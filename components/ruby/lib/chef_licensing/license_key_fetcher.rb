@@ -1,7 +1,6 @@
 require "chef-config/path_helper"
 require "chef-config/windows"
 require "logger"
-require "forwardable"
 
 require_relative "license_key_fetcher/argument"
 require_relative "license_key_fetcher/environment"
@@ -13,8 +12,6 @@ module ChefLicensing
   class LicenseKeyFetcher
     class LicenseKeyNotFetchedError < Exception
     end
-
-    extend Forwardable
 
     attr_reader :config, :license_key, :arg_fetcher, :env_fetcher, :file_fetcher, :prompt_fetcher, :logger
     def initialize(opts = {})
