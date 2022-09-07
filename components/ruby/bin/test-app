@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "chef_licensing/license_key_fetcher"
+require "logger"
+
+logger = Logger.new(STDERR)
+logger.level = Logger::INFO
+
+ChefLicensing::LicenseKeyFetcher.fetch_and_persist("DemoApp", "0.1.0", logger: logger)

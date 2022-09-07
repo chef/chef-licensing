@@ -24,4 +24,7 @@ Gem::Specification.new do |spec|
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
+
+  spec.add_dependency "chef-config", ">= 15"
+  spec.add_dependency "tty-prompt", "~> 0.23"
 end
