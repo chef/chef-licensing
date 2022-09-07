@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "chef_licensing/license_key_fetcher"
+
+ChefLicensing::LicenseKeyFetcher.fetch_and_persist("DemoApp", "0.1.0", {})
