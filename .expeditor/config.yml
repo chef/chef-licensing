@@ -9,9 +9,9 @@ slack:
   notify_channel: chef-found-notify
 
 # https://expeditor.chef.io/docs/integrations/rubygems/
-# rubygems:
-#   - chef_licensing:
-#       gemspec_path: ./components/ruby/
+rubygems:
+  - chef_licensing:
+      gemspec_path: ./components/ruby/
 
 # https://expeditor.chef.io/docs/integrations/github/
 github:
