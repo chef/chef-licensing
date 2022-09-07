@@ -3,6 +3,7 @@ require "chef-config/windows"
 require "chef-config/path_helper"
 require "yaml"
 require "date"
+require "fileutils"
 
 module ChefLicensing
   class LicenseKeyFetcher

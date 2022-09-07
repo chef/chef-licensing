@@ -98,7 +98,7 @@ module ChefLicensing
         output.puts <<~EOM
           Enter your License ID.
 
-          A Chef License ID is #{LICENSE_ID_PATTERN_DESC}.
+          A Chef License ID is #{LICENSE_KEY_PATTERN_DESC}.
 
           Enter "q" to quit without entering a Chef License ID.
 
@@ -107,7 +107,7 @@ module ChefLicensing
         logger.debug("Attempting to request interactive prompt on TTY")
         prompt = TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit, output: output, input: input)
         answer = prompt.ask("License ID:")
-        unless match = answer.match(/^(q|Q)|#{LICENSE_ID_REGEX}$/)
+        unless match = answer.match(/^(q|Q)|#{LICENSE_KEY_REGEX}$/)
           # TODO: this could be more graceful
           puts "Unrecognized License ID format '#{answer}'"
           return fetch_license_id_by_manual_entry
