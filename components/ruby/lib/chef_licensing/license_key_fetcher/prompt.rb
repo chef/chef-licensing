@@ -27,9 +27,13 @@ module ChefLicensing
       end
 
       def fetch
+        # TODO: Make it gracefully exit if air gap is enabled
+        raise "AIR_GAP is enabled" if air_gap?
+
         logger.debug "Prompting for license Key..."
 
         output.puts <<~EOM
+        #{BORDER}
                     Provide Your License ID
 
           To access premium content and other special features,
@@ -44,14 +48,13 @@ module ChefLicensing
         EOM
 
         # This first one has a timeout on it
-        result = choose_how_to_fetch_license_id
+        result = ask_if_user_has_license_id
 
-        # Remaining UI interactions do not have timeouts
         case result
-        when /enter/i
-          return fetch_license_id_by_manual_entry
-        when /lookup/i
-          return fetch_license_id_by_email_lookup
+        when /yes/i
+          fetch_license_id_by_manual_entry
+        when /no/i
+          generate_license_id
         when /exit/i
           exit_because_user_chose_not_to_enter
         end
@@ -59,36 +62,37 @@ module ChefLicensing
 
       private
 
-      def choose_how_to_fetch_license_id
-        logger.debug("Attempting to request interactive prompt on TTY")
+      def ask_if_user_has_license_id
+        logger.debug("Asking if user has a license ID")
         prompt = TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit, output: output, input: input)
         timeout = ENV["CI_TELEMETRY_PROMPT_TIMEOUT"].nil? ? 60 : ENV["CI_TELEMETRY_PROMPT_TIMEOUT"].to_i
         handle_timeout = ->() {
+          logger.debug("User did not respond to prompt in #{timeout} seconds")
           prompt.unsubscribe(prompt.reader)
-          output.puts "\nPrompt timed out. Exiting without a license ID set."
+          output.puts PASTEL.red.bold("\nPrompt timed out. Exiting without a license ID set.")
           return "Exit without setting a License ID"
         }
 
         answer = "Exit without setting a License ID"
 
-        # TODO: Test timeout on Windows
+        # TODO: Test timeout in windows
         begin
           Timeout.timeout(timeout, PromptTimeout) do
             answer = prompt.select(
-              "How would you like to provide a License ID?",
+              "Do you have a Chef License ID?",
               [
-                "Enter a License ID manually",
-                "Generate or Lookup a License ID based on my email address",
+                "Yes, I have a Chef License ID",
+                "No, I need to get a Chef License ID",
                 "Exit without setting a License ID",
               ]
             )
-            return answer
           end
-        rescue PromptTimeout
+        rescue Timeout::Error
+          # handled by the lambda timeout handler
           return handle_timeout.call
         end
 
-        logger.debug "Saw answer '#{answer}'"
+        logger.debug("User answered: #{answer}")
         answer
       end
 
@@ -107,9 +111,10 @@ module ChefLicensing
         logger.debug("Attempting to request interactive prompt on TTY")
         prompt = TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit, output: output, input: input)
         answer = prompt.ask("License ID:")
-        unless match = answer.match(/^(q|Q)|#{LICENSE_KEY_REGEX}$/)
+
+        unless (match = answer.match(/^(q|Q)|#{LICENSE_KEY_REGEX}$/))
           # TODO: this could be more graceful
-          puts "Unrecognized License ID format '#{answer}'"
+          output.puts PASTEL.red.bold("Unrecognized License ID format #{answer}")
           return fetch_license_id_by_manual_entry
         end
 
@@ -117,63 +122,60 @@ module ChefLicensing
           exit_because_user_chose_not_to_enter
         end
 
-        puts "#{BORDER}"
-        return match[2]
+        unless license_valid?(match[2])
+          logger.debug("License ID is not valid")
+          output.puts PASTEL.red.bold("License ID is not valid")
+          output.puts "If you need help, please contact #{PASTEL.green.bold("chef@progress.com")}"
+          # TODO: Output the error message from the license_validation API
+          return fetch_license_id_by_manual_entry
+        end
+
+        output.puts PASTEL.green.bold("License validated successfully #{CHECK}")
+        output.puts BORDER
+        match[2]
       end
 
       def exit_because_user_chose_not_to_enter
-        puts "OK, exiting without setting a License ID..."
-        # Inspec::UI.new.exit # TODO: consider special exit code here
+        output.puts PASTEL.red.bold("Exiting without setting a License ID")
+
+        # Inspec::UI.new.exit
+        # TODO: consider special exit code here
+        # TODO: Check if we should set a license ID to nil to not prompt again
         exit
       end
 
-      def fetch_license_id_by_email_lookup
-        logger.debug "Prompting for email..."
-
+      def generate_license_id
+        logger.debug "Generating a new license ID..."
         output.puts <<~EOM
-          Enter your email address.
+          #{BORDER}
+                    Chef License ID Generation
 
-          The licensing system will look up your email address and
-          if a License ID is already associated with your email, it
-          will be set for the future.
-
-          If no License ID is currently associated with your email
-          address, a new evaluation License ID will be generated
-          and will be set for future use.
-
-          Internet access is required for this operation.
-
-          Enter "q" to quit without entering an email address.
-
+          Generate Chef License ID to enjoy premium content and special features.
         EOM
 
-        logger.debug("Attempting to request interactive prompt on TTY")
-        prompt = TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit, output: output, input: input)
-        answer = prompt.ask("Email Address, or 'q' to quit:")
-
-        unless match = answer.match(/^(q|Q)|(\S+\@\S+)$/) # TODO: validate an email address, LOL
-          # TODO: this could be more graceful
-          puts "Unrecognized email format '#{answer}'"
-          return fetch_license_id_by_email_lookup
-        end
-
-        if match[1] == "q" || match[1] == "Q"
-          exit_because_user_chose_not_to_enter
-        end
-
-        email = match[2]
-
-        # TODO: actually lookup the email using the API
-        puts "\nPRETENDING to use an API to find-or-create a LicenseID based on an email...\n"
-        license_id = "12345678"
-
-        puts "The email #{email} is associated with \nLicense ID #{license_id}"
-        puts "#{BORDER}"
-        return license_id
+        # TODO: This is dependent on implementation of `Generation TUI ticket` ticket
+        # This implements the TUI for generating a new license ID of different types
+        # This should return a valid license ID by possibly querying an API
+        license_id = "1234567890"
+        puts PASTEL.green.bold("Successfully generated a new license ID #{CHECK}")
+        puts "Save your license id #{PASTEL.green.bold(license_id)} for future reference."
+        license_id
       end
 
-      class PromptTimeout < StandardError; end
+      def air_gap?
+        # TODO: Implement the below logic
+        # return true: if env variable is set to enable air gap or
+        #              if local setting is set to enable air gap or
+        #              if unable to ping public Chef server
+        false
+      end
 
+      def license_valid?(license_id)
+        # TODO: This is dependent on implementation of `Validate License Key with License Server` ticket
+        true
+      end
+
+      class PromptTimeout < Timeout::Error; end
     end
   end
 end
