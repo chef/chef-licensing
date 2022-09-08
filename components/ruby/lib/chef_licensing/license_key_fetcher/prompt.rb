@@ -112,6 +112,11 @@ module ChefLicensing
         prompt = TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit, output: output, input: input)
         answer = prompt.ask("License ID:")
 
+        # Handle if user doesn't enter anything
+        if answer.nil? || answer.empty?
+          output.puts PASTEL.red.bold("No License ID entered. Please try again.")
+          return fetch_license_id_by_manual_entry
+        end
         unless (match = answer.match(/^(q|Q)|#{LICENSE_KEY_REGEX}$/))
           # TODO: this could be more graceful
           output.puts PASTEL.red.bold("Unrecognized License ID format #{answer}")
