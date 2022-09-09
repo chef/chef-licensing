@@ -17,11 +17,13 @@ module ChefLicensing
         # TODO: WhyTF are we hand-rolling an option parser
         arg = argv.detect { |a| a.start_with? "--chef-license-key=" }
         return nil unless arg
+
         match = arg.match(/--chef-license-key=#{LICENSE_KEY_REGEX}/)
         unless match
           raise LicenseKeyNotFetchedError.new("Malformed License Key passed on command line - should be #{LICENSE_KEY_PATTERN_DESC}")
         end
-        return match[1]
+
+        match[1]
       end
     end
   end
