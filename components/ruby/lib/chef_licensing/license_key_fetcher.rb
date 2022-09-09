@@ -35,7 +35,6 @@ module ChefLicensing
     # Methods for obtaining consent from the user.
     #
     def fetch_and_persist(product, version)
-
       # TODO: handle non-persistent cases
       # If a fetch is made by CLI arg, persist and return
       logger.debug "Telemetry license Key fetcher examining CLI arg checks"
