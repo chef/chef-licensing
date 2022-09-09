@@ -1,6 +1,6 @@
 # Use same support libraries as license-acceptance
 require "tty-prompt"
-require "pastel" unless defined?("paster")
+require "pastel" unless defined?("pastel")
 require "timeout" unless defined?("timeout")
 require "chef-config/windows"
 require_relative "base"
