@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    chef_licensing (0.1.0)
+    chef_licensing (0.1.1)
       chef-config (>= 15)
       tty-prompt (~> 0.23)
 
@@ -88,4 +88,4 @@ DEPENDENCIES
   rspec (~> 3.11)
 
 BUNDLED WITH
-   2.1.2
+   2.3.18
