@@ -3,7 +3,7 @@ require "chef-config/windows"
 require "chef-config/path_helper"
 require "yaml"
 require "date"
-require "fileutils"
+require "fileutils" unless defined?(FileUtils)
 
 module ChefLicensing
   class LicenseKeyFetcher
@@ -23,7 +23,6 @@ module ChefLicensing
 
         @opts[:dir] ||= LicenseKeyFetcher::File.default_file_location
         @local_dir = @opts[:dir]
-
       end
 
       def fetch
@@ -45,11 +44,11 @@ module ChefLicensing
           FileUtils.mkdir_p(dir)
           msg = "Could not write telemetry license_key file #{dir}/#{LICENSE_KEY_FILE}"
           ::File.write("#{dir}/#{LICENSE_KEY_FILE}", YAML.dump(content))
-          return []
+          []
         rescue StandardError => e
           logger.info "#{msg}\n\t#{e.message}"
           logger.debug "#{e.backtrace.join("\n\t")}"
-          return [e]
+          [e]
         end
       end
 
@@ -101,8 +100,10 @@ module ChefLicensing
 
       def read_license_key_file
         return contents if contents
+
         path = seek
         return nil unless path
+
         @contents ||= YAML.load(::File.read(path))
       end
 
