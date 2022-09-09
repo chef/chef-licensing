@@ -122,7 +122,7 @@ module ChefLicensing
               TUI_MSGS[:options]
             )
           end
-        rescue Timeout::Error
+        rescue PromptTimeout
           # handled by the lambda timeout handler
           return handle_timeout.call
         end
