@@ -3,9 +3,9 @@ require_relative "../../../lib/chef_licensing/license_key_fetcher/prompt"
 require "logger"
 
 RSpec.describe ChefLicensing::LicenseKeyFetcher::Prompt do
-  let (:output) { StringIO.new }
-  let (:logger) { Logger.new(output) }
-  
+  let(:output) { StringIO.new }
+  let(:logger) { Logger.new(output) }
+
   describe "when the user chooses to input license id" do
     # TODO: Implement this test
     it "should do something" do
