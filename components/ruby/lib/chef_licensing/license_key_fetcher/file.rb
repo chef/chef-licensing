@@ -36,6 +36,7 @@ module ChefLicensing
       def persist(license_key, _product, _version, content = {})
         content[:update_time] = DateTime.now.to_s
         content[:license_key] = license_key
+        content[:version] = _version
         @contents = content
         dir = @opts[:dir]
 
