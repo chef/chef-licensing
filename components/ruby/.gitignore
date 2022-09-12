@@ -2,3 +2,5 @@
 *.rbc
 .rvmrc
 .ruby-version
+.bundle
+vendor
