@@ -1,5 +1,5 @@
 module ChefLicensing
-  class InvalidLicense < RestfulClientErrors
+  class InvalidLicense < RestfulClientError
   end
 end
 
