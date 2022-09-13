@@ -1,3 +1,6 @@
+require_relative "restful_client/v1"
+require_relative "exceptions/license_generation_failed"
+
 module ChefLicensing
   class LicenseKeyGenerator
     attr_reader :payload
@@ -10,8 +13,11 @@ module ChefLicensing
 
     def generate!
       response = restful_client.generate_license(payload)
-      # response outputs
-      #raise ChefLicensing::LicenseGenerationFailed
+      # need some logic around delivery
+      # how the delivery is decided?
+      response.key
+    rescue RestfulClientError => e
+      raise ChefLicensing::LicenseGenerationFailed
     end
 
     private
