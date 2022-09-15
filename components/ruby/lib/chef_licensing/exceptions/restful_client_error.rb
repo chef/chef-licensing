@@ -1,4 +1,9 @@
+require_relative "error"
+
 module ChefLicensing
-  class RestfulClientError < StandardError
+  class RestfulClientError < Error
+    def message
+      "License Server Error"
+    end
   end
 end
