@@ -1,7 +1,7 @@
 # Use same support libraries as license-acceptance
 require "tty-prompt"
-require "pastel"
-require "timeout"
+require "pastel" unless defined?(Pastel)
+require "timeout" unless defined?(Timeout)
 require "chef-config/windows"
 require_relative "base"
 
@@ -49,9 +49,9 @@ module ChefLicensing
         # Remaining UI interactions do not have timeouts
         case result
         when /enter/i
-          return fetch_license_id_by_manual_entry
+          fetch_license_id_by_manual_entry
         when /lookup/i
-          return fetch_license_id_by_email_lookup
+          fetch_license_id_by_email_lookup
         when /exit/i
           exit_because_user_chose_not_to_enter
         end
@@ -107,7 +107,7 @@ module ChefLicensing
         logger.debug("Attempting to request interactive prompt on TTY")
         prompt = TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit, output: output, input: input)
         answer = prompt.ask("License ID:")
-        unless match = answer.match(/^(q|Q)|#{LICENSE_KEY_REGEX}$/)
+        unless (match = answer.match(/^(q|Q)|#{LICENSE_KEY_REGEX}$/))
           # TODO: this could be more graceful
           puts "Unrecognized License ID format '#{answer}'"
           return fetch_license_id_by_manual_entry
@@ -118,7 +118,7 @@ module ChefLicensing
         end
 
         puts "#{BORDER}"
-        return match[2]
+        match[2]
       end
 
       def exit_because_user_chose_not_to_enter
@@ -151,7 +151,7 @@ module ChefLicensing
         prompt = TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit, output: output, input: input)
         answer = prompt.ask("Email Address, or 'q' to quit:")
 
-        unless match = answer.match(/^(q|Q)|(\S+\@\S+)$/) # TODO: validate an email address, LOL
+        unless (match = answer.match(/^(q|Q)|(\S+\@\S+)$/)) # TODO: validate an email address, LOL
           # TODO: this could be more graceful
           puts "Unrecognized email format '#{answer}'"
           return fetch_license_id_by_email_lookup
@@ -169,7 +169,7 @@ module ChefLicensing
 
         puts "The email #{email} is associated with \nLicense ID #{license_id}"
         puts "#{BORDER}"
-        return license_id
+        license_id
       end
 
       class PromptTimeout < StandardError; end
