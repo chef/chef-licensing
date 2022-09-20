@@ -11,6 +11,7 @@ module ChefLicensing
     # Represents a fethced license ID recorded on disk
     class File
       LICENSE_KEY_FILE = "license_key.yaml".freeze
+      LICENSE_FILE_FORMAT_VERSION = "1.0.0".freeze
 
       attr_reader :logger, :contents, :location
       attr_accessor :local_dir # Optional local path to use to seek
@@ -36,7 +37,7 @@ module ChefLicensing
       def persist(license_key, _product, _version, content = {})
         content[:update_time] = DateTime.now.to_s
         content[:license_key] = license_key
-        content[:version] = _version
+        content[:version] = LICENSE_FILE_FORMAT_VERSION
         @contents = content
         dir = @opts[:dir]
 
@@ -106,8 +107,12 @@ module ChefLicensing
         return nil unless path
 
         @contents ||= YAML.load(::File.read(path))
+        if @contents[:version] == LICENSE_FILE_FORMAT_VERSION
+          @contents
+        else
+          raise LicenseKeyNotFetchedError.new("License File version #{@contents[:version]} not supported.")
+        end
       end
-
     end
   end
 end
