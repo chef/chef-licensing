@@ -1,4 +1,3 @@
-require "net/ping"
 require_relative "air_gap/ping"
 require_relative "air_gap/environment"
 require_relative "air_gap/argument"
