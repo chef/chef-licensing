@@ -1,4 +1,4 @@
-# require "chef_licensing/air_gap/argument"
+require "chef_licensing/air_gap/argument"
 require "chef_licensing/air_gap"
 
 RSpec.describe ChefLicensing::AirGap::Argument do
