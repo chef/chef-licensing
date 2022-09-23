@@ -1,5 +1,5 @@
 require "tty-prompt"
-require_relative "../../../lib/chef_licensing/license_key_fetcher/prompt"
+require "chef_licensing/license_key_fetcher/prompt"
 require "logger"
 
 RSpec.describe ChefLicensing::LicenseKeyFetcher::Prompt do
