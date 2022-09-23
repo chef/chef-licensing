@@ -1,37 +1,31 @@
 require "net/ping"
+require_relative "air_gap/ping"
+require_relative "air_gap/environment"
+require_relative "air_gap/argument"
 
 module ChefLicensing
   class AirGap
-    # TODO: Check URL for public chef server
-    CHEF_SERVER_URL = "progress.com".freeze
 
-    attr_reader :status
-    def self.air_gapped_env?
-      raise AirGapEnvException, "AIR_GAP environment variable is enabled." if ENV["AIR_GAP"] == "enabled"
+    # TODO: Check URL for public licensing server
+    LICENSE_SERVER_URL = "progress.com".freeze
 
-      raise AirGapFlagException, "--airgap flag is enabled." if ARGV.include?("--airgap")
+    def initialize
+      @ping_check = AirGap::Ping.new(LICENSE_SERVER_URL)
+      @env_check = AirGap::Environment.new(ENV)
+      @argv_check = AirGap::Argument.new(ARGV)
+    end
 
-      raise AirGapPingException, "Unable to ping public chef server.\nPlease check your internet connectivity." unless reachable?(CHEF_SERVER_URL)
-
-      false
-    rescue AirGapEnvException, AirGapFlagException, AirGapPingException => exception
+    def check
+      @env_check.verify_env
+      @argv_check.verify_argv
+      @ping_check.verify_ping
+    rescue AirGapException => exception
       puts exception.message
       # TODO: Exit with some code
       exit
     end
 
-    def self.reachable?(host)
-      check = Net::Ping::External.new(host)
-      check.ping?
-    end
-
-    class AirGapEnvException < RuntimeError
-    end
-
-    class AirGapFlagException < RuntimeError
-    end
-
-    class AirGapPingException < RuntimeError
+    class AirGapException < RuntimeError
     end
   end
 end
