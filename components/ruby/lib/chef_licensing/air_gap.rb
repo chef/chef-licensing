@@ -6,7 +6,7 @@ module ChefLicensing
   class AirGap
 
     # TODO: Check URL for public licensing server
-    LICENSE_SERVER_URL = "progress.com".freeze
+    LICENSE_SERVER_URL = "https://licensing-acceptance.chef.co/".freeze
 
     def initialize
       @ping_check = AirGap::Ping.new(LICENSE_SERVER_URL)
