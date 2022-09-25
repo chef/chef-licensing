@@ -14,4 +14,3 @@ module ChefLicensing
     end
   end
 end
-
