@@ -12,6 +12,15 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  config.before(:each) do
+    licensing_server_response = {
+      status: "success",
+      data: [],
+    }
+    stub_request(:get, "https://licensing-acceptance.chef.co/")
+      .to_return(status: 200, body: licensing_server_response.to_json)
+  end
 end
 
 ENV["LICENSING_SERVER"] = "http://localhost-license-server/License"
