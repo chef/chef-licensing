@@ -5,6 +5,12 @@ module ChefLicensing
   class LicenseKeyGenerator
     attr_reader :payload
 
+    class << self
+      def generate!(kwargs)
+        new(kwargs).generate!
+      end
+    end
+
     def initialize(kwargs, restful_client: ChefLicensing::RestfulClient::V1)
       # TODO: validate kwargs
       @payload = build_payload_from(kwargs)

@@ -5,6 +5,12 @@ module ChefLicensing
   class LicenseKeyValidator
     attr_reader :license
 
+    class << self
+      def validate!(license)
+        new(license).validate!
+      end
+    end
+
     def initialize(license, restful_client: ChefLicensing::RestfulClient::V1)
       @license = license.presence || raise(ArgumentError, "Missing Params: `license`")
       @restful_client = restful_client.new
