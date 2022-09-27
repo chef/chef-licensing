@@ -9,7 +9,7 @@ module ChefLicensing
 
       END_POINTS = {
         VALIDATE: "validate",
-        GENERATE_LICENSE: "generate",
+        GENERATE_LICENSE: "triallicense",
       }.freeze
 
       def validate(license)
