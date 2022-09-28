@@ -1,0 +1,21 @@
+nodes:
+  license_id_welcome_note:
+    messages: ["hello"]
+    action: welcome_function
+    paths: [ask_if_user_has_license_id]
+  ask_if_user_has_license_id:
+    messages: ["Do you have a License ID?"]
+    action: question_about_license_id
+    paths: [ask_for_license_id, ]
+  ask_for_license_id:
+    messages: ["Please input your License ID: "]
+    action: accept_license_id_from_user
+    paths: []
+  ask_for_license_generation:
+    messages: ["Which license id do you want generate?"]
+    action: license_generator
+    paths: []
+  exit_license_tui:
+    messages: ["Thank you!"]
+    action: exit_function
+    paths: []
