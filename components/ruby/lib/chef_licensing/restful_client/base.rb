@@ -14,15 +14,15 @@ module ChefLicensing
 
       def validate(license)
         handle_connection do |connection|
-          connection.get(END_POINTS[:validate], { license: license })
+          connection.get(self.class::END_POINTS[:VALIDATE], { licenseId: license }).body
         end
       end
 
       def generate_license(payload)
         handle_connection do |connection|
-          connection.post(END_POINTS[:GENERATE_LICENSE]) do |request|
+          connection.post(self.class::END_POINTS[:GENERATE_LICENSE]) do |request|
             request.body = payload.to_json
-          end
+          end.body
         end
       end
 
@@ -38,8 +38,7 @@ module ChefLicensing
 
       def connection
         Faraday.new(url: ChefLicensing::Config::LICENSING_SERVER) do |config|
-          config.request = :json
-          config.request :retry
+          config.request :json
           config.response :json, parser_options: { object_class: OpenStruct }
         end
       end
