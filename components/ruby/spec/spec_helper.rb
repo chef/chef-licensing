@@ -1,5 +1,6 @@
 require "bundler/setup"
 require "chef_licensing"
+require "webmock/rspec"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -12,3 +13,5 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 end
+
+ENV["LICENSING_SERVER"] = "http://localhost-license-server/License"

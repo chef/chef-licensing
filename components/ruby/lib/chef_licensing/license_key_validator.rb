@@ -12,7 +12,7 @@ module ChefLicensing
     end
 
     def initialize(license, restful_client: ChefLicensing::RestfulClient::V1)
-      @license = license.presence || raise(ArgumentError, "Missing Params: `license`")
+      @license = license || raise(ArgumentError, "Missing Params: `license`")
       @restful_client = restful_client.new
     end
 
