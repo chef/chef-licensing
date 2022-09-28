@@ -8,16 +8,16 @@ RSpec.describe ChefLicensing::AirGap::Ping do
     context "when the public licensing server is reachable" do
       let(:acc) { described_class.new("https://licensing-acceptance.chef.co/") }
 
-      it "does not raise an AirGapException" do
-        expect { acc.verify_ping }.not_to raise_error
+      it "returns false" do
+        expect(acc.verify_ping).to eq true
       end
     end
 
     context "when the public licensing server is not reachable" do
       let(:acc) { described_class.new("https://wrong-url.co/") }
 
-      it "does not raise an AirGapException" do
-        expect { acc.verify_ping }.to raise_error
+      it "returns true" do
+        expect(acc.verify_ping).to eq false
       end
     end
   end

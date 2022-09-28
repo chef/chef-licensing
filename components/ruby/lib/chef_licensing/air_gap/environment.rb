@@ -2,14 +2,18 @@ module ChefLicensing
   class AirGap
     class Environment
 
-      attr_reader :env
+      attr_reader :env, :status
 
       def initialize(env)
         @env = env
       end
 
       def verify_env
-        raise AirGapException, "AIR_GAP environment variable is enabled." if @env["AIR_GAP"] == "enabled"
+        return @status if @status # memoize
+
+        @status = @env["AIR_GAP"] == "enabled"
+      rescue => exception
+        raise AirGapException, "Unable to verify air gap environment variable.\n#{exception.message}"
       end
     end
   end

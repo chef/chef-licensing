@@ -20,6 +20,9 @@ RSpec.configure do |config|
     }
     stub_request(:get, "https://licensing-acceptance.chef.co/")
       .to_return(status: 200, body: licensing_server_response.to_json)
+
+    stub_request(:get, "https://wrong-url.co/")
+      .to_return(status: 404, body: "", headers: {})
   end
 end
 

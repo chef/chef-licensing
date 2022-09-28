@@ -11,13 +11,13 @@ module ChefLicensing
       end
 
       def verify_ping
-        return @status if @status.is_a? Net::HTTPSuccess
+        return @status if @status
 
-        @status = Net::HTTP.get_response(host)
-
-        raise "Error message: #{@status.message}\nStatus code: #{@status.code}" unless @status.is_a? Net::HTTPSuccess
+        response = Net::HTTP.get_response(host)
+        @status = response.is_a? Net::HTTPSuccess
+        @status
       rescue => exception
-        raise AirGapException, "Unable to ping public licensing server.\n#{exception.message}"
+        warn "Unable to ping #{host}.\n#{exception.message}"
       end
     end
   end
