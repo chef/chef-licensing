@@ -4,18 +4,12 @@ require_relative "../../spec_helper"
 RSpec.describe ChefLicensing::TUIEngine::TUIInteraction do
 
   let(:config) { {
-    id: "test",
     messages: ["test"],
     action: "some_action",
-    paths: [],
   } }
   let(:tui_interaction) { described_class.new(config) }
 
   describe "when a tui_interaction object is instantiated" do
-    it "should have an id field" do
-      expect(tui_interaction.id).to eq("test")
-    end
-
     it "should have messages field" do
       expect(tui_interaction.messages).to eq(["test"])
     end
