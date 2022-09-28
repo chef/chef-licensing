@@ -3,10 +3,12 @@ require_relative "../../spec_helper"
 
 RSpec.describe ChefLicensing::TUIEngine::TUIInteraction do
 
-  let(:config) { {
+  let(:config) {
+    {
     messages: ["test"],
     action: "some_action",
-  } }
+  }
+  }
   let(:tui_interaction) { described_class.new(config) }
 
   describe "when a tui_interaction object is instantiated" do
@@ -19,7 +21,7 @@ RSpec.describe ChefLicensing::TUIEngine::TUIInteraction do
     end
 
     it "should have paths field" do
-      expect(tui_interaction.paths).to eq([])
+      expect(tui_interaction.paths).to eq({})
     end
 
     it "should not have other fields" do

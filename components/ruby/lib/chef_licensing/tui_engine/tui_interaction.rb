@@ -5,7 +5,7 @@ module ChefLicensing
       def initialize(opts = {})
         @messages = opts[:messages]
         @action = opts[:action]
-        @paths = []
+        @paths = {}
       end
     end
   end
