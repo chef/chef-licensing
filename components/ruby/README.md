@@ -1,9 +1,49 @@
 # Chef Licensing
 
 Ruby support for Progress Chef License Key:
+##Pre-requisites
+- please define the `LICENSING_SERVER` env variables
+
  * Storage ( TODO )
- * Generation ( TODO )
- * Validation ( TODO )
+ * ##Generation
+   ### Summary
+    LicenseKey generation abstracts a RESTful action from the License Server. It raises Exceptions when license generation fails
+   ###Usage
+   ```ruby
+        require 'chef_licensing/license_key_generator'
+        ChefLicensing::LicenseKeyGenerator.generate!(
+            first_name: "FIRSTNAME", 
+            last_name: "LASTNAME", 
+            email_id: "EMAILID",
+            product: "PRODUCT",
+            company: "COMPANY", 
+            phone: "PHONE"
+        )
+     ```
+   
+   ### Response
+      on success, it responds with a valid LICENSE KEY and on failure it raises an Error
+   ### Errors
+      On errors, message from the license gen server is directly return as exception message
+      ```ruby
+        ChefLicensing::LicenseGenerationFailed
+      ```
+
+    
+ * ##Validation 
+   ###Usage
+   ```ruby
+      require 'chef_licensing/license_key_validator'
+   
+      ChefLicensing::LicenseKeyValidator.validate!("LICENSE_KEY")
+   ```
+   ### Response
+     on success, it responds `true` and on failure it raises an Error
+   ### Errors
+      ```ruby
+        ChefLicensing::InvalidLicense
+      ```
+
  * Entitlement ( TODO )
 
 ## Usage
