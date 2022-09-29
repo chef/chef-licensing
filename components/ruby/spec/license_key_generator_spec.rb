@@ -11,8 +11,8 @@ RSpec.describe ChefLicensing::LicenseKeyGenerator do
   let(:expected_response) {
     {
       "delivery": "RealTime",
-      "key": expected_license_key,
-      "msg": "Success",
+      "licenseId": expected_license_key,
+      "message": "Success",
       "status_code": 200,
     }.to_json
   }
@@ -30,9 +30,9 @@ RSpec.describe ChefLicensing::LicenseKeyGenerator do
 
   let(:payload) {
     {
-      firstName: params[:first_name],
-      lastName: params[:last_name],
-      emailId: params[:email_id],
+      first_name: params[:first_name],
+      last_name: params[:last_name],
+      email_id: params[:email_id],
       product: params[:product],
       company: params[:company],
       phone: params[:phone],

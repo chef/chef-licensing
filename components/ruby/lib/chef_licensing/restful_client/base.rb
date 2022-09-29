@@ -1,5 +1,6 @@
 require "faraday" unless defined?(Faraday)
 require_relative "../exceptions/restful_client_error"
+require_relative "../config"
 
 module ChefLicensing
   module RestfulClient

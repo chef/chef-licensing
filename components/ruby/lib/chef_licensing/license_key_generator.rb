@@ -6,7 +6,7 @@ module ChefLicensing
     attr_reader :payload
 
     class << self
-      # @param [Hash] KWARGS keys accepted are [first_name]
+      # @param [Hash] KWARGS keys accepted are [first_name, last_name, email_id, product, company, phone]
       def generate!(kwargs)
         new(kwargs).generate!
       end
@@ -22,7 +22,7 @@ module ChefLicensing
       response = restful_client.generate_license(payload)
       # need some logic around delivery
       # how the delivery is decided?
-      response.key
+      response.licenseId
     rescue RestfulClientError => e
       raise ChefLicensing::LicenseGenerationFailed, e.message
     end
@@ -32,14 +32,7 @@ module ChefLicensing
     attr_reader :restful_client
 
     def build_payload_from(kwargs)
-      {
-        firstName: kwargs[:first_name],
-        lastName: kwargs[:last_name],
-        emailId:  kwargs[:email_id],
-        product:  kwargs[:product],
-        company:  kwargs[:company],
-        phone:    kwargs[:phone],
-      }
+      kwargs.slice(:first_name, :last_name, :email_id, :product, :company, :phone)
     end
   end
 end
