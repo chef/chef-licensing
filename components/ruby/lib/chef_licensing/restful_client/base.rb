@@ -20,9 +20,12 @@ module ChefLicensing
 
       def generate_license(payload)
         handle_connection do |connection|
-          connection.post(self.class::END_POINTS[:GENERATE_LICENSE]) do |request|
+          response = connection.post(self.class::END_POINTS[:GENERATE_LICENSE]) do |request|
             request.body = payload.to_json
-          end.body
+          end
+          raise RestfulClientError, response.body.data.error unless response.success?
+
+          response.body
         end
       end
 
