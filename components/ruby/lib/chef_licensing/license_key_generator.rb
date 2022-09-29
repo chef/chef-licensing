@@ -24,7 +24,7 @@ module ChefLicensing
       # how the delivery is decided?
       response.key
     rescue RestfulClientError => e
-      raise ChefLicensing::LicenseGenerationFailed
+      raise ChefLicensing::LicenseGenerationFailed, e.message
     end
 
     private

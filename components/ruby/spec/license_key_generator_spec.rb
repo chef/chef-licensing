@@ -13,7 +13,7 @@ RSpec.describe ChefLicensing::LicenseKeyGenerator do
       "delivery": "RealTime",
       "key": expected_license_key,
       "msg": "Success",
-      "status_code": 200
+      "status_code": 200,
     }.to_json
   }
 
@@ -51,15 +51,29 @@ RSpec.describe ChefLicensing::LicenseKeyGenerator do
     it { is_expected.to eq(expected_license_key) }
 
     context "when params are bad" do
-      let(:payload) {
-        {}
+
+      let(:params) {
+        {
+          first_name: "chef_customer",
+          last_name: "inspec",
+          email_id: "xxxxxxxxx",
+          product: "inspec",
+          company: "Chef",
+          phone: "xxxxx_yyyyy",
+        }
       }
+
+      let(:expected_response) {
+        { "data": { "error": "Invalid Email Id" }, "status": 400 }.to_json
+      }
+
       before do
         stub_request(:post, "#{ChefLicensing::Config::LICENSING_SERVER}/v1/triallicense")
           .with(body: payload.to_json)
-          .to_return(body: {}.to_json, headers: { content_type: "application/json" }, status: 400)
+          .to_return(body: expected_response, headers: { content_type: "application/json" }, status: 400)
       end
 
+      # it { is_expected.to eq(expected_license_key) }
       it { expect { subject }.to raise_error(ChefLicensing::LicenseGenerationFailed) }
     end
   end
