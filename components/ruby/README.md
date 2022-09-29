@@ -2,8 +2,33 @@
 
 Ruby support for Progress Chef License Key:
  * Storage ( TODO )
- * Generation ( TODO )
- * Validation ( TODO )
+ * ##Generation
+   ### Summary
+    LicenseKey generation abstracts a RESTful action from the License Server. It is build to raise Exceptions
+   ###Usage
+   ```ruby
+        require 'license_key_generator'
+        ChefLicensing::LicenseKeyGenerator.generate!(
+            first_name: "FIRSTNAME", 
+            last_name: "LASTNAME", 
+            email_id: "EMAILID",
+            product: "PRODUCT",
+            company: "COMPANY", 
+            phone: "PHONE"
+        )
+     ```
+   ### Errors
+      ```ruby
+        ChefLicensing::LicenseGenerationFailed
+      ```
+    
+ * ##Validation 
+   ###Usage
+   ```ruby
+      require 'license_key_validator'
+      ChefLicensing::LicenseKeyValidator.validate!("LICENSE_KEY")
+   ```
+
  * Entitlement ( TODO )
 
 ## Usage

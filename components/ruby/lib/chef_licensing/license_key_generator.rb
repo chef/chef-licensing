@@ -6,6 +6,7 @@ module ChefLicensing
     attr_reader :payload
 
     class << self
+      # @param [Hash] KWARGS keys accepted are [first_name]
       def generate!(kwargs)
         new(kwargs).generate!
       end
