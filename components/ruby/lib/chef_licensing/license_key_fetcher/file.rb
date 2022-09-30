@@ -28,24 +28,54 @@ module ChefLicensing
 
       def fetch
         read_license_key_file
-        !contents.nil? && contents[:license_key]
+        !contents.nil? && fetch_license_keys(contents[:licenses]) # list license keys
+      end
+
+      def fetch_license_keys(licenses)
+        licenses.collect{ |x| x[:license_key] }
       end
 
       # Writes a license_id file to disk in the location specified,
       # with the content given.
       # @return Array of Errors
-      def persist(license_key, _product, _version, content = {})
-        content[:update_time] = DateTime.now.to_s
-        content[:license_key] = license_key
-        content[:version] = LICENSE_FILE_FORMAT_VERSION
-        @contents = content
-        dir = @opts[:dir]
+      def persist(license_key, _product, _version)
+        license_data = {
+          license_key: license_key,
+          update_time: DateTime.now.to_s
+        }
 
+        dir = @opts[:dir]
+        license_key_file_path = "#{dir}/#{LICENSE_KEY_FILE}"
         begin
-          msg = "Could not create directory for license_key file #{dir}"
-          FileUtils.mkdir_p(dir)
-          msg = "Could not write telemetry license_key file #{dir}/#{LICENSE_KEY_FILE}"
-          ::File.write("#{dir}/#{LICENSE_KEY_FILE}", YAML.dump(content))
+          if ::File.exist?(license_key_file_path)
+            msg = "Could not read telemetry license_key file #{license_key_file_path}"
+            current_keys = YAML.load_file(license_key_file_path)
+
+            # Checking for unique keys
+            if current_keys[:licenses]
+              unless fetch_license_keys(current_keys[:licenses]).include? license_key
+                current_keys[:licenses].push(license_data)
+                current_keys[:file_format_version] = LICENSE_FILE_FORMAT_VERSION
+              end
+              @contents = current_keys
+            elsif !current_keys # if file is empty
+              @contents = {
+                licenses: [license_data] ,
+                file_format_version: LICENSE_FILE_FORMAT_VERSION
+              }
+            end
+          else
+            @contents = {
+              licenses: [license_data] ,
+              file_format_version: LICENSE_FILE_FORMAT_VERSION
+            }
+            msg = "Could not create directory for license_key file #{dir}"
+            FileUtils.mkdir_p(dir)
+          end
+
+          # write/overwrite license file content in the file
+          msg = "Could not write telemetry license_key file #{license_key_file_path}"
+          ::File.write(license_key_file_path, YAML.dump(@contents))
           []
         rescue StandardError => e
           logger.info "#{msg}\n\t#{e.message}"
@@ -107,7 +137,7 @@ module ChefLicensing
         return nil unless path
 
         @contents ||= YAML.load(::File.read(path))
-        if @contents[:version] == LICENSE_FILE_FORMAT_VERSION
+        if @contents[:file_format_version] == LICENSE_FILE_FORMAT_VERSION
           @contents
         else
           raise LicenseKeyNotFetchedError.new("License File version #{@contents[:version]} not supported.")
