@@ -7,7 +7,7 @@ module ChefLicensing
   # TODO: Check URL for public licensing server
   LICENSE_SERVER_URL = "https://licensing-acceptance.chef.co/".freeze
 
-  def self.air_gap_enabled?
+  def self.air_gap_mode_enabled?
     @ping_check = AirGap::Ping.new(LICENSE_SERVER_URL)
     @env_check = AirGap::Environment.new(ENV)
     @argv_check = AirGap::Argument.new(ARGV)
