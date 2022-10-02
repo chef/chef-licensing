@@ -1,3 +1,5 @@
+require_relative "exception"
+
 module ChefLicensing
   class AirGap
     class Argument
@@ -13,7 +15,7 @@ module ChefLicensing
 
         @status = argv.include?("--airgap")
       rescue => exception
-        raise AirGapException, "Unable to verify air gap argument.\n#{exception.message}"
+        raise ChefLicensing::AirGapException, "Unable to verify air gap argument.\n#{exception.message}"
       end
     end
   end

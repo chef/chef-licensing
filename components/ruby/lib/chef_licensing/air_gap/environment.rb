@@ -1,3 +1,5 @@
+require_relative "exception"
+
 module ChefLicensing
   class AirGap
     class Environment
@@ -13,7 +15,7 @@ module ChefLicensing
 
         @status = @env["AIR_GAP"] == "enabled"
       rescue => exception
-        raise AirGapException, "Unable to verify air gap environment variable.\n#{exception.message}"
+        raise ChefLicensing::AirGapException, "Unable to verify air gap environment variable.\n#{exception.message}"
       end
     end
   end
