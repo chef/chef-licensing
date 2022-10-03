@@ -67,6 +67,11 @@ module ChefLicensing
 
       def ask_for_license_generation_fn(interaction)
         output.puts interaction.messages
+
+        # Currently the license generation is not implemented.
+        # So, we are directly storing a dummy license id in the processed_input.
+        @processed_input.store("license_id".to_sym, "87654321")
+        @processed_input.store("license_id_valid".to_sym, true)
         @next_interaction_id = "exit_license_tui"
       end
 
