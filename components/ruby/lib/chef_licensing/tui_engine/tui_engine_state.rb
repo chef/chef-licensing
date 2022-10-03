@@ -1,6 +1,8 @@
 require "timeout" unless defined?(Timeout)
 require "tty-prompt"
 require "logger"
+require_relative "../license_key_validator"
+require_relative "../exceptions/invalid_license"
 
 module ChefLicensing
   class TUIEngine
@@ -39,7 +41,7 @@ module ChefLicensing
         # TODO: Change q.validate to an actual regex that matches the license id format
         license_id = @tty_prompt.ask(interaction.messages[1]) do |q|
           q.required true
-          q.validate(/\d{8}/)
+          # q.validate(/\d{8}/)
         end
 
         @processed_input.store("license_id".to_sym, license_id)
@@ -47,12 +49,14 @@ module ChefLicensing
       end
 
       def validate_license_id_fn(interaction)
-        # TODO: Do an actual validation with the license id validation API
-        @processed_input.store("license_id_valid".to_sym, true)
+        output.puts "License ID: #{@processed_input[:license_id]} is being validated."
+        status = ChefLicensing::LicenseKeyValidator.validate!(@processed_input[:license_id])
+        @processed_input.store("license_id_valid".to_sym, status)
         @next_interaction_id = "validation_success"
-
-        # TODO: Set @next_interaction_id to "validation_failure" if the license id is invalid
-        # and set @processed_input.store("license_id_valid".to_sym, false)
+      rescue ChefLicensing::InvalidLicense => e
+        output.puts e.message
+        @next_interaction_id = "validation_failure"
+        @processed_input.store("license_id_valid".to_sym, false)
       end
 
       def validation_success_fn(interaction)
