@@ -1,21 +1,59 @@
 nodes:
-  license_id_welcome_note:
-    messages: ["hello"]
-    action: welcome_function
-    paths: [ask_if_user_has_license_id]
-  ask_if_user_has_license_id:
-    messages: ["Do you have a License ID?"]
-    action: question_about_license_id
-    paths: [ask_for_license_id, ]
-  ask_for_license_id:
-    messages: ["Please input your License ID: "]
-    action: accept_license_id_from_user
-    paths: []
+  initial_greet:
+    messages: |
+      -----------------------------------------------------
+                   Provide Your License ID
+
+        To access premium content and other special features,
+        you will need a Chef License ID.
+
+        If you already have one, you can enter it at the prompt
+        on the following screen.
+
+        If you need to get an evaluation or personal use license
+        ID, you can get one by providing your details.
+      -------------------------------------------------------
+    action: initial_greet_fn
+    paths: [question_about_license_id]
+
+  question_about_license_id:
+    messages: "Do you have a Chef License ID?"
+    action: question_about_license_id_fn
+    paths: [ask_input_for_license_id, ask_for_license_generation, prompt_timeout_exit]
+
+  ask_input_for_license_id:
+    messages: ["A Chef License ID is eight digits.", "Please input your License ID: "]
+    action: ask_input_for_license_id_fn
+    paths: [validate_license_id]
+
+  validate_license_id:
+    messages: 
+    action: validate_license_id_fn
+    paths: [validation_success, validation_failure]
+
+  validation_success:
+    messages: "License validated successfully!"
+    action: validation_success_fn
+    paths: [exit_license_tui]
+
+  validation_failure:
+    messages: "License ID is not valid. Please try again."
+    action: validation_failure_fn
+    paths: [ask_input_for_license_id]
+
   ask_for_license_generation:
     messages: ["Which license id do you want generate?"]
-    action: license_generator
-    paths: []
+    action: ask_for_license_generation_fn
+    paths: [exit_license_tui]
+
   exit_license_tui:
     messages: ["Thank you!"]
-    action: exit_function
+    action: exit_license_tui_fn
+    paths: []
+
+  prompt_timeout_exit:
+    messages: |
+      No input received.
+      Prompt timed out. Set license id using cli flag or enter an answer within 60 seconds.
+    action: prompt_timeout_exit_fn
     paths: []

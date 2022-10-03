@@ -37,14 +37,20 @@ module ChefLicensing
     end
 
     def run_interaction
-      current_interaction = @tui_interactions[:license_id_welcome_note]
+      current_interaction = @tui_interactions[:initial_greet]
 
       state = ChefLicensing::TUIEngine::TUIEngineState.new
       until current_interaction.nil?
-        puts current_interaction.messages unless current_interaction.messages.empty?
-        state.send(current_interaction.action) if state.respond_to?(current_interaction.action)
-        current_interaction = current_interaction.paths[state.next_interaction_id.to_sym]
+        state.send(current_interaction.action, current_interaction) if state.respond_to?(current_interaction.action)
+
+        if state.next_interaction_id.nil?
+          current_interaction = nil
+        else
+          current_interaction = current_interaction.paths[state.next_interaction_id.to_sym]
+        end
       end
+
+      state.processed_input
     end
   end
 end
