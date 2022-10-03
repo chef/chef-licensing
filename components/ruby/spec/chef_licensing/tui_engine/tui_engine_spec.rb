@@ -1,6 +1,10 @@
 require "chef_licensing/tui_engine/tui_engine"
+require "chef_licensing/license_key_validator"
+require "chef_licensing/config"
 require_relative "../../spec_helper"
 require "stringio"
+require "webmock/rspec"
+
 
 RSpec.describe ChefLicensing::TUIEngine do
   describe "when a tui_engine object is instantiated" do
@@ -44,30 +48,43 @@ RSpec.describe ChefLicensing::TUIEngine do
     context "the user chooses to input license id and is a valid license id" do
       let(:input) { StringIO.new }
       before do
-        input.write("yes\n12345678")
+        input.write("yes\ntmns-90564f0a-ad22-482f-b57d-569f3fb1c11e-6620")
         input.rewind
+
+        stub_request(:get, "#{ChefLicensing::Config::LICENSING_SERVER}/v1/validate")
+        .with(query: { licenseId: "tmns-90564f0a-ad22-482f-b57d-569f3fb1c11e-6620" })
+        .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+                  headers: { content_type: "application/json" })
       end
+
       let(:output) { StringIO.new }
       let(:config) { { input: input, output: output } }
       let(:tui_engine) { described_class.new(config) }
       it "returns a hash of user input and the validity of license id" do
-        expect(tui_engine.run_interaction).to eq({ answer: true, license_id: "12345678", license_id_valid: true })
+        expect(tui_engine.run_interaction).to eq({ answer: true, license_id: "tmns-90564f0a-ad22-482f-b57d-569f3fb1c11e-6620", license_id_valid: true })
       end
     end
 
     context "the user chooses to input license id and is not a valid license id" do
-      let(:input) { StringIO.new }
-      before do
-        input.write("yes\n98765432")
-        input.rewind
-      end
-      let(:output) { StringIO.new }
-      let(:config) { { input: input, output: output } }
-      let(:tui_engine) { described_class.new(config) }
-      it "returns a hash of user input and the validity of license id" do
-        # TODO: Uncomment the below line after adding the license id validation logic in tui engine state
-        # expect(tui_engine.run_interaction).to eq({ answer: true, license_id: "12345678", license_id_valid: false })
-      end
+      # TODO: Verify this test case
+
+      # let(:input) { StringIO.new }
+      # before do
+      #   input.write("yes\ntmns-90564f0a-ad22-482f-b57d-569f3fb1c11e-1234")
+      #   input.rewind
+
+      #   stub_request(:get, "#{ChefLicensing::Config::LICENSING_SERVER}/v1/validate")
+      #     .with(query: { licenseId: "tmns-90564f0a-ad22-482f-b57d-569f3fb1c11e-1234" })
+      #     .to_return(body: { data: false, message: "License Id is invalid", status_code: 200 }.to_json,
+      #                headers: { content_type: "application/json" })
+      # end
+
+      # let(:output) { StringIO.new }
+      # let(:config) { { input: input, output: output } }
+      # let(:tui_engine) { described_class.new(config) }
+      # it "raises an InvalidLicense error" do
+      #   expect { tui_engine.run_interaction }.to raise_error(ChefLicensing::InvalidLicense)
+      # end
     end
   end
 end
