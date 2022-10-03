@@ -64,27 +64,5 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect(tui_engine.run_interaction).to eq({ answer: true, license_id: "tmns-90564f0a-ad22-482f-b57d-569f3fb1c11e-6620", license_id_valid: true })
       end
     end
-
-    context "the user chooses to input license id and is not a valid license id" do
-      # TODO: Verify this test case
-
-      # let(:input) { StringIO.new }
-      # before do
-      #   input.write("yes\ntmns-90564f0a-ad22-482f-b57d-569f3fb1c11e-1234")
-      #   input.rewind
-
-      #   stub_request(:get, "#{ChefLicensing::Config::LICENSING_SERVER}/v1/validate")
-      #     .with(query: { licenseId: "tmns-90564f0a-ad22-482f-b57d-569f3fb1c11e-1234" })
-      #     .to_return(body: { data: false, message: "License Id is invalid", status_code: 200 }.to_json,
-      #                headers: { content_type: "application/json" })
-      # end
-
-      # let(:output) { StringIO.new }
-      # let(:config) { { input: input, output: output } }
-      # let(:tui_engine) { described_class.new(config) }
-      # it "raises an InvalidLicense error" do
-      #   expect { tui_engine.run_interaction }.to raise_error(ChefLicensing::InvalidLicense)
-      # end
-    end
   end
 end
