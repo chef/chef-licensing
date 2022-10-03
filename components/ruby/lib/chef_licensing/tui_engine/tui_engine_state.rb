@@ -1,42 +1,43 @@
 require "timeout" unless defined?(Timeout)
 require "tty-prompt"
+require "logger"
 
 module ChefLicensing
   class TUIEngine
     class TUIEngineState < Hash
-      attr_accessor :next_interaction_id, :processed_input
+      attr_accessor :next_interaction_id, :processed_input, :output, :input, :logger, :tty_prompt
 
-      def initialize
+      def initialize(opts = {})
         @processed_input = {}
+        @output = opts[:output] || STDOUT
+        @input = opts[:input] || STDIN
+        @logger = opts[:logger] || Logger.new(STDOUT)
+        @tty_prompt = TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit, output: output, input: input)
       end
 
       def initial_greet_fn(interaction)
-        puts interaction.messages
+        output.puts interaction.messages
         @next_interaction_id = "question_about_license_id"
       end
 
       def question_about_license_id_fn(interaction)
-        prompt = TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit)
-
         begin
           Timeout.timeout(10, ChefLicensing::TUIEngine::PromptTimeout) do
-            answer = prompt.yes?(interaction.messages, default: true)
+            answer = @tty_prompt.yes?(interaction.messages, default: true)
             @processed_input.store("answer".to_sym, answer)
             @next_interaction_id = answer ? "ask_input_for_license_id" : "ask_for_license_generation"
           end
         rescue ChefLicensing::TUIEngine::PromptTimeout
-          prompt.unsubscribe(prompt.reader)
+          @tty_prompt.unsubscribe(@tty_prompt.reader)
           @next_interaction_id = "prompt_timeout_exit"
         end
       end
 
       def ask_input_for_license_id_fn(interaction)
-        # TODO: Add (..., output: output, input: input) to TTY::Prompt.new
-        puts interaction.messages[0]
-        prompt = TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit)
+        output.puts interaction.messages[0]
 
         # TODO: Change q.validate to an actual regex that matches the license id format
-        license_id = prompt.ask(interaction.messages[1]) do |q|
+        license_id = @tty_prompt.ask(interaction.messages[1]) do |q|
           q.required true
           q.validate(/\d{8}/)
         end
@@ -55,27 +56,27 @@ module ChefLicensing
       end
 
       def validation_success_fn(interaction)
-        puts interaction.messages
+        output.puts interaction.messages
         @next_interaction_id = "exit_license_tui"
       end
 
       def validation_failure_fn(interaction)
-        puts interaction.messages
+        output.puts interaction.messages
         @next_interaction_id = "ask_input_for_license_id"
       end
 
       def ask_for_license_generation_fn(interaction)
-        puts interaction.messages
+        output.puts interaction.messages
         @next_interaction_id = "exit_license_tui"
       end
 
       def exit_license_tui_fn(interaction)
-        puts interaction.messages
+        output.puts interaction.messages
         @next_interaction_id = nil
       end
 
       def prompt_timeout_exit_fn(interaction)
-        puts interaction.messages
+        output.puts interaction.messages
         @next_interaction_id = nil
       end
     end

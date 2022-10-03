@@ -1,5 +1,6 @@
 require "chef_licensing/tui_engine/tui_engine"
 require_relative "../../spec_helper"
+require "stringio"
 
 RSpec.describe ChefLicensing::TUIEngine do
   describe "when a tui_engine object is instantiated" do
@@ -8,7 +9,8 @@ RSpec.describe ChefLicensing::TUIEngine do
         @pwd = Dir.pwd
         @file_path = File.join(@pwd, "chef_licensing/tui_engine/fixtures/tui-flow.yaml")
       end
-      let(:tui_engine) { described_class.new(@file_path) }
+      let(:config) { { yaml_file: @file_path } }
+      let(:tui_engine) { described_class.new(config) }
       it "loads the yaml file data" do
         expect(tui_engine.yaml_data).to_not be_empty
       end
@@ -34,6 +36,37 @@ RSpec.describe ChefLicensing::TUIEngine do
       it "creates tui_interaction objects" do
         expect(tui_engine.tui_interactions).to_not be_empty
         expect(tui_engine.tui_interactions).to be_a(Hash)
+      end
+    end
+  end
+
+  describe "when a tui_engine object is invoked with run_interaction" do
+    context "the user chooses to input license id and is a valid license id" do
+      let(:input) { StringIO.new }
+      before do
+        input.write("yes\n12345678")
+        input.rewind
+      end
+      let(:output) { StringIO.new }
+      let(:config) { { input: input, output: output } }
+      let(:tui_engine) { described_class.new(config) }
+      it "returns a hash of user input and the validity of license id" do
+        expect(tui_engine.run_interaction).to eq({ answer: true, license_id: "12345678", license_id_valid: true })
+      end
+    end
+
+    context "the user chooses to input license id and is not a valid license id" do
+      let(:input) { StringIO.new }
+      before do
+        input.write("yes\n98765432")
+        input.rewind
+      end
+      let(:output) { StringIO.new }
+      let(:config) { { input: input, output: output } }
+      let(:tui_engine) { described_class.new(config) }
+      it "returns a hash of user input and the validity of license id" do
+        # TODO: Uncomment the below line after adding the license id validation logic in tui engine state
+        # expect(tui_engine.run_interaction).to eq({ answer: true, license_id: "12345678", license_id_valid: false })
       end
     end
   end
