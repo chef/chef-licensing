@@ -11,6 +11,8 @@ module ChefLicensing
       END_POINTS = {
         VALIDATE: "validate",
         GENERATE_LICENSE: "triallicense",
+        FEATURE_BY_NAME: "license-service/featurebyname",
+        FEATURE_BY_ID: "license-service/featurebyid",
       }.freeze
 
       def validate(license)
@@ -25,6 +27,28 @@ module ChefLicensing
             request.body = payload.to_json
           end
           raise RestfulClientError, response.body.data.error unless response.success?
+
+          response.body
+        end
+      end
+
+      def validate_feature_by_name(payload)
+        handle_connection do |connection|
+          response = connection.post(self.class::END_POINTS[:FEATURE_BY_NAME]) do |request|
+            request.body = payload.to_json
+          end
+          raise RestfulClientError, response.body unless response.success?
+
+          response.body
+        end
+      end
+
+      def validate_feature_by_id(payload)
+        handle_connection do |connection|
+          response = connection.post(self.class::END_POINTS[:FEATURE_BY_ID]) do |request|
+            request.body = payload.to_json
+          end
+          raise RestfulClientError, response.body unless response.success?
 
           response.body
         end
