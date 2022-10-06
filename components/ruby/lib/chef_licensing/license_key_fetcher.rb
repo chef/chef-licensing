@@ -13,7 +13,7 @@ module ChefLicensing
     class LicenseKeyNotFetchedError < RuntimeError
     end
 
-    attr_reader :config, :license_key, :arg_fetcher, :env_fetcher, :file_fetcher, :prompt_fetcher, :logger
+    attr_reader :config, :license_key, :license_keys, :arg_fetcher, :env_fetcher, :file_fetcher, :prompt_fetcher, :logger
     def initialize(opts = {})
       @config = opts
       @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
@@ -23,6 +23,7 @@ module ChefLicensing
 
       # This is the whole point - to obtain the license key.
       @license_key = nil
+      @license_keys = []
 
       # The various things that have a say in fetching the license Key.
       @arg_fetcher = LicenseKeyFetcher::Argument.new(ARGV)
@@ -53,7 +54,7 @@ module ChefLicensing
       # If it has previously been fetched and persisted, read from disk and set runtime decision
       logger.debug "Telemetry license Key fetcher examining file checks"
       if file_fetcher.persisted?
-        return @license_key = file_fetcher.fetch
+        return @license_keys = file_fetcher.fetch
       end
 
       # Lowest priority is to interactively prompt if we have a TTY

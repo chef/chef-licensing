@@ -1,9 +1,9 @@
-
 require "chef-config/windows"
 require "chef-config/path_helper"
 require "yaml"
 require "date"
 require "fileutils" unless defined?(FileUtils)
+require "chef_licensing/license_key_fetcher"
 
 module ChefLicensing
   class LicenseKeyFetcher
@@ -32,7 +32,7 @@ module ChefLicensing
       end
 
       def fetch_license_keys(licenses)
-        licenses.collect{ |x| x[:license_key] }
+        licenses.collect { |x| x[:license_key] }
       end
 
       # Writes a license_id file to disk in the location specified,
@@ -41,7 +41,7 @@ module ChefLicensing
       def persist(license_key, _product, _version)
         license_data = {
           license_key: license_key,
-          update_time: DateTime.now.to_s
+          update_time: DateTime.now.to_s,
         }
 
         dir = @opts[:dir]
@@ -52,7 +52,7 @@ module ChefLicensing
             current_keys = YAML.load_file(license_key_file_path)
 
             # Checking for unique keys
-            if current_keys[:licenses]
+            if current_keys && current_keys[:licenses]
               unless fetch_license_keys(current_keys[:licenses]).include? license_key
                 current_keys[:licenses].push(license_data)
                 current_keys[:file_format_version] = LICENSE_FILE_FORMAT_VERSION
@@ -61,13 +61,13 @@ module ChefLicensing
             elsif !current_keys # if file is empty
               @contents = {
                 licenses: [license_data] ,
-                file_format_version: LICENSE_FILE_FORMAT_VERSION
+                file_format_version: LICENSE_FILE_FORMAT_VERSION,
               }
             end
           else
             @contents = {
               licenses: [license_data] ,
-              file_format_version: LICENSE_FILE_FORMAT_VERSION
+              file_format_version: LICENSE_FILE_FORMAT_VERSION,
             }
             msg = "Could not create directory for license_key file #{dir}"
             FileUtils.mkdir_p(dir)
@@ -140,7 +140,7 @@ module ChefLicensing
         if @contents[:file_format_version] == LICENSE_FILE_FORMAT_VERSION
           @contents
         else
-          raise LicenseKeyNotFetchedError.new("License File version #{@contents[:version]} not supported.")
+          raise LicenseKeyNotFetchedError.new("License File version #{@contents[:file_format_version]} not supported.")
         end
       end
     end

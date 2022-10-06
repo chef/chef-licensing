@@ -1,4 +1,5 @@
 ---
-:update_time: '2022-09-12T15:29:27+05:30'
-:license_key: '12345678'
-:version: 10.0.0
+:licenses:
+- :license_key: '12345678'
+  :update_time: '2022-09-12T15:29:27+05:30'
+:file_format_version: 10.0.0
