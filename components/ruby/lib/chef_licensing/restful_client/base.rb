@@ -37,7 +37,7 @@ module ChefLicensing
           response = connection.post(self.class::END_POINTS[:FEATURE_BY_NAME]) do |request|
             request.body = payload.to_json
           end
-          raise RestfulClientError, response.body unless response.success?
+          raise RestfulClientError, response.body.data.error unless response.success?
 
           response.body
         end
@@ -48,7 +48,7 @@ module ChefLicensing
           response = connection.post(self.class::END_POINTS[:FEATURE_BY_ID]) do |request|
             request.body = payload.to_json
           end
-          raise RestfulClientError, response.body unless response.success?
+          raise RestfulClientError, response.body.data.error unless response.success?
 
           response.body
         end
