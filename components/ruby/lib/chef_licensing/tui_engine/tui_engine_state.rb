@@ -23,16 +23,14 @@ module ChefLicensing
       end
 
       def question_about_license_id_fn(interaction)
-        begin
-          Timeout.timeout(10, ChefLicensing::TUIEngine::PromptTimeout) do
-            answer = @tty_prompt.yes?(interaction.messages, default: true)
-            @processed_input.store("answer".to_sym, answer)
-            @next_interaction_id = answer ? "ask_input_for_license_id" : "ask_for_license_generation"
-          end
-        rescue ChefLicensing::TUIEngine::PromptTimeout
-          @tty_prompt.unsubscribe(@tty_prompt.reader)
-          @next_interaction_id = "prompt_timeout_exit"
+        Timeout.timeout(60, ChefLicensing::TUIEngine::PromptTimeout) do
+          answer = @tty_prompt.yes?(interaction.messages, default: true)
+          @processed_input.store("answer".to_sym, answer)
+          @next_interaction_id = answer ? "ask_input_for_license_id" : "ask_for_license_generation"
         end
+      rescue ChefLicensing::TUIEngine::PromptTimeout
+        @tty_prompt.unsubscribe(@tty_prompt.reader)
+        @next_interaction_id = "prompt_timeout_exit"
       end
 
       def ask_input_for_license_id_fn(interaction)
@@ -86,7 +84,7 @@ module ChefLicensing
 
       def prompt_timeout_exit_fn(interaction)
         output.puts interaction.messages
-        @next_interaction_id = nil
+        exit
       end
     end
   end
