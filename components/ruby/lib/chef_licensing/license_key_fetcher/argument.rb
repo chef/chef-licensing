@@ -15,7 +15,13 @@ module ChefLicensing
       def fetch
         # TODO: this only handles explicit equals
         # TODO: WhyTF are we hand-rolling an option parser
-        arg = argv.detect { |a| a.start_with? "--chef-license-key=" }
+        arg = ""
+        if (argv.is_a? Array) && (argv.count == 2) && (argv.first.include? "--chef-license-key")
+          arg = argv.join("=")
+        else
+          arg = argv.detect { |a| a.start_with? "--chef-license-key=" }
+        end
+
         return nil unless arg
 
         match = arg.match(/--chef-license-key=#{LICENSE_KEY_REGEX}/)

@@ -11,7 +11,7 @@ module ChefLicensing
         # TBD need to confirm the name of the key
         klass.class_option :chef_license_key,
           type: :string,
-          desc: "Accept the license for this product and any contained products: accept, accept-no-persist, accept-silent"
+          desc: "Accepts the license key"
       end
     end
   end
