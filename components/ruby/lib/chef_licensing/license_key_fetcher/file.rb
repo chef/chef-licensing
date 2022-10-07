@@ -11,7 +11,7 @@ module ChefLicensing
     # Represents a fethced license ID recorded on disk
     class File
       LICENSE_KEY_FILE = "licenses.yaml".freeze
-      LICENSE_FILE_FORMAT_VERSION = "1.0.0".freeze
+      LICENSE_FILE_FORMAT_VERSION = "1.0.1".freeze
 
       attr_reader :logger, :contents, :location
       attr_accessor :local_dir # Optional local path to use to seek
@@ -51,8 +51,8 @@ module ChefLicensing
             msg = "Could not read telemetry license_key file #{license_key_file_path}"
             current_keys = YAML.load_file(license_key_file_path)
 
-            # Checking for unique keys
             if current_keys && current_keys[:licenses]
+              # Checking for unique keys
               unless fetch_license_keys(current_keys[:licenses]).include? license_key
                 current_keys[:licenses].push(license_data)
                 current_keys[:file_format_version] = LICENSE_FILE_FORMAT_VERSION
@@ -136,12 +136,17 @@ module ChefLicensing
         path = seek
         return nil unless path
 
+        # only checking for major version for file format for breaking changes
         @contents ||= YAML.load(::File.read(path))
-        if @contents[:file_format_version] == LICENSE_FILE_FORMAT_VERSION
+        if major_version(@contents[:file_format_version]) == major_version(LICENSE_FILE_FORMAT_VERSION)
           @contents
         else
           raise LicenseKeyNotFetchedError.new("License File version #{@contents[:file_format_version]} not supported.")
         end
+      end
+
+      def major_version(version)
+        Gem::Version.new(version).segments[0]
       end
     end
   end

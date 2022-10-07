@@ -13,7 +13,7 @@ module ChefLicensing
     class LicenseKeyNotFetchedError < RuntimeError
     end
 
-    attr_reader :config, :license_key, :license_keys, :arg_fetcher, :env_fetcher, :file_fetcher, :prompt_fetcher, :logger
+    attr_reader :config, :license_keys, :arg_fetcher, :env_fetcher, :file_fetcher, :prompt_fetcher, :logger
     def initialize(opts = {})
       @config = opts
       @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
@@ -21,8 +21,7 @@ module ChefLicensing
       config[:logger] = logger
       config[:dir] = opts[:dir]
 
-      # This is the whole point - to obtain the license key.
-      @license_key = nil
+      # This is the whole point - to obtain the license keys.
       @license_keys = []
 
       # The various things that have a say in fetching the license Key.
@@ -39,16 +38,16 @@ module ChefLicensing
       # TODO: handle non-persistent cases
       # If a fetch is made by CLI arg, persist and return
       logger.debug "Telemetry license Key fetcher examining CLI arg checks"
-      if (@license_key = @arg_fetcher.fetch)
-        file_fetcher.persist(license_key, product, version)
-        return license_key
+      if (@license_keys = @arg_fetcher.fetch)
+        file_fetcher.persist(license_keys, product, version)
+        return license_keys
       end
 
       # If a fetch is made by ENV, persist and return
       logger.debug "Telemetry license Key fetcher examining ENV checks"
-      if (@license_key = @env_fetcher.fetch)
-        file_fetcher.persist(license_key, product, version)
-        return license_key
+      if (@license_keys = @env_fetcher.fetch)
+        file_fetcher.persist(license_keys, product, version)
+        return license_keys
       end
 
       # If it has previously been fetched and persisted, read from disk and set runtime decision
@@ -60,9 +59,9 @@ module ChefLicensing
       # Lowest priority is to interactively prompt if we have a TTY
       if config[:output].isatty
         logger.debug "Telemetry license Key fetcher - detected TTY, prompting..."
-        if (@license_key = prompt_fetcher.fetch)
-          file_fetcher.persist(license_key, product, version)
-          return license_key
+        if (@license_keys = prompt_fetcher.fetch)
+          file_fetcher.persist(license_keys, product, version)
+          return license_keys
         end
       end
 
