@@ -4,7 +4,7 @@ require "chef_licensing/license_key_fetcher/file"
 
 RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
   let(:fixture_dir) { "spec/fixtures" }
-  let(:license_key_file) { "license_key.yaml" }
+  let(:license_key_file) { "licenses.yaml" }
   let(:unsupported_vesion_license_dir) { "spec/fixtures/unsupported_version_license" }
   let(:multiple_keys_license_dir) { "spec/fixtures/multiple_license_keys_license" }
 

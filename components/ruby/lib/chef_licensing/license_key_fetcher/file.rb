@@ -10,7 +10,7 @@ module ChefLicensing
 
     # Represents a fethced license ID recorded on disk
     class File
-      LICENSE_KEY_FILE = "license_key.yaml".freeze
+      LICENSE_KEY_FILE = "licenses.yaml".freeze
       LICENSE_FILE_FORMAT_VERSION = "1.0.0".freeze
 
       attr_reader :logger, :contents, :location
