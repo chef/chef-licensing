@@ -7,4 +7,4 @@ require "logger"
 logger = Logger.new(STDERR)
 logger.level = Logger::INFO
 
-ChefLicensing::LicenseKeyFetcher.fetch_and_persist("DemoApp", "0.1.0", logger: logger)
+ChefLicensing::LicenseKeyFetcher.fetch_and_persist(logger: logger)

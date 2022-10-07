@@ -34,19 +34,20 @@ module ChefLicensing
     #
     # Methods for obtaining consent from the user.
     #
-    def fetch_and_persist(product, version)
+    def fetch_and_persist
       # TODO: handle non-persistent cases
       # If a fetch is made by CLI arg, persist and return
       logger.debug "Telemetry license Key fetcher examining CLI arg checks"
+
       if (@license_keys = @arg_fetcher.fetch)
-        file_fetcher.persist(license_keys, product, version)
+        file_fetcher.persist(license_keys)
         return license_keys
       end
 
       # If a fetch is made by ENV, persist and return
       logger.debug "Telemetry license Key fetcher examining ENV checks"
       if (@license_keys = @env_fetcher.fetch)
-        file_fetcher.persist(license_keys, product, version)
+        file_fetcher.persist(license_keys)
         return license_keys
       end
 
@@ -60,7 +61,7 @@ module ChefLicensing
       if config[:output].isatty
         logger.debug "Telemetry license Key fetcher - detected TTY, prompting..."
         if (@license_keys = prompt_fetcher.fetch)
-          file_fetcher.persist(license_keys, product, version)
+          file_fetcher.persist(license_keys)
           return license_keys
         end
       end
@@ -71,16 +72,16 @@ module ChefLicensing
     end
 
     # Assumes fetch_and_persist has been called and succeeded
-    def fetch(_product, _version)
+    def fetch
       @arg_fetcher.fetch || @env_fetcher.fetch || @file_fetcher.fetch
     end
 
-    def self.fetch_and_persist(product, version, opts)
-      new(opts).fetch_and_persist(product, version)
+    def self.fetch_and_persist(opts = {})
+      new(opts).fetch_and_persist
     end
 
-    def self.fetch(product, version, opts)
-      new(opts).fetch(product, version)
+    def self.fetch(opts = {})
+      new(opts).fetch
     end
   end
 end

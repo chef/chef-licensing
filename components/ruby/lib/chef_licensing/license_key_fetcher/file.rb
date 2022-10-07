@@ -38,7 +38,7 @@ module ChefLicensing
       # Writes a license_id file to disk in the location specified,
       # with the content given.
       # @return Array of Errors
-      def persist(license_key, _product, _version)
+      def persist(license_key)
         license_data = {
           license_key: license_key,
           update_time: DateTime.now.to_s,
