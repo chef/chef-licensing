@@ -1,10 +1,15 @@
+require_relative "tui_prompt"
 module ChefLicensing
   class TUIEngine
     class TUIInteraction
-      attr_accessor :messages, :action, :paths
+      attr_accessor :id, :messages, :action, :paths, :prompt_type, :text_style, :response_path_map
       def initialize(opts = {})
+        @id = opts[:id]
         @messages = opts[:messages]
         @action = opts[:action]
+        @prompt_type = opts[:prompt_type] || "say"
+        @text_style = opts[:text_style]
+        @response_path_map = opts[:response_path_map]
         @paths = {}
       end
     end
