@@ -6,7 +6,7 @@ RSpec.describe ChefLicensing::AirGap::Ping do
 
   describe "#verify_ping" do
     context "when the public licensing server is reachable" do
-      let(:acc) { described_class.new("https://licensing-acceptance.chef.co/") }
+      let(:acc) { described_class.new("https://localhost-license-server/License") }
 
       it "returns true" do
         expect(acc.verify_ping).to eq true

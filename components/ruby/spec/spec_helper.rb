@@ -18,7 +18,7 @@ RSpec.configure do |config|
       status: "success",
       data: [],
     }
-    stub_request(:get, "https://licensing-acceptance.chef.co/")
+    stub_request(:get, "https://localhost-license-server/License")
       .to_return(status: 200, body: licensing_server_response.to_json)
 
     stub_request(:get, "https://wrong-url.co/")
