@@ -9,7 +9,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::Argument do
       let(:argv)  { ["--chef-license-key=12345678"] }
       it "fetches the license key" do
         argv_fetcher = ChefLicensing::LicenseKeyFetcher::Argument.new(argv)
-        expect(argv_fetcher.fetch).to eq("12345678")
+        expect(argv_fetcher.fetch).to eq(["12345678"])
       end
     end
 

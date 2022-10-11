@@ -15,12 +15,7 @@ module ChefLicensing
       def fetch
         # TODO: this only handles explicit equals
         # TODO: WhyTF are we hand-rolling an option parser
-        arg = ""
-        if (argv.is_a? Array) && (argv.count == 2) && (argv.first.include? "--chef-license-key")
-          arg = argv.join("=")
-        else
-          arg = argv.detect { |a| a.start_with? "--chef-license-key=" }
-        end
+        arg = argv.detect { |a| a.start_with? "--chef-license-key=" }
 
         return nil unless arg
 
@@ -29,7 +24,7 @@ module ChefLicensing
           raise LicenseKeyNotFetchedError.new("Malformed License Key passed on command line - should be #{LICENSE_KEY_PATTERN_DESC}")
         end
 
-        match[1]
+        [match[1]]
       end
     end
   end

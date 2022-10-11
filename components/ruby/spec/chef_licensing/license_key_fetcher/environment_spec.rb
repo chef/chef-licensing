@@ -9,7 +9,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::Environment do
       let(:env) { { "CHEF_LICENSE_KEY" => "12345678" } }
       it "fetches the license key" do
         env_fetcher = ChefLicensing::LicenseKeyFetcher::Environment.new(env)
-        expect(env_fetcher.fetch).to eq("12345678")
+        expect(env_fetcher.fetch).to eq(["12345678"])
       end
     end
 

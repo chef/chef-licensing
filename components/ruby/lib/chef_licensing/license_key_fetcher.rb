@@ -62,7 +62,7 @@ module ChefLicensing
         logger.debug "Telemetry license Key fetcher - detected TTY, prompting..."
         if (@license_keys = prompt_fetcher.fetch)
           file_fetcher.persist(license_keys)
-          return license_keys
+          return [license_keys]
         end
       end
 

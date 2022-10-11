@@ -39,7 +39,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
     it "stores license key in file" do
       Dir.mktmpdir do |tmpdir|
         file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: tmpdir })
-        file_fetcher.persist("2345678", "Test-app", "0.1.0")
+        file_fetcher.persist("2345678")
         expect(file_fetcher.fetch).to eq(["2345678"])
         expect(file_fetcher.persisted?).to eq(true)
       end
@@ -48,8 +48,8 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
     it "stores multiple license keys in file" do
       Dir.mktmpdir do |tmpdir|
         file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: tmpdir })
-        file_fetcher.persist("23456789", "Test-app", "0.1.0")
-        file_fetcher.persist("12345678", "Test-app", "0.1.0")
+        file_fetcher.persist("23456789")
+        file_fetcher.persist("12345678")
         expect(file_fetcher.fetch).to eq(%w{23456789 12345678})
         expect(file_fetcher.persisted?).to eq(true)
       end
