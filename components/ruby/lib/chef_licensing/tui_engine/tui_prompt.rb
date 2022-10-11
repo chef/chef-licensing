@@ -2,6 +2,8 @@ require "timeout" unless defined?(Timeout)
 require "tty-prompt"
 require "logger"
 require_relative "prompts/prompts"
+require_relative "exceptions/tui_exceptions"
+
 module ChefLicensing
   class TUIEngine
     class TUIPrompt
