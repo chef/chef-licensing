@@ -1,0 +1,38 @@
+interactions:
+  start:
+    messages: [start_message]
+    prompt_type: "say"
+    paths: [ask_if_user_has_license_id]
+    description: This field is for the user's understanding to write something about the interaction. This is an optional field.
+
+  ask_if_user_has_license_id:
+    messages: [ask_if_user_has_license_id_message]
+    prompt_type: "yes"
+    paths: [menu_prompt]
+
+  menu_prompt:
+    messages: [menu_prompt_heading, [menu_prompt_value_1, menu_prompt_value_2, menu_prompt_value_3]]
+    prompt_type: "select"
+    paths: [prompt_1_id, prompt_2_id, prompt_3_id]
+    response_path_map: 
+      menu_prompt_value_1: prompt_1_id
+      menu_prompt_value_2: prompt_2_id
+      menu_prompt_value_3: prompt_3_id
+
+  prompt_1_id:
+    messages: [prompt_1_id_message]
+    prompt_type: "say"
+    paths: []
+
+  prompt_2_id:
+    messages: [prompt_2_id_message]
+    prompt_type: "say"
+    paths: []
+
+  prompt_3_id:
+    messages: [prompt_3_id_message]
+    prompt_type: "say"
+    paths: []
+  
+
+
