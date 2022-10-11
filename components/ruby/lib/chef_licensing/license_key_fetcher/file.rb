@@ -28,7 +28,8 @@ module ChefLicensing
 
       def fetch
         read_license_key_file
-        !contents.nil? && fetch_license_keys(contents[:licenses]) # list license keys
+        license_keys = !contents.nil? && fetch_license_keys(contents[:licenses]) # list license keys
+        license_keys || nil
       end
 
       def fetch_license_keys(licenses)

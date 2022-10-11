@@ -41,14 +41,12 @@ module ChefLicensing
 
       if (@license_keys = @arg_fetcher.fetch)
         file_fetcher.persist(license_keys)
-        return license_keys
       end
 
       # If a fetch is made by ENV, persist and return
       logger.debug "Telemetry license Key fetcher examining ENV checks"
       if (@license_keys = @env_fetcher.fetch)
         file_fetcher.persist(license_keys)
-        return license_keys
       end
 
       # If it has previously been fetched and persisted, read from disk and set runtime decision

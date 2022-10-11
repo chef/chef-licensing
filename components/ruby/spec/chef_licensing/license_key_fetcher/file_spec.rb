@@ -17,7 +17,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
     it "returns false when license key is not persisted" do
       Dir.mktmpdir do |tmpdir|
         file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: tmpdir })
-        expect(file_fetcher.fetch).to eq(false)
+        expect(file_fetcher.fetch).to eq(nil)
         expect(file_fetcher.persisted?).to eq(false)
       end
     end
