@@ -18,5 +18,12 @@ RSpec.describe ChefLicensing::AirGap::Argument do
         expect(argv_air_gap.verify_argv).to eq false
       end
     end
+
+    context "when --airgap is not present" do
+      let(:argv) { [] }
+      it "returns false" do
+        expect(argv_air_gap.verify_argv).to eq false
+      end
+    end
   end
 end
