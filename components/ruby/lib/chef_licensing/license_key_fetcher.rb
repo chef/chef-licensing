@@ -13,7 +13,7 @@ module ChefLicensing
     class LicenseKeyNotFetchedError < RuntimeError
     end
 
-    attr_reader :config, :license_key, :arg_fetcher, :env_fetcher, :file_fetcher, :prompt_fetcher, :logger
+    attr_reader :config, :license_keys, :arg_fetcher, :env_fetcher, :file_fetcher, :prompt_fetcher, :logger
     def initialize(opts = {})
       @config = opts
       @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
@@ -21,8 +21,8 @@ module ChefLicensing
       config[:logger] = logger
       config[:dir] = opts[:dir]
 
-      # This is the whole point - to obtain the license key.
-      @license_key = nil
+      # This is the whole point - to obtain the license keys.
+      @license_keys = []
 
       # The various things that have a say in fetching the license Key.
       @arg_fetcher = LicenseKeyFetcher::Argument.new(ARGV)
@@ -34,53 +34,60 @@ module ChefLicensing
     #
     # Methods for obtaining consent from the user.
     #
-    def fetch_and_persist(product, version)
+    def fetch_and_persist
       # TODO: handle non-persistent cases
       # If a fetch is made by CLI arg, persist and return
-      logger.debug "Telemetry license Key fetcher examining CLI arg checks"
-      if (@license_key = @arg_fetcher.fetch)
-        file_fetcher.persist(license_key, product, version)
-        return license_key
+      logger.debug "License Key fetcher examining CLI arg checks"
+
+      new_keys = arg_fetcher.fetch
+      unless new_keys.empty?
+        @license_keys.concat(new_keys)
+        file_fetcher.persist(new_keys.first)
+        return license_keys
       end
 
       # If a fetch is made by ENV, persist and return
-      logger.debug "Telemetry license Key fetcher examining ENV checks"
-      if (@license_key = @env_fetcher.fetch)
-        file_fetcher.persist(license_key, product, version)
-        return license_key
+      logger.debug "License Key fetcher examining ENV checks"
+      new_keys = env_fetcher.fetch
+      unless new_keys.empty?
+        @license_keys.concat(new_keys)
+        file_fetcher.persist(new_keys.first)
+        return license_keys
       end
 
       # If it has previously been fetched and persisted, read from disk and set runtime decision
-      logger.debug "Telemetry license Key fetcher examining file checks"
+      logger.debug "License Key fetcher examining file checks"
       if file_fetcher.persisted?
-        return @license_key = file_fetcher.fetch
+        return @license_keys = file_fetcher.fetch
       end
 
       # Lowest priority is to interactively prompt if we have a TTY
       if config[:output].isatty
-        logger.debug "Telemetry license Key fetcher - detected TTY, prompting..."
-        if (@license_key = prompt_fetcher.fetch)
-          file_fetcher.persist(license_key, product, version)
-          return license_key
+        logger.debug "License Key fetcher - detected TTY, prompting..."
+        new_keys = prompt_fetcher.fetch
+        unless new_keys.empty?
+          @license_keys.concat(new_keys)
+          new_keys.each { |key| file_fetcher.persist(key) }
+          return license_keys
         end
       end
 
       # Otherwise nothing was able to fetch a license. Throw an exception.
-      logger.debug "Telemetry license Key fetcher - no license Key able to be fetched."
+      logger.debug "License Key fetcher - no license Key able to be fetched."
       raise LicenseKeyNotFetchedError.new("Unable to obtain a License Key.")
     end
 
     # Assumes fetch_and_persist has been called and succeeded
-    def fetch(_product, _version)
-      @arg_fetcher.fetch || @env_fetcher.fetch || @file_fetcher.fetch
+    def fetch
+      (@arg_fetcher.fetch << @env_fetcher.fetch << @file_fetcher.fetch).flatten
     end
 
-    def self.fetch_and_persist(product, version, opts)
-      new(opts).fetch_and_persist(product, version)
+    def self.fetch_and_persist(opts = {})
+      new(opts).fetch_and_persist
     end
 
-    def self.fetch(product, version, opts)
-      new(opts).fetch(product, version)
+    def self.fetch(opts = {})
+      new(opts).fetch
     end
   end
 end

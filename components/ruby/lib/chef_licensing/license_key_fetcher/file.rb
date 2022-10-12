@@ -1,17 +1,17 @@
-
 require "chef-config/windows"
 require "chef-config/path_helper"
 require "yaml"
 require "date"
 require "fileutils" unless defined?(FileUtils)
+require "chef_licensing/license_key_fetcher"
 
 module ChefLicensing
   class LicenseKeyFetcher
 
     # Represents a fethced license ID recorded on disk
     class File
-      LICENSE_KEY_FILE = "license_key.yaml".freeze
-      LICENSE_FILE_FORMAT_VERSION = "1.0.0".freeze
+      LICENSE_KEY_FILE = "licenses.yaml".freeze
+      LICENSE_FILE_FORMAT_VERSION = "2.0.0".freeze
 
       attr_reader :logger, :contents, :location
       attr_accessor :local_dir # Optional local path to use to seek
@@ -28,24 +28,55 @@ module ChefLicensing
 
       def fetch
         read_license_key_file
-        !contents.nil? && contents[:license_key]
+        license_keys = !contents.nil? && fetch_license_keys(contents[:licenses]) # list license keys
+        license_keys || []
+      end
+
+      def fetch_license_keys(licenses)
+        licenses.collect { |x| x[:license_key] }
       end
 
       # Writes a license_id file to disk in the location specified,
       # with the content given.
       # @return Array of Errors
-      def persist(license_key, _product, _version, content = {})
-        content[:update_time] = DateTime.now.to_s
-        content[:license_key] = license_key
-        content[:version] = LICENSE_FILE_FORMAT_VERSION
-        @contents = content
-        dir = @opts[:dir]
+      def persist(license_key)
+        license_data = {
+          license_key: license_key,
+          update_time: DateTime.now.to_s,
+        }
 
+        dir = @opts[:dir]
+        license_key_file_path = "#{dir}/#{LICENSE_KEY_FILE}"
         begin
-          msg = "Could not create directory for license_key file #{dir}"
-          FileUtils.mkdir_p(dir)
-          msg = "Could not write telemetry license_key file #{dir}/#{LICENSE_KEY_FILE}"
-          ::File.write("#{dir}/#{LICENSE_KEY_FILE}", YAML.dump(content))
+          if ::File.exist?(license_key_file_path)
+            msg = "Could not read license key file #{license_key_file_path}"
+            current_keys = YAML.load_file(license_key_file_path)
+
+            if current_keys && current_keys[:licenses]
+              # Checking for unique keys
+              unless fetch_license_keys(current_keys[:licenses]).include? license_key
+                current_keys[:licenses].push(license_data)
+                current_keys[:file_format_version] = LICENSE_FILE_FORMAT_VERSION
+              end
+              @contents = current_keys
+            elsif !current_keys # if file is empty
+              @contents = {
+                licenses: [license_data] ,
+                file_format_version: LICENSE_FILE_FORMAT_VERSION,
+              }
+            end
+          else
+            @contents = {
+              licenses: [license_data] ,
+              file_format_version: LICENSE_FILE_FORMAT_VERSION,
+            }
+            msg = "Could not create directory for license_key file #{dir}"
+            FileUtils.mkdir_p(dir)
+          end
+
+          # write/overwrite license file content in the file
+          msg = "Could not write telemetry license_key file #{license_key_file_path}"
+          ::File.write(license_key_file_path, YAML.dump(@contents))
           []
         rescue StandardError => e
           logger.info "#{msg}\n\t#{e.message}"
@@ -106,12 +137,17 @@ module ChefLicensing
         path = seek
         return nil unless path
 
+        # only checking for major version for file format for breaking changes
         @contents ||= YAML.load(::File.read(path))
-        if @contents[:version] == LICENSE_FILE_FORMAT_VERSION
+        if major_version(@contents[:file_format_version]) == major_version(LICENSE_FILE_FORMAT_VERSION)
           @contents
         else
-          raise LicenseKeyNotFetchedError.new("License File version #{@contents[:version]} not supported.")
+          raise LicenseKeyNotFetchedError.new("License File version #{@contents[:file_format_version]} not supported.")
         end
+      end
+
+      def major_version(version)
+        Gem::Version.new(version).segments[0]
       end
     end
   end
