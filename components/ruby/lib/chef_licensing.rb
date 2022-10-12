@@ -4,7 +4,7 @@ require "chef_licensing/license_key_fetcher"
 
 module ChefLicensing
   class << self
-    def entitled_feature?(feature)
+    def check_feature_entitlement!(feature)
       ChefLicensing::LicenseFeatureValidator.validate!(licenses, feature_name: feature)
     end
 
