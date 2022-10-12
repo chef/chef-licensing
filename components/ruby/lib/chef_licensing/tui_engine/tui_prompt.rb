@@ -18,6 +18,8 @@ module ChefLicensing
         @all_messages.transform_keys!(&:to_sym)
       end
 
+      # TBD: Add comments for each prompt type briefly.
+
       def yes(messages)
         msg = @all_messages[messages[0].to_sym]
         @tty_prompt.yes?(msg, default: true)
@@ -80,6 +82,7 @@ module ChefLicensing
             q.send(k, v)
           end
         end
+        response
       end
 
       private

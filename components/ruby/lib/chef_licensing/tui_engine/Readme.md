@@ -10,3 +10,19 @@ Type of interactions could be:
 3. Yes or no -> possible actions 2
 4. Menu/Options -> possible actions n
 5. Action - no display only operation
+
+
+Rules:
+An interaction can be either a prompt type or action type. But cannot be both. Explain why? Hint: Response_path_mapping
+It cannot have two different response path map at the same time.
+
+# Define the must have keys
+# Yaml file empty -> give good exception
+# Wrong keys in yaml file
+# Missing keys in yaml file
+# Extra keys in yaml file
+# Wrong combinations of keys in yaml file (example: action and prompt cannot be toghether)
+# Validation of value used in yaml file
+# Raise exception when prompt_type is not supported
+# All exception message must be logger debug
+# Messages for customers should be generic

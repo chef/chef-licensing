@@ -26,11 +26,26 @@ interactions:
 
   prompt_2_id:
     messages: [prompt_2_id_message]
-    prompt_type: "say"
+    prompt_type: "ask"
+    prompt_attributes:
+      required: true
+      modify: capitalize
     paths: []
 
   prompt_3_id:
-    messages: [prompt_3_id_message]
+    action: validate_license_id
+    paths: [success, failure]
+    response_path_map:
+      true: success
+      false: failure
+
+  success:
+    messages: [prompt_1_id_message]
+    prompt_type: "say"
+    paths: []
+
+  failure:
+    messages: [prompt_1_id_message]
     prompt_type: "say"
     paths: []
   

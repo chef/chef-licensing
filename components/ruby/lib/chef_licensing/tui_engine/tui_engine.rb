@@ -48,12 +48,16 @@ module ChefLicensing
       until current_interaction.nil?
         state.default_action(current_interaction)
 
+        # TBD: Error handling in situation of invalid next_interaction_id
+
         if state.next_interaction_id.nil?
           current_interaction = nil
         else
           current_interaction = current_interaction.paths[state.next_interaction_id.to_sym]
         end
       end
+
+      # TBD: If the last interaction is not the exit interaction: Something went wrong in the flow.
 
       state.processed_input
     end

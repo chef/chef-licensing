@@ -4,7 +4,7 @@ require "logger"
 require_relative "tui_prompt"
 require_relative "../license_key_validator"
 require_relative "../exceptions/invalid_license"
-
+require_relative "tui_actions"
 module ChefLicensing
   class TUIEngine
     class TUIEngineState < Hash
@@ -14,20 +14,26 @@ module ChefLicensing
         @processed_input = {}
         @logger = opts[:logger] || Logger.new(STDERR)
         @prompt = ChefLicensing::TUIEngine::TUIPrompt.new(opts)
+        @tui_actions = ChefLicensing::TUIEngine::TUIActions.new
       end
 
       def default_action(interaction)
         # Style is pending.
 
-        response = @prompt.send(interaction.prompt_type, interaction.messages) if @prompt.respond_to?(interaction.prompt_type) && interaction.messages
-        @processed_input.store(interaction.id, response)
+        # We need to display only if the interaction has messages.
+        # When a prompt_type is not given, we assume it to be say.
+        if interaction.messages && @prompt.respond_to?(interaction.prompt_type)
+          response = @prompt.send(interaction.prompt_type, interaction.messages)
+          @processed_input.store(interaction.id, response)
+        end
 
-        # TBD: Actions are pending.
-        send(interaction.action, interaction) if interaction.action && respond_to?(interaction.action)
+        # We need to call the action only if the interaction has an action.
+        if interaction.action && @tui_actions.respond_to?(interaction.action)
+          response = @tui_actions.send(interaction.action, interaction)
+          @processed_input.store(interaction.id, response)
+        end
 
         if interaction.paths.size > 1
-          # There can be situations where the next path can be determined based on
-          # action item of the interaction.
           @next_interaction_id = interaction.response_path_map[response.to_s]
         elsif interaction.paths.size == 1
           @next_interaction_id = interaction.paths.keys.first
