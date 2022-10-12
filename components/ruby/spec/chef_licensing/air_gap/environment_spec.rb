@@ -6,14 +6,14 @@ RSpec.describe ChefLicensing::AirGap::Environment do
 
   describe "#verify_env" do
     context "when AIR_GAP is enabled" do
-      let(:env) { { "AIR_GAP" => "enabled" } }
+      let(:env) { { "CHEF_AIR_GAP" => "enabled" } }
       it "returns true" do
         expect(env_air_gap.verify_env).to eq true
       end
     end
 
     context "when AIR_GAP is not enabled" do
-      let(:env) { { "AIR_GAP" => "disabled" } }
+      let(:env) { { "CHEF_AIR_GAP" => "disabled" } }
       it "returns false" do
         expect(env_air_gap.verify_env).to eq false
       end
