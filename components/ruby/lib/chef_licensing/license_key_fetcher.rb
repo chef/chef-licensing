@@ -39,17 +39,19 @@ module ChefLicensing
       # If a fetch is made by CLI arg, persist and return
       logger.debug "License Key fetcher examining CLI arg checks"
 
-      @license_keys.concat(@arg_fetcher.fetch)
-      unless license_keys.empty?
-        file_fetcher.persist(license_keys)
+      new_keys = arg_fetcher.fetch
+      unless new_keys.empty?
+        @license_keys.concat(new_keys)
+        file_fetcher.persist(new_keys.first)
         return license_keys
       end
 
       # If a fetch is made by ENV, persist and return
       logger.debug "License Key fetcher examining ENV checks"
-      @license_keys.concat(@env_fetcher.fetch)
-      unless license_keys.empty?
-        file_fetcher.persist(license_keys)
+      new_keys = env_fetcher.fetch
+      unless new_keys.empty?
+        @license_keys.concat(new_keys)
+        file_fetcher.persist(new_keys.first)
         return license_keys
       end
 
@@ -62,8 +64,10 @@ module ChefLicensing
       # Lowest priority is to interactively prompt if we have a TTY
       if config[:output].isatty
         logger.debug "License Key fetcher - detected TTY, prompting..."
-        if (@license_keys = prompt_fetcher.fetch)
-          file_fetcher.persist(license_keys)
+        new_keys = prompt_fetcher.fetch
+        unless new_keys.empty?
+          @license_keys.concat(new_keys)
+          new_keys.each { |key| file_fetcher.persist(key) }
           return license_keys
         end
       end
