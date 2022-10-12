@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.1.6 -->
-## [0.1.6](https://github.com/chef/chef-licensing/tree/0.1.6) (2022-09-30)
+<!-- latest_release 0.1.7 -->
+## [0.1.7](https://github.com/chef/chef-licensing/tree/0.1.7) (2022-10-12)
 
 #### Merged Pull Requests
-- fix style [#12](https://github.com/chef/chef-licensing/pull/12) ([sathish-progress](https://github.com/sathish-progress))
+- CFINSPEC-468 Handle multiple licenses [#15](https://github.com/chef/chef-licensing/pull/15) ([Nik08](https://github.com/Nik08))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CFINSPEC-468 Handle multiple licenses [#15](https://github.com/chef/chef-licensing/pull/15) ([Nik08](https://github.com/Nik08)) <!-- 0.1.7 -->
 - fix style [#12](https://github.com/chef/chef-licensing/pull/12) ([sathish-progress](https://github.com/sathish-progress)) <!-- 0.1.6 -->
 - License validation generation [#9](https://github.com/chef/chef-licensing/pull/9) ([sathish-progress](https://github.com/sathish-progress)) <!-- 0.1.5 -->
 - CFINSPEC-433 File fetcher test specs and license file version support [#8](https://github.com/chef/chef-licensing/pull/8) ([Nik08](https://github.com/Nik08)) <!-- 0.1.4 -->

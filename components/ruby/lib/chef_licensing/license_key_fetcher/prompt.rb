@@ -91,9 +91,9 @@ module ChefLicensing
 
         case result
         when /yes/i
-          fetch_license_id_by_manual_entry
+          [ fetch_license_id_by_manual_entry ]
         when /no/i
-          generate_license_id
+          [ generate_license_id ]
         when /exit/i
           exit_because_user_chose_not_to_enter
         end

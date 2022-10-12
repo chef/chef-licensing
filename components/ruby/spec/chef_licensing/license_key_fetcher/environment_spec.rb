@@ -9,7 +9,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::Environment do
       let(:env) { { "CHEF_LICENSE_KEY" => "12345678" } }
       it "fetches the license key" do
         env_fetcher = ChefLicensing::LicenseKeyFetcher::Environment.new(env)
-        expect(env_fetcher.fetch).to eq("12345678")
+        expect(env_fetcher.fetch).to eq(["12345678"])
       end
     end
 
@@ -31,9 +31,9 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::Environment do
 
     describe "when license key is not defined in env" do
       let(:env) { {} }
-      it "returns nil" do
+      it "returns an empty array" do
         env_fetcher = ChefLicensing::LicenseKeyFetcher::Environment.new(env)
-        expect(env_fetcher.fetch).to eq(nil)
+        expect(env_fetcher.fetch).to eq([])
       end
     end
   end
