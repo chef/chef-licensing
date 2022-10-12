@@ -43,7 +43,6 @@ module ChefLicensing
       unless new_keys.empty?
         @license_keys.concat(new_keys)
         file_fetcher.persist(new_keys.first)
-        return license_keys
       end
 
       # If a fetch is made by ENV, persist and return
@@ -52,7 +51,6 @@ module ChefLicensing
       unless new_keys.empty?
         @license_keys.concat(new_keys)
         file_fetcher.persist(new_keys.first)
-        return license_keys
       end
 
       # If it has previously been fetched and persisted, read from disk and set runtime decision
@@ -79,7 +77,7 @@ module ChefLicensing
 
     # Assumes fetch_and_persist has been called and succeeded
     def fetch
-      (@arg_fetcher.fetch << @env_fetcher.fetch << @file_fetcher.fetch).flatten
+      @file_fetcher.fetch
     end
 
     def self.fetch_and_persist(opts = {})
