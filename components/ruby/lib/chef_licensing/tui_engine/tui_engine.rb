@@ -1,4 +1,4 @@
-require_relative "exceptions/tui_exceptions"
+require_relative "tui_exceptions"
 require_relative "tui_interaction"
 require_relative "tui_engine_state"
 
