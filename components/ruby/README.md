@@ -50,6 +50,12 @@ Ruby support for Progress Chef License Key:
    - License Feature Validator can accept either of Feature Name or Feature ID.
    - Also it can accept multiple License IDs at the same time.
    - the entitlement check would be successful if the feature is entitled by at least one of the given licenses
+
+   #### Validate the feature for entitlements
+   ```ruby
+      require "chef_licensing"
+      ChefLicensing.check_feature_entitlement!('FEATURE_NAME') 
+   ```
    
    #### Validate with Single License and Feature ID
    ```ruby
