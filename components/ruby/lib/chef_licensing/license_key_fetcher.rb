@@ -37,41 +37,45 @@ module ChefLicensing
     def fetch_and_persist
       # TODO: handle non-persistent cases
       # If a fetch is made by CLI arg, persist and return
-      logger.debug "Telemetry license Key fetcher examining CLI arg checks"
+      logger.debug "License Key fetcher examining CLI arg checks"
 
-      if (@license_keys = @arg_fetcher.fetch)
+      @license_keys.concat(@arg_fetcher.fetch)
+      unless license_keys.empty?
         file_fetcher.persist(license_keys)
+        return license_keys
       end
 
       # If a fetch is made by ENV, persist and return
-      logger.debug "Telemetry license Key fetcher examining ENV checks"
-      if (@license_keys = @env_fetcher.fetch)
+      logger.debug "License Key fetcher examining ENV checks"
+      @license_keys.concat(@env_fetcher.fetch)
+      unless license_keys.empty?
         file_fetcher.persist(license_keys)
+        return license_keys
       end
 
       # If it has previously been fetched and persisted, read from disk and set runtime decision
-      logger.debug "Telemetry license Key fetcher examining file checks"
+      logger.debug "License Key fetcher examining file checks"
       if file_fetcher.persisted?
         return @license_keys = file_fetcher.fetch
       end
 
       # Lowest priority is to interactively prompt if we have a TTY
       if config[:output].isatty
-        logger.debug "Telemetry license Key fetcher - detected TTY, prompting..."
+        logger.debug "License Key fetcher - detected TTY, prompting..."
         if (@license_keys = prompt_fetcher.fetch)
           file_fetcher.persist(license_keys)
-          return [license_keys]
+          return license_keys
         end
       end
 
       # Otherwise nothing was able to fetch a license. Throw an exception.
-      logger.debug "Telemetry license Key fetcher - no license Key able to be fetched."
+      logger.debug "License Key fetcher - no license Key able to be fetched."
       raise LicenseKeyNotFetchedError.new("Unable to obtain a License Key.")
     end
 
     # Assumes fetch_and_persist has been called and succeeded
     def fetch
-      @arg_fetcher.fetch || @env_fetcher.fetch || @file_fetcher.fetch
+      (@arg_fetcher.fetch << @env_fetcher.fetch << @file_fetcher.fetch).flatten
     end
 
     def self.fetch_and_persist(opts = {})

@@ -11,7 +11,7 @@ module ChefLicensing
     # Represents a fethced license ID recorded on disk
     class File
       LICENSE_KEY_FILE = "licenses.yaml".freeze
-      LICENSE_FILE_FORMAT_VERSION = "1.0.1".freeze
+      LICENSE_FILE_FORMAT_VERSION = "2.0.0".freeze
 
       attr_reader :logger, :contents, :location
       attr_accessor :local_dir # Optional local path to use to seek
@@ -29,7 +29,7 @@ module ChefLicensing
       def fetch
         read_license_key_file
         license_keys = !contents.nil? && fetch_license_keys(contents[:licenses]) # list license keys
-        license_keys || nil
+        license_keys || []
       end
 
       def fetch_license_keys(licenses)
@@ -49,7 +49,7 @@ module ChefLicensing
         license_key_file_path = "#{dir}/#{LICENSE_KEY_FILE}"
         begin
           if ::File.exist?(license_key_file_path)
-            msg = "Could not read telemetry license_key file #{license_key_file_path}"
+            msg = "Could not read license key file #{license_key_file_path}"
             current_keys = YAML.load_file(license_key_file_path)
 
             if current_keys && current_keys[:licenses]

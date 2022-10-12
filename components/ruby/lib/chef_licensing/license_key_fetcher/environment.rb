@@ -19,6 +19,8 @@ module ChefLicensing
           else
             raise LicenseKeyNotFetchedError.new("Malformed License Key passed in ENV variable CHEF_LICENSE_KEY - should be #{LICENSE_KEY_PATTERN_DESC}")
           end
+        else
+          []
         end
       end
     end

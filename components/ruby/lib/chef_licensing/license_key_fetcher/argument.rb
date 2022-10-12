@@ -17,7 +17,7 @@ module ChefLicensing
         # TODO: WhyTF are we hand-rolling an option parser
         arg = argv.detect { |a| a.start_with? "--chef-license-key=" }
 
-        return nil unless arg
+        return [] unless arg
 
         match = arg.match(/--chef-license-key=#{LICENSE_KEY_REGEX}/)
         unless match
