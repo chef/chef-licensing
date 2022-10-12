@@ -31,9 +31,9 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::Environment do
 
     describe "when license key is not defined in env" do
       let(:env) { {} }
-      it "returns nil" do
+      it "returns an empty array" do
         env_fetcher = ChefLicensing::LicenseKeyFetcher::Environment.new(env)
-        expect(env_fetcher.fetch).to eq(nil)
+        expect(env_fetcher.fetch).to eq([])
       end
     end
   end

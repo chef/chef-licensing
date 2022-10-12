@@ -31,9 +31,9 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::Argument do
 
     describe "when license key is not passed in argument" do
       let(:argv) { [] }
-      it "returns nil" do
+      it "returns an empty array" do
         argv_fetcher = ChefLicensing::LicenseKeyFetcher::Argument.new(argv)
-        expect(argv_fetcher.fetch).to eq(nil)
+        expect(argv_fetcher.fetch).to eq([])
       end
     end
   end

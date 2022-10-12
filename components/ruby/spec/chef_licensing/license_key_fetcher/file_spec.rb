@@ -14,10 +14,10 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
       expect(file_fetcher.fetch).to include("12345678")
     end
 
-    it "returns false when license key is not persisted" do
+    it "returns an empty array when license key is not persisted" do
       Dir.mktmpdir do |tmpdir|
         file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: tmpdir })
-        expect(file_fetcher.fetch).to eq(nil)
+        expect(file_fetcher.fetch).to eq([])
         expect(file_fetcher.persisted?).to eq(false)
       end
     end
@@ -25,7 +25,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
     it "raises error for unsupported version of license file with wrong version" do
       Dir.mktmpdir do |tmpdir|
         file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: unsupported_vesion_license_dir })
-        expect { file_fetcher.fetch }.to raise_error(RuntimeError, /License File version 10.0.0 not supported./)
+        expect { file_fetcher.fetch }.to raise_error(RuntimeError, /License File version 0.0.0 not supported./)
       end
     end
 
