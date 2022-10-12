@@ -8,10 +8,10 @@ module ChefLicensing
   module CLIFlags
     module Thor
       def self.included(klass)
-        # TBD need to confirm the name of the key
+        # TBD need to confirm the name of the option
         klass.class_option :chef_license_key,
           type: :string,
-          desc: "Accepts the license key"
+          desc: "Add a new Chef License Key to the license store. Ignores duplicates."
       end
     end
   end

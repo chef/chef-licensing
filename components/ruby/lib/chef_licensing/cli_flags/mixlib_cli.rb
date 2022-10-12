@@ -10,10 +10,10 @@ module ChefLicensing
     module MixlibCLI
 
       def self.included(klass)
-        # TBD need to confirm the name of the key
+        # TBD need to confirm the name of the option
         klass.option :chef_license_key,
           long: "--chef-license-key KEY",
-          description: "Accepts the license key",
+          description: "Add a new Chef License Key to the license store. Ignores duplicates.",
           required: false
       end
 
