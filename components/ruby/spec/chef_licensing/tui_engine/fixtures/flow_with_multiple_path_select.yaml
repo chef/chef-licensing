@@ -1,0 +1,31 @@
+interactions:
+  start:
+    messages: ["This is a start message"]
+    prompt_type: "say"
+    paths: [prompt_2]
+    description: This is an optional field. WYOD (Write your own description)
+
+  prompt_2:
+    messages: ["Select an option from below: ", ["Option 1", "Option 2"]]
+    prompt_type: "select"
+    paths: [prompt_3, prompt_4]
+    response_path_map: 
+      "Option 1": prompt_3
+      "Option 2": prompt_4
+
+  prompt_3:
+    messages: ["This is message for prompt 3 - Reached when selected Option 1"]
+    prompt_type: "say"
+    paths: [exit]
+    description: WYOD.
+
+  prompt_4:
+    messages: ["This is message for prompt 4 - Reached when selected Option 2"]
+    prompt_type: "say"
+    paths: [exit]
+    description: WYOD.
+
+  exit:
+    messages: ["This is the exist prompt"]
+    prompt_type: "say"
+
