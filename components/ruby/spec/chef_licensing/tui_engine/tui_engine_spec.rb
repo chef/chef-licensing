@@ -5,7 +5,6 @@ require_relative "../../spec_helper"
 require "stringio"
 require "webmock/rspec"
 
-
 RSpec.describe ChefLicensing::TUIEngine do
   describe "when a tui_engine object is instantiated with a valid yaml file" do
 
@@ -34,11 +33,11 @@ RSpec.describe ChefLicensing::TUIEngine do
       end
 
       it "should have a tui_interactions object with 4 interactions with the correct ids" do
-        expect(tui_engine.tui_interactions.keys).to eq([:start, :prompt_2, :prompt_3, :exit])
+        expect(tui_engine.tui_interactions.keys).to eq(%i{start prompt_2 prompt_3 exit})
       end
 
       it "should return processed_input as the interaction_id: nil hash" do
-        expect(tui_engine.run_interaction).to eq({:start=> nil, :prompt_2=>nil, :prompt_3=>nil, :exit=>nil})
+        expect(tui_engine.run_interaction).to eq({ start: nil, prompt_2: nil, prompt_3: nil, exit: nil })
       end
     end
 
