@@ -10,8 +10,7 @@ module ChefLicensing
 
     # @note no in-memory caching of the licenses so that it fetches updated licenses always
     def license_keys
-      # TODO: remove redundant args
-      ChefLicensing::LicenseKeyFetcher.fetch_and_persist(logger: Logger.new($stdout))
+      ChefLicensing::LicenseKeyFetcher.fetch_and_persist
     end
   end
 end
