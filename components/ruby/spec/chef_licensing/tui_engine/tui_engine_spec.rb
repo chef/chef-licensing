@@ -162,19 +162,35 @@ RSpec.describe ChefLicensing::TUIEngine do
     end
 
     context "when the yaml file has no paths at each interaction" do
-      # TODO: Add test for no paths
+      let(:config) {
+        {
+          output: StringIO.new,
+          input: StringIO.new,
+          logger: Logger.new(StringIO.new),
+          yaml_file: File.join(File.dirname(__FILE__), "fixtures/flow_with_no_path.yaml"),
+        }
+      }
+
+      let(:tui_engine) { described_class.new(config) }
+
+      it "should contain only the start interaction" do
+        expect(tui_engine.run_interaction).to eq({ start: nil })
+      end
     end
 
-    context "when the yaml file has no interactions" do
-      # TODO: Add test for no interactions
-    end
+    context "when the yaml file is empty" do
+      let(:config) {
+        {
+          output: StringIO.new,
+          input: StringIO.new,
+          logger: Logger.new(StringIO.new),
+          yaml_file: File.join(File.dirname(__FILE__), "fixtures/flow_with_no_interaction.yaml"),
+        }
+      }
 
-    context "when the yaml file has no yaml data" do
-      # TODO: Add test for no yaml data
-    end
-
-    context "when the interaction has different types of prompts" do
-      # TODO: Add test for different types of prompts
+      it "should raise error while instantiating the class" do
+        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException)
+      end
     end
   end
 
@@ -183,6 +199,19 @@ RSpec.describe ChefLicensing::TUIEngine do
   end
 
   describe "when a tui_engine object is instantiated with no input yaml file" do
-    # TODO: Add test for no input yaml file
+    context "when the yaml file does not exists" do
+      let(:config) {
+        {
+          output: StringIO.new,
+          input: StringIO.new,
+          logger: Logger.new(StringIO.new),
+          yaml_file: File.join(File.dirname(__FILE__), "fixtures/unexisting_file.yaml"),
+        }
+      }
+
+      it "should raise error while instantiating the class" do
+        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException)
+      end
+    end
   end
 end

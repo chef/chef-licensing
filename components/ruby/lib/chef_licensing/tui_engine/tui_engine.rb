@@ -8,6 +8,10 @@ module ChefLicensing
     def initialize(opts = {})
       yaml_file = opts[:yaml_file] || File.join(File.dirname(__FILE__), "default_flow.yaml")
       @yaml_data = inflate_yaml_data(yaml_file)
+
+      # YAML.load_file returns false if the file is empty
+      raise ChefLicensing::TUIEngine::YAMLException, "No interactions found in yaml file." unless @yaml_data
+
       @tui_interactions = {}
       get_interaction_objects
       build_interaction_path
