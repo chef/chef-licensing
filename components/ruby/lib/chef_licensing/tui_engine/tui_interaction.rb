@@ -8,7 +8,6 @@ module ChefLicensing
         @messages = opts[:messages]
         @action = opts[:action]
         @prompt_type = opts[:prompt_type] || "say"
-        @text_style = opts[:text_style]
         @response_path_map = opts[:response_path_map]
         @paths = {}
       end
