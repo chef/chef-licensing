@@ -61,26 +61,26 @@ Ruby support for Progress Chef License Key:
    ```ruby
       require 'chef_licensing/license_feature_validator'
    
-      ChefLicensing::LicenseFeatureValidator.validate!("LICENSE", feature_id: "FEATURE_ID")
+      ChefLicensing::LicenseFeatureEntitlement.check_entitlement!("LICENSE", feature_id: "FEATURE_ID")
    ```
  
    #### Validate with Multiple license and Feature ID
    ```ruby
       require 'chef_licensing/license_feature_validator'
    
-      ChefLicensing::LicenseFeatureValidator.validate!(["LICENSES"], feature_id: "FEATURE_ID")
+      ChefLicensing::LicenseFeatureEntitlement.check_entitlement!(["LICENSES"], feature_id: "FEATURE_ID")
    ```
    
    #### Validate with Feature Name
    ```ruby
       require 'chef_licensing/license_feature_validator'
    
-      ChefLicensing::LicenseFeatureValidator.validate!(["LICENSES"], feature_name: "FEATURE_NAME")
+      ChefLicensing::LicenseFeatureEntitlement.check_entitlement!(["LICENSES"], feature_name: "FEATURE_NAME")
    ```
 
    ### Response
-     on success, it responds `true` meaning the feature is entitled to one of the given licenses 
-     and on failure it raises an Error
+     on success, it responds `true` meaning the feature is entitled to one of the given licenses
+   and on failure it raises an Error
    ### Errors
    - in case of invalid license it would raise invalid license error
    ```ruby

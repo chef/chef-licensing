@@ -32,7 +32,7 @@ module ChefLicensing
         end
       end
 
-      def validate_feature_by_name(payload)
+      def feature_by_name(payload)
         handle_connection do |connection|
           response = connection.post(self.class::END_POINTS[:FEATURE_BY_NAME]) do |request|
             request.body = payload.to_json
@@ -43,7 +43,7 @@ module ChefLicensing
         end
       end
 
-      def validate_feature_by_id(payload)
+      def feature_by_id(payload)
         handle_connection do |connection|
           response = connection.post(self.class::END_POINTS[:FEATURE_BY_ID]) do |request|
             request.body = payload.to_json

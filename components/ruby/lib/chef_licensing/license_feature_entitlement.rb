@@ -2,18 +2,18 @@ require_relative "restful_client/v1"
 require_relative "exceptions/invalid_entitlement"
 
 module ChefLicensing
-  class LicenseFeatureValidator
+  class LicenseFeatureEntitlement
     attr_reader :licenses
 
     class << self
-      def validate!(licenses, feature_name: nil, feature_id: nil)
-        new(licenses, feature_name, feature_id).validate!
+      def check_entitlement!(license_keys, feature_name: nil, feature_id: nil)
+        new(license_keys, feature_name, feature_id).check_entitlement!
       end
     end
 
-    def initialize(licenses, feature_name, feature_id, restful_client: ChefLicensing::RestfulClient::V1)
-      licenses || raise(ArgumentError, "Missing Params: `license`")
-      @licenses = licenses.is_a?(Array) ? licenses : [licenses]
+    def initialize(license_keys, feature_name, feature_id, restful_client: ChefLicensing::RestfulClient::V1)
+      license_keys || raise(ArgumentError, "Missing Params: `license_keys`")
+      @licenses = license_keys.is_a?(Array) ? license_keys : [license_keys]
       @feature_name = feature_name
       @feature_id = feature_id
       raise ArgumentError, "Either of `feature_id` or `feature_name` should be provided" if feature_name.nil? && feature_id.nil?
@@ -21,7 +21,7 @@ module ChefLicensing
       @restful_client = restful_client.new
     end
 
-    def validate!
+    def check_entitlement!
       response = make_request
       response.data.entitled || raise(ChefLicensing::InvalidEntitlement)
     end
@@ -33,9 +33,9 @@ module ChefLicensing
     def make_request
       payload = build_payload
       if feature_name
-        restful_client.validate_feature_by_name(payload)
+        restful_client.feature_by_name(payload)
       else
-        restful_client.validate_feature_by_id(payload)
+        restful_client.feature_by_id(payload)
       end
     end
 
