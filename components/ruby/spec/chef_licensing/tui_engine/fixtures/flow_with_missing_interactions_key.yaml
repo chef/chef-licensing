@@ -19,4 +19,3 @@ prompt_3:
 exit:
   messages: ["This is the exist prompt"]
   prompt_type: "say"
-

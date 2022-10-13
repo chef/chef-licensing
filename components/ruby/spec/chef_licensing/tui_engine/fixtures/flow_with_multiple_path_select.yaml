@@ -28,4 +28,3 @@ interactions:
   exit:
     messages: ["This is the exist prompt"]
     prompt_type: "say"
-

@@ -3,7 +3,6 @@ require "chef_licensing/license_key_validator"
 require "chef_licensing/config"
 require_relative "../../spec_helper"
 require "stringio"
-require "webmock/rspec"
 
 RSpec.describe ChefLicensing::TUIEngine do
   describe "when a tui_engine object is instantiated with a valid yaml file" do
