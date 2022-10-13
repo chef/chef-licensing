@@ -17,3 +17,9 @@ RSpec.configure do |config|
 end
 
 ENV["CHEF_LICENSE_SERVER"] = "http://localhost-license-server/License"
+
+class StringIO 
+  def wait_readable(*) 
+    true 
+  end 
+end 
