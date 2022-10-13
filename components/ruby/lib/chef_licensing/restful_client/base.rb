@@ -26,7 +26,7 @@ module ChefLicensing
           response = connection.post(self.class::END_POINTS[:GENERATE_LICENSE]) do |request|
             request.body = payload.to_json
           end
-          raise RestfulClientError, response.body.data.error unless response.success?
+          raise RestfulClientError, format_error_from(response) unless response.success?
 
           response.body
         end
@@ -37,7 +37,7 @@ module ChefLicensing
           response = connection.post(self.class::END_POINTS[:FEATURE_BY_NAME]) do |request|
             request.body = payload.to_json
           end
-          raise RestfulClientError, response.body.data.error unless response.success?
+          raise RestfulClientError, format_error_from(response) unless response.success?
 
           response.body
         end
@@ -48,7 +48,7 @@ module ChefLicensing
           response = connection.post(self.class::END_POINTS[:FEATURE_BY_ID]) do |request|
             request.body = payload.to_json
           end
-          raise RestfulClientError, response.body.data.error unless response.success?
+          raise RestfulClientError, format_error_from(response) unless response.success?
 
           response.body
         end
@@ -69,6 +69,13 @@ module ChefLicensing
           config.request :json
           config.response :json, parser_options: { object_class: OpenStruct }
         end
+      end
+
+      def format_error_from(response)
+        error_details = response.body&.data&.error
+        return response.reason_phrase unless error_details
+
+        error_details
       end
     end
   end
