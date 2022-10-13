@@ -195,7 +195,19 @@ RSpec.describe ChefLicensing::TUIEngine do
   end
 
   describe "when a tui_engine object is instantiated with an invalid yaml file" do
-    # TODO: Add test for invalid yaml file
+    context "when interactions key is missing in yaml file" do
+      let(:config) {
+        {
+          output: StringIO.new,
+          input: StringIO.new,
+          logger: Logger.new(StringIO.new),
+          yaml_file: File.join(File.dirname(__FILE__), "fixtures/flow_with_missing_interactions_key.yaml"),
+        }
+      }
+      it "should raise error while instantiating the class" do
+        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException)
+      end
+    end
   end
 
   describe "when a tui_engine object is instantiated with no input yaml file" do
