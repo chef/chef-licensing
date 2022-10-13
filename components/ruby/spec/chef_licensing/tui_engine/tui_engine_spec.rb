@@ -208,6 +208,50 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException)
       end
     end
+
+    context "when interactions have some invalid key" do
+      let(:config) {
+        {
+          output: StringIO.new,
+          input: StringIO.new,
+          logger: Logger.new(StringIO.new),
+          yaml_file: File.join(File.dirname(__FILE__), "fixtures/flow_with_broken_keys.yaml"),
+        }
+      }
+
+      before do
+        @orig_stderr = $stderr
+        $stderr = StringIO.new
+      end
+
+      it "warns about invalid key found in yaml file" do
+        described_class.new(config)
+        $stderr.rewind
+        expect($stderr.string.chomp).to include("Invalid key `messagesx` found in yaml file for interaction start")
+        expect($stderr.string.chomp).to include("Invalid key `path` found in yaml file for interaction prompt_2")
+        expect($stderr.string.chomp).to include("Invalid key `prompt_typr` found in yaml file for interaction start.")
+        expect($stderr.string.chomp).to include("Valid keys are `action`, `messages`, `paths`, `prompt_type`, `response_path_map` and `description`")
+      end
+
+      after do
+        $stderr = @orig_stderr
+      end
+    end
+
+    context "when invalid value for prompt_type is given" do
+      let(:config) {
+        {
+          output: StringIO.new,
+          input: StringIO.new,
+          logger: Logger.new(StringIO.new),
+          yaml_file: File.join(File.dirname(__FILE__), "fixtures/flow_with_invalid_prompt_type.yaml"),
+        }
+      }
+
+      it "raises error" do
+        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException)
+      end
+    end
   end
 
   describe "when a tui_engine object is instantiated with no input yaml file" do

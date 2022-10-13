@@ -75,19 +75,26 @@ module ChefLicensing
 
       raise ChefLicensing::TUIEngine::YAMLException, "`interactions` key not found in yaml file." unless @yaml_data["interactions"]
 
-      @yaml_data["interactions"].each do |_, opts|
+      @yaml_data["interactions"].each do |i_id, opts|
         if opts[:action] && opts[:messages]
-          warn "Both `action` and `messages` keys found in yaml file for interaction #{k}."
+          warn "Both `action` and `messages` keys found in yaml file for interaction #{i_id}."
           warn "`response_path_map` keys would be considered response from messages and not action."
         end
 
         opts.transform_keys!(&:to_sym)
 
-        opts.each do |k, _|
+        opts.each do |k, val|
           unless %i{action messages paths prompt_type response_path_map description}.include?(k)
-            warn "Invalid key `#{k}` found in yaml file for interaction #{k}."
+            warn "Invalid key `#{k}` found in yaml file for interaction #{i_id}."
             warn "Valid keys are `action`, `messages`, `paths`, `prompt_type`, `response_path_map` and `description`."
             warn "#{k} will be ignored.\nYour yaml file may not work as expected."
+          end
+
+          # check prompt_type value is valid
+          if k == :prompt_type
+            unless %w{yes say ask ok warn error select enum_select}.include?(val)
+              raise ChefLicensing::TUIEngine::YAMLException, "Invalid value `#{val}` for `prompt_type` key in yaml file for interaction #{i_id}."
+            end
           end
         end
       end

@@ -1,0 +1,16 @@
+interactions:
+  start:
+    messagesx: ["This is a start message"]
+    prompt_typr: "say"
+    paths: [prompt_2]
+    description: This is an optional field. WYOD (Write your own description)
+
+  prompt_2:
+    messages: ["This is message for prompt 2"]
+    prompt_type: "say"
+    path: [exit]
+    description: WYOD.
+
+  exit:
+    messages: ["This is the exist prompt"]
+    prompt_type: "say"
