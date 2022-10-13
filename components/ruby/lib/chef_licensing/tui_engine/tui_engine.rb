@@ -6,8 +6,8 @@ module ChefLicensing
   class TUIEngine
     attr_accessor :yaml_data, :tui_interactions, :opts
     def initialize(opts = {})
-      flow_yaml = opts[:flow_yaml] || File.join(File.dirname(__FILE__), "default_flow.yaml")
-      @yaml_data = inflate_yaml_data(flow_yaml)
+      yaml_file = opts[:yaml_file] || File.join(File.dirname(__FILE__), "default_flow.yaml")
+      @yaml_data = inflate_yaml_data(yaml_file)
       @tui_interactions = {}
       get_interaction_objects
       build_interaction_path
@@ -15,9 +15,9 @@ module ChefLicensing
       @opts = opts
     end
 
-    def inflate_yaml_data(flow_yaml)
+    def inflate_yaml_data(yaml_file)
       require "yaml" unless defined?(YAML)
-      YAML.load_file(flow_yaml)
+      YAML.load_file(yaml_file)
     rescue => e
       raise ChefLicensing::TUIEngine::YAMLException, "Unable to load yaml file. #{e.message}"
     end

@@ -7,62 +7,63 @@ require "webmock/rspec"
 
 
 RSpec.describe ChefLicensing::TUIEngine do
-  describe "when a tui_engine object is instantiated" do
-    context "with an external yaml file" do
-      before do
-        @pwd = Dir.pwd
-        @file_path = File.join(@pwd, "chef_licensing/tui_engine/fixtures/tui-flow.yaml")
-      end
-      let(:config) { { yaml_file: @file_path } }
+  describe "when a tui_engine object is instantiated with a valid yaml file" do
+
+    context "when the yaml file has only single path at each interaction" do
+      let(:config) {
+        {
+          output: STDOUT,
+          input: STDIN,
+          logger: Logger.new(STDOUT),
+          yaml_file: File.join(File.dirname(__FILE__), "fixtures/basic_flow_with_one_path.yaml"),
+        }
+      }
+
       let(:tui_engine) { described_class.new(config) }
-      it "loads the yaml file data" do
-        expect(tui_engine.yaml_data).to_not be_empty
+
+      it "should have a yaml_data object" do
+        expect(tui_engine.yaml_data).to be_a(Hash)
       end
 
-      it "creates tui_interaction objects" do
-        expect(tui_engine.tui_interactions).to_not be_empty
+      it "should have a tui_interactions object" do
         expect(tui_engine.tui_interactions).to be_a(Hash)
       end
 
-      it "builds the interaction path" do
-        expect(tui_engine.tui_interactions[:license_id_welcome_note].paths).to_not be_empty
-        expect(tui_engine.tui_interactions[:license_id_welcome_note].paths).to be_a(Hash)
-        expect(tui_engine.tui_interactions[:license_id_welcome_note].paths[:ask_if_user_has_license_id]).to be_a(ChefLicensing::TUIEngine::TUIInteraction)
+      it "should have a tui_interactions object with 4 interactions" do
+        expect(tui_engine.tui_interactions.size).to eq(4)
+      end
+
+      it "should have a tui_interactions object with 4 interactions with the correct ids" do
+        expect(tui_engine.tui_interactions.keys).to eq([:start, :prompt_2, :prompt_3, :exit])
       end
     end
 
-    context "without any yaml file" do
-      let(:tui_engine) { described_class.new }
-      it "loads the default yaml file data" do
-        expect(tui_engine.yaml_data).to_not be_empty
-      end
+    context "when the yaml file has multiple paths at each interaction" do
+      # TODO: Add test for multiple paths
+    end
 
-      it "creates tui_interaction objects" do
-        expect(tui_engine.tui_interactions).to_not be_empty
-        expect(tui_engine.tui_interactions).to be_a(Hash)
-      end
+    context "when the yaml file has no paths at each interaction" do
+      # TODO: Add test for no paths
+    end
+
+    context "when the yaml file has no interactions" do
+      # TODO: Add test for no interactions
+    end
+
+    context "when the yaml file has no yaml data" do
+      # TODO: Add test for no yaml data
+    end
+
+    context "when the interaction has different types of prompts" do
+      # TODO: Add test for different types of prompts
     end
   end
 
-  describe "when a tui_engine object is invoked with run_interaction" do
-    context "the user chooses to input license id and is a valid license id" do
-      let(:input) { StringIO.new }
-      before do
-        input.write("yes\ntmns-90564f0a-ad22-482f-b57d-569f3fb1c11e-6620")
-        input.rewind
+  describe "when a tui_engine object is instantiated with an invalid yaml file" do
+    # TODO: Add test for invalid yaml file
+  end
 
-        stub_request(:get, "#{ChefLicensing::Config::LICENSING_SERVER}/v1/validate")
-        .with(query: { licenseId: "tmns-90564f0a-ad22-482f-b57d-569f3fb1c11e-6620" })
-        .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
-                  headers: { content_type: "application/json" })
-      end
-
-      let(:output) { StringIO.new }
-      let(:config) { { input: input, output: output } }
-      let(:tui_engine) { described_class.new(config) }
-      it "returns a hash of user input and the validity of license id" do
-        expect(tui_engine.run_interaction).to eq({ answer: true, license_id: "tmns-90564f0a-ad22-482f-b57d-569f3fb1c11e-6620", license_id_valid: true })
-      end
-    end
+  describe "when a tui_engine object is instantiated with no input yaml file" do
+    # TODO: Add test for no input yaml file
   end
 end
