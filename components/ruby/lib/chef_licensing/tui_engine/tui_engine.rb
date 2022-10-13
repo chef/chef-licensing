@@ -6,7 +6,7 @@ module ChefLicensing
   class TUIEngine
     attr_accessor :yaml_data, :tui_interactions, :opts
     def initialize(opts = {})
-      flow_yaml = opts[:flow_yaml] || File.join(File.dirname(__FILE__), "yaml/default_flow.yaml")
+      flow_yaml = opts[:flow_yaml] || File.join(File.dirname(__FILE__), "default_flow.yaml")
       @yaml_data = inflate_yaml_data(flow_yaml)
       @tui_interactions = {}
       get_interaction_objects
