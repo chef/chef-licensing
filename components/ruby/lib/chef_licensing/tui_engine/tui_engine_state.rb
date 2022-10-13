@@ -8,7 +8,7 @@ require_relative "tui_actions"
 module ChefLicensing
   class TUIEngine
     class TUIEngineState < Hash
-      attr_accessor :next_interaction_id, :processed_input, :logger, :prompt
+      attr_accessor :next_interaction_id, :processed_input, :logger, :prompt, :tui_actions
 
       def initialize(opts = {})
         @processed_input = {}
