@@ -12,9 +12,9 @@ RSpec.describe ChefLicensing::TUIEngine do
     context "when the yaml file has only single path at each interaction" do
       let(:config) {
         {
-          output: STDOUT,
-          input: STDIN,
-          logger: Logger.new(STDOUT),
+          output: StringIO.new,
+          input: StringIO.new,
+          logger: Logger.new(StringIO.new),
           yaml_file: File.join(File.dirname(__FILE__), "fixtures/basic_flow_with_one_path.yaml"),
         }
       }
@@ -35,6 +35,10 @@ RSpec.describe ChefLicensing::TUIEngine do
 
       it "should have a tui_interactions object with 4 interactions with the correct ids" do
         expect(tui_engine.tui_interactions.keys).to eq([:start, :prompt_2, :prompt_3, :exit])
+      end
+
+      it "should return processed_input as the interaction_id: nil hash" do
+        expect(tui_engine.run_interaction).to eq({:start=> nil, :prompt_2=>nil, :prompt_3=>nil, :exit=>nil})
       end
     end
 
