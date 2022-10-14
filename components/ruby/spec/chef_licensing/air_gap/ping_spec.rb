@@ -4,20 +4,25 @@ require_relative "../../spec_helper"
 
 RSpec.describe ChefLicensing::AirGap::Ping do
 
-  describe "#verify_ping" do
+  describe "#enabled?" do
     context "when the public licensing server is reachable" do
       let(:ping_air_gap) { described_class.new("https://localhost-license-server/License") }
 
-      it "returns true" do
-        expect(ping_air_gap.verify_ping).to eq true
+      # Remember, "airgap disabled means online, reachable"
+      # so ping enabled? => false
+      it "returns false" do
+        expect(ping_air_gap.enabled?).to eq false
       end
     end
 
     context "when the public licensing server is not reachable" do
       let(:ping_air_gap) { described_class.new("https://wrong-url.co/") }
 
-      it "returns false" do
-        expect(ping_air_gap.verify_ping).to eq false
+
+      # Remember, "airgap enabled means isolated, unreachable"
+      # so ping enabled? => true
+      it "returns true" do
+        expect(ping_air_gap.enabled?).to eq true
       end
     end
   end

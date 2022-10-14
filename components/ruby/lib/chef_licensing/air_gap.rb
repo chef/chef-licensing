@@ -12,7 +12,7 @@ module ChefLicensing
     @env_check = AirGap::Environment.new(ENV)
     @argv_check = AirGap::Argument.new(ARGV)
 
-    @env_check.verify_env || @argv_check.verify_argv || !@ping_check.verify_ping
+    @env_check.enabled? || @argv_check.enabled? || @ping_check.enabled?
   rescue ChefLicensing::AirGapException => exception
     puts exception.message
     exit
