@@ -14,7 +14,7 @@ module ChefLicensing
       def detected?
         return @status if @status # memoize
 
-        @status = @env["CHEF_AIR_GAP"] == "enabled"
+        @status = @env.key?("CHEF_AIR_GAP")
       rescue => exception
         raise ChefLicensing::AirGapDetectionException, "Unable to verify air gap environment variable.\n#{exception.message}"
       end
