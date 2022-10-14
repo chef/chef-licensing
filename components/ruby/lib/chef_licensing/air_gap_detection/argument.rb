@@ -1,5 +1,3 @@
-require_relative "exception"
-
 module ChefLicensing
   class AirGapDetection
     class Argument

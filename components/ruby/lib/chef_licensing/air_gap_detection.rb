@@ -1,7 +1,6 @@
 require_relative "air_gap_detection/ping"
 require_relative "air_gap_detection/environment"
 require_relative "air_gap_detection/argument"
-require_relative "air_gap_detection/exception"
 require_relative "config"
 
 module ChefLicensing
@@ -12,8 +11,5 @@ module ChefLicensing
     @ping_check = AirGapDetection::Ping.new(ChefLicensing.license_server_url)
 
     @env_check.detected? || @argv_check.detected? || @ping_check.detected?
-  rescue ChefLicensing::AirGapDetectionException => exception
-    puts exception.message
-    exit
   end
 end

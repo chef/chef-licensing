@@ -79,7 +79,6 @@ module ChefLicensing
       end
 
       def fetch
-        # TODO: Set raise AirGapDetectionException("Air gap mode is not supported yet") after implementing air gap logic
         raise NotImplementedError if @air_gapped_env
 
         logger.debug "Prompting for license Key..."
