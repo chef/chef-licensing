@@ -15,8 +15,6 @@ module ChefLicensing
         return @status unless @status.nil? # memoize
 
         @status = argv.include?("--airgap")
-      rescue => exception
-        raise ChefLicensing::AirGapDetectionException, "Unable to verify air gap argument.\n#{exception.message}"
       end
     end
   end

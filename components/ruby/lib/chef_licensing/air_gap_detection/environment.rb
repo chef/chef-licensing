@@ -15,8 +15,6 @@ module ChefLicensing
         return @status unless @status.nil? # memoize
 
         @status = @env.key?("CHEF_AIR_GAP")
-      rescue => exception
-        raise ChefLicensing::AirGapDetectionException, "Unable to verify air gap environment variable.\n#{exception.message}"
       end
     end
   end
