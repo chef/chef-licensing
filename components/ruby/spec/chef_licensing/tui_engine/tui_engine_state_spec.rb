@@ -1,7 +1,7 @@
 require "chef_licensing/tui_engine/tui_prompt"
 require "chef_licensing/tui_engine/tui_actions"
 require "chef_licensing/tui_engine/tui_engine_state"
-require_relative "../../spec_helper"
+require "spec_helper"
 
 RSpec.describe ChefLicensing::TUIEngine::TUIEngineState do
   let(:config) {

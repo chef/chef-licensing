@@ -1,5 +1,4 @@
 require "chef_licensing/tui_engine/tui_engine"
-require "chef_licensing/license_key_validator"
 require "chef_licensing/config"
 require "spec_helper"
 require "stringio"
