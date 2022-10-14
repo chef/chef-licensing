@@ -1,7 +1,15 @@
 # Chef Licensing
 
 Ruby support for Progress Chef License Key:
-##Pre-requisites
+##Setup
+- define the below block in your initializer file `chef-licensing.rb`
+   ```ruby
+      require 'chef_licensing'
+      ChefLicensing.configure do |config|
+        config.licensing_server  = 'LICENSE_SERVER'
+        config.logger = Logger.new($stdout)
+      end
+   ```
 - please define the `LICENSING_SERVER` env variables
 
  * Storage ( TODO )
