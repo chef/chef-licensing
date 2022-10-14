@@ -14,14 +14,14 @@ RSpec.describe ChefLicensing::TUIEngine do
           output: StringIO.new,
           input: StringIO.new,
           logger: Logger.new(StringIO.new),
-          yaml_file: File.join(fixture_dir, "basic_flow_with_one_path.yaml"),
+          interaction_file: File.join(fixture_dir, "basic_flow_with_one_path.yaml"),
         }
       }
 
       let(:tui_engine) { described_class.new(config) }
 
-      it "should have a yaml_data object" do
-        expect(tui_engine.yaml_data).to be_a(Hash)
+      it "should have a interaction_data object" do
+        expect(tui_engine.interaction_data).to be_a(Hash)
       end
 
       it "should have a tui_interactions object" do
@@ -54,7 +54,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           output: StringIO.new,
           input: user_input,
           logger: Logger.new(StringIO.new),
-          yaml_file: File.join(fixture_dir, "flow_with_multiple_path_select.yaml"),
+          interaction_file: File.join(fixture_dir, "flow_with_multiple_path_select.yaml"),
         }
       }
 
@@ -86,7 +86,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           output: StringIO.new,
           input: user_input,
           logger: Logger.new(StringIO.new),
-          yaml_file: File.join(fixture_dir, "flow_with_multiple_path_select.yaml"),
+          interaction_file: File.join(fixture_dir, "flow_with_multiple_path_select.yaml"),
         }
       }
 
@@ -110,7 +110,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           output: StringIO.new,
           input: user_input,
           logger: Logger.new(StringIO.new),
-          yaml_file: File.join(fixture_dir, "flow_with_multiple_path_with_yes.yaml"),
+          interaction_file: File.join(fixture_dir, "flow_with_multiple_path_with_yes.yaml"),
         }
       }
 
@@ -142,7 +142,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           output: StringIO.new,
           input: user_input,
           logger: Logger.new(StringIO.new),
-          yaml_file: File.join(fixture_dir, "flow_with_multiple_path_with_yes.yaml"),
+          interaction_file: File.join(fixture_dir, "flow_with_multiple_path_with_yes.yaml"),
         }
       }
 
@@ -167,7 +167,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           output: StringIO.new,
           input: StringIO.new,
           logger: Logger.new(StringIO.new),
-          yaml_file: File.join(fixture_dir, "flow_with_no_path.yaml"),
+          interaction_file: File.join(fixture_dir, "flow_with_no_path.yaml"),
         }
       }
 
@@ -184,7 +184,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           output: StringIO.new,
           input: StringIO.new,
           logger: Logger.new(StringIO.new),
-          yaml_file: File.join(fixture_dir, "flow_with_no_interaction.yaml"),
+          interaction_file: File.join(fixture_dir, "flow_with_no_interaction.yaml"),
         }
       }
 
@@ -201,7 +201,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           output: StringIO.new,
           input: StringIO.new,
           logger: Logger.new(StringIO.new),
-          yaml_file: File.join(fixture_dir, "flow_with_missing_interactions_key.yaml"),
+          interaction_file: File.join(fixture_dir, "flow_with_missing_interactions_key.yaml"),
         }
       }
       it "should raise error while instantiating the class" do
@@ -215,7 +215,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           output: StringIO.new,
           input: StringIO.new,
           logger: Logger.new(StringIO.new),
-          yaml_file: File.join(fixture_dir, "flow_with_broken_keys.yaml"),
+          interaction_file: File.join(fixture_dir, "flow_with_broken_keys.yaml"),
         }
       }
 
@@ -244,7 +244,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           output: StringIO.new,
           input: StringIO.new,
           logger: Logger.new(StringIO.new),
-          yaml_file: File.join(fixture_dir, "flow_with_invalid_prompt_type.yaml"),
+          interaction_file: File.join(fixture_dir, "flow_with_invalid_prompt_type.yaml"),
         }
       }
 
@@ -261,7 +261,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           output: StringIO.new,
           input: StringIO.new,
           logger: Logger.new(StringIO.new),
-          yaml_file: File.join(fixture_dir, "unexisting_file.yaml"),
+          interaction_file: File.join(fixture_dir, "unexisting_file.yaml"),
         }
       }
 

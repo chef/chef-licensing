@@ -5,12 +5,12 @@ require_relative "tui_engine_state"
 module ChefLicensing
   class TUIEngine
 
-    attr_accessor :yaml_data, :tui_interactions, :opts
+    attr_accessor :interaction_data, :tui_interactions, :opts
 
     def initialize(opts = {})
       @opts = opts
       @tui_interactions = {}
-      initialization_of_engine(opts[:yaml_file])
+      initialization_of_engine(opts[:interaction_file])
     end
 
     def run_interaction
@@ -36,23 +36,23 @@ module ChefLicensing
 
     private
 
-    def initialization_of_engine(yaml_file)
-      yaml_file ||= File.join(File.dirname(__FILE__), "default_flow.yaml")
-      @yaml_data = inflate_yaml_data(yaml_file)
-      verify_yaml_data
+    def initialization_of_engine(interaction_file)
+      interaction_file ||= File.join(File.dirname(__FILE__), "default_interactions.yaml")
+      @interaction_data = inflate_interaction_data(interaction_file)
+      verify_interaction_data
       store_interaction_objects
       build_interaction_path
     end
 
-    def inflate_yaml_data(yaml_file)
+    def inflate_interaction_data(interaction_file)
       require "yaml" unless defined?(YAML)
-      YAML.load_file(yaml_file)
+      YAML.load_file(interaction_file)
     rescue => e
-      raise ChefLicensing::TUIEngine::YAMLException, "Unable to load yaml file. #{e.message}"
+      raise ChefLicensing::TUIEngine::YAMLException, "Unable to load interaction file. #{e.message}"
     end
 
     def store_interaction_objects
-      @yaml_data["interactions"].each do |k, opts|
+      @interaction_data["interactions"].each do |k, opts|
         opts.transform_keys!(&:to_sym)
         opts.store(:id, k.to_sym)
         @tui_interactions.store(k.to_sym, ChefLicensing::TUIEngine::TUIInteraction.new(opts))
@@ -60,7 +60,7 @@ module ChefLicensing
     end
 
     def build_interaction_path
-      @yaml_data["interactions"].each do |k, opts|
+      @interaction_data["interactions"].each do |k, opts|
         current_interaction = @tui_interactions[k.to_sym]
         opts.transform_keys!(&:to_sym)
         paths = opts[:paths] || []
@@ -70,12 +70,12 @@ module ChefLicensing
       end
     end
 
-    def verify_yaml_data
-      raise ChefLicensing::TUIEngine::YAMLException, "No interactions found in yaml file." unless @yaml_data
+    def verify_interaction_data
+      raise ChefLicensing::TUIEngine::YAMLException, "No interactions found in yaml file." unless @interaction_data
 
-      raise ChefLicensing::TUIEngine::YAMLException, "`interactions` key not found in yaml file." unless @yaml_data["interactions"]
+      raise ChefLicensing::TUIEngine::YAMLException, "`interactions` key not found in yaml file." unless @interaction_data["interactions"]
 
-      @yaml_data["interactions"].each do |i_id, opts|
+      @interaction_data["interactions"].each do |i_id, opts|
         if opts[:action] && opts[:messages]
           warn "Both `action` and `messages` keys found in yaml file for interaction #{i_id}."
           warn "`response_path_map` keys would be considered response from messages and not action."
