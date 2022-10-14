@@ -1,8 +1,9 @@
 # Chef Licensing
 
 Ruby support for Progress Chef License Key:
-##Pre-requisites
-- please define the `LICENSING_SERVER` env variables
+## Pre-requisites
+
+- Please define the `CHEF_LICENSE_SERVER` env variable to the URL of the Progress Chef License Service you are targeting.
 
  * Storage ( TODO )
  * ##Generation
@@ -12,15 +13,15 @@ Ruby support for Progress Chef License Key:
    ```ruby
         require 'chef_licensing/license_key_generator'
         ChefLicensing::LicenseKeyGenerator.generate!(
-            first_name: "FIRSTNAME", 
-            last_name: "LASTNAME", 
+            first_name: "FIRSTNAME",
+            last_name: "LASTNAME",
             email_id: "EMAILID",
             product: "PRODUCT",
-            company: "COMPANY", 
+            company: "COMPANY",
             phone: "PHONE"
         )
      ```
-   
+
    ### Response
       on success, it responds with a valid LICENSE KEY and on failure it raises an Error
    ### Errors
@@ -29,12 +30,12 @@ Ruby support for Progress Chef License Key:
         ChefLicensing::LicenseGenerationFailed
       ```
 
-    
- * ##Validation 
+
+ * ##Validation
    ###Usage
    ```ruby
       require 'chef_licensing/license_key_validator'
-   
+
       ChefLicensing::LicenseKeyValidator.validate!("LICENSE_KEY")
    ```
    ### Response

@@ -1,4 +1,4 @@
-require "net/http"
+require "net/http" unless defined?(Net::HTTP)
 
 module ChefLicensing
   class AirGap

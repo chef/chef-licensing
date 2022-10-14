@@ -7,7 +7,7 @@ require_relative "config"
 module ChefLicensing
 
   def self.air_gap_mode_enabled?
-    license_server_version_url = ChefLicensing::Config::LICENSING_SERVER + "/v1/version"
+    license_server_version_url = ChefLicensing.license_server_url + "/v1/version"
     @ping_check = AirGap::Ping.new(license_server_version_url)
     @env_check = AirGap::Environment.new(ENV)
     @argv_check = AirGap::Argument.new(ARGV)
