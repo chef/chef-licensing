@@ -26,4 +26,4 @@ RSpec.configure do |config|
   end
 end
 
-ENV["LICENSING_SERVER"] = "http://localhost-license-server/License"
+ENV["CHEF_LICENSE_SERVER"] = "http://localhost-license-server/License"
