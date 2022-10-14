@@ -12,7 +12,7 @@ module ChefLicensing
       end
 
       def detected?
-        return @status if @status # memoize
+        return @status unless @status.nil? # memoize
 
         @status = @env.key?("CHEF_AIR_GAP")
       rescue => exception

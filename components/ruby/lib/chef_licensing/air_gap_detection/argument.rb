@@ -12,7 +12,7 @@ module ChefLicensing
       end
 
       def detected?
-        return @status if @status # memoize
+        return @status unless @status.nil? # memoize
 
         @status = argv.include?("--airgap")
       rescue => exception
