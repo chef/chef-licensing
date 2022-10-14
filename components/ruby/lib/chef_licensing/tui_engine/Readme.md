@@ -17,7 +17,7 @@ An interaction can be either a prompt type or action type. But cannot be both. E
 It cannot have two different response path map at the same time.
 
 # Define the must have keys
-# Yaml file empty -> give good exception
+# Yaml file empty -> give good exception - done
 # Wrong keys in yaml file
 # Missing keys in yaml file
 # Extra keys in yaml file
@@ -26,3 +26,10 @@ It cannot have two different response path map at the same time.
 # Raise exception when prompt_type is not supported
 # All exception message must be logger debug
 # Messages for customers should be generic
+
+In yaml file:
+paths is optional and defaults to []
+prompt_type can be optional and defaults to say
+description is not used in the tui engine and is only for reference to understand interaction in the yaml
+
+Keep response_path key to be string for consistency

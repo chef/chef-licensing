@@ -1,10 +1,12 @@
 require "chef_licensing/tui_engine/tui_engine"
 require "chef_licensing/license_key_validator"
 require "chef_licensing/config"
-require_relative "../../spec_helper"
+require "spec_helper"
 require "stringio"
 
 RSpec.describe ChefLicensing::TUIEngine do
+  let(:fixture_dir) { "spec/fixtures/tui_interactions" }
+
   describe "when a tui_engine object is instantiated with a valid yaml file" do
 
     context "when the yaml file has only single path at each interaction" do
@@ -13,7 +15,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           output: StringIO.new,
           input: StringIO.new,
           logger: Logger.new(StringIO.new),
-          yaml_file: File.join(File.dirname(__FILE__), "fixtures/basic_flow_with_one_path.yaml"),
+          yaml_file: File.join(fixture_dir, "basic_flow_with_one_path.yaml"),
         }
       }
 
@@ -53,7 +55,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           output: StringIO.new,
           input: user_input,
           logger: Logger.new(StringIO.new),
-          yaml_file: File.join(File.dirname(__FILE__), "fixtures/flow_with_multiple_path_select.yaml"),
+          yaml_file: File.join(fixture_dir, "flow_with_multiple_path_select.yaml"),
         }
       }
 
@@ -85,7 +87,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           output: StringIO.new,
           input: user_input,
           logger: Logger.new(StringIO.new),
-          yaml_file: File.join(File.dirname(__FILE__), "fixtures/flow_with_multiple_path_select.yaml"),
+          yaml_file: File.join(fixture_dir, "flow_with_multiple_path_select.yaml"),
         }
       }
 
@@ -109,7 +111,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           output: StringIO.new,
           input: user_input,
           logger: Logger.new(StringIO.new),
-          yaml_file: File.join(File.dirname(__FILE__), "fixtures/flow_with_multiple_path_with_yes.yaml"),
+          yaml_file: File.join(fixture_dir, "flow_with_multiple_path_with_yes.yaml"),
         }
       }
 
@@ -141,7 +143,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           output: StringIO.new,
           input: user_input,
           logger: Logger.new(StringIO.new),
-          yaml_file: File.join(File.dirname(__FILE__), "fixtures/flow_with_multiple_path_with_yes.yaml"),
+          yaml_file: File.join(fixture_dir, "flow_with_multiple_path_with_yes.yaml"),
         }
       }
 
@@ -166,7 +168,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           output: StringIO.new,
           input: StringIO.new,
           logger: Logger.new(StringIO.new),
-          yaml_file: File.join(File.dirname(__FILE__), "fixtures/flow_with_no_path.yaml"),
+          yaml_file: File.join(fixture_dir, "flow_with_no_path.yaml"),
         }
       }
 
@@ -183,7 +185,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           output: StringIO.new,
           input: StringIO.new,
           logger: Logger.new(StringIO.new),
-          yaml_file: File.join(File.dirname(__FILE__), "fixtures/flow_with_no_interaction.yaml"),
+          yaml_file: File.join(fixture_dir, "flow_with_no_interaction.yaml"),
         }
       }
 
@@ -200,7 +202,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           output: StringIO.new,
           input: StringIO.new,
           logger: Logger.new(StringIO.new),
-          yaml_file: File.join(File.dirname(__FILE__), "fixtures/flow_with_missing_interactions_key.yaml"),
+          yaml_file: File.join(fixture_dir, "flow_with_missing_interactions_key.yaml"),
         }
       }
       it "should raise error while instantiating the class" do
@@ -214,7 +216,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           output: StringIO.new,
           input: StringIO.new,
           logger: Logger.new(StringIO.new),
-          yaml_file: File.join(File.dirname(__FILE__), "fixtures/flow_with_broken_keys.yaml"),
+          yaml_file: File.join(fixture_dir, "flow_with_broken_keys.yaml"),
         }
       }
 
@@ -243,7 +245,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           output: StringIO.new,
           input: StringIO.new,
           logger: Logger.new(StringIO.new),
-          yaml_file: File.join(File.dirname(__FILE__), "fixtures/flow_with_invalid_prompt_type.yaml"),
+          yaml_file: File.join(fixture_dir, "flow_with_invalid_prompt_type.yaml"),
         }
       }
 
@@ -260,7 +262,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           output: StringIO.new,
           input: StringIO.new,
           logger: Logger.new(StringIO.new),
-          yaml_file: File.join(File.dirname(__FILE__), "fixtures/unexisting_file.yaml"),
+          yaml_file: File.join(fixture_dir, "unexisting_file.yaml"),
         }
       }
 
