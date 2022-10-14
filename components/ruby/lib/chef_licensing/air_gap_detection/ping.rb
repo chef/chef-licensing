@@ -15,7 +15,7 @@ module ChefLicensing
       def detected?
         return @status unless @status.nil?
 
-        Net::HTTP.start(url.host, url.port, :use_ssl => true) do |http|
+        Net::HTTP.start(url.host, url.port, use_ssl: true) do |http|
           http.open_timeout = 5
 
           request = Net::HTTP::Get.new url
@@ -24,9 +24,9 @@ module ChefLicensing
         end
         @status
 
-      rescue => exception
+      rescue #  => exception
         # TODO: Wish I had a logger here for exception.message
-        return @status = true
+        @status = true
       end
     end
   end

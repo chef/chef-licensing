@@ -9,7 +9,7 @@ require "byebug"
 logger = Logger.new(STDERR)
 logger.level = Logger::INFO
 
-ENV['LICENSE_SERVER'] = 'https://licensing-acceptance.chef.co/License'
+ENV["LICENSE_SERVER"] = "https://licensing-acceptance.chef.co/License"
 puts "Calling fetch_and_persist:"
 ChefLicensing::LicenseKeyFetcher.fetch_and_persist(logger: logger).each do |license_key|
   puts "License Key: #{license_key}"

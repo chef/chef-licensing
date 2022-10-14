@@ -13,7 +13,7 @@ RSpec.describe ChefLicensing::AirGapDetection::Environment do
     end
 
     context "when CHEF_AIR_GAP is not present" do
-      let(:env) { {  } }
+      let(:env) { {} }
       it "returns false" do
         expect(env_air_gap.detected?).to eq false
       end

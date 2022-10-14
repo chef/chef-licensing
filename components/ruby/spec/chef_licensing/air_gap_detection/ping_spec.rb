@@ -20,7 +20,6 @@ RSpec.describe ChefLicensing::AirGapDetection::Ping do
     context "when the public licensing server is not reachable" do
       let(:ping_air_gap) { described_class.new("https://wrong-url.co") }
 
-
       # Remember, "airgap detected means isolated, unreachable"
       # so ping detected? => true
       it "returns true" do
