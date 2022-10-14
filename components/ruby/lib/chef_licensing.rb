@@ -1,6 +1,7 @@
 require "chef_licensing/version"
 require "chef_licensing/license_feature_entitlement"
 require "chef_licensing/license_key_fetcher"
+require "chef_licensing/config"
 
 module ChefLicensing
   class << self
@@ -11,6 +12,15 @@ module ChefLicensing
     # @note no in-memory caching of the licenses so that it fetches updated licenses always
     def license_keys
       ChefLicensing::LicenseKeyFetcher.fetch_and_persist
+    end
+
+    # @example
+    #   ChefLicensing.configure do |config|
+    #     config.licensing_server  = 'LICENSE_SERVER'
+    #     config.logger = Logger.new($stdout)
+    #   end
+    def configure(&block)
+      yield(ChefLicensing::Config)
     end
   end
 end

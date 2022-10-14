@@ -23,27 +23,46 @@ RSpec.describe ChefLicensing do
     end
 
     it { is_expected.to eq(true) }
+
+    context "when license keys are invalid" do
+      let(:feature) { "fly-mode" }
+      let(:license_keys) {
+        %w{tmns-58555821-925e-4a27-8fdc-e79dae5a425b-9763}
+      }
+
+      let(:invalid_license_id) {
+        "tmns-58555821-925e-4a27-8fdc-e79dae5a425b-1234"
+      }
+
+      subject { described_class.check_feature_entitlement!(feature) }
+
+      before do
+        allow(described_class).to receive(:licenses).and_return(license_keys)
+        allow(ChefLicensing::LicenseFeatureEntitlement).to receive(:check_entitlement!)
+          .with(invalid_license_id, feature_name: feature)
+          .and_raise(ChefLicensing::InvalidEntitlement)
+      end
+
+      it { expect { subject }.to raise_error(ChefLicensing::InvalidEntitlement) }
+    end
   end
 
-  context "when license keys are invalid" do
-    let(:feature) { "fly-mode" }
-    let(:license_keys) {
-      %w{tmns-58555821-925e-4a27-8fdc-e79dae5a425b-9763}
-    }
-
-    let(:invalid_license_id) {
-      "tmns-58555821-925e-4a27-8fdc-e79dae5a425b-1234"
-    }
-
-    subject { described_class.check_feature_entitlement!(feature) }
-
+  describe ".configure" do
+    let(:licensing_server) { "http://license-server" }
+    let(:logger) { Logger.new($stdout) }
     before do
-      allow(described_class).to receive(:licenses).and_return(license_keys)
-      allow(ChefLicensing::LicenseFeatureEntitlement).to receive(:check_entitlement!)
-        .with(invalid_license_id, feature_name: feature)
-        .and_raise(ChefLicensing::InvalidEntitlement)
+      described_class.configure { |c|
+        c.licensing_server = "http://license-server"
+        c.logger = logger
+      }
     end
 
-    it { expect { subject }.to raise_error(ChefLicensing::InvalidEntitlement) }
+    it "is expected to update licensing server values" do
+      expect(ChefLicensing::Config.licensing_server).to eq(licensing_server)
+    end
+
+    it "is expected to update logger values" do
+      expect(ChefLicensing::Config.logger).to eq(logger)
+    end
   end
 end
