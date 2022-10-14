@@ -1,0 +1,61 @@
+interactions:
+  start:
+    messages: |
+      -----------------------------------------------------
+                   Provide Your License ID
+
+        To access premium content and other special features,
+        you will need a Chef License ID.
+
+        If you already have one, you can enter it at the prompt
+        on the following screen.
+
+        If you need to get an evaluation or personal use license
+        ID, you can get one by providing your details.
+      -------------------------------------------------------
+    prompt_type: "say"
+    paths: [ask_if_user_has_license_id]
+
+  ask_if_user_has_license_id:
+    messages: "Do you have a Chef License ID?"
+    prompt_type: "yes"
+    paths: [ask_for_license_id, ask_for_license_generation]
+    response_path_map:
+      "true": ask_for_license_id
+      "false": ask_for_license_generation
+
+  ask_for_license_id:
+    messages: "Please input your License ID: "
+    prompt_type: "ask"
+    paths: [validate_license_id]
+
+  ask_for_license_generation:
+    messages: ["Would you like to generate a license id?"]
+    prompt_type: "yes"
+    paths: [display_type_of_license_id, exit]
+    response_path_map:
+      "true": display_type_of_license_id
+      "false": exit
+  
+  display_type_of_license_id:
+    messages: "This is yet to be implemented."
+    paths: [exit]
+
+  validate_license_id:
+    action: is_license_valid?
+    paths: [validation_success, validation_failure]
+    response_path_map:
+      "true": validation_success
+      "false": validation_failure
+    description: "is_license_valid is a method defined in TUIActions class"
+
+  validation_success:
+    messages: "License validated successfully."
+    paths: [exit]
+  
+  validation_failure:
+    messages: "License is not valid. Please try again."
+    paths: [ask_for_license_id]
+  
+  exit:
+    messages: "Thank you."

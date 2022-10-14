@@ -6,7 +6,10 @@ require_relative "config"
 require_relative "license_key_fetcher/argument"
 require_relative "license_key_fetcher/environment"
 require_relative "license_key_fetcher/file"
-require_relative "license_key_fetcher/prompt"
+# require_relative "license_key_fetcher/prompt"
+
+# The content of below file would be transferred to prompt once approved.
+require_relative "license_key_fetcher/prompt_test"
 
 # LicenseKeyFetcher allows us to inspect obtain the license Key from the user in a variety of ways.
 module ChefLicensing
@@ -29,7 +32,7 @@ module ChefLicensing
       @arg_fetcher = LicenseKeyFetcher::Argument.new(ARGV)
       @env_fetcher = LicenseKeyFetcher::Environment.new(ENV)
       @file_fetcher = LicenseKeyFetcher::File.new(config)
-      @prompt_fetcher = LicenseKeyFetcher::Prompt.new(config)
+      @prompt_fetcher = LicenseKeyFetcher::TUIPrompt.new(config)
     end
 
     #

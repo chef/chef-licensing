@@ -29,7 +29,7 @@ module ChefLicensing
 
         # We need to call the action only if the interaction has an action.
         if interaction.action && @tui_actions.respond_to?(interaction.action)
-          response = @tui_actions.send(interaction.action, interaction)
+          response = @tui_actions.send(interaction.action, @processed_input)
           @processed_input.store(interaction.id, response)
         end
 
