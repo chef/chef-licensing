@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.2.1 -->
-## [0.2.1](https://github.com/chef/chef-licensing/tree/0.2.1) (2022-10-14)
+<!-- latest_release 0.2.2 -->
+## [0.2.2](https://github.com/chef/chef-licensing/tree/0.2.2) (2022-10-14)
 
 #### Merged Pull Requests
-- Methodize License Server Setting, rename to CHEF_LICENSE_SERVER [#18](https://github.com/chef/chef-licensing/pull/18) ([clintoncwolfe](https://github.com/clintoncwolfe))
+- AirGap Updates [#17](https://github.com/chef/chef-licensing/pull/17) ([clintoncwolfe](https://github.com/clintoncwolfe))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- AirGap Updates [#17](https://github.com/chef/chef-licensing/pull/17) ([clintoncwolfe](https://github.com/clintoncwolfe)) <!-- 0.2.2 -->
 - Methodize License Server Setting, rename to CHEF_LICENSE_SERVER [#18](https://github.com/chef/chef-licensing/pull/18) ([clintoncwolfe](https://github.com/clintoncwolfe)) <!-- 0.2.1 -->
 - CFINSPEC-459: Implement AIR_GAP functionality [#7](https://github.com/chef/chef-licensing/pull/7) ([ahasunos](https://github.com/ahasunos)) <!-- 0.2.0 -->
 - CFINSPEC-468 Handle multiple licenses [#15](https://github.com/chef/chef-licensing/pull/15) ([Nik08](https://github.com/Nik08)) <!-- 0.1.7 -->
