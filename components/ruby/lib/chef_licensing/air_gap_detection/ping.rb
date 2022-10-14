@@ -13,13 +13,20 @@ module ChefLicensing
 
       # Ping Airgap is "detected" if the host is unreachable in an HTTP sense.
       def detected?
-        return @status if @status
+        return @status unless @status.nil?
 
-        response = Net::HTTP.get_response(url)
-        @status = !(response.is_a? Net::HTTPSuccess)
+        Net::HTTP.start(url.host, url.port, :use_ssl => true) do |http|
+          http.open_timeout = 5
+
+          request = Net::HTTP::Get.new url
+          response = http.request request # Net::HTTPResponse object
+          @status = !(response.is_a? Net::HTTPSuccess)
+        end
         @status
+
       rescue => exception
-        warn "Unable to ping #{url}.\n#{exception.message}"
+        # TODO: Wish I had a logger here for exception.message
+        return @status = true
       end
     end
   end
