@@ -74,12 +74,11 @@ module ChefLicensing
         @logger = cfg[:logger]
         @output = cfg[:output]
         @input = cfg[:input] || STDIN
-        # TODO: Set @air_gap to AirGapCheck value after implementing air gap logic
+        # TODO: Set @air_gap to AirGapDetectionCheck value after implementing air gap logic
         @air_gapped_env = false
       end
 
       def fetch
-        # TODO: Set raise AirGapException("Air gap mode is not supported yet") after implementing air gap logic
         raise NotImplementedError if @air_gapped_env
 
         logger.debug "Prompting for license Key..."
