@@ -41,7 +41,7 @@ RSpec.describe ChefLicensing::TUIEngine::TUIInteraction do
     end
 
     it "should not have other fields" do
-      expect { tui_interaction.non_existing_field }.to raise_error
+      expect { tui_interaction.non_existing_field }.to raise_error(NoMethodError)
     end
   end
 end

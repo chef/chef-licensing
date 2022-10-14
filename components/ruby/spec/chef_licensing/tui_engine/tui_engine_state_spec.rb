@@ -32,7 +32,7 @@ RSpec.describe ChefLicensing::TUIEngine::TUIEngineState do
     end
 
     it "should not have other fields" do
-      expect { tui_engine_state.non_existing_field }.to raise_error
+      expect { tui_engine_state.non_existing_field }.to raise_error(NoMethodError)
     end
 
     it "should respond to default_action method" do
