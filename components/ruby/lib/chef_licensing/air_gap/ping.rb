@@ -7,8 +7,8 @@ module ChefLicensing
       # If status is true, airgap mode is on - we are isolated.
       attr_reader :url, :status
 
-      def initialize(url)
-        @url = URI(url)
+      def initialize(base_url_string)
+        @url = URI(base_url_string + "/v1/version")
       end
 
       # Ping Airgap is "enabled" if the host is unreachable in an HTTP sense.
