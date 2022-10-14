@@ -1,7 +1,7 @@
 require_relative "exception"
 
 module ChefLicensing
-  class AirGap
+  class AirGapDetection
     class Argument
 
       # If status is true, airgap mode is on - we are isolated.
@@ -11,12 +11,12 @@ module ChefLicensing
         @argv = argv
       end
 
-      def enabled?
+      def detected?
         return @status if @status # memoize
 
         @status = argv.include?("--airgap")
       rescue => exception
-        raise ChefLicensing::AirGapException, "Unable to verify air gap argument.\n#{exception.message}"
+        raise ChefLicensing::AirGapDetectionException, "Unable to verify air gap argument.\n#{exception.message}"
       end
     end
   end

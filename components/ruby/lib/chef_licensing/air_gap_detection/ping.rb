@@ -1,7 +1,7 @@
 require "net/http" unless defined?(Net::HTTP)
 
 module ChefLicensing
-  class AirGap
+  class AirGapDetection
     class Ping
 
       # If status is true, airgap mode is on - we are isolated.
@@ -11,8 +11,8 @@ module ChefLicensing
         @url = URI(base_url_string + "/v1/version")
       end
 
-      # Ping Airgap is "enabled" if the host is unreachable in an HTTP sense.
-      def enabled?
+      # Ping Airgap is "detected" if the host is unreachable in an HTTP sense.
+      def detected?
         return @status if @status
 
         response = Net::HTTP.get_response(url)
