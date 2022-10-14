@@ -3,7 +3,7 @@
 Ruby support for Progress Chef License Key:
 ## Pre-requisites
 
-- please define the `CHEF_LICENSE_SERVER` env variable to the URL of the Progress Chef License Service you are targeting.
+- Please define the `CHEF_LICENSE_SERVER` env variable to the URL of the Progress Chef License Service you are targeting.
 
  * Storage ( TODO )
  * ##Generation
