@@ -2,7 +2,7 @@ require_relative "../tui_engine"
 
 module ChefLicensing
   class LicenseKeyFetcher
-    class TUIPrompt
+    class Prompt
       attr_accessor :config
 
       def initialize(config = {})
