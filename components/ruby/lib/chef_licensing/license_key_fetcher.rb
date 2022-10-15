@@ -6,10 +6,7 @@ require_relative "config"
 require_relative "license_key_fetcher/argument"
 require_relative "license_key_fetcher/environment"
 require_relative "license_key_fetcher/file"
-# require_relative "license_key_fetcher/prompt"
-
-# The content of below file would be transferred to prompt once approved.
-require_relative "license_key_fetcher/prompt_test"
+require_relative "license_key_fetcher/prompt"
 
 # LicenseKeyFetcher allows us to inspect obtain the license Key from the user in a variety of ways.
 module ChefLicensing
@@ -32,7 +29,7 @@ module ChefLicensing
       @arg_fetcher = LicenseKeyFetcher::Argument.new(ARGV)
       @env_fetcher = LicenseKeyFetcher::Environment.new(ENV)
       @file_fetcher = LicenseKeyFetcher::File.new(config)
-      @prompt_fetcher = LicenseKeyFetcher::TUIPrompt.new(config)
+      @prompt_fetcher = LicenseKeyFetcher::Prompt.new(config)
     end
 
     #
@@ -67,10 +64,12 @@ module ChefLicensing
 
       # Lowest priority is to interactively prompt if we have a TTY
       if config[:output].isatty
-        logger.debug "Telemetry license Key fetcher - detected TTY, prompting..."
-        if (@license_key = prompt_fetcher.fetch)
-          file_fetcher.persist(license_key, product, version)
-          return license_key
+        logger.debug "License Key fetcher - detected TTY, prompting..."
+        new_keys = prompt_fetcher.fetch
+        unless new_keys.empty?
+          @license_keys.concat(new_keys)
+          new_keys.each { |key| file_fetcher.persist(key) }
+          return license_keys
         end
       end
 
