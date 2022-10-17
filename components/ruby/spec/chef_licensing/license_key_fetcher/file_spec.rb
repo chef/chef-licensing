@@ -11,7 +11,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
   describe "#fetch" do
     it "returns license key from file" do
       file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: fixture_dir })
-      expect(file_fetcher.fetch).to include("12345678")
+      expect(file_fetcher.fetch).to include("tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150")
     end
 
     it "returns an empty array when license key is not persisted" do
@@ -31,7 +31,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
 
     it "returns multiple license keys from a license file" do
       file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: multiple_keys_license_dir })
-      expect(file_fetcher.fetch).to eq(%w{12345678 10101010})
+      expect(file_fetcher.fetch).to eq(%w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150 tmns-0f76efaf-c45c-4d92-86b2-2d144ce73dfa-150})
     end
   end
 
@@ -39,8 +39,8 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
     it "stores license key in file" do
       Dir.mktmpdir do |tmpdir|
         file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: tmpdir })
-        file_fetcher.persist("2345678")
-        expect(file_fetcher.fetch).to eq(["2345678"])
+        file_fetcher.persist("tmns-0f76efaf-d45d-4d92-86b2-2d144ce73dfa-150")
+        expect(file_fetcher.fetch).to eq(["tmns-0f76efaf-d45d-4d92-86b2-2d144ce73dfa-150"])
         expect(file_fetcher.persisted?).to eq(true)
       end
     end
@@ -48,9 +48,9 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
     it "stores multiple license keys in file" do
       Dir.mktmpdir do |tmpdir|
         file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: tmpdir })
-        file_fetcher.persist("23456789")
-        file_fetcher.persist("12345678")
-        expect(file_fetcher.fetch).to eq(%w{23456789 12345678})
+        file_fetcher.persist("tmns-0f76efaf-e45e-4d92-86b2-2d144ce73dfa-150")
+        file_fetcher.persist("tmns-0f76efaf-f45f-4d92-86b2-2d144ce73dfa-150")
+        expect(file_fetcher.fetch).to eq(%w{tmns-0f76efaf-e45e-4d92-86b2-2d144ce73dfa-150 tmns-0f76efaf-f45f-4d92-86b2-2d144ce73dfa-150})
         expect(file_fetcher.persisted?).to eq(true)
       end
     end
