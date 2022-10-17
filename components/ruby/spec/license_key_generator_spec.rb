@@ -43,7 +43,7 @@ RSpec.describe ChefLicensing::LicenseKeyGenerator do
 
   describe ".generate!" do
     before do
-      stub_request(:post, "#{ChefLicensing.license_server_url}/v1/triallicense")
+      stub_request(:post, "#{ChefLicensing::Config.licensing_server}/v1/triallicense")
         .with(body: payload.to_json)
         .to_return(body: expected_response,
                    headers: { content_type: "application/json" })
@@ -68,7 +68,7 @@ RSpec.describe ChefLicensing::LicenseKeyGenerator do
       }
 
       before do
-        stub_request(:post, "#{ChefLicensing.license_server_url}/v1/triallicense")
+        stub_request(:post, "#{ChefLicensing::Config.licensing_server}/v1/triallicense")
           .with(body: payload.to_json)
           .to_return(body: expected_response, headers: { content_type: "application/json" }, status: 400)
       end

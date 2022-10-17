@@ -12,7 +12,7 @@ RSpec.describe ChefLicensing::LicenseKeyValidator do
 
   describe ".validate!" do
     before do
-      stub_request(:get, "#{ChefLicensing.license_server_url}/v1/validate")
+      stub_request(:get, "#{ChefLicensing::Config.licensing_server}/v1/validate")
         .with(query: { licenseId: license_key })
         .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
                    headers: { content_type: "application/json" })
@@ -21,7 +21,7 @@ RSpec.describe ChefLicensing::LicenseKeyValidator do
 
     context "when license is in valid" do
       before do
-        stub_request(:get, "#{ChefLicensing.license_server_url}/v1/validate")
+        stub_request(:get, "#{ChefLicensing::Config.licensing_server}/v1/validate")
           .with(query: { licenseId: license_key })
           .to_return(body: { data: false, message: "License Id is invalid", status_code: 200 }.to_json,
                      headers: { content_type: "application/json" })

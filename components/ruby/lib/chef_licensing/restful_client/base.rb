@@ -41,7 +41,7 @@ module ChefLicensing
       private
 
       def connection
-        Faraday.new(url: ChefLicensing.license_server_url) do |config|
+        Faraday.new(url: ChefLicensing::Config.licensing_server) do |config|
           config.request :json
           config.response :json, parser_options: { object_class: OpenStruct }
         end
