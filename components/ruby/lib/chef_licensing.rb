@@ -13,14 +13,5 @@ module ChefLicensing
     def license_keys
       ChefLicensing::LicenseKeyFetcher.fetch_and_persist
     end
-
-    # @example
-    #   ChefLicensing.configure do |config|
-    #     config.licensing_server  = 'LICENSE_SERVER'
-    #     config.logger = Logger.new($stdout)
-    #   end
-    def configure(&block)
-      yield(ChefLicensing::Config)
-    end
   end
 end

@@ -17,7 +17,7 @@ module ChefLicensing
     attr_reader :config, :license_keys, :arg_fetcher, :env_fetcher, :file_fetcher, :prompt_fetcher, :logger
     def initialize(opts = {})
       @config = opts
-      @logger = ChefLicensing::Config.logger
+      @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
       @config[:output] ||= STDOUT
       config[:logger] = logger
       config[:dir] = opts[:dir]

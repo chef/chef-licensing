@@ -4,7 +4,6 @@ require "pastel" unless defined?(Pastel)
 require "timeout" unless defined?(Timeout)
 require "chef-config/windows"
 require_relative "base"
-require_relative "../config"
 
 module ChefLicensing
   class LicenseKeyFetcher
@@ -72,7 +71,7 @@ module ChefLicensing
       }.freeze
 
       def initialize(cfg)
-        @logger = ChefLicensing::Config.logger
+        @logger = cfg[:logger]
         @output = cfg[:output]
         @input = cfg[:input] || STDIN
         # TODO: Set @air_gap to AirGapCheck value after implementing air gap logic
