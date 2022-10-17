@@ -69,7 +69,7 @@ TODO
  * ##Validation
    ###Usage
    ```ruby
-      require 'chef_licensing/license_key_validator'
+      require 'chef_licensing/license_feature_entitlement'
 
       ChefLicensing::LicenseKeyValidator.validate!("LICENSE_KEY")
    ```
@@ -82,34 +82,36 @@ TODO
 
  * Entitlement
    ## Features Entitlement
-   ### Usage
-   - License Feature Validator can accept either of Feature Name or Feature ID.
-   - Also it can accept multiple License IDs at the same time.
-   - the entitlement check would be successful if the feature is entitled by at least one of the given licenses
+   ### Usage of check feature entitlement
+   - Accepts the feature name as the argument
 
    #### Validate the feature for entitlements
    ```ruby
       require "chef_licensing"
       ChefLicensing.check_feature_entitlement!('FEATURE_NAME') 
    ```
-   
+   ### Usage of Service class
+    - License Feature Validator can accept either of Feature Name or Feature ID.
+    - Also it can accept multiple License IDs at the same time.
+    - the entitlement check would be successful if the feature is entitled by at least one of the given licenses
+
    #### Validate with Single License and Feature ID
    ```ruby
-      require 'chef_licensing/license_feature_validator'
+      require 'chef_licensing/license_feature_entitlement'
    
       ChefLicensing::LicenseFeatureEntitlement.check_entitlement!("LICENSE", feature_id: "FEATURE_ID")
    ```
  
    #### Validate with Multiple license and Feature ID
    ```ruby
-      require 'chef_licensing/license_feature_validator'
+      require 'chef_licensing/license_feature_entitlement'
    
       ChefLicensing::LicenseFeatureEntitlement.check_entitlement!(["LICENSES"], feature_id: "FEATURE_ID")
    ```
    
    #### Validate with Feature Name
    ```ruby
-      require 'chef_licensing/license_feature_validator'
+      require 'chef_licensing/license_feature_entitlement'
    
       ChefLicensing::LicenseFeatureEntitlement.check_entitlement!(["LICENSES"], feature_name: "FEATURE_NAME")
    ```
