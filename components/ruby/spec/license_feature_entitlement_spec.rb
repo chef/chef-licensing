@@ -1,7 +1,7 @@
 require "spec_helper"
 require_relative "../lib/chef_licensing/license_feature_entitlement"
 require_relative "../lib/chef_licensing/config"
-require_relative '../lib/chef_licensing'
+require_relative "../lib/chef_licensing"
 
 RSpec.describe ChefLicensing::LicenseFeatureEntitlement do
 

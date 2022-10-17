@@ -16,6 +16,7 @@ RSpec.describe ChefLicensing do
     subject { described_class.check_feature_entitlement!(feature) }
 
     before do
+      allow(ChefLicensing::LicenseKeyFetcher).to receive(:fetch_and_persist).and_return(license_keys)
       allow(described_class).to receive(:licenses).and_return(license_keys)
       allow(ChefLicensing::LicenseFeatureEntitlement).to receive(:check_entitlement!)
         .with(license_keys, feature_name: feature)
@@ -27,19 +28,16 @@ RSpec.describe ChefLicensing do
     context "when license keys are invalid" do
       let(:feature) { "fly-mode" }
       let(:license_keys) {
-        %w{tmns-58555821-925e-4a27-8fdc-e79dae5a425b-9763}
+        [invalid_license_id]
       }
 
       let(:invalid_license_id) {
         "tmns-58555821-925e-4a27-8fdc-e79dae5a425b-1234"
       }
 
-      subject { described_class.check_feature_entitlement!(feature) }
-
       before do
-        allow(described_class).to receive(:licenses).and_return(license_keys)
         allow(ChefLicensing::LicenseFeatureEntitlement).to receive(:check_entitlement!)
-          .with(invalid_license_id, feature_name: feature)
+          .with(license_keys, feature_name: feature)
           .and_raise(ChefLicensing::InvalidEntitlement)
       end
 
