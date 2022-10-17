@@ -6,6 +6,7 @@ require_relative "license_key_fetcher/argument"
 require_relative "license_key_fetcher/environment"
 require_relative "license_key_fetcher/file"
 require_relative "license_key_fetcher/prompt"
+require_relative "config"
 
 # LicenseKeyFetcher allows us to inspect obtain the license Key from the user in a variety of ways.
 module ChefLicensing
@@ -16,7 +17,7 @@ module ChefLicensing
     attr_reader :config, :license_keys, :arg_fetcher, :env_fetcher, :file_fetcher, :prompt_fetcher, :logger
     def initialize(opts = {})
       @config = opts
-      @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
+      @logger = ChefLicensing::Config.logger
       @config[:output] ||= STDOUT
       config[:logger] = logger
       config[:dir] = opts[:dir]

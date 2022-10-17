@@ -4,6 +4,7 @@ require "yaml"
 require "date"
 require "fileutils" unless defined?(FileUtils)
 require "chef_licensing/license_key_fetcher"
+require_relative "../config"
 
 module ChefLicensing
   class LicenseKeyFetcher
@@ -18,7 +19,7 @@ module ChefLicensing
 
       def initialize(opts)
         @opts = opts
-        @logger = opts[:logger]
+        @logger = ChefLicensing::Config.logger
         @contents_ivar = nil
         @location = nil
 

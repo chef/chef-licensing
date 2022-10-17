@@ -36,7 +36,15 @@ TODO
 
 ## Licensing Server API
 
-## Pre-requisites
+##Setup
+- define the below block in your initializer file `chef-licensing.rb`
+   ```ruby
+      require 'chef_licensing'
+      ChefLicensing.configure do |config|
+        config.licensing_server  = 'LICENSE_SERVER'
+        config.logger = Logger.new($stdout)
+      end
+   ```
 
 - Please define the `CHEF_LICENSE_SERVER` env variable to the URL of the Progress Chef License Service you are targeting.
 
