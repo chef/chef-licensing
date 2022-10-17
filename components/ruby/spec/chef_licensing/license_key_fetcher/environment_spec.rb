@@ -6,10 +6,10 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::Environment do
   describe "#fetch" do
 
     describe "when the environment contains the correct key and value" do
-      let(:env) { { "CHEF_LICENSE_KEY" => "12345678" } }
+      let(:env) { { "CHEF_LICENSE_KEY" => "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150" } }
       it "fetches the license key" do
         env_fetcher = ChefLicensing::LicenseKeyFetcher::Environment.new(env)
-        expect(env_fetcher.fetch).to eq(["12345678"])
+        expect(env_fetcher.fetch).to eq(["tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"])
       end
     end
 
@@ -17,7 +17,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::Environment do
       let(:env) { { "CHEF_LICENSE_KEY" => "wrongkindoflicensekeyvalue" } }
       it "raises malformed error while fetching" do
         env_fetcher = ChefLicensing::LicenseKeyFetcher::Environment.new(env)
-        expect { env_fetcher.fetch }.to raise_error(RuntimeError, /Malformed License Key passed in ENV variable CHEF_LICENSE_KEY - should be eight digits/)
+        expect { env_fetcher.fetch }.to raise_error(RuntimeError, /Malformed License Key passed in ENV variable CHEF_LICENSE_KEY/)
       end
     end
 
@@ -25,7 +25,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::Environment do
       let(:env) { { "CHEF_LICENSE_KEY" => "" } }
       it "raises malformed error while fetching" do
         env_fetcher = ChefLicensing::LicenseKeyFetcher::Environment.new(env)
-        expect { env_fetcher.fetch }.to raise_error(RuntimeError, /Malformed License Key passed in ENV variable CHEF_LICENSE_KEY - should be eight digits/)
+        expect { env_fetcher.fetch }.to raise_error(RuntimeError, /Malformed License Key passed in ENV variable CHEF_LICENSE_KEY/)
       end
     end
 

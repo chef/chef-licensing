@@ -2,6 +2,7 @@ require "chef-config/path_helper"
 require "chef-config/windows"
 require "logger"
 
+require_relative "config"
 require_relative "license_key_fetcher/argument"
 require_relative "license_key_fetcher/environment"
 require_relative "license_key_fetcher/file"
