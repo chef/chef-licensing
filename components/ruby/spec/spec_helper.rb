@@ -13,7 +13,7 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 
-  config.exclude_pattern = './vendor/**/*_spec.rb'
+  config.exclude_pattern = "./vendor/**/*_spec.rb"
 end
 
-ENV["CHEF_LICENSING_SERVER"] = "http://localhost-license-server/License"
+ENV["CHEF_LICENSE_SERVER"] = "http://localhost-license-server/License"
