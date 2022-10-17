@@ -3,7 +3,7 @@ require "chef-config/path_helper"
 require "yaml"
 require "date"
 require "fileutils" unless defined?(FileUtils)
-require "chef_licensing/license_key_fetcher"
+require_relative "../license_key_fetcher"
 
 module ChefLicensing
   class LicenseKeyFetcher

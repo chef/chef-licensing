@@ -16,6 +16,7 @@ module ChefLicensing
         puts "License validation in progress..."
         ChefLicensing::LicenseKeyValidator.validate!(license_id)
       rescue ChefLicensing::InvalidLicense => e
+        # TODO: change warn to logger
         warn e.message
         false
       end
