@@ -144,7 +144,7 @@ module ChefLicensing
           return fetch_license_id_by_manual_entry
         end
 
-        unless (match = answer.match(/^(q|Q)|(#{LICENSE_KEY_REGEX})$/))
+        unless (match = answer.match(/^#{QUIT_KEY_REGEX}|#{LICENSE_KEY_REGEX}$/))
           # TODO: this could be more graceful
           output.puts TUI_MSGS[:bad_format_msg]
           return fetch_license_id_by_manual_entry
