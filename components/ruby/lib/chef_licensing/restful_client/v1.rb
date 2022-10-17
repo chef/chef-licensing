@@ -7,7 +7,7 @@ module ChefLicensing
       END_POINTS = END_POINTS.merge({
         VALIDATE: "v1/validate",
         GENERATE_LICENSE: "v1/triallicense",
-      }).freeze
+      })
     end
   end
 end

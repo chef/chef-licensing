@@ -13,6 +13,8 @@ module ChefLicensing
         GENERATE_LICENSE: "triallicense",
         FEATURE_BY_NAME: "license-service/featurebyname",
         FEATURE_BY_ID: "license-service/featurebyid",
+        ENTITLEMENT_BY_NAME: "license-service/entitlementbyname",
+        ENTITLEMENT_BY_ID: "license-service/entitlementbyid"
       }.freeze
 
       def validate(license)
@@ -46,6 +48,28 @@ module ChefLicensing
       def feature_by_id(payload)
         handle_connection do |connection|
           response = connection.post(self.class::END_POINTS[:FEATURE_BY_ID]) do |request|
+            request.body = payload.to_json
+          end
+          raise RestfulClientError, format_error_from(response) unless response.success?
+
+          response.body
+        end
+      end
+
+      def entitlement_by_name(payload)
+        handle_connection do |connection|
+          response = connection.post(self.class::END_POINTS[:ENTITLEMENT_BY_NAME]) do |request|
+            request.body = payload.to_json
+          end
+          raise RestfulClientError, format_error_from(response) unless response.success?
+
+          response.body
+        end
+      end
+
+      def entitlement_by_id(payload)
+        handle_connection do |connection|
+          response = connection.post(self.class::END_POINTS[:ENTITLEMENT_BY_ID]) do |request|
             request.body = payload.to_json
           end
           raise RestfulClientError, format_error_from(response) unless response.success?
