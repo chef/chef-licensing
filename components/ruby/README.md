@@ -1,8 +1,44 @@
 # Chef Licensing
 
-Ruby support for Progress Chef License Key:
-##Setup
-- please define the `LICENSING_SERVER` env variables
+Ruby support for fetching, storing, validating, checking entitlement, and interacting with the user about Progress Chef License Keys.
+
+Functionality is divided into several areas:
+
+ * Storing License Keys Locally
+ * Interacting with the User (Text UI Engine)
+ * Interacting with the Licensing API
+ * Checking for an Air Gap
+ * Reading a setting for the License Server URL (TODO)
+
+ # Quick Start
+
+ TODO
+
+# Major Components
+
+## Storing License Keys Locally
+
+TODO
+
+## Air Gap Detection
+
+Detecting an air gap condition is needed so that the licensing system can detect when to operate in an offline mode.
+
+Air gap detection may be specified by CLI argument, ENV variable, or by attempting to reach the licensing server through HTTP.
+
+### ChefLicensing.air_gap_detected?
+
+The main entry point to air gap detection is this function. Simply call it, and it will check for (in order) whether the CHEF_AIR_GAP env variable has been set, whether `--airgap` is present in ARGV, and finally whether the Licensing Server URL (its /v1/version endpoint) can be reached by HTTPS. The return value is a boolean, and is cached for the life of the process - airgap detection happens only once.
+
+## TUI Engine
+
+TODO
+
+## Licensing Server API
+
+## Pre-requisites
+
+- Please define the `CHEF_LICENSE_SERVER` env variable to the URL of the Progress Chef License Service you are targeting.
 
  * Storage ( TODO )
  * ##Generation
@@ -12,15 +48,15 @@ Ruby support for Progress Chef License Key:
    ```ruby
         require 'chef_licensing/license_key_generator'
         ChefLicensing::LicenseKeyGenerator.generate!(
-            first_name: "FIRSTNAME", 
-            last_name: "LASTNAME", 
+            first_name: "FIRSTNAME",
+            last_name: "LASTNAME",
             email_id: "EMAILID",
             product: "PRODUCT",
-            company: "COMPANY", 
+            company: "COMPANY",
             phone: "PHONE"
         )
      ```
-   
+
    ### Response
       on success, it responds with a valid LICENSE KEY and on failure it raises an Error
    ### Errors
@@ -29,12 +65,12 @@ Ruby support for Progress Chef License Key:
         ChefLicensing::LicenseGenerationFailed
       ```
 
-    
- * ##Validation 
+
+ * ##Validation
    ###Usage
    ```ruby
       require 'chef_licensing/license_key_validator'
-   
+
       ChefLicensing::LicenseKeyValidator.validate!("LICENSE_KEY")
    ```
    ### Response
@@ -99,6 +135,4 @@ Docs TODO
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 

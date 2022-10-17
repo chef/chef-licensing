@@ -1,5 +1,2 @@
-module ChefLicensing
-  class Config
-    LICENSING_SERVER = ENV.fetch("CHEF_LICENSING_SERVER", "https://licensing.chef.co/License")
-  end
-end
+# This file is just used as a load point for component that load configuration.
+require_relative "license_server_url"
