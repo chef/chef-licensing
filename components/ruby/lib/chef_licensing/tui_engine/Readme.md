@@ -1,8 +1,8 @@
-## TUI Engine
+# TUI Engine
 
 TUI Engine helps to build a text user interface considering each step involved in the text user interface as interaction.
 
-### Syntax
+## Syntax
 
 A basic interaction is described as below:
 ```YAML
@@ -14,24 +14,17 @@ interactions:
     description: "Some description about this interaction"
 ```
 
+### Keys in an Interaction File
 The different keys in an interaction file are:
 
-1. `interactions`
+1. `interactions`: `interactions` key is the parent key in an interaction file. Every interaction must be defined under this key.
 
-   `interactions` key is the parent key in an interaction file. Every interaction must be defined under this key.
-
-2. `<interaction_id>`
-
-   `<interaction_id>` key is the identifier of any interaction, which defines a particular interaction.
+2. `<interaction_id>`: `<interaction_id>` key is the identifier of any interaction, which defines a particular interaction.
 
    Evert interaction file must have an interaction with the interaction id as `start`.
    The flow of interaction starts from the `start` interaction.
 
-3. `messages`
-
-   `messages` key is the key of an interaction which contains the texts to be displayed to the user.
-
-   `messages` can receive texts as an array or a string.
+3. `messages`:  `messages` key is the key of an interaction which contains the texts to be displayed to the user. `messages` can receive texts as an array or a string.
 
    For general purpose display, texts can be provided as string. 
 
@@ -45,9 +38,7 @@ The different keys in an interaction file are:
 
    - Example: `messages: ["The header of the menu", ["Option 1", "Option 2"]]`
    
-4. `prompt_type`
-   
-   `prompt_type` key is another key of an interaction which accepts value representing different types of prompt. Currently, the supported prompt types are:
+4. `prompt_type`: `prompt_type` key is another key of an interaction which accepts value representing different types of prompt. Currently, the supported prompt types are:
 
    - `say`: displays the message, returns nil
    - `yes`: displays the message, asks for input from user. Returns true when input is given as `yes` or `y`, and false on input of `no` or `n`.
@@ -60,68 +51,140 @@ The different keys in an interaction file are:
 
    This key is an optional and defaults to prompt_type of `say`.
 
-5. `paths`
+5. `paths`: `paths` key is another key of an interaction which accepts an array of interaction id to which it could be follow after the current responsibility of the interaction is complete.
 
-   `paths` key is another key of an interaction which accepts an array of interaction id to which it could be follow after the current responsibility of the interaction is complete.
+6. `action`: `action`  key is another key of an interaction which accepts a method name. The methods are to be defined in `TUIActions` class.
 
-6. `action`
-
-   `action`  key is another key of an interaction which accepts a method name. The methods are to be defined in `TUIActions` class.
-
-7. `response_path_map`
-
-   `response_path_map` key is another key of an interaction which contains a mapping of `<response>: <interaction id>`
+7. `response_path_map`: `response_path_map` key is another key of an interaction which contains a mapping of `<response>: <interaction id>`
 
    The response could be from either prompt display or from action, but not both.
 
-8. `description`
+8. `description`: `description` is an optional field of an interaction which is used to describe interaction for readability of the interaction file.
 
-   `description` is an optional field of an interaction which is used to describe interaction for readability of the interaction file.
-
+### Ways to define an interaction
 
 The different ways how we can define an interaction is shown below.
 
-1. TUI with one interaction.
+1. A simple interaction which displays message and has no further paths
    ```YAML
-   interactions:
-      start:
-        messages: "The message to be displayed in this interaction"
-        prompt_type: "say"
-        paths: []
-        description: "Some description about this interaction"
+   start:
+     messages: "The message to be displayed in this interaction"
+     prompt_type: "say"
+     paths: []
+     description: "Some description about this interaction"
    ```
-   Here, `start` is the interaction id. prompt
+   Here, `start` is the interaction id.
+
+   Since in the above interaction it has no path and prompt_type is say which is a default prompt_type for any interaction. The interaction could also be defined as:
+   ```YAML
+   start:
+     messages: "The message to be displayed in this interaction"
+   ```
+
+2. An interaction which has an action item and has no further path
+   ```YAML
+   add_inputs:
+     action: sum_of_input
+     paths: []
+     description: "Some description about this interaction"
+   ```
+   Here, sum_of_input is a method defined in tui_actions
+
+3. An interaction which displays message and has a single path
+   ```YAML
+   ask_number:
+     messages: "Please enter two numbers"
+     prompt_type: "ask"
+     paths: [validate_number]
+     description: "Some description about this interaction"
+   ```
+   Here, validate_number is the interaction id of next interaction.
+
+4. An interaction which has an action item and has a single path
+   ```YAML
+   validate_number:
+     action: is_number_valid?
+     paths: [add_inputs]
+     description: "Some description about this interaction"
+   ```
+   Here, add_inputs is the interaction id of next interaction.
+
+5. An interaction which displays a list of choices and has multiple paths
+   ```YAML
+   menu_prompt:
+    messages: ["Header of message", ["Option 1", "Option 2"]]
+    prompt_type: "select"
+    paths: [prompt_1_id, prompt_2_id]
+    response_path_map:
+      "Option 1": prompt_1_id
+      "Option 2": prompt_2_id
+   ```
+   Here, a menu is displayed with two options to select from. prompt_1_id and prompt_2_id are the two interaction id of next possible interactions. Here, `response_path_map` is required since different response from the user can lead to different interaction.
 
 
+6. An interaction which has an action item and has multiple paths
+   ```YAML
+   validate_number:
+     action: is_number_valid?
+     paths: [add_inputs, ask_number]
+     response_path_map:
+       "true": add_inputs
+       "false": ask_number
+   ```
+   Here, after the action is performed, based on the response of the action it could lead to different paths with the mapped interaction id.
 
-It separates out the high level flow from the core implementation. The high level flow could be defined in a yaml file which contains a collection of interactions which has the text to be displayed, any action associated with it, and the path to next interactions. 
+## Troubleshooting
+- Do not have response_path_map based on the response from prompts and action together in a single interaction, this could lead to ambiguity. So, atomize the interaction to either: 
+  - display message,
+  - take inputs from user, or
+  - to perform an action item
+- Prompt_type field defaults to say when not provided. So, mentioning correct prompt_type for menu, choices or taking input is necessary.
+- It is recommended to key the keys in response_path_map as strings when key is space separated to maintain the consistency between different type of response.
+- Any additional keys provided in the interaction file is ignored.
 
-Type of interactions could be:
-1. Display -> followed by one path
-2. Take input -> followed by one path
-3. Yes or no -> possible actions 2
-4. Menu/Options -> possible actions n
-5. Action - no display only operation
+## Example of a simple interaction file.
+```YAML
+interactions:
+  start:
+    messages: [start_message]
+    prompt_type: "say"
+    paths: [ask_if_user_has_license_id]
+    description: This field is for the user's understanding to write something about the interaction. This is an optional field.
 
+  ask_if_user_has_license_id:
+    messages: [ask_if_user_has_license_id_message]
+    prompt_type: "yes"
+    paths: [menu_prompt]
 
-Rules:
-An interaction can be either a prompt type or action type. But cannot be both. Explain why? Hint: Response_path_mapping
-It cannot have two different response path map at the same time.
+  menu_prompt:
+    messages: [menu_prompt_heading, [menu_prompt_value_1, menu_prompt_value_2, menu_prompt_value_3]]
+    prompt_type: "select"
+    paths: [prompt_1_id, prompt_2_id, prompt_3_id]
+    response_path_map:
+      menu_prompt_value_1: prompt_1_id
+      menu_prompt_value_2: prompt_2_id
+      menu_prompt_value_3: prompt_3_id
 
-# Define the must have keys
-# Yaml file empty -> give good exception - done
-# Wrong keys in yaml file
-# Missing keys in yaml file
-# Extra keys in yaml file
-# Wrong combinations of keys in yaml file (example: action and prompt cannot be toghether)
-# Validation of value used in yaml file
-# Raise exception when prompt_type is not supported
-# All exception message must be logger debug
-# Messages for customers should be generic
+  prompt_1_id:
+    messages: [prompt_1_id_message]
+    prompt_type: "say"
+    paths: []
 
-In yaml file:
-paths is optional and defaults to []
-prompt_type can be optional and defaults to say
-description is not used in the tui engine and is only for reference to understand interaction in the yaml
+  prompt_2_id:
+    messages: [prompt_2_id_message]
+    prompt_type: "ask"
+    paths: []
 
-Keep response_path key to be string for consistency
+  prompt_3_id:
+    action: validate_license_id
+    paths: [success, failure]
+    response_path_map:
+      true: success
+      false: failure
+
+  success:
+    messages: [prompt_1_id_message]
+
+  failure:
+    messages: [prompt_1_id_message]
+```
