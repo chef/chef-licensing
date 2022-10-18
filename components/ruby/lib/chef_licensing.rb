@@ -6,8 +6,8 @@ require "chef_licensing/license_software_entitlement"
 
 module ChefLicensing
   class << self
-    def check_feature_entitlement!(feature)
-      ChefLicensing::LicenseFeatureEntitlement.check_entitlement!(license_keys, feature_name: feature)
+    def check_feature_entitlement!(feature_name: nil, feature_id: nil)
+      ChefLicensing::LicenseFeatureEntitlement.check_entitlement!(license_keys: license_keys, feature_name: feature_name)
     end
 
     def check_software_entitlement!(software_entitlement_name: nil, software_entitlement_id: nil)

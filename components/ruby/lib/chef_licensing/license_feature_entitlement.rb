@@ -3,17 +3,17 @@ require_relative "exceptions/invalid_entitlement"
 
 module ChefLicensing
   class LicenseFeatureEntitlement
-    attr_reader :licenses
+    attr_reader :license_keys
 
     class << self
-      def check_entitlement!(license_keys, feature_name: nil, feature_id: nil)
-        new(license_keys, feature_name, feature_id).check_entitlement!
+      def check_entitlement!(license_keys: [], feature_name: nil, feature_id: nil)
+        new(license_keys: license_keys, feature_name: feature_name , feature_id: feature_id).check_entitlement!
       end
     end
 
-    def initialize(license_keys, feature_name, feature_id, restful_client: ChefLicensing::RestfulClient::V1)
+    def initialize(license_keys: [], feature_name: nil, feature_id: nil, restful_client: ChefLicensing::RestfulClient::V1)
       license_keys || raise(ArgumentError, "Missing Params: `license_keys`")
-      @licenses = license_keys.is_a?(Array) ? license_keys : [license_keys]
+      @license_keys = license_keys.is_a?(Array) ? license_keys : [license_keys]
       @feature_name = feature_name
       @feature_id = feature_id
       raise ArgumentError, "Either of `feature_id` or `feature_name` should be provided" if feature_name.nil? && feature_id.nil?
@@ -41,7 +41,7 @@ module ChefLicensing
 
     def build_payload
       {
-        licenseIds: licenses,
+        licenseIds: license_keys,
       }.tap do |payload|
         if feature_name
           payload[:featureName] = feature_name
