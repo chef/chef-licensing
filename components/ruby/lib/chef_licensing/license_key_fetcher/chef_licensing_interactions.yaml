@@ -27,7 +27,15 @@ interactions:
   ask_for_license_id:
     messages: "Please input your License ID: "
     prompt_type: "ask"
-    paths: [validate_license_id]
+    paths: [validate_license_id_pattern]
+
+  validate_license_id_pattern:
+    action: is_license_with_valid_pattern?
+    paths: [validate_license_id_with_api, ask_for_license_id]
+    response_path_map:
+      "true": validate_license_id_with_api
+      "false": ask_for_license_id
+    description: "is_license_with_valid_pattern? is a method defined in TUIActions class"
 
   ask_for_license_generation:
     messages: ["Would you like to generate a license id?"]
@@ -41,13 +49,13 @@ interactions:
     messages: "This is yet to be implemented."
     paths: [exit]
 
-  validate_license_id:
-    action: is_license_valid?
+  validate_license_id_with_api:
+    action: is_license_valid_on_server?
     paths: [validation_success, validation_failure]
     response_path_map:
       "true": validation_success
       "false": validation_failure
-    description: "is_license_valid is a method defined in TUIActions class"
+    description: "is_license_valid_on_server? is a method defined in TUIActions class"
 
   validation_success:
     messages: "License validated successfully."
@@ -56,6 +64,6 @@ interactions:
   validation_failure:
     messages: "License is not valid. Please try again."
     paths: [ask_for_license_id]
-  
+
   exit:
     messages: "Thank you."
