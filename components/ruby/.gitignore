@@ -2,5 +2,6 @@
 *.rbc
 .rvmrc
 .ruby-version
+.rspec_status
 .bundle
 vendor

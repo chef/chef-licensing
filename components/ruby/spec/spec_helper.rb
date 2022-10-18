@@ -17,3 +17,10 @@ RSpec.configure do |config|
 end
 
 ENV["CHEF_LICENSE_SERVER"] = "http://localhost-license-server/License"
+
+# This is required when mocked down key pressed in tui_engine_spec.rb
+class StringIO
+  def wait_readable(*)
+    true
+  end
+end
