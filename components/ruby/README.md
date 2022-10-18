@@ -80,15 +80,58 @@ TODO
         ChefLicensing::InvalidLicense
       ```
 
- * Entitlement
-   ## Features Entitlement
+## Entitlement
+
+## Software Entitlement
+
+Software entitlement check validates the software entitlement against given licenses.
+
+### ChefLicensing.check_software_entitlement
+
+Accepts the software_entitlement_name or software_entitlement_id as parameter.
+
+* check_software_entitlment by name:
+
+```ruby
+require "chef_licensing"
+ChefLicensing.check_software_entitlement!(software_entitlement_name: "Software-Name")
+```
+
+* check_software_entitlment by id:
+
+```ruby
+require "chef_licensing"
+ChefLicensing.check_software_entitlement!(software_entitlement_id: "Software-ID")
+```
+
+* Returns `true` if software is entitled to the license else raises `ChefLicensing::InvalidEntitlement` exception.
+
+### Software Entitlement API service class usage:
+
+* Check with software entitlement name
+
+ ```ruby
+require 'chef_licensing/license_software_entitlement'
+ChefLicensing::LicenseSoftwareEntitlement.check!(license_keys: license_keys, software_entitlement_name: software_entitlement_name)
+```
+
+* Check with software entitlement name
+
+ ```ruby
+require 'chef_licensing/license_software_entitlement'
+ChefLicensing::LicenseSoftwareEntitlement.check!(license_keys: license_keys, software_entitlement_id: software_entitlement_id)
+```
+
+* Returns `true` if software is entitled to the license else raises `ChefLicensing::InvalidEntitlement` exception.
+
+## Features Entitlement
    ### Usage of check feature entitlement
    - Accepts the feature name as the argument
 
    #### Validate the feature for entitlements
    ```ruby
       require "chef_licensing"
-      ChefLicensing.check_feature_entitlement!('FEATURE_NAME') 
+      ChefLicensing.check_feature_entitlement!('FEATURE_NAME')
    ```
    ### Usage of Service class
     - License Feature Validator can accept either of Feature Name or Feature ID.
@@ -98,21 +141,21 @@ TODO
    #### Validate with Single License and Feature ID
    ```ruby
       require 'chef_licensing/license_feature_entitlement'
-   
+
       ChefLicensing::LicenseFeatureEntitlement.check_entitlement!("LICENSE", feature_id: "FEATURE_ID")
    ```
- 
+
    #### Validate with Multiple license and Feature ID
    ```ruby
       require 'chef_licensing/license_feature_entitlement'
-   
+
       ChefLicensing::LicenseFeatureEntitlement.check_entitlement!(["LICENSES"], feature_id: "FEATURE_ID")
    ```
-   
+
    #### Validate with Feature Name
    ```ruby
       require 'chef_licensing/license_feature_entitlement'
-   
+
       ChefLicensing::LicenseFeatureEntitlement.check_entitlement!(["LICENSES"], feature_name: "FEATURE_NAME")
    ```
 

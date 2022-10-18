@@ -14,6 +14,7 @@ module ChefLicensing
       ChefLicensing::LicenseSoftwareEntitlement.check!(license_keys: license_keys, software_entitlement_name: software_entitlement_name, software_entitlement_id: software_entitlement_id)
     end
 
+    # @note no in-memory caching of the licenses so that it fetches updated licenses always
     def license_keys
       ChefLicensing::LicenseKeyFetcher.fetch_and_persist
     end
