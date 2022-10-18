@@ -1,20 +1,20 @@
 # Chef Licensing
 
-Ruby support for fetching, storing, validating, checking entitlement, and interacting with the user about Progress Chef License Keys.
+Ruby support for fetching, storing, validating, checking entitlement, and interacting with the User about Progress Chef License Keys.
 
 Functionality is divided into several areas:
 
- * Storing License Keys Locally
- * Interacting with the User (Text UI Engine)
- * Interacting with the Licensing API
- * Checking for an Air Gap
- * Reading a setting for the License Server URL (TODO)
+* Storing License Keys Locally
+* Interacting with the User (Text UI Engine)
+* Interacting with the Licensing API
+* Checking for an Air Gap
+* Reading a setting for the License Server URL (TODO)
 
- # Quick Start
+## Quick Start
 
- TODO
+TODO
 
-# Major Components
+## Major Components
 
 ## Storing License Keys Locally
 
@@ -36,49 +36,64 @@ TODO
 
 ## Licensing Server API
 
-## Pre-requisites
+### Pre-requisites
 
-- Please define the `CHEF_LICENSE_SERVER` env variable to the URL of the Progress Chef License Service you are targeting.
+Please define the `CHEF_LICENSE_SERVER` env variable to the URL of the Progress Chef License Service you are targeting.
 
- * Storage ( TODO )
- * ##Generation
-   ### Summary
-    LicenseKey generation abstracts a RESTful action from the License Server. It raises Exceptions when license generation fails
-   ###Usage
-   ```ruby
-        require 'chef_licensing/license_key_generator'
-        ChefLicensing::LicenseKeyGenerator.generate!(
-            first_name: "FIRSTNAME",
-            last_name: "LASTNAME",
-            email_id: "EMAILID",
-            product: "PRODUCT",
-            company: "COMPANY",
-            phone: "PHONE"
-        )
-     ```
+## Storage
 
-   ### Response
-      on success, it responds with a valid LICENSE KEY and on failure it raises an Error
-   ### Errors
-      On errors, message from the license gen server is directly return as exception message
-      ```ruby
-        ChefLicensing::LicenseGenerationFailed
-      ```
+## License Generation
+
+### Summary:
+
+LicenseKey generation abstracts a RESTful action from the License Server. It raises Exceptions when license generation fails
+
+### License Key Genereation Usage:
 
 
- * ##Validation
-   ###Usage
-   ```ruby
-      require 'chef_licensing/license_feature_entitlement'
+```ruby
+require 'chef_licensing/license_key_generator'
 
-      ChefLicensing::LicenseKeyValidator.validate!("LICENSE_KEY")
-   ```
-   ### Response
-     on success, it responds `true` and on failure it raises an Error
-   ### Errors
-      ```ruby
-        ChefLicensing::InvalidLicense
-      ```
+ChefLicensing::LicenseKeyGenerator.generate!(
+  first_name: "FIRSTNAME",
+  last_name: "LASTNAME",
+  email_id: "EMAILID",
+  product: "PRODUCT",
+  company: "COMPANY",
+  phone: "PHONE"
+)
+```
+
+### License Key Genereation Response:
+
+On success, it responds with a valid LICENSE KEY and on failure it raises an Error
+
+### License Key Genereation Errors:
+
+On errors, message from the license gen server is directly return as exception message
+
+```ruby
+ChefLicensing::LicenseGenerationFailed
+```
+
+## License Validation
+
+### License Validation Usage
+
+```ruby
+require 'chef_licensing/license_feature_entitlement'
+ChefLicensing::LicenseKeyValidator.validate!("LICENSE_KEY")
+```
+
+### License Validation Response
+
+On success, it returns `true` and on failure it raises an Error
+
+### License Validation Exceptions
+
+```ruby
+  ChefLicensing::InvalidLicense
+```
 
 ## Entitlement
 
@@ -125,53 +140,65 @@ ChefLicensing::LicenseSoftwareEntitlement.check!(license_keys: license_keys, sof
 * Returns `true` if software is entitled to the license else raises `ChefLicensing::InvalidEntitlement` exception.
 
 ## Features Entitlement
-   ### Usage of check feature entitlement
-   - Accepts the feature name as the argument
 
-   #### Validate the feature for entitlements
-   ```ruby
-      require "chef_licensing"
-      ChefLicensing.check_feature_entitlement!('FEATURE_NAME')
-   ```
-   ### Usage of Service class
-    - License Feature Validator can accept either of Feature Name or Feature ID.
-    - Also it can accept multiple License IDs at the same time.
-    - the entitlement check would be successful if the feature is entitled by at least one of the given licenses
+Feature entitlement check allows validating the premium features entitlement against the license.
 
-   #### Validate with Single License and Feature ID
-   ```ruby
-      require 'chef_licensing/license_feature_entitlement'
+### ChefLicensing.check_feature_entitlement
 
-      ChefLicensing::LicenseFeatureEntitlement.check_entitlement!("LICENSE", feature_id: "FEATURE_ID")
-   ```
+Accepts the feature name as the argument
 
-   #### Validate with Multiple license and Feature ID
-   ```ruby
-      require 'chef_licensing/license_feature_entitlement'
+#### check_feature_entitlment usage
 
-      ChefLicensing::LicenseFeatureEntitlement.check_entitlement!(["LICENSES"], feature_id: "FEATURE_ID")
-   ```
+```ruby
+require "chef_licensing"
+ChefLicensing.check_feature_entitlement!('FEATURE_NAME')
+```
 
-   #### Validate with Feature Name
-   ```ruby
-      require 'chef_licensing/license_feature_entitlement'
+### Usage of Service class
 
-      ChefLicensing::LicenseFeatureEntitlement.check_entitlement!(["LICENSES"], feature_name: "FEATURE_NAME")
-   ```
+* License Feature Validator can accept either of Feature Name or Feature ID.
+* Also it can accept multiple License IDs at the same time.
+* the entitlement check would be successful if the feature is entitled by at least one of the given licenses
 
-   ### Response
-     on success, it responds `true` meaning the feature is entitled to one of the given licenses
-   and on failure it raises an Error
-   ### Errors
-   - in case of invalid license it would raise invalid license error
-   ```ruby
-      ChefLicensing::InvalidLicense
-   ```
-    - in case of invalid entitlements it would raise an invalid entitlement error
-   ```ruby
-      ChefLicensing::InvalidEntitlement
-   ```
+#### Validate with Single License and Feature ID
 
+```ruby
+require 'chef_licensing/license_feature_entitlement'
+ChefLicensing::LicenseFeatureEntitlement.check_entitlement!("LICENSE", feature_id: "FEATURE_ID")
+```
+
+#### Validate with Multiple license and Feature ID
+
+```ruby
+require 'chef_licensing/license_feature_entitlement'
+ChefLicensing::LicenseFeatureEntitlement.check_entitlement!(["LICENSES"], feature_id: "FEATURE_ID")
+```
+
+#### Validate with Feature Name
+
+```ruby
+require 'chef_licensing/license_feature_entitlement'
+ChefLicensing::LicenseFeatureEntitlement.check_entitlement!(["LICENSES"], feature_name: "FEATURE_NAME")
+```
+
+### Response
+
+On success, it returns `true` meaning the feature is entitled to one of the given licenses and
+on failure it raises an Error
+
+### Errors
+
+* in case of invalid license it would raise invalid license exception
+
+```ruby
+ChefLicensing::InvalidLicense
+```
+
+* in case of invalid entitlements it would raise an invalid entitlement exception
+
+```ruby
+ChefLicensing::InvalidEntitlement
+```
 
 ## Usage
 
@@ -180,4 +207,3 @@ Docs TODO
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
