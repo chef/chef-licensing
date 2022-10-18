@@ -13,13 +13,13 @@ RSpec.describe ChefLicensing do
     let(:license_keys) {
       %w{tmns-58555821-925e-4a27-8fdc-e79dae5a425b-9763 tmns-58555821-925e-4a27-8fdc-e79dae5a425b-1234}
     }
-    subject { described_class.check_feature_entitlement!(feature) }
+    subject { described_class.check_feature_entitlement!(feature_name: feature) }
 
     before do
       allow(ChefLicensing::LicenseKeyFetcher).to receive(:fetch_and_persist).and_return(license_keys)
       allow(described_class).to receive(:licenses).and_return(license_keys)
       allow(ChefLicensing::LicenseFeatureEntitlement).to receive(:check_entitlement!)
-        .with(license_keys, feature_name: feature)
+        .with(license_keys: license_keys, feature_name: feature)
         .and_return(true)
     end
 
@@ -37,7 +37,7 @@ RSpec.describe ChefLicensing do
 
       before do
         allow(ChefLicensing::LicenseFeatureEntitlement).to receive(:check_entitlement!)
-          .with(license_keys, feature_name: feature)
+          .with(license_keys: license_keys, feature_name: feature)
           .and_raise(ChefLicensing::InvalidEntitlement)
       end
 
