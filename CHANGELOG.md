@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.2.4 -->
-## [0.2.4](https://github.com/chef/chef-licensing/tree/0.2.4) (2022-10-18)
+<!-- latest_release 0.2.5 -->
+## [0.2.5](https://github.com/chef/chef-licensing/tree/0.2.5) (2022-10-18)
 
 #### Merged Pull Requests
-- CFINSPEC-24 Software/Product entitlement check. [#19](https://github.com/chef/chef-licensing/pull/19) ([Vasu1105](https://github.com/Vasu1105))
+- Few Readme fixes [#21](https://github.com/chef/chef-licensing/pull/21) ([Vasu1105](https://github.com/Vasu1105))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Few Readme fixes [#21](https://github.com/chef/chef-licensing/pull/21) ([Vasu1105](https://github.com/Vasu1105)) <!-- 0.2.5 -->
 - CFINSPEC-24 Software/Product entitlement check. [#19](https://github.com/chef/chef-licensing/pull/19) ([Vasu1105](https://github.com/Vasu1105)) <!-- 0.2.4 -->
 - Feature/cfinspec 474 features validation [#14](https://github.com/chef/chef-licensing/pull/14) ([sathish-progress](https://github.com/sathish-progress)) <!-- 0.2.3 -->
 - AirGap Updates [#17](https://github.com/chef/chef-licensing/pull/17) ([clintoncwolfe](https://github.com/clintoncwolfe)) <!-- 0.2.2 -->
