@@ -42,7 +42,7 @@ RSpec.describe ChefLicensing::LicenseFeatureEntitlement do
     }
   }
 
-  subject { described_class.check_entitlement!(license_key, feature_name: feature_name) }
+  subject { described_class.check_entitlement!(license_keys: [license_key], feature_name: feature_name) }
 
   describe ".check_entitlement!" do
 
@@ -121,7 +121,7 @@ RSpec.describe ChefLicensing::LicenseFeatureEntitlement do
           ],
         }
       }
-      subject { described_class.check_entitlement!(license_key, feature_id: feature_id) }
+      subject { described_class.check_entitlement!(license_keys: [license_key], feature_id: feature_id) }
 
       before do
         stub_request(:post, "#{ChefLicensing.license_server_url}/license-service/featurebyid")
@@ -160,8 +160,8 @@ RSpec.describe ChefLicensing::LicenseFeatureEntitlement do
         let(:license_key) {
           "tmns-90564f0a-ad22-482f-b57d-569f3fb1c11e-1234"
         }
-        let(:feature_name) {
-          "Inspec-Parall"
+        let(:feature_id) {
+          "Inspec-Parall-id"
         }
 
         before do
