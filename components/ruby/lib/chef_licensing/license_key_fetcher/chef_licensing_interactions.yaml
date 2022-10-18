@@ -68,5 +68,96 @@ interactions:
     messages: "License is not valid. Please try again."
     paths: [ask_for_license_id]
 
+  ask_for_license_generation:
+    messages: "Would you like to generate a license id?"
+    prompt_type: "yes"
+    paths: [gather_user_first_name_for_license_generation, exit]
+    response_path_map:
+      "true": gather_user_first_name_for_license_generation
+      "false": exit
+
+  gather_user_first_name_for_license_generation:
+    messages: "Please enter your first name"
+    prompt_type: "ask"
+    paths: [validate_user_first_name_for_license_generation]
+
+  validate_user_first_name_for_license_generation:
+    action: is_user_name_valid?
+    paths: [gather_user_last_name_for_license_generation, gather_user_first_name_for_license_generation]
+    response_path_map:
+      "true": gather_user_last_name_for_license_generation
+      "false": gather_user_first_name_for_license_generation
+
+  gather_user_last_name_for_license_generation:
+    messages: "Please enter your last name"
+    prompt_type: "ask"
+    paths: [validate_user_last_name_for_license_generation]
+
+  validate_user_last_name_for_license_generation:
+    action: is_user_name_valid?
+    paths: [gather_user_email_for_license_generation, gather_user_last_name_for_license_generation]
+    response_path_map:
+      "true": gather_user_email_for_license_generation
+      "false": gather_user_last_name_for_license_generation
+
+  gather_user_email_for_license_generation:
+    messages: "Please enter your Email address"
+    prompt_type: "ask"
+    paths: [validate_user_email_for_license_generation]
+
+  validate_user_email_for_license_generation:
+    action: is_email_valid?
+    paths: [gather_user_company_for_license_generation, gather_user_email_for_license_generation]
+    response_path_map:
+      "true": gather_user_company_for_license_generation
+      "false": gather_user_email_for_license_generation
+
+  gather_user_company_for_license_generation:
+    messages: "Please enter your Company Name"
+    prompt_type: "ask"
+    paths: [validate_user_company_name_for_license_generation]
+
+  validate_user_company_name_for_license_generation:
+    action: is_company_name_valid?
+    paths: [gather_user_phone_no_for_license_generation, gather_user_company_for_license_generation]
+    response_path_map:
+      "true": gather_user_phone_no_for_license_generation
+      "false": gather_user_company_for_license_generation
+
+  gather_user_phone_no_for_license_generation:
+    messages: "Please enter your Phone No."
+    prompt_type: "ask"
+    paths: [validate_user_phone_no]
+
+  validate_user_phone_no:
+    action: is_phone_no_valid?
+    paths: [generate_license, gather_user_phone_no_for_license_generation]
+    response_path_map:
+      "true": generate_license
+      "false": gather_user_phone_no_for_license_generation
+
+  generate_license:
+    action: generate_license
+    paths: [license_generation_success, license_generation_failure]
+    response_path_map:
+      "true": license_generation_success
+      "false": license_generation_failure
+
+  license_generation_success:
+    messages: "Your license has been generated and has been emailed to you."
+    paths: [ask_for_license_id]
+
+  license_generation_failure:
+    messages: ["An error occured while generating your license. Please select an option:", ["Try again, Raise an issue with support"]]
+    prompt_type: "select"
+    paths: [generate_license, raise_issue_with_support]
+    response_path_map:
+      "Try again": generate_license
+      "Raise an issue with support": raise_issue_with_support
+
+  raise_issue_with_support:
+    messages: "This is yet to be implemented."
+    paths: [exit]
+
   exit:
     messages: "Thank you."
