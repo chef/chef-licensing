@@ -10,8 +10,11 @@ interactions:
   start:
     messages: "The message to be displayed in this interaction"
     prompt_type: "say"
-    paths: []
+    paths: [exit]
     description: "Some description about this interaction"
+
+  exit:
+    messages: "Thank you"
 ```
 
 ### Keys in an Interaction File
@@ -21,8 +24,8 @@ The different keys in an interaction file are:
 
 2. `<interaction_id>`: `<interaction_id>` key is the identifier of any interaction, which defines a particular interaction.
 
-   Evert interaction file must have an interaction with the interaction id as `start`.
-   The flow of interaction starts from the `start` interaction.
+   Evert interaction file must have the `start` and `exit` interaction.
+   The flow of interaction starts from the `start` interaction and always ends on `exit` interaction.
 
 3. `messages`:  `messages` key is the key of an interaction which contains the texts to be displayed to the user. `messages` can receive texts as an array or a string.
 
@@ -51,7 +54,7 @@ The different keys in an interaction file are:
 
    This key is an optional and defaults to prompt_type of `say`.
 
-5. `paths`: `paths` key is another key of an interaction which accepts an array of interaction id to which it could be follow after the current responsibility of the interaction is complete.
+5. `paths`: `paths` key is another key of an interaction which accepts an array of interaction id to which it could be follow, after the current responsibility of the interaction is complete. Every interaction must have a path except for the `exit` interaction.
 
 6. `action`: `action`  key is another key of an interaction which accepts a method name. The methods are to be defined in `TUIActions` class.
 
@@ -65,32 +68,35 @@ The different keys in an interaction file are:
 
 The different ways how we can define an interaction is shown below.
 
-1. A simple interaction which displays message and has no further paths
+1. A simple interaction which displays message and exits with exit message.
    ```YAML
-   start:
-     messages: "The message to be displayed in this interaction"
-     prompt_type: "say"
-     paths: []
-     description: "Some description about this interaction"
-   ```
-   Here, `start` is the interaction id.
+   interactions:
+      start:
+        messages: "The message to be displayed in this interaction"
+        prompt_type: "say"
+        paths: [exit]
+        description: "Some description about this interaction"
 
-   Since in the above interaction it has no path and prompt_type is say which is a default prompt_type for any interaction. The interaction could also be defined as:
+       exit:
+         messages: "Thank you"
+         prompt_type: "say"
+         paths: []
+         description: "This is the exit interaction"
+   ```
+   Here, `start` and `exit` are the interaction id.
+
+   Since, prompt_type defaults to say for any interaction, description is an optional field and paths is empty for `exit` interaction. The above interactions interaction could also be defined as:
    ```YAML
-   start:
-     messages: "The message to be displayed in this interaction"
+   interactions:
+      start:
+        messages: "The message to be displayed in this interaction"
+        paths: [exit]
+
+       exit:
+         messages: "Thank you"
    ```
 
-2. An interaction which has an action item and has no further path
-   ```YAML
-   add_inputs:
-     action: sum_of_input
-     paths: []
-     description: "Some description about this interaction"
-   ```
-   Here, sum_of_input is a method defined in tui_actions
-
-3. An interaction which displays message and has a single path
+2. An interaction which displays message and has a single path
    ```YAML
    ask_number:
      messages: "Please enter two numbers"
@@ -100,7 +106,7 @@ The different ways how we can define an interaction is shown below.
    ```
    Here, validate_number is the interaction id of next interaction.
 
-4. An interaction which has an action item and has a single path
+3. An interaction which has an action item and has a single path
    ```YAML
    validate_number:
      action: is_number_valid?
@@ -109,7 +115,7 @@ The different ways how we can define an interaction is shown below.
    ```
    Here, add_inputs is the interaction id of next interaction.
 
-5. An interaction which displays a list of choices and has multiple paths
+4. An interaction which displays a list of choices and has multiple paths
    ```YAML
    menu_prompt:
     messages: ["Header of message", ["Option 1", "Option 2"]]
@@ -122,7 +128,7 @@ The different ways how we can define an interaction is shown below.
    Here, a menu is displayed with two options to select from. prompt_1_id and prompt_2_id are the two interaction id of next possible interactions. Here, `response_path_map` is required since different response from the user can lead to different interaction.
 
 
-6. An interaction which has an action item and has multiple paths
+5. An interaction which has an action item and has multiple paths
    ```YAML
    validate_number:
      action: is_number_valid?
@@ -130,6 +136,7 @@ The different ways how we can define an interaction is shown below.
      response_path_map:
        "true": add_inputs
        "false": ask_number
+      description: "is_number_valid? is a method and should be defined by the user in TUI Actions"
    ```
    Here, after the action is performed, based on the response of the action it could lead to different paths with the mapped interaction id.
 
@@ -141,50 +148,46 @@ The different ways how we can define an interaction is shown below.
 - Prompt_type field defaults to say when not provided. So, mentioning correct prompt_type for menu, choices or taking input is necessary.
 - It is recommended to key the keys in response_path_map as strings when key is space separated to maintain the consistency between different type of response.
 - Any additional keys provided in the interaction file is ignored.
+- Paths is mandatory for all interactions except for `exit` interaction.
 
-## Example of a simple interaction file.
+## Example
 ```YAML
 interactions:
   start:
-    messages: [start_message]
+    messages: ["This is a start message"]
     prompt_type: "say"
-    paths: [ask_if_user_has_license_id]
-    description: This field is for the user's understanding to write something about the interaction. This is an optional field.
+    paths: [prompt_2]
+    description: This is an optional field. WYOD (Write your own description)
 
-  ask_if_user_has_license_id:
-    messages: [ask_if_user_has_license_id_message]
+  prompt_2:
+    messages: ["Do you agree?"]
     prompt_type: "yes"
-    paths: [menu_prompt]
-
-  menu_prompt:
-    messages: [menu_prompt_heading, [menu_prompt_value_1, menu_prompt_value_2, menu_prompt_value_3]]
-    prompt_type: "select"
-    paths: [prompt_1_id, prompt_2_id, prompt_3_id]
+    paths: [prompt_3, prompt_4]
     response_path_map:
-      menu_prompt_value_1: prompt_1_id
-      menu_prompt_value_2: prompt_2_id
-      menu_prompt_value_3: prompt_3_id
+      "true": prompt_3
+      "false": prompt_4
 
-  prompt_1_id:
-    messages: [prompt_1_id_message]
-    prompt_type: "say"
-    paths: []
+  prompt_3:
+    messages: ["This is message for prompt 3 - Reached when user says yes"]
+    prompt_type: "ok"
+    paths: [prompt_6]
 
-  prompt_2_id:
-    messages: [prompt_2_id_message]
+  prompt_4:
+    messages: ["This is message for prompt 4 - Reached when user says no"]
+    prompt_type: "warn"
+    paths: [prompt_5]
+
+  prompt_5:
+    messages: ["This is message for prompt 5"]
+    prompt_type: "error"
+    paths: [exit]
+
+  prompt_6:
+    messages: ["This is message for prompt 6"]
     prompt_type: "ask"
-    paths: []
+    paths: [exit]
 
-  prompt_3_id:
-    action: validate_license_id
-    paths: [success, failure]
-    response_path_map:
-      true: success
-      false: failure
-
-  success:
-    messages: [prompt_1_id_message]
-
-  failure:
-    messages: [prompt_1_id_message]
+  exit:
+    messages: ["This is the exist prompt"]
+    prompt_type: "say"
 ```

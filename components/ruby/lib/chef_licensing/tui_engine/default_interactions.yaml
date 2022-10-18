@@ -22,7 +22,7 @@ interactions:
   prompt_1_id:
     messages: [prompt_1_id_message]
     prompt_type: "say"
-    paths: []
+    paths: [exit]
 
   prompt_2_id:
     messages: [prompt_2_id_message]
@@ -30,7 +30,7 @@ interactions:
     prompt_attributes:
       required: true
       modify: capitalize
-    paths: []
+    paths: [exit]
 
   prompt_3_id:
     action: validate_license_id
@@ -42,12 +42,12 @@ interactions:
   success:
     messages: [prompt_1_id_message]
     prompt_type: "say"
-    paths: []
+    paths: [exit]
 
   failure:
     messages: [prompt_1_id_message]
     prompt_type: "say"
-    paths: []
-  
+    paths: [exit]
 
-
+  exit:
+    messages: "Thank you"
