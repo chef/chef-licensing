@@ -38,6 +38,32 @@ module ChefLicensing
         logger.debug("License is invalid")
         false
       end
+
+      def is_user_name_valid?(inputs)
+        # TBD validation logic
+        true
+      end
+
+      def is_email_valid?(inputs)
+        # TBD validation logic
+        true
+      end
+
+      def is_company_name_valid?(inputs)
+        # TBD validation logic
+        true
+      end
+
+      def is_phone_no_valid?(inputs)
+        # TBD validation logic
+        true
+      end
+
+      def generate_license(inputs)
+        # TBD validation logic
+        true
+      end
+
     end
   end
 end
