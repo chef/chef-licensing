@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    chef_licensing (0.2.3)
+    chef_licensing (0.2.4)
       chef-config (>= 15)
       faraday (~> 2.5, >= 2.5.2)
       tty-prompt (~> 0.23)

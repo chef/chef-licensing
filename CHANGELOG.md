@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.2.3 -->
-## [0.2.3](https://github.com/chef/chef-licensing/tree/0.2.3) (2022-10-17)
+<!-- latest_release 0.2.4 -->
+## [0.2.4](https://github.com/chef/chef-licensing/tree/0.2.4) (2022-10-18)
 
 #### Merged Pull Requests
-- Feature/cfinspec 474 features validation [#14](https://github.com/chef/chef-licensing/pull/14) ([sathish-progress](https://github.com/sathish-progress))
+- CFINSPEC-24 Software/Product entitlement check. [#19](https://github.com/chef/chef-licensing/pull/19) ([Vasu1105](https://github.com/Vasu1105))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CFINSPEC-24 Software/Product entitlement check. [#19](https://github.com/chef/chef-licensing/pull/19) ([Vasu1105](https://github.com/Vasu1105)) <!-- 0.2.4 -->
 - Feature/cfinspec 474 features validation [#14](https://github.com/chef/chef-licensing/pull/14) ([sathish-progress](https://github.com/sathish-progress)) <!-- 0.2.3 -->
 - AirGap Updates [#17](https://github.com/chef/chef-licensing/pull/17) ([clintoncwolfe](https://github.com/clintoncwolfe)) <!-- 0.2.2 -->
 - Methodize License Server Setting, rename to CHEF_LICENSE_SERVER [#18](https://github.com/chef/chef-licensing/pull/18) ([clintoncwolfe](https://github.com/clintoncwolfe)) <!-- 0.2.1 -->
