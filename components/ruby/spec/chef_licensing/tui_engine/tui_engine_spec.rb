@@ -173,8 +173,8 @@ RSpec.describe ChefLicensing::TUIEngine do
 
       let(:tui_engine) { described_class.new(config) }
 
-      it "should contain only the start interaction" do
-        expect(tui_engine.run_interaction).to eq({ start: nil })
+      it "should raise exception of incomplete path" do
+        expect { tui_engine.run_interaction }.to raise_error(ChefLicensing::TUIEngine::IncompleteFlowException)
       end
     end
 

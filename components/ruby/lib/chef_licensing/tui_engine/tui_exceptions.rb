@@ -6,5 +6,7 @@ module ChefLicensing
     end
 
     class PromptTimeout < Timeout::Error; end
+
+    class IncompleteFlowException < StandardError; end
   end
 end
