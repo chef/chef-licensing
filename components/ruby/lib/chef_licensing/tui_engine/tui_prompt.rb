@@ -11,7 +11,7 @@ module ChefLicensing
       def initialize(opts = {})
         @output = opts[:output] || STDOUT
         @input = opts[:input] || STDIN
-        @logger = opts[:logger] || Logger.new(STDOUT)
+        @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
         @tty_prompt = TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit, output: output, input: input)
       end
 

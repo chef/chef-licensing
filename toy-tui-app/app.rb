@@ -7,7 +7,7 @@ require_relative "../components/ruby/lib/chef_licensing/license_key_fetcher"
 require 'logger'
 
 config = {
-  logger: Logger.new(STDOUT),
+  logger: Logger.new(STDERR),
   input: STDIN,
   output: STDOUT,
 }

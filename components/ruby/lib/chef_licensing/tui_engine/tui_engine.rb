@@ -5,10 +5,11 @@ require_relative "tui_engine_state"
 module ChefLicensing
   class TUIEngine
 
-    attr_accessor :interaction_data, :tui_interactions, :opts
+    attr_accessor :interaction_data, :tui_interactions, :opts, :logger
 
     def initialize(opts = {})
       @opts = opts
+      @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
       @tui_interactions = {}
       initialization_of_engine(opts[:interaction_file])
     end
@@ -42,6 +43,7 @@ module ChefLicensing
       verify_interaction_data
       store_interaction_objects
       build_interaction_path
+      logger.debug "TUI Engine initialized."
     end
 
     def inflate_interaction_data(interaction_file)
