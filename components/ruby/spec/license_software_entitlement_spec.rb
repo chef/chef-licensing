@@ -22,7 +22,7 @@ RSpec.describe ChefLicensing::LicenseSoftwareEntitlement do
       data: {
         entitled: true,
         entitledBy: {
-          license_key: true
+          license_key: true,
         },
         limits: {
           license_key:
@@ -33,29 +33,29 @@ RSpec.describe ChefLicensing::LicenseSoftwareEntitlement do
             limit: 10,
             grace: {
               limit: 0,
-              duration: 0
+              duration: 0,
             },
             period: {
               start: "2022-10-06",
-              end: "2022-11-05"
-            }
-          }
-        }
+              end: "2022-11-05",
+            },
+          },
+        },
       },
-      status: 200
+      status: 200,
     }
   }
 
   let(:failure_response) {
     {
       data: {
-        entitled:false,
+        entitled: false,
         entitledBy: {
-          license_key: false
+          license_key: false,
         },
-        limits: {}
+        limits: {},
       },
-      status: 200
+      status: 200,
     }
   }
 
