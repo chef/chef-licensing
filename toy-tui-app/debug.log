@@ -1,0 +1,46 @@
+D, [2022-10-18T18:36:24.120338 #98922] DEBUG -- : License Key fetcher examining CLI arg checks
+D, [2022-10-18T18:36:24.120427 #98922] DEBUG -- : License Key fetcher examining ENV checks
+D, [2022-10-18T18:36:24.120440 #98922] DEBUG -- : License Key fetcher examining file checks
+D, [2022-10-18T18:36:24.120479 #98922] DEBUG -- : License Key fetcher - detected TTY, prompting...
+D, [2022-10-18T18:36:24.120948 #98922] DEBUG -- : TUI Engine initialized.
+D, [2022-10-18T18:36:24.121103 #98922] DEBUG -- : Default action called for interaction id: start
+D, [2022-10-18T18:36:24.121142 #98922] DEBUG -- : Response for interaction start is 
+D, [2022-10-18T18:36:24.121156 #98922] DEBUG -- : Default action called for interaction id: ask_if_user_has_license_id
+D, [2022-10-18T18:36:25.263527 #98922] DEBUG -- : Response for interaction ask_if_user_has_license_id is false
+D, [2022-10-18T18:36:25.263639 #98922] DEBUG -- : Default action called for interaction id: ask_for_license_generation
+D, [2022-10-18T18:36:25.885289 #98922] DEBUG -- : Response for interaction ask_for_license_generation is false
+D, [2022-10-18T18:36:25.885421 #98922] DEBUG -- : Default action called for interaction id: exit
+D, [2022-10-18T18:36:25.885662 #98922] DEBUG -- : Response for interaction exit is 
+D, [2022-10-18T18:36:28.094783 #98969] DEBUG -- : License Key fetcher examining CLI arg checks
+D, [2022-10-18T18:36:28.094832 #98969] DEBUG -- : License Key fetcher examining ENV checks
+D, [2022-10-18T18:36:28.094849 #98969] DEBUG -- : License Key fetcher examining file checks
+D, [2022-10-18T18:36:28.094883 #98969] DEBUG -- : License Key fetcher - detected TTY, prompting...
+D, [2022-10-18T18:36:28.095227 #98969] DEBUG -- : TUI Engine initialized.
+D, [2022-10-18T18:36:28.095323 #98969] DEBUG -- : Default action called for interaction id: start
+D, [2022-10-18T18:36:28.095356 #98969] DEBUG -- : Response for interaction start is 
+D, [2022-10-18T18:36:28.095366 #98969] DEBUG -- : Default action called for interaction id: ask_if_user_has_license_id
+D, [2022-10-18T18:36:29.094833 #98969] DEBUG -- : Response for interaction ask_if_user_has_license_id is false
+D, [2022-10-18T18:36:29.094891 #98969] DEBUG -- : Default action called for interaction id: ask_for_license_generation
+D, [2022-10-18T18:36:30.465452 #98969] DEBUG -- : Response for interaction ask_for_license_generation is true
+D, [2022-10-18T18:36:30.465514 #98969] DEBUG -- : Default action called for interaction id: display_type_of_license_id
+D, [2022-10-18T18:36:30.465542 #98969] DEBUG -- : Response for interaction display_type_of_license_id is 
+D, [2022-10-18T18:36:30.465556 #98969] DEBUG -- : Default action called for interaction id: exit
+D, [2022-10-18T18:36:30.465570 #98969] DEBUG -- : Response for interaction exit is 
+D, [2022-10-18T18:36:31.989553 #99009] DEBUG -- : License Key fetcher examining CLI arg checks
+D, [2022-10-18T18:36:31.989616 #99009] DEBUG -- : License Key fetcher examining ENV checks
+D, [2022-10-18T18:36:31.989628 #99009] DEBUG -- : License Key fetcher examining file checks
+D, [2022-10-18T18:36:31.989664 #99009] DEBUG -- : License Key fetcher - detected TTY, prompting...
+D, [2022-10-18T18:36:31.990034 #99009] DEBUG -- : TUI Engine initialized.
+D, [2022-10-18T18:36:31.990144 #99009] DEBUG -- : Default action called for interaction id: start
+D, [2022-10-18T18:36:31.990182 #99009] DEBUG -- : Response for interaction start is 
+D, [2022-10-18T18:36:31.990197 #99009] DEBUG -- : Default action called for interaction id: ask_if_user_has_license_id
+D, [2022-10-18T18:36:33.280054 #99009] DEBUG -- : Response for interaction ask_if_user_has_license_id is true
+D, [2022-10-18T18:36:33.280144 #99009] DEBUG -- : Default action called for interaction id: ask_for_license_id
+D, [2022-10-18T18:36:35.065464 #99009] DEBUG -- : Response for interaction ask_for_license_id is 123
+D, [2022-10-18T18:36:35.065586 #99009] DEBUG -- : Default action called for interaction id: validate_license_id_pattern
+D, [2022-10-18T18:36:35.065743 #99009] DEBUG -- : Response for interaction validate_license_id_pattern is false
+D, [2022-10-18T18:36:35.065801 #99009] DEBUG -- : Default action called for interaction id: ask_for_license_id
+D, [2022-10-18T18:36:37.586669 #99009] DEBUG -- : Response for interaction ask_for_license_id is 123456
+D, [2022-10-18T18:36:37.586773 #99009] DEBUG -- : Default action called for interaction id: validate_license_id_pattern
+D, [2022-10-18T18:36:37.586938 #99009] DEBUG -- : Response for interaction validate_license_id_pattern is false
+D, [2022-10-18T18:36:37.586962 #99009] DEBUG -- : Default action called for interaction id: ask_for_license_id
