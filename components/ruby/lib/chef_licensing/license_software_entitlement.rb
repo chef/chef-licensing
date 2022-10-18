@@ -4,21 +4,21 @@ module ChefLicensing
   class LicenseSoftwareEntitlement
     attr_reader :license_keys
 
-    def self.check!(license_keys, entitlement_name: nil, entitlement_id: nil)
-      new(license_keys, entitlement_name, entitlement_id).validate!
+    def self.check!(license_keys: [], software_entitlement_name: nil, software_entitlement_id: nil)
+      new(license_keys: license_keys, software_entitlement_name: software_entitlement_name, software_entitlement_id: software_entitlement_id).check!
     end
 
-    def initialize(license_keys, entitlement_name, entitlement_id, restful_client: ChefLicensing::RestfulClient::V1)
+    def initialize(license_keys: [], software_entitlement_name: nil, software_entitlement_id: nil, restful_client: ChefLicensing::RestfulClient::V1)
       @license_keys = license_keys
-      @entitlement_id = entitlement_id
-      @entitlement_name = entitlement_name
+      @entitlement_id = software_entitlement_id
+      @entitlement_name = software_entitlement_name
 
-      raise ArgumentError, "Either of `entitlement_id` or `entitlement_name` should be provided" if entitlement_name.nil? && entitlement_id.nil?
+      raise ArgumentError, "Either of `software_entitlement_id` or `software_entitlement_name` should be provided" if software_entitlement_name.nil? && software_entitlement_id.nil?
 
       @restful_client = restful_client.new
     end
 
-    def validate!
+    def check!
       response = make_request
       response.data.entitled || raise(ChefLicensing::InvalidEntitlement)
     end

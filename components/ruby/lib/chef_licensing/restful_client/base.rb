@@ -14,7 +14,7 @@ module ChefLicensing
         FEATURE_BY_NAME: "license-service/featurebyname",
         FEATURE_BY_ID: "license-service/featurebyid",
         ENTITLEMENT_BY_NAME: "license-service/entitlementbyname",
-        ENTITLEMENT_BY_ID: "license-service/entitlementbyid"
+        ENTITLEMENT_BY_ID: "license-service/entitlementbyid",
       }.freeze
 
       def validate(license)

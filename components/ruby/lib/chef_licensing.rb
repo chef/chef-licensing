@@ -10,8 +10,8 @@ module ChefLicensing
       ChefLicensing::LicenseFeatureEntitlement.check_entitlement!(license_keys, feature_name: feature)
     end
 
-    def check_software_entitlement!(software)
-      ChefLicensing::LicenseSoftwareEntitlement.check!(license_keys, entitlement_name: software)
+    def check_software_entitlement!(software_entitlement_name: nil, software_entitlement_id: nil)
+      ChefLicensing::LicenseSoftwareEntitlement.check!(license_keys: license_keys, software_entitlement_name: software_entitlement_name, software_entitlement_id: software_entitlement_id)
     end
 
     def license_keys
