@@ -1,12 +1,11 @@
 require "timeout" unless defined?(Timeout)
 require "tty-prompt"
 require "logger"
-require_relative "tui_exceptions"
 
 module ChefLicensing
   class TUIEngine
     class TUIPrompt
-      attr_accessor :next_interaction_id, :processed_input, :output, :input, :logger, :tty_prompt
+      attr_accessor :output, :input, :logger, :tty_prompt
 
       def initialize(opts = {})
         @output = opts[:output] || STDOUT

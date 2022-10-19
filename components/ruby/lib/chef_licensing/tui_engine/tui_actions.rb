@@ -1,6 +1,7 @@
 require_relative "../license_key_validator"
 require_relative "../exceptions/invalid_license"
 require_relative "../license_key_fetcher/base"
+
 module ChefLicensing
   class TUIEngine
     # TODO: Is there a better way to use the base class?

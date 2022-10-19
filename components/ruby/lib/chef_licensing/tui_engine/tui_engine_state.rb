@@ -1,10 +1,7 @@
-require "timeout" unless defined?(Timeout)
-require "tty-prompt"
 require "logger"
 require_relative "tui_prompt"
-require_relative "../license_key_validator"
-require_relative "../exceptions/invalid_license"
 require_relative "tui_actions"
+
 module ChefLicensing
   class TUIEngine
     class TUIEngineState < Hash
