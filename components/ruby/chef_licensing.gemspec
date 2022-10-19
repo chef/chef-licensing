@@ -28,5 +28,5 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "chef-config", ">= 15"
   spec.add_dependency "tty-prompt", "~> 0.23"
-  spec.add_dependency "faraday", "~> 2.5", ">= 2.5.2"
+  spec.add_dependency "faraday", ">= 1", "< 3"
 end
