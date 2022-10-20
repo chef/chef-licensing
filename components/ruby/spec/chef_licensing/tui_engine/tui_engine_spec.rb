@@ -192,6 +192,23 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException)
       end
     end
+
+    context "when the interaction file has timeout prompt" do
+      let(:config) {
+        {
+          output: StringIO.new,
+          input: StringIO.new,
+          logger: Logger.new(StringIO.new),
+          interaction_file: File.join(fixture_dir, "flow_with_timeout_yes.yaml"),
+        }
+      }
+
+      let(:tui_engine) { described_class.new(config) }
+
+      it "should timeout" do
+        # TODO: Figure out how to test timeout
+      end
+    end
   end
 
   describe "when a tui_engine object is instantiated with an invalid yaml file" do
@@ -230,7 +247,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect($stderr.string.chomp).to include("Invalid key `messagesx` found in yaml file for interaction start")
         expect($stderr.string.chomp).to include("Invalid key `path` found in yaml file for interaction prompt_2")
         expect($stderr.string.chomp).to include("Invalid key `prompt_typr` found in yaml file for interaction start.")
-        expect($stderr.string.chomp).to include("Valid keys are `action`, `messages`, `paths`, `prompt_type`, `response_path_map` and `description`")
+        expect($stderr.string.chomp).to include("Valid keys are `action`, `messages`, `paths`, `prompt_type`, `response_path_map`, `prompt_attributes` and `description`")
       end
 
       after do
