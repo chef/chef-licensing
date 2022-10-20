@@ -22,7 +22,7 @@ module ChefLicensing
         # We need to display only if the interaction has messages.
         # When a prompt_type is not given, we assume it to be say.
         if interaction.messages && @prompt.respond_to?(interaction.prompt_type)
-          response = @prompt.send(interaction.prompt_type, interaction.messages)
+          response = @prompt.send(interaction.prompt_type, interaction.messages, interaction.prompt_attributes)
           @processed_input.store(interaction.id, response)
         end
 
