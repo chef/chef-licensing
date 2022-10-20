@@ -1,4 +1,3 @@
-require_relative "tui_prompt"
 module ChefLicensing
   class TUIEngine
     class TUIInteraction
