@@ -1,6 +1,8 @@
 require_relative "tui_exceptions"
 require_relative "tui_interaction"
 require_relative "tui_engine_state"
+require_relative "tui_prompt"
+require_relative "tui_actions"
 
 module ChefLicensing
   class TUIEngine
@@ -77,29 +79,41 @@ module ChefLicensing
 
       raise ChefLicensing::TUIEngine::YAMLException, "`interactions` key not found in yaml file." unless @interaction_data["interactions"]
 
+      # Temporary objects to verify the yaml data
+      # TODO: Could this be done effectively?
+      tui_actions = ChefLicensing::TUIEngine::TUIActions.new
+      tui_prompt = ChefLicensing::TUIEngine::TUIPrompt.new
+      tui_interaction = ChefLicensing::TUIEngine::TUIInteraction.new
+
       @interaction_data["interactions"].each do |i_id, opts|
+        opts.transform_keys!(&:to_sym)
+
+        # An interaction must be either action or a prompt.
+        # Supporting both could lead ambiguous flow in response_path_map
         if opts[:action] && opts[:messages]
           warn "Both `action` and `messages` keys found in yaml file for interaction #{i_id}."
           warn "`response_path_map` keys would be considered response from messages and not action."
         end
 
-        opts.transform_keys!(&:to_sym)
-
         opts.each do |k, val|
-          # TODO: Figure out to find the valid keys dynamically.
-          # Possible solution: Fetch the attributes from the TUIInteraction class.
-          unless %i{action messages paths prompt_type response_path_map description prompt_attributes}.include?(k)
+          # check for invalid keys in an interaction
+          unless tui_interaction.respond_to?(k)
             warn "Invalid key `#{k}` found in yaml file for interaction #{i_id}."
-            warn "Valid keys are `action`, `messages`, `paths`, `prompt_type`, `response_path_map`, `prompt_attributes` and `description`."
+            warn "Valid keys are #{tui_interaction.instance_variables.join(", ")}."
             warn "#{k} will be ignored.\nYour yaml file may not work as expected."
           end
 
           # check prompt_type value is valid
-          # TODO: Figure out to find the prompt types dynamically.
-          # Possible solution: Fetch all the methods from the TUIPrompt class.
           if k == :prompt_type
-            unless %w{yes say ask ok warn error select enum_select timeout_yes}.include?(val)
+            unless tui_prompt.respond_to?(val)
               raise ChefLicensing::TUIEngine::YAMLException, "Invalid value `#{val}` for `prompt_type` key in yaml file for interaction #{i_id}."
+            end
+          end
+
+          # check action value is valid
+          if k == :action
+            unless tui_actions.respond_to?(val)
+              raise ChefLicensing::TUIEngine::YAMLException, "Invalid value `#{val}` for `action` key in yaml file for interaction #{i_id}."
             end
           end
         end
