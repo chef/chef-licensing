@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.3.1 -->
-## [0.3.1](https://github.com/chef/chef-licensing/tree/0.3.1) (2022-10-18)
+<!-- latest_release 0.3.2 -->
+## [0.3.2](https://github.com/chef/chef-licensing/tree/0.3.2) (2022-10-20)
 
 #### Merged Pull Requests
-- Add named params for feature entitlement check. [#22](https://github.com/chef/chef-licensing/pull/22) ([Vasu1105](https://github.com/Vasu1105))
+- Clean up in TUI Engine [#23](https://github.com/chef/chef-licensing/pull/23) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Clean up in TUI Engine [#23](https://github.com/chef/chef-licensing/pull/23) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.2 -->
 - Add named params for feature entitlement check. [#22](https://github.com/chef/chef-licensing/pull/22) ([Vasu1105](https://github.com/Vasu1105)) <!-- 0.3.1 -->
 - CFINSPEC-463: TUI Engine Implementation [#13](https://github.com/chef/chef-licensing/pull/13) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.0 -->
 - Few Readme fixes [#21](https://github.com/chef/chef-licensing/pull/21) ([Vasu1105](https://github.com/Vasu1105)) <!-- 0.2.5 -->
