@@ -86,15 +86,19 @@ module ChefLicensing
         opts.transform_keys!(&:to_sym)
 
         opts.each do |k, val|
-          unless %i{action messages paths prompt_type response_path_map description}.include?(k)
+          # TODO: Figure out to find the valid keys dynamically.
+          # Possible solution: Fetch the attributes from the TUIInteraction class.
+          unless %i{action messages paths prompt_type response_path_map description prompt_attributes}.include?(k)
             warn "Invalid key `#{k}` found in yaml file for interaction #{i_id}."
-            warn "Valid keys are `action`, `messages`, `paths`, `prompt_type`, `response_path_map` and `description`."
+            warn "Valid keys are `action`, `messages`, `paths`, `prompt_type`, `response_path_map`, `prompt_attributes` and `description`."
             warn "#{k} will be ignored.\nYour yaml file may not work as expected."
           end
 
           # check prompt_type value is valid
+          # TODO: Figure out to find the prompt types dynamically.
+          # Possible solution: Fetch all the methods from the TUIPrompt class.
           if k == :prompt_type
-            unless %w{yes say ask ok warn error select enum_select}.include?(val)
+            unless %w{yes say ask ok warn error select enum_select timeout_yes}.include?(val)
               raise ChefLicensing::TUIEngine::YAMLException, "Invalid value `#{val}` for `prompt_type` key in yaml file for interaction #{i_id}."
             end
           end
