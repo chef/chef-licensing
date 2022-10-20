@@ -209,6 +209,24 @@ RSpec.describe ChefLicensing::TUIEngine do
         # TODO: Figure out how to test timeout
       end
     end
+
+    context "when the interaction file has messages in erb" do
+      let(:config) {
+        {
+          output: StringIO.new,
+          input: StringIO.new,
+          logger: Logger.new(StringIO.new),
+          interaction_file: File.join(fixture_dir, "flow_with_erb_messages.yaml"),
+        }
+      }
+
+      let(:tui_engine) { described_class.new(config) }
+
+      it "should render the erb" do
+        expect(tui_engine.run_interaction).to eq({ start: ["The product of 397 and 537 is 213189"], exit: nil })
+      end
+
+    end
   end
 
   describe "when a tui_engine object is instantiated with an invalid yaml file" do
