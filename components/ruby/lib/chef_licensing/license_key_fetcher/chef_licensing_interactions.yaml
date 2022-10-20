@@ -20,7 +20,7 @@ interactions:
     messages: "Do you have a Chef License ID?"
     prompt_type: "timeout_yes"
     prompt_attributes:
-      timeout_duration: 6
+      timeout_duration: 60
       timeout_message: "\nPrompt timed out. Use non-interactive flags or enter an answer within 60 seconds."
     paths: [ask_for_license_id, ask_for_license_generation]
     response_path_map:
