@@ -104,17 +104,13 @@ module ChefLicensing
           end
 
           # check prompt_type value is valid
-          if k == :prompt_type
-            unless tui_prompt.respond_to?(val)
-              raise ChefLicensing::TUIEngine::YAMLException, "Invalid value `#{val}` for `prompt_type` key in yaml file for interaction #{i_id}."
-            end
+          if k == :prompt_type && !tui_prompt.respond_to?(val)
+            raise ChefLicensing::TUIEngine::YAMLException, "Invalid value `#{val}` for `prompt_type` key in yaml file for interaction #{i_id}."
           end
 
           # check action value is valid
-          if k == :action
-            unless tui_actions.respond_to?(val)
-              raise ChefLicensing::TUIEngine::YAMLException, "Invalid value `#{val}` for `action` key in yaml file for interaction #{i_id}."
-            end
+          if k == :action && !tui_actions.respond_to?(val)
+            raise ChefLicensing::TUIEngine::YAMLException, "Invalid value `#{val}` for `action` key in yaml file for interaction #{i_id}."
           end
         end
       end
