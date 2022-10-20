@@ -1,0 +1,10 @@
+interactions:
+  start:
+    messages: ["The product of 397 and 537 is <%= 397 * 537 %>"]
+    prompt_type: "ok"
+    paths: [exit]
+    description: This is an optional field. WYOD (Write your own description)
+
+  exit:
+    messages: ["This is the exit prompt"]
+    prompt_type: "say"
