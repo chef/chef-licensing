@@ -1,9 +1,9 @@
 require "spec_helper"
-require_relative "../lib/chef_licensing/license_software_entitlement"
-require_relative "../lib/chef_licensing/config"
-require_relative "../lib/chef_licensing"
+require"chef_licensing/api/license_software_entitlement"
+require "chef_licensing/config"
+require "chef_licensing"
 
-RSpec.describe ChefLicensing::LicenseSoftwareEntitlement do
+RSpec.describe ChefLicensing::Api::LicenseSoftwareEntitlement do
   let(:software_entitlement_name) {
     "Inspec"
   }
@@ -90,7 +90,7 @@ RSpec.describe ChefLicensing::LicenseSoftwareEntitlement do
                        headers: { content_type: "application/json" }, status: 200)
         end
 
-        it { expect { subject }.to raise_error(ChefLicensing::InvalidEntitlement) }
+        it { expect { subject }.to raise_error(ChefLicensing::SoftwareNotEntitled) }
       end
 
       context "when software is not entitled to the license" do
@@ -109,7 +109,7 @@ RSpec.describe ChefLicensing::LicenseSoftwareEntitlement do
                        headers: { content_type: "application/json" })
         end
 
-        it { expect { subject }.to raise_error(ChefLicensing::InvalidEntitlement) }
+        it { expect { subject }.to raise_error(ChefLicensing::SoftwareNotEntitled) }
       end
 
     end
@@ -157,7 +157,7 @@ RSpec.describe ChefLicensing::LicenseSoftwareEntitlement do
                        headers: { content_type: "application/json" }, status: 200)
         end
 
-        it { expect { subject }.to raise_error(ChefLicensing::InvalidEntitlement) }
+        it { expect { subject }.to raise_error(ChefLicensing::SoftwareNotEntitled) }
       end
 
       context "when software is not entitled to the license" do
@@ -177,7 +177,7 @@ RSpec.describe ChefLicensing::LicenseSoftwareEntitlement do
                        headers: { content_type: "application/json" })
         end
 
-        it { expect { subject }.to raise_error(ChefLicensing::InvalidEntitlement) }
+        it { expect { subject }.to raise_error(ChefLicensing::SoftwareNotEntitled) }
       end
 
     end

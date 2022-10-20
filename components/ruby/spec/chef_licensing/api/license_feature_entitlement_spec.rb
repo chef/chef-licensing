@@ -1,9 +1,9 @@
 require "spec_helper"
-require_relative "../lib/chef_licensing/license_feature_entitlement"
-require_relative "../lib/chef_licensing/config"
-require_relative "../lib/chef_licensing"
+require "chef_licensing/api/license_feature_entitlement"
+require "chef_licensing/config"
+require "chef_licensing"
 
-RSpec.describe ChefLicensing::LicenseFeatureEntitlement do
+RSpec.describe ChefLicensing::Api::LicenseFeatureEntitlement do
 
   let(:feature_name) {
     "Inspec-Parallel"
@@ -99,7 +99,7 @@ RSpec.describe ChefLicensing::LicenseFeatureEntitlement do
                        headers: { content_type: "application/json" })
         end
 
-        it { expect { subject }.to raise_error(ChefLicensing::InvalidEntitlement) }
+        it { expect { subject }.to raise_error(ChefLicensing::FeatureNotEntitled) }
       end
     end
 
@@ -171,7 +171,7 @@ RSpec.describe ChefLicensing::LicenseFeatureEntitlement do
                        headers: { content_type: "application/json" })
         end
 
-        it { expect { subject }.to raise_error(ChefLicensing::InvalidEntitlement) }
+        it { expect { subject }.to raise_error(ChefLicensing::FeatureNotEntitled) }
       end
     end
   end
