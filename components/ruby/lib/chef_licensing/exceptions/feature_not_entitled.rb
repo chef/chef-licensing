@@ -1,9 +1,9 @@
 require_relative "error"
 
 module ChefLicensing
-  class InvalidEntitlement < Error
+  class FeatureNotEntitled < Error
     def message
-      super || "Invalid Entitlement"
+      super || "Feature not entitled"
     end
   end
 end
