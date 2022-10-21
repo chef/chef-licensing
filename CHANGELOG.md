@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.3.3 -->
-## [0.3.3](https://github.com/chef/chef-licensing/tree/0.3.3) (2022-10-21)
+<!-- latest_release 0.3.4 -->
+## [0.3.4](https://github.com/chef/chef-licensing/tree/0.3.4) (2022-10-21)
 
 #### Merged Pull Requests
-- Few changes and fixes in license key fetcher [#16](https://github.com/chef/chef-licensing/pull/16) ([Nik08](https://github.com/Nik08))
+- Updates the version pinning for faraday gem [#24](https://github.com/chef/chef-licensing/pull/24) ([Vasu1105](https://github.com/Vasu1105))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Updates the version pinning for faraday gem [#24](https://github.com/chef/chef-licensing/pull/24) ([Vasu1105](https://github.com/Vasu1105)) <!-- 0.3.4 -->
 - Few changes and fixes in license key fetcher [#16](https://github.com/chef/chef-licensing/pull/16) ([Nik08](https://github.com/Nik08)) <!-- 0.3.3 -->
 - Clean up in TUI Engine [#23](https://github.com/chef/chef-licensing/pull/23) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.2 -->
 - Add named params for feature entitlement check. [#22](https://github.com/chef/chef-licensing/pull/22) ([Vasu1105](https://github.com/Vasu1105)) <!-- 0.3.1 -->
