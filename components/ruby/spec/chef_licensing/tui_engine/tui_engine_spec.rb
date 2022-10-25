@@ -203,10 +203,17 @@ RSpec.describe ChefLicensing::TUIEngine do
           logger: Logger.new(StringIO.new),
           interaction_file: File.join(fixture_dir, "flow_with_timeout_yes.yaml"),
     context "when the interaction file has messages in erb template" do
+      let(:user_input) { StringIO.new }
+
+      before do
+        user_input.write("Chef User!\n")
+        user_input.rewind
+      end
+
       let(:config) {
         {
           output: StringIO.new,
-          input: StringIO.new,
+          input: user_input,
           logger: Logger.new(StringIO.new),
           interaction_file: File.join(fixture_dir, "flow_with_erb_messages.yaml"),
         }
@@ -219,7 +226,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect(tui_output.string).to include("Timed out!")
         expect(tui_output.string).to include("Oops! Reflex too slow.")
       it "should render the erb" do
-        expect(tui_engine.run_interaction).to eq({ start: ["The product of 397 and 537 is 213189"], exit: nil })
+        expect(tui_engine.run_interaction).to eq({ start: nil, ask_user_name: "Chef User!", welcome_user_in_english: ["Hello, Chef User!"], welcome_user_in_hindi: ["Namaste, Chef User!"] ,exit: nil })
       end
     end
     context "when the yaml file has an interaction without messages or action key" do
