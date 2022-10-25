@@ -1,6 +1,7 @@
 require "logger"
 require_relative "tui_prompt"
 require_relative "tui_actions"
+require "erb" unless defined?(Erb)
 
 module ChefLicensing
   class TUIEngine
@@ -35,6 +36,25 @@ module ChefLicensing
           @next_interaction_id = interaction.paths.keys.first
         else
           @next_interaction_id = nil
+        end
+      end
+
+      private
+
+      def erb_result(message)
+        # TODO: Find a better way to do update binding.
+        b = binding.clone
+        @processed_input.each { |k, v| b.local_variable_set(k, v) }
+        ERB.new(message).result(b)
+      end
+
+      def render_messages(messages)
+        if messages.is_a?(String)
+          erb_result(messages)
+        elsif messages.is_a?(Array)
+          messages.map do |message|
+            render_messages(message)
+          end
         end
       end
     end
