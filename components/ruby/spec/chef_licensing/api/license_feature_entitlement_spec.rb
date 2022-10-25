@@ -2,6 +2,7 @@ require "spec_helper"
 require "chef_licensing/api/license_feature_entitlement"
 require "chef_licensing/config"
 require "chef_licensing"
+require "chef_licensing/exceptions/feature_not_entitled"
 
 RSpec.describe ChefLicensing::Api::LicenseFeatureEntitlement do
 
