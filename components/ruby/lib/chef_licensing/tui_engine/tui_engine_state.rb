@@ -42,7 +42,13 @@ module ChefLicensing
       private
 
       def erb_result(message)
+        # NOTE: result allows us to pass a binding to the ERB template.
+        # We are using binding here to make sure that the variables
+        # defined in the context of the state class are available in the ERB template.
         ERB.new(message).result(binding)
+
+        # TODO: result_with_hash allows us to pass a hash to the ERB template.
+        # Passing self is not working as expected. We need to investigate further.
         # ERB.new(message).result_with_hash(self)
       end
 
