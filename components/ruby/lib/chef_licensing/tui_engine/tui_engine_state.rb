@@ -42,10 +42,8 @@ module ChefLicensing
       private
 
       def erb_result(message)
-        # TODO: Find a better way to do update binding.
-        b = binding.clone
-        @processed_input.each { |k, v| b.local_variable_set(k, v) }
-        ERB.new(message).result(b)
+        ERB.new(message).result(binding)
+        # ERB.new(message).result_with_hash(self)
       end
 
       def render_messages(messages)

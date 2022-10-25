@@ -14,7 +14,7 @@ interactions:
   welcome_user_in_english:
     # You can provide interaction id in erb.
     # It renders to the input received at that interaction.
-    messages: ["Hello, <%= ask_user_name %>"]
+    messages: ["Hello, <%= processed_input[:ask_user_name] %>"]
     prompt_type: "ok"
     paths: [welcome_user_in_hindi]
 
