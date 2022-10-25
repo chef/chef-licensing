@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.3.5 -->
-## [0.3.5](https://github.com/chef/chef-licensing/tree/0.3.5) (2022-10-21)
+<!-- latest_release 0.3.6 -->
+## [0.3.6](https://github.com/chef/chef-licensing/tree/0.3.6) (2022-10-25)
 
 #### Merged Pull Requests
-- Creates Namespace for API calls [#26](https://github.com/chef/chef-licensing/pull/26) ([Vasu1105](https://github.com/Vasu1105))
+- Fix: Require appropriate class to be able to raise error [#29](https://github.com/chef/chef-licensing/pull/29) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Fix: Require appropriate class to be able to raise error [#29](https://github.com/chef/chef-licensing/pull/29) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.6 -->
 - Creates Namespace for API calls [#26](https://github.com/chef/chef-licensing/pull/26) ([Vasu1105](https://github.com/Vasu1105)) <!-- 0.3.5 -->
 - Updates the version pinning for faraday gem [#24](https://github.com/chef/chef-licensing/pull/24) ([Vasu1105](https://github.com/Vasu1105)) <!-- 0.3.4 -->
 - Few changes and fixes in license key fetcher [#16](https://github.com/chef/chef-licensing/pull/16) ([Nik08](https://github.com/Nik08)) <!-- 0.3.3 -->
