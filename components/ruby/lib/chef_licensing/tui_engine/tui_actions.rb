@@ -1,5 +1,7 @@
 require_relative "../license_key_validator"
+require_relative "../license_key_generator"
 require_relative "../exceptions/invalid_license"
+require_relative "../exceptions/license_generation_failed"
 require_relative "../license_key_fetcher/base"
 
 module ChefLicensing
@@ -40,18 +42,16 @@ module ChefLicensing
       end
 
       def is_user_name_valid?(inputs)
-        # TBD validation logic
-        true
+        user_name = inputs[:gather_user_last_name_for_license_generation] || inputs[:gather_user_first_name_for_license_generation]
+        return (user_name =~ /\A[a-z_A-Z\-\`]{4,16}\Z/) == 0
       end
 
       def is_email_valid?(inputs)
-        # TBD validation logic
-        true
+        return (inputs[:gather_user_email_for_license_generation]  =~ URI::MailTo::EMAIL_REGEXP) == 0
       end
 
       def is_company_name_valid?(inputs)
-        # TBD validation logic
-        true
+        return (inputs[:gather_user_company_for_license_generation] =~ /\A[a-z_.\sA-Z\-\`]{4,16}\Z/) == 0
       end
 
       def is_phone_no_valid?(inputs)
@@ -59,11 +59,50 @@ module ChefLicensing
         true
       end
 
+      # TBD to add product name dynamically
       def generate_license(inputs)
-        # TBD validation logic
+        puts "License generation in progress..."
+        license_id = ChefLicensing::LicenseKeyGenerator.generate!(
+          first_name: inputs[:gather_user_first_name_for_license_generation],
+          last_name: inputs[:gather_user_last_name_for_license_generation],
+          email_id: inputs[:gather_user_email_for_license_generation],
+          product: "inspec",
+          company: inputs[:gather_user_company_for_license_generation],
+          phone: inputs[:gather_user_phone_no_for_license_generation]
+        )
+        puts "License ID: #{license_id}"
         true
+      rescue ChefLicensing::LicenseGenerationFailed => e
+        puts e.message
+        false
       end
 
+      def select_license_generation_based_on_type(inputs)
+        if inputs.keys.include? :free_license_selection
+          "free"
+        elsif inputs.keys.include? :trial_license_selection
+          "trial"
+        else
+          "commercial"
+        end
+      end
+
+      def print_review_details(inputs)
+        puts %{
+          User Details
+          ----------------------------------------------------
+          Name: #{inputs[:gather_user_first_name_for_license_generation]}
+          Last Name: #{inputs[:gather_user_last_name_for_license_generation]}
+          Email: #{inputs[:gather_user_email_for_license_generation]}
+          Company: #{inputs[:gather_user_company_for_license_generation]}
+          Phone number: #{inputs[:gather_user_phone_no_for_license_generation]}
+        }
+      end
+
+      def license_generation_rejected?(inputs)
+        # TBD based on error handling in API
+        true
+      end
     end
   end
 end
