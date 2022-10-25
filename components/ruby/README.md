@@ -253,6 +253,9 @@ The different keys in an interaction file are:
    However, we need to provided the texts as an array or arrays when the provided text is to be displayed as menu. The format to be followed is as: `[header, [choices]]`
 
    - Example: `messages: ["The header of the menu", ["Option 1", "Option 2"]]`
+
+   Messages can also be provided in erb formats to display values received in other states or values of constants/variables defined in the class `ChefLicensing::TUIEngine::TUIEngineState`
+
    
 4. `prompt_type`: `prompt_type` key defines the type of prompt for an interaction. The supported prompt types are:
 
@@ -281,6 +284,7 @@ The different keys in an interaction file are:
 9. `prompt_attributes`: `prompt_attributes` helps to provide additional properties required by any prompt_type. Currently, supported attributes are:
    1.  `timeout_duration`: This attribute is supported by the `timeout_yes` prompt and can receive decimal values.
    2.  `timeout_message`: This attribute is supported by the `timeout_yes` prompt and can receive string values.
+9. `prompt_attributes`: `prompt_attributes` helps to provide additional properties required by any prompt_type. Currently, supported attributes are `timeout_duration` and `timeout_message`.
 
 ### Ways to define an interaction
 
@@ -434,4 +438,38 @@ interactions:
   exit:
     messages: ["Game over!"]
     prompt_type: "say"
+```
+## Example with erb message
+```YAML
+interactions:
+  start:
+    messages: ["TUI GREET!"]
+    prompt_type: "say"
+    paths: [ask_user_name]
+    description: This is an optional field. WYOD (Write your own description)
+
+  ask_user_name:
+    messages: ["What is your name?"]
+    prompt_type: "ask"
+    paths: [welcome_user_in_english]
+    description: This is an optional field. WYOD (Write your own description)
+
+  welcome_user_in_english:
+    # You can provide interaction id in erb.
+    # It renders to the input received at that interaction.
+    messages: ["Hello, <%= ask_user_name %>"]
+    prompt_type: "ok"
+    paths: [welcome_user_in_hindi]
+
+  welcome_user_in_hindi:
+    # You can access any other variables defined in TUIEngineState
+    # Example: processed_input
+    messages: ["Namaste, <%= processed_input[:ask_user_name] %>"]
+    prompt_type: "ok"
+    paths: [exit]
+
+  exit:
+    messages: ["This is the exit prompt"]
+    prompt_type: "say"
+
 ```
