@@ -40,18 +40,6 @@ interactions:
       "false": ask_for_license_id
     description: "is_license_with_valid_pattern? is a method defined in TUIActions class"
 
-  ask_for_license_generation:
-    messages: ["Would you like to generate a license id?"]
-    prompt_type: "yes"
-    paths: [display_type_of_license_id, exit]
-    response_path_map:
-      "true": display_type_of_license_id
-      "false": exit
-  
-  display_type_of_license_id:
-    messages: "This is yet to be implemented."
-    paths: [exit]
-
   validate_license_id_with_api:
     action: is_license_valid_on_server?
     paths: [validation_success, validation_failure]
@@ -63,101 +51,288 @@ interactions:
   validation_success:
     messages: "License validated successfully."
     paths: [exit]
-  
+
   validation_failure:
     messages: "License is not valid. Please try again."
     paths: [ask_for_license_id]
 
   ask_for_license_generation:
-    messages: "Would you like to generate a license id?"
+    messages: "Would you like to generate license?"
     prompt_type: "yes"
-    paths: [gather_user_first_name_for_license_generation, exit]
+    paths: [info_of_license_types, license_generation_skipped]
     response_path_map:
-      "true": gather_user_first_name_for_license_generation
-      "false": exit
+      "true": info_of_license_types
+      "false": license_generation_skipped
+
+  license_generation_skipped:
+    messages: |
+      License generation skipped!
+
+      License is required to in order to use inspec
+
+      Visit <link> to know more about the licenses
+    paths: [exit]
+
+  info_of_license_types:
+    messages: |
+      Thank you for taking interest in inspec.
+
+      We have following types of licenses
+      Please choose the one that suits your requirements
+
+
+      1.Free license
+        Validity : # Days
+        Entitlement :
+        No. of nodes : ##
+        Free features : Yes
+        Premium features : No
+
+
+      2.Trial License
+        Validity : # Days
+        Entitlement :
+        No. of nodes : ##
+        Free features : Yes
+        Premium features : No
+
+
+      3.Commercial License
+        Validity : # Days
+        Entitlement :
+        No. of nodes : ##
+        Free features : Yes
+        Premium features : No
+
+
+      To know more about license types, their respective entitlement and premium features, Visit
+      <link>"
+    prompt_type: "say"
+    paths: [ask_for_license_type]
+
+  ask_for_license_type:
+    prompt_type: "select"
+    messages: ["" , [ "1.Free license", "2.Trial license", "3.Commercial license"]]
+    paths: [free_license_selection, commercial_license_selection, trial_license_selection]
+    response_path_map:
+      "1.Free license": free_license_selection
+      "2.Trial license": trial_license_selection
+      "3.Commercial license": commercial_license_selection
+
+  free_license_selection:
+    messages: |
+      You have selected
+      Free License
+        Validity : x Days
+        Entitlement :
+          No. of nodes : X
+          Free features : Yes
+          Premium features : No
+    prompt_type: "say"
+    paths: [license_type_confirmation]
+
+  trial_license_selection:
+    messages: |
+      You have selected
+      Trial License
+        Validity : x Days
+        Entitlement :
+          No. of nodes : X
+          Free features : Yes
+          Premium features : No
+    prompt_type: "say"
+    paths: [license_type_confirmation]
+
+  commercial_license_selection:
+    messages: |
+      You have selected
+      Commercial license
+        Validity : x Days
+        Entitlement :
+          No. of nodes : X
+          Free features : Yes
+          Premium features : No
+    prompt_type: "say"
+    paths: [license_type_confirmation]
+
+  license_type_confirmation:
+    prompt_type: "select"
+    messages: ["Please select", ["Confirm", "Choose again", "Quit"]]
+    paths: [gather_user_first_name_for_license_generation, info_of_license_types, exit]
+    response_path_map:
+      "Confirm": gather_user_first_name_for_license_generation
+      "Choose again": info_of_license_types
+      "Quit": exit
 
   gather_user_first_name_for_license_generation:
-    messages: "Please enter your first name"
+    messages: "Enter First name"
     prompt_type: "ask"
     paths: [validate_user_first_name_for_license_generation]
 
   validate_user_first_name_for_license_generation:
     action: is_user_name_valid?
-    paths: [gather_user_last_name_for_license_generation, gather_user_first_name_for_license_generation]
+    paths: [gather_user_last_name_for_license_generation, user_first_name_validation_failure]
     response_path_map:
       "true": gather_user_last_name_for_license_generation
-      "false": gather_user_first_name_for_license_generation
+      "false": user_first_name_validation_failure
+
+  user_first_name_validation_failure:
+    messages: "Please enter valid name."
+    prompt_type: "error"
+    paths: [gather_user_first_name_for_license_generation]
 
   gather_user_last_name_for_license_generation:
-    messages: "Please enter your last name"
+    messages: "Enter last name"
     prompt_type: "ask"
     paths: [validate_user_last_name_for_license_generation]
 
   validate_user_last_name_for_license_generation:
     action: is_user_name_valid?
-    paths: [gather_user_email_for_license_generation, gather_user_last_name_for_license_generation]
+    paths: [gather_user_email_for_license_generation, user_last_name_validation_failure]
     response_path_map:
       "true": gather_user_email_for_license_generation
-      "false": gather_user_last_name_for_license_generation
+      "false": user_last_name_validation_failure
+
+  user_last_name_validation_failure:
+    messages: "Please enter valid name."
+    prompt_type: "error"
+    paths: [gather_user_last_name_for_license_generation]
 
   gather_user_email_for_license_generation:
-    messages: "Please enter your Email address"
+    messages: "Enter Email address"
     prompt_type: "ask"
     paths: [validate_user_email_for_license_generation]
 
   validate_user_email_for_license_generation:
     action: is_email_valid?
-    paths: [gather_user_company_for_license_generation, gather_user_email_for_license_generation]
+    paths: [gather_user_company_for_license_generation, user_email_validation_failure]
     response_path_map:
       "true": gather_user_company_for_license_generation
-      "false": gather_user_email_for_license_generation
+      "false": user_email_validation_failure
+
+  user_email_validation_failure:
+    messages: "Please enter valid email address."
+    prompt_type: "error"
+    paths: [gather_user_email_for_license_generation]
 
   gather_user_company_for_license_generation:
-    messages: "Please enter your Company Name"
+    messages: "Enter Company Name"
     prompt_type: "ask"
     paths: [validate_user_company_name_for_license_generation]
 
   validate_user_company_name_for_license_generation:
     action: is_company_name_valid?
-    paths: [gather_user_phone_no_for_license_generation, gather_user_company_for_license_generation]
+    paths: [gather_user_phone_no_for_license_generation, user_company_name_validation_failure]
     response_path_map:
       "true": gather_user_phone_no_for_license_generation
-      "false": gather_user_company_for_license_generation
+      "false": user_company_name_validation_failure
+
+  user_company_name_validation_failure:
+    messages: "Please enter valid company name."
+    prompt_type: "error"
+    paths: [gather_user_company_for_license_generation]
 
   gather_user_phone_no_for_license_generation:
-    messages: "Please enter your Phone No."
+    messages: "Enter Phone number"
     prompt_type: "ask"
     paths: [validate_user_phone_no]
 
   validate_user_phone_no:
     action: is_phone_no_valid?
-    paths: [generate_license, gather_user_phone_no_for_license_generation]
+    paths: [print_to_review_details, user_phone_no_validation_failure]
     response_path_map:
-      "true": generate_license
-      "false": gather_user_phone_no_for_license_generation
+      "true": print_to_review_details
+      "false": user_phone_no_validation_failure
 
-  generate_license:
-    action: generate_license
-    paths: [license_generation_success, license_generation_failure]
+  user_phone_no_validation_failure:
+    messages: "Please enter valid phone no."
+    prompt_type: "error"
+    paths: [gather_user_phone_no_for_license_generation]
+
+  print_to_review_details:
+    action: print_review_details
+    paths: [ask_for_review_confirmation]
+
+  ask_for_review_confirmation:
+    prompt_type: "select"
+    messages: ["Please select", ["Confirm and proceed", "Re-enter the details"]]
+    paths: [pre_license_generation, info_of_license_types]
     response_path_map:
-      "true": license_generation_success
+      "Confirm and proceed": pre_license_generation
+      "Re-enter the details": info_of_license_types
+
+  pre_license_generation:
+    action: select_license_generation_based_on_type
+    paths: [generate_free_license, generate_trial_license, generate_commercial_license]
+    response_path_map:
+      "free": generate_free_license
+      "trial": generate_trial_license
+      "commercial": generate_commercial_license
+
+  generate_free_license:
+    action: generate_license
+    paths: [free_license_generation_success, license_generation_failure]
+    response_path_map:
+      "true": free_license_generation_success
       "false": license_generation_failure
 
-  license_generation_success:
-    messages: "Your license has been generated and has been emailed to you."
-    paths: [ask_for_license_id]
+  generate_trial_license:
+    action: generate_license
+    paths: [trial_license_generation_success, license_generation_failure]
+    response_path_map:
+      "true": trial_license_generation_success
+      "false": license_generation_failure
+
+  generate_commercial_license:
+    action: generate_license
+    paths: [commercial_license_generation_success, license_generation_failure]
+    response_path_map:
+      "true": commercial_license_generation_success
+      "false": license_generation_failure
+
+  free_license_generation_success:
+    messages: |
+      The license has been generated and registered.
+
+      A copy has also been sent on your email.
+
+      You can also look up it in saleforce portal under the name of <username>
+      f you do not know your license key you can log into your Progress Chef customer portal to obtain your product serial number
+    paths: [exit]
+
+  trial_license_generation_success:
+    messages: |
+      The license has been generated and registered.
+      A copy has also been sent on <email id>.
+      You can also look up it in saleforce portal under the name of <username>
+    paths: [exit]
+
+  commercial_license_generation_success:
+    messages: "Our Sales team will get in touch with you with further steps."
+    paths: [exit]
 
   license_generation_failure:
-    messages: ["An error occured while generating your license. Please select an option:", ["Try again, Raise an issue with support"]]
-    prompt_type: "select"
-    paths: [generate_license, raise_issue_with_support]
+    action: license_generation_rejected?
+    paths: [license_generation_with_errors, license_generation_rejected]
     response_path_map:
-      "Try again": generate_license
-      "Raise an issue with support": raise_issue_with_support
+      "true": license_generation_rejected
+      "false": license_generation_with_errors
 
-  raise_issue_with_support:
-    messages: "This is yet to be implemented."
-    paths: [exit]
+  license_generation_rejected:
+    messages: ["Your request for a license was denied for the following reason <XXXXX>. Please select an Option", ["Try again", "Continue using non-premium features"]]
+    prompt_type: "select"
+    paths: [pre_license_generation, exit]
+    response_path_map:
+      "Try again": pre_license_generation
+      "Continue using non-premium features": exit
+
+  license_generation_with_errors:
+    messages: ["An error occurred while generating your license. Error code: <CODE>", ["Try again", "Continue using non-premium features"]]
+    prompt_type: "select"
+    paths: [pre_license_generation, exit]
+    response_path_map:
+      "Try again": pre_license_generation
+      "Continue using non-premium features": exit
 
   exit:
     messages: "Thank you."
