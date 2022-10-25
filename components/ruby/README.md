@@ -455,15 +455,13 @@ interactions:
     description: This is an optional field. WYOD (Write your own description)
 
   welcome_user_in_english:
-    # You can provide interaction id in erb.
-    # It renders to the input received at that interaction.
-    messages: ["Hello, <%= ask_user_name %>"]
+    # You can provide variables/Constants of TUIEngineState
+    messages: ["Hello, <%=  processed_input[:ask_user_name] %>"]
     prompt_type: "ok"
     paths: [welcome_user_in_hindi]
 
   welcome_user_in_hindi:
-    # You can access any other variables defined in TUIEngineState
-    # Example: processed_input
+    # You can provide variables/Constants of TUIEngineState
     messages: ["Namaste, <%= processed_input[:ask_user_name] %>"]
     prompt_type: "ok"
     paths: [exit]
@@ -471,5 +469,4 @@ interactions:
   exit:
     messages: ["This is the exit prompt"]
     prompt_type: "say"
-
 ```
