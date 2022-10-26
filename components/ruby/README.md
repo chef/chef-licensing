@@ -38,7 +38,9 @@ TODO
 
 ### Pre-requisites
 
-Please define the `CHEF_LICENSE_SERVER` env variable to the URL of the Progress Chef License Service you are targeting.
+Please define 
+- the `CHEF_LICENSE_SERVER` env variable to the URL of the Progress Chef License Service you are targeting.
+- the `CHEF_LICENSE_SERVER_API_KEY` env variable of the API key of the Chef License Service.
 
 ## Storage
 
