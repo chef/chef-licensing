@@ -39,12 +39,20 @@ RSpec.describe ChefLicensing::LicenseKeyGenerator do
     }
   }
 
+  let(:api_key) {
+    ChefLicensing.license_server_api_key
+  }
+
+  let(:headers) {
+    { 'x-api-key': api_key }
+  }
+
   subject { described_class.generate!(params) }
 
   describe ".generate!" do
     before do
       stub_request(:post, "#{ChefLicensing.license_server_url}/v1/triallicense")
-        .with(body: payload.to_json)
+        .with(body: payload.to_json, headers: headers)
         .to_return(body: expected_response,
                    headers: { content_type: "application/json" })
     end
@@ -69,11 +77,29 @@ RSpec.describe ChefLicensing::LicenseKeyGenerator do
 
       before do
         stub_request(:post, "#{ChefLicensing.license_server_url}/v1/triallicense")
-          .with(body: payload.to_json)
+          .with(body: payload.to_json, headers: headers)
           .to_return(body: expected_response, headers: { content_type: "application/json" }, status: 400)
       end
 
-      # it { is_expected.to eq(expected_license_key) }
+      it { expect { subject }.to raise_error(ChefLicensing::LicenseGenerationFailed) }
+    end
+
+    context "when invalid token is set" do
+      let(:api_key) {
+        "dummy token"
+      }
+
+      let(:expected_response) {
+        { "message": "Forbidden" }.to_json
+      }
+
+      before do
+        allow(ChefLicensing).to receive(:license_server_api_key).and_return(api_key)
+        stub_request(:post, "#{ChefLicensing.license_server_url}/v1/triallicense")
+          .with(body: payload.to_json, headers: headers)
+          .to_return(body: expected_response, headers: { content_type: "application/json" }, status: 403)
+      end
+
       it { expect { subject }.to raise_error(ChefLicensing::LicenseGenerationFailed) }
     end
   end
