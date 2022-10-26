@@ -10,7 +10,7 @@ module ChefLicensing
     # Base class is required for constants like LICENSE_KEY_REGEX
     class TUIActions < LicenseKeyFetcher::Base
 
-      attr_accessor :logger, :output
+      attr_accessor :logger, :output, :license_id
       def initialize(opts = {})
         @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
         @output = opts[:output] || STDOUT
@@ -34,7 +34,9 @@ module ChefLicensing
       def is_license_valid_on_server?(inputs)
         license_id = inputs[:ask_for_license_id]
         output.puts "License validation in progress..."
-        ChefLicensing::LicenseKeyValidator.validate!(license_id)
+        is_valid = ChefLicensing::LicenseKeyValidator.validate!(license_id)
+        self.license_id = license_id
+        return is_valid
       rescue ChefLicensing::InvalidLicense => e
         logger.debug e.message
         logger.debug("License is invalid")
@@ -71,10 +73,15 @@ module ChefLicensing
           phone: inputs[:gather_user_phone_no_for_license_generation]
         )
         puts "License ID: #{license_id}"
-        true
+        self.license_id = license_id
+        return true
       rescue ChefLicensing::LicenseGenerationFailed => e
         puts e.message
-        false
+        return false
+      end
+
+      def fetch_license_id(inputs)
+        license_id
       end
 
       def select_license_generation_based_on_type(inputs)

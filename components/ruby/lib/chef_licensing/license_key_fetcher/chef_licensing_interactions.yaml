@@ -50,7 +50,7 @@ interactions:
 
   validation_success:
     messages: "License validated successfully."
-    paths: [exit]
+    paths: [fetch_license_id]
 
   validation_failure:
     messages: "License is not valid. Please try again."
@@ -298,17 +298,21 @@ interactions:
 
       You can also look up it in saleforce portal under the name of <username>
       f you do not know your license key you can log into your Progress Chef customer portal to obtain your product serial number
-    paths: [exit]
+    paths: [fetch_license_id]
 
   trial_license_generation_success:
     messages: |
       The license has been generated and registered.
       A copy has also been sent on <email id>.
       You can also look up it in saleforce portal under the name of <username>
-    paths: [exit]
+    paths: [fetch_license_id]
 
   commercial_license_generation_success:
     messages: "Our Sales team will get in touch with you with further steps."
+    paths: [exit]
+
+  fetch_license_id:
+    action: fetch_license_id
     paths: [exit]
 
   license_generation_failure:

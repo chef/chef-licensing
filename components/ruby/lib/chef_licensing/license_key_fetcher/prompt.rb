@@ -19,11 +19,11 @@ module ChefLicensing
 
         # The interaction_id ask_for_license_id holds the license key
         # TODO: Do we move this to tui_engine?
-        if info[:ask_for_license_id].nil?
+        if info[:fetch_license_id].nil?
           # puts "Failed to obtain license."
           exit
         else
-          [info[:ask_for_license_id]]
+          [info[:fetch_license_id]]
         end
       end
     end
