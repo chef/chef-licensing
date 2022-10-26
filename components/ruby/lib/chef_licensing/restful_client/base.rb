@@ -1,6 +1,7 @@
 require "faraday" unless defined?(Faraday)
 require_relative "../exceptions/restful_client_error"
 require_relative "../config"
+require_relative "../license_server_api_key"
 
 module ChefLicensing
   module RestfulClient
@@ -27,6 +28,7 @@ module ChefLicensing
         handle_connection do |connection|
           response = connection.post(self.class::END_POINTS[:GENERATE_LICENSE]) do |request|
             request.body = payload.to_json
+            request.headers = { 'x-api-key': ChefLicensing.license_server_api_key }
           end
           raise RestfulClientError, format_error_from(response) unless response.success?
 
