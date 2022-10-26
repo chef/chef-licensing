@@ -226,7 +226,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect(tui_output.string).to include("Timed out!")
         expect(tui_output.string).to include("Oops! Reflex too slow.")
       it "should render the erb" do
-        expect(tui_engine.run_interaction).to eq({ start: nil, ask_user_name: "Chef User!", welcome_user_in_english: ["Hello, Chef User!"], welcome_user_in_hindi: ["Namaste, Chef User!"] ,exit: nil })
+        expect(tui_engine.run_interaction).to eq({ start: nil, ask_user_name: "Chef User!", welcome_user_in_english: ["Hello, Chef User!"], welcome_user_in_hindi: ["Namaste, Chef User!"], exit: nil })
       end
     end
     context "when the yaml file has an interaction without messages or action key" do
