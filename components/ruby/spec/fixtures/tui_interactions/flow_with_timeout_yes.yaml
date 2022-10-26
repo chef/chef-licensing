@@ -3,7 +3,7 @@ interactions:
     messages: ["Shall we begin the game?"]
     prompt_type: "timeout_yes"
     prompt_attributes:
-      timeout_duration: 10
+      timeout_duration: 0.000001
       timeout_message: "Oops! Reflex too slow."
     paths: [play, rest]
     response_path_map: 

@@ -84,7 +84,8 @@ module ChefLicensing
           # Qs: Why do we unsubscribe from the tty_prompt here?
           @tty_prompt.unsubscribe(@tty_prompt.reader)
           logger.error("Timeout error: #{e}")
-          exit!
+          # TODO: Exit with a meaningful error code.
+          exit
         end
       end
     end
