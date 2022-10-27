@@ -36,7 +36,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect(tui_engine.tui_interactions.keys).to eq(%i{start prompt_2 prompt_3 exit})
       end
 
-      it "should return processed_input as the interaction_id: nil hash" do
+      it "should return input as the interaction_id: nil hash" do
         expect(tui_engine.run_interaction).to eq({ start: nil, prompt_2: nil, prompt_3: nil, exit: nil })
       end
     end
@@ -68,7 +68,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect(tui_engine.tui_interactions.keys).to eq(%i{start prompt_2 prompt_3 prompt_4 exit})
       end
 
-      it "should return processed_input as the interaction_id: value hash but not prompt 4" do
+      it "should return input as the interaction_id: value hash but not prompt 4" do
         expect(tui_engine.run_interaction).to eq({ start: nil, prompt_2: "Option 1", prompt_3: nil, exit: nil })
       end
     end
@@ -92,7 +92,7 @@ RSpec.describe ChefLicensing::TUIEngine do
 
       let(:tui_engine) { described_class.new(config) }
 
-      it "should return processed_input as the interaction_id: value hash but not prompt 3" do
+      it "should return input as the interaction_id: value hash but not prompt 3" do
         expect(tui_engine.run_interaction).to eq({ start: nil, prompt_2: "Option 2", prompt_4: nil, exit: nil })
       end
     end
@@ -116,7 +116,7 @@ RSpec.describe ChefLicensing::TUIEngine do
 
       let(:tui_engine) { described_class.new(config) }
 
-      it "should return processed_input as the interaction_id: value hash" do
+      it "should return input as the interaction_id: value hash" do
         expect(tui_engine.run_interaction).to eq(
           {
             start: nil,
@@ -148,7 +148,7 @@ RSpec.describe ChefLicensing::TUIEngine do
 
       let(:tui_engine) { described_class.new(config) }
 
-      it "should return processed_input as the interaction_id: value hash" do
+      it "should return input as the interaction_id: value hash" do
         expect(tui_engine.run_interaction).to eq(
           {
             start: nil,

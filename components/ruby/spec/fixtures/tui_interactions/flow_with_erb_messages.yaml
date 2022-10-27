@@ -13,13 +13,13 @@ interactions:
 
   welcome_user_in_english:
     # You can provide variables/Constants of TUIEngineState
-    messages: ["Hello, <%= processed_input[:ask_user_name] %>"]
+    messages: ["Hello, <%= input[:ask_user_name] %>"]
     prompt_type: "ok"
     paths: [welcome_user_in_hindi]
 
   welcome_user_in_hindi:
     # You can provide variables/Constants of TUIEngineState
-    messages: ["Namaste, <%= processed_input[:ask_user_name] %>"]
+    messages: ["Namaste, <%= input[:ask_user_name] %>"]
     prompt_type: "ok"
     paths: [exit]
 

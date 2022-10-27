@@ -6,10 +6,10 @@ require "erb" unless defined?(Erb)
 module ChefLicensing
   class TUIEngine
     class TUIEngineState < Hash
-      attr_accessor :next_interaction_id, :processed_input, :logger, :prompt, :tui_actions
+      attr_accessor :next_interaction_id, :input, :logger, :prompt, :tui_actions
 
       def initialize(opts = {})
-        @processed_input = {}
+        @input = {}
         @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
         @prompt = ChefLicensing::TUIEngine::TUIPrompt.new(opts)
         @tui_actions = ChefLicensing::TUIEngine::TUIActions.new
@@ -21,14 +21,15 @@ module ChefLicensing
         logger.debug "Default action called for interaction id: #{interaction.id}"
 
         if interaction.messages
+          messages = render_messages(interaction.messages)
           response = @prompt.send(interaction.prompt_type, interaction.messages, interaction.prompt_attributes)
         elsif interaction.action
-          response = @tui_actions.send(interaction.action, @processed_input)
+          response = @tui_actions.send(interaction.action, @input)
         end
 
-        @processed_input.store(interaction.id, response)
+        @input.store(interaction.id, response)
 
-        logger.debug "Response for interaction #{interaction.id} is #{@processed_input[interaction.id]}"
+        logger.debug "Response for interaction #{interaction.id} is #{@input[interaction.id]}"
 
         if interaction.paths.size > 1
           @next_interaction_id = interaction.response_path_map[response.to_s]
@@ -42,7 +43,7 @@ module ChefLicensing
       private
 
       def erb_result(message)
-        ERB.new(message).result_with_hash(processed_input: processed_input)
+        ERB.new(message).result_with_hash(input: input)
       end
 
       def render_messages(messages)
