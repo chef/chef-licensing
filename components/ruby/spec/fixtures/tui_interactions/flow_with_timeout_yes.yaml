@@ -1,0 +1,27 @@
+interactions:
+  start:
+    messages: ["Shall we begin the game?"]
+    prompt_type: "timeout_yes"
+    prompt_attributes:
+      timeout_duration: 1
+      timeout_message: "Oops! Reflex too slow."
+    paths: [play, rest]
+    response_path_map: 
+      "true": play
+      "false": rest
+
+  play:
+    messages: ["Playing..."]
+    prompt_type: "ok"
+    paths: [exit]
+    description: WYOD.
+
+  rest:
+    messages: ["Resting..."]
+    prompt_type: "ok"
+    paths: [exit]
+    description: WYOD.
+
+  exit:
+    messages: ["Game over!"]
+    prompt_type: "say"
