@@ -242,7 +242,7 @@ The different keys in an interaction file are:
 
 3. `messages`:  `messages` key is the key of an interaction which contains the texts to be displayed to the user. `messages` can receive texts as an array or a string.
 
-   For general purpose display, texts can be provided as string. 
+   For general purpose display, texts can be provided as string.
 
    - Example: `messages: "This is the text to be displayed"`
 
@@ -256,8 +256,8 @@ The different keys in an interaction file are:
 
    Messages can also be provided in erb formats to display values received in other states or values of constants/variables defined in the class `ChefLicensing::TUIEngine::TUIEngineState`
 
-   - Example: `messages: ["Hello, <%= processed_input[:<interaction_id>] %>"]`.
-   
+   - Example: `messages: ["Hello, <%= input[:<interaction_id>] %>"]`.
+
 4. `prompt_type`: `prompt_type` key is another key of an interaction which accepts value representing different types of prompt. Currently, the supported prompt types are:
 
    - `say`: displays the message, returns nil
@@ -364,7 +364,7 @@ The different ways how we can define an interaction is shown below.
    Here, after the action is performed, based on the response of the action it could lead to different paths with the mapped interaction id.
 
 ## Troubleshooting
-- Do not have response_path_map based on the response from prompts and action together in a single interaction, this could lead to ambiguity. So, atomize the interaction to either: 
+- Do not have response_path_map based on the response from prompts and action together in a single interaction, this could lead to ambiguity. So, atomize the interaction to either:
   - display message,
   - take inputs from user, or
   - to perform an action item
@@ -455,7 +455,7 @@ interactions:
     description: This is an optional field. WYOD (Write your own description)
   welcome_user_in_english:
     # You can provide variables/Constants of TUIEngineState
-    messages: ["Hello, <%=  processed_input[:ask_user_name] %>"]
+    messages: ["Hello, <%=  input[:ask_user_name] %>"]
     prompt_type: "ok"
     paths: [exit]
   exit:
