@@ -30,6 +30,7 @@ module ChefLicensing
         end
       end
 
+
       # If the last interaction is not the exit interaction. Something went wrong in the flow.
       raise ChefLicensing::TUIEngine::IncompleteFlowException, "Something went wrong in the flow." if current_interaction.nil? || current_interaction.id != :exit
 
