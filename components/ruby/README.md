@@ -240,9 +240,9 @@ The different keys in an interaction file are:
    Evert interaction file must have the `start` and `exit` interaction.
    The flow of interaction starts from the `start` interaction and always ends on `exit` interaction.
 
-3. `messages`:  `messages` key is the key of an interaction which contains the texts to be displayed to the user. `messages` can receive texts as an array or a string.
+3. `messages`:  `messages` key contains the texts to be displayed to the user at each interaction. `messages` can receive texts as an array or a string.
 
-   For general purpose display, texts can be provided as string.
+   For general purpose display, texts can be provided as string. 
 
    - Example: `messages: "This is the text to be displayed"`
 
@@ -253,12 +253,8 @@ The different keys in an interaction file are:
    However, we need to provided the texts as an array or arrays when the provided text is to be displayed as menu. The format to be followed is as: `[header, [choices]]`
 
    - Example: `messages: ["The header of the menu", ["Option 1", "Option 2"]]`
-
-   Messages can also be provided in erb formats to display values received in other states or values of constants/variables defined in the class `ChefLicensing::TUIEngine::TUIEngineState`
-
-   - Example: `messages: ["Hello, <%= input[:<interaction_id>] %>"]`.
-
-4. `prompt_type`: `prompt_type` key is another key of an interaction which accepts value representing different types of prompt. Currently, the supported prompt types are:
+   
+4. `prompt_type`: `prompt_type` key defines the type of prompt for an interaction. The supported prompt types are:
 
    - `say`: displays the message, returns nil
    - `yes`: displays the message, asks for input from user. Returns true when input is given as `yes` or `y`, and false on input of `no` or `n`.
@@ -272,11 +268,11 @@ The different keys in an interaction file are:
 
    This key is an optional and defaults to prompt_type of `say`.
 
-5. `paths`: `paths` key is another key of an interaction which accepts an array of interaction id to which it could be follow, after the current responsibility of the interaction is complete. Every interaction must have a path except for the `exit` interaction.
+5. `paths`: `paths` key accepts an array of interaction id to which an interaction could be follow, after the current responsibility of the interaction is complete. Every interaction must have a path except for the `exit` interaction.
 
-6. `action`: `action`  key is another key of an interaction which accepts a method name. The methods are to be defined in `TUIActions` class.
+6. `action`: `action` key accepts a method name to be executed for an interaction. The methods are to be defined in `TUIActions` class.
 
-7. `response_path_map`: `response_path_map` key is another key of an interaction which contains a mapping of `<response>: <interaction id>`
+7. `response_path_map`: `response_path_map` key contains a mapping of `<response>: <interaction id>` which helps an interaction in decision making for next interaction.
 
    The response could be from either prompt display or from action, but not both.
 
@@ -363,7 +359,7 @@ The different ways how we can define an interaction is shown below.
    Here, after the action is performed, based on the response of the action it could lead to different paths with the mapped interaction id.
 
 ## Troubleshooting
-- Do not have response_path_map based on the response from prompts and action together in a single interaction, this could lead to ambiguity. So, atomize the interaction to either:
+- Do not have response_path_map based on the response from prompts and action together in a single interaction, this could lead to ambiguity. So, atomize the interaction to either: 
   - display message,
   - take inputs from user, or
   - to perform an action item
@@ -372,7 +368,7 @@ The different ways how we can define an interaction is shown below.
 - Any additional keys provided in the interaction file is ignored.
 - Paths is mandatory for all interactions except for `exit` interaction.
 
-## Example
+## Example of a basic interaction file
 ```YAML
 interactions:
   start:
@@ -439,6 +435,7 @@ interactions:
     messages: ["Game over!"]
     prompt_type: "say"
 ```
+
 ## Example with erb message
 ```YAML
 interactions:
