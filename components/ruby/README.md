@@ -238,7 +238,7 @@ The different keys in an interaction file are:
    Evert interaction file must have the `start` and `exit` interaction.
    The flow of interaction starts from the `start` interaction and always ends on `exit` interaction.
 
-3. `messages`:  `messages` key contains the texts to be displayed to the user at each interaction. `messages` can receive texts as an array or a string.
+3. `messages`:  `messages` key is the key of an interaction which contains the texts to be displayed to the user. `messages` can receive texts as an array or a string.
 
    For general purpose display, texts can be provided as string. 
 
@@ -252,7 +252,7 @@ The different keys in an interaction file are:
 
    - Example: `messages: ["The header of the menu", ["Option 1", "Option 2"]]`
    
-4. `prompt_type`: `prompt_type` key defines the type of prompt for an interaction. The supported prompt types are:
+4. `prompt_type`: `prompt_type` key is another key of an interaction which accepts value representing different types of prompt. Currently, the supported prompt types are:
 
    - `say`: displays the message, returns nil
    - `yes`: displays the message, asks for input from user. Returns true when input is given as `yes` or `y`, and false on input of `no` or `n`.
@@ -266,11 +266,11 @@ The different keys in an interaction file are:
 
    This key is an optional and defaults to prompt_type of `say`.
 
-5. `paths`: `paths` key accepts an array of interaction id to which an interaction could be follow, after the current responsibility of the interaction is complete. Every interaction must have a path except for the `exit` interaction.
+5. `paths`: `paths` key is another key of an interaction which accepts an array of interaction id to which it could be follow, after the current responsibility of the interaction is complete. Every interaction must have a path except for the `exit` interaction.
 
-6. `action`: `action` key accepts a method name to be executed for an interaction. The methods are to be defined in `TUIActions` class.
+6. `action`: `action`  key is another key of an interaction which accepts a method name. The methods are to be defined in `TUIActions` class.
 
-7. `response_path_map`: `response_path_map` key contains a mapping of `<response>: <interaction id>` which helps an interaction in decision making for next interaction.
+7. `response_path_map`: `response_path_map` key is another key of an interaction which contains a mapping of `<response>: <interaction id>`
 
    The response could be from either prompt display or from action, but not both.
 
@@ -364,7 +364,7 @@ The different ways how we can define an interaction is shown below.
 - Any additional keys provided in the interaction file is ignored.
 - Paths is mandatory for all interactions except for `exit` interaction.
 
-## Example of a basic interaction file
+## Example
 ```YAML
 interactions:
   start:
@@ -419,17 +419,14 @@ interactions:
     response_path_map:
       "true": play
       "false": rest
-
   play:
     messages: ["Playing..."]
     prompt_type: "ok"
     paths: [exit]
-
   rest:
     messages: ["Resting..."]
     prompt_type: "ok"
     paths: [exit]
-
   exit:
     messages: ["Game over!"]
     prompt_type: "say"
