@@ -194,9 +194,11 @@ RSpec.describe ChefLicensing::TUIEngine do
     end
 
     context "when the interaction file has timeout prompt" do
+      let(:tui_output) { StringIO.new }
+
       let(:config) {
         {
-          output: StringIO.new,
+          output: tui_output,
           # input: StringIO.new, # This is not required as we are not sending any input
           logger: Logger.new(StringIO.new),
           interaction_file: File.join(fixture_dir, "flow_with_timeout_yes.yaml"),
@@ -205,8 +207,10 @@ RSpec.describe ChefLicensing::TUIEngine do
 
       let(:tui_engine) { described_class.new(config) }
 
-      it "should timeout and exit in 0.000001 seconds" do
+      it "should timeout and exit in 1 second" do
         expect { tui_engine.run_interaction }.to raise_error(SystemExit)
+        expect(tui_output.string).to include("Timed out!")
+        expect(tui_output.string).to include("Oops! Reflex too slow.")
       end
     end
   end

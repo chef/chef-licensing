@@ -79,12 +79,12 @@ module ChefLicensing
 
         Timeout.timeout(timeout_duration, PromptTimeout) do
           yes(messages, prompt_attributes)
-        rescue PromptTimeout => e
+        rescue PromptTimeout
           error(prompt_attributes[:timeout_message] || "Prompt Timeout", prompt_attributes)
           # Qs: Why do we unsubscribe from the tty_prompt here?
           @tty_prompt.unsubscribe(@tty_prompt.reader)
-          logger.error("Timeout error: #{e}")
           # TODO: Exit with a meaningful error code.
+          output.puts "Timed out!"
           exit
         end
       end

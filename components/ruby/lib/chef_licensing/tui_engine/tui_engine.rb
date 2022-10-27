@@ -86,7 +86,7 @@ module ChefLicensing
         opts.transform_keys!(&:to_sym)
 
         opts.each do |k, val|
-          unless %i{action messages paths prompt_type response_path_map description}.include?(k)
+          unless %i{action messages paths prompt_type response_path_map description prompt_attributes}.include?(k)
             warn "Invalid key `#{k}` found in yaml file for interaction #{i_id}."
             warn "Valid keys are `action`, `messages`, `paths`, `prompt_type`, `response_path_map` and `description`."
             warn "#{k} will be ignored.\nYour yaml file may not work as expected."

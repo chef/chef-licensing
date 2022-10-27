@@ -276,7 +276,9 @@ The different keys in an interaction file are:
 
 8. `description`: `description` is an optional field of an interaction which is used to describe interaction for readability of the interaction file.
 
-9. `prompt_attributes`: `prompt_attributes` helps to provide additional properties required by any prompt_type. Currently, supported attributes are `timeout_duration` and `timeout_message`.
+9. `prompt_attributes`: `prompt_attributes` helps to provide additional properties required by any prompt_type. Currently, supported attributes are:
+   1.  `timeout_duration`: This attribute is supported by the `timeout_yes` prompt and can receive decimal values.
+   2.  `timeout_message`: This attribute is supported by the `timeout_yes` prompt and can receive string values.
 
 ### Ways to define an interaction
 
