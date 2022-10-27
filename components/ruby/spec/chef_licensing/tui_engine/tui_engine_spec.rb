@@ -202,6 +202,18 @@ RSpec.describe ChefLicensing::TUIEngine do
           # input: StringIO.new, # This is not required as we are not sending any input
           logger: Logger.new(StringIO.new),
           interaction_file: File.join(fixture_dir, "flow_with_timeout_yes.yaml"),
+        }
+      }
+
+      let(:tui_engine) { described_class.new(config) }
+
+      it "should timeout and exit in 1 second" do
+        expect { tui_engine.run_interaction }.to raise_error(SystemExit)
+        expect(tui_output.string).to include("Timed out!")
+        expect(tui_output.string).to include("Oops! Reflex too slow.")
+      end
+    end
+
     context "when the interaction file has messages in erb template" do
       let(:user_input) { StringIO.new }
 
@@ -221,10 +233,6 @@ RSpec.describe ChefLicensing::TUIEngine do
 
       let(:tui_engine) { described_class.new(config) }
 
-      it "should timeout and exit in 1 second" do
-        expect { tui_engine.run_interaction }.to raise_error(SystemExit)
-        expect(tui_output.string).to include("Timed out!")
-        expect(tui_output.string).to include("Oops! Reflex too slow.")
       it "should render the erb" do
         expect(tui_engine.run_interaction).to eq({ start: nil, ask_user_name: "Chef User!", welcome_user_in_english: ["Hello, Chef User!"], welcome_user_in_hindi: ["Namaste, Chef User!"], exit: nil })
       end

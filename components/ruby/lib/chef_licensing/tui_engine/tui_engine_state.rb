@@ -22,7 +22,7 @@ module ChefLicensing
 
         if interaction.messages
           messages = render_messages(interaction.messages)
-          response = @prompt.send(interaction.prompt_type, interaction.messages, interaction.prompt_attributes)
+          response = @prompt.send(interaction.prompt_type, messages, interaction.prompt_attributes)
         elsif interaction.action
           response = @tui_actions.send(interaction.action, @input)
         end
