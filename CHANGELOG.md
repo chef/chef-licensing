@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.3.8 -->
-## [0.3.8](https://github.com/chef/chef-licensing/tree/0.3.8) (2022-10-27)
+<!-- latest_release 0.3.9 -->
+## [0.3.9](https://github.com/chef/chef-licensing/tree/0.3.9) (2022-10-27)
 
 #### Merged Pull Requests
-- CFINSPEC-490 authenticate requests [#31](https://github.com/chef/chef-licensing/pull/31) ([sathish-progress](https://github.com/sathish-progress))
+- CFINSPEC-492: Improve TUI Engine [#32](https://github.com/chef/chef-licensing/pull/32) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CFINSPEC-492: Improve TUI Engine [#32](https://github.com/chef/chef-licensing/pull/32) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.9 -->
 - CFINSPEC-490 authenticate requests [#31](https://github.com/chef/chef-licensing/pull/31) ([sathish-progress](https://github.com/sathish-progress)) <!-- 0.3.8 -->
 - CFINSPEC-483: Handle timeout at first prompt of Chef Licensing [#25](https://github.com/chef/chef-licensing/pull/25) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.7 -->
 - Fix: Require appropriate class to be able to raise error [#29](https://github.com/chef/chef-licensing/pull/29) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.6 -->
