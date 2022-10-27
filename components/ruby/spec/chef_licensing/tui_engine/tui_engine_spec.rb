@@ -264,7 +264,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         $stderr.rewind
         expect($stderr.string.chomp).to include("Invalid key `path` found in yaml file for interaction prompt_2")
         expect($stderr.string.chomp).to include("Invalid key `prompt_typr` found in yaml file for interaction start.")
-        expect($stderr.string.chomp).to include("Valid keys are id, messages, action, prompt_type, response_path_map, paths, description")
+        expect($stderr.string.chomp).to include("Valid keys are id, messages, action, prompt_type, prompt_attributes, response_path_map, paths, description")
       end
 
       after do

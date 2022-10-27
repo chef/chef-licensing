@@ -20,7 +20,7 @@ module ChefLicensing
         logger.debug "Default action called for interaction id: #{interaction.id}"
 
         if interaction.messages
-          response = @prompt.send(interaction.prompt_type, interaction.messages)
+          response = @prompt.send(interaction.prompt_type, interaction.messages, interaction.prompt_attributes)
         elsif interaction.action
           response = @tui_actions.send(interaction.action, @processed_input)
         end
