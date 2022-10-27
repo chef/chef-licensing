@@ -20,7 +20,7 @@ module ChefLicensing
 
       def is_license_with_valid_pattern?(inputs)
         license_id = inputs[:ask_for_license_id]
-        if (match = license_id.match(/^#{LICENSE_KEY_REGEX}$/))
+        if !license_id.nil? && (match = license_id.match(/^#{LICENSE_KEY_REGEX}$/))
           inputs[:ask_for_license_id] = match[1]
           true
         else
