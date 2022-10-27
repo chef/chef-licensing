@@ -1,0 +1,8 @@
+interactions:
+  start:
+    paths: [exit]
+    description: This is an optional field. WYOD (Write your own description)
+
+  exit:
+    messages: ["This is the exit prompt"]
+    prompt_type: "say"

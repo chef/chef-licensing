@@ -82,7 +82,11 @@ module ChefLicensing
       @interaction_data["interactions"].each do |i_id, opts|
         opts.transform_keys!(&:to_sym)
 
-        # An interaction must be either action or a prompt.
+        # An interaction must be either action or a prompt to display messages.
+        if opts[:action].nil? && opts[:messages].nil?
+          raise ChefLicensing::TUIEngine::YAMLException, "No action or messages found for interaction #{i_id}.\nAdd either action or messages to the interaction."
+        end
+
         # Supporting both could lead ambiguous flow in response_path_map
         if opts[:action] && opts[:messages]
           warn "Both `action` and `messages` keys found in yaml file for interaction #{i_id}."

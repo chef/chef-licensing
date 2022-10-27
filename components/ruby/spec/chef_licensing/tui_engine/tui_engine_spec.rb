@@ -213,6 +213,20 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect(tui_output.string).to include("Oops! Reflex too slow.")
       end
     end
+    context "when the yaml file has an interaction without messages or action key" do
+      let(:config) {
+        {
+          output: StringIO.new,
+          input: StringIO.new,
+          logger: Logger.new(StringIO.new),
+          interaction_file: File.join(fixture_dir, "flow_without_messages_or_action.yaml"),
+        }
+      }
+
+      it "should raise error while instantiating the class" do
+        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException)
+      end
+    end
   end
 
   describe "when a tui_engine object is instantiated with an invalid yaml file" do
@@ -248,7 +262,6 @@ RSpec.describe ChefLicensing::TUIEngine do
       it "warns about invalid key found in yaml file" do
         described_class.new(config)
         $stderr.rewind
-        expect($stderr.string.chomp).to include("Invalid key `messagesx` found in yaml file for interaction start")
         expect($stderr.string.chomp).to include("Invalid key `path` found in yaml file for interaction prompt_2")
         expect($stderr.string.chomp).to include("Invalid key `prompt_typr` found in yaml file for interaction start.")
         expect($stderr.string.chomp).to include("Valid keys are id, messages, action, prompt_type, response_path_map, paths, description")

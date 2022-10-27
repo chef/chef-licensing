@@ -1,6 +1,6 @@
 interactions:
   start:
-    messagesx: ["This is a start message"]
+    messages: ["This is a start message"]
     prompt_typr: "say"
     paths: [prompt_2]
     description: This is an optional field. WYOD (Write your own description)
