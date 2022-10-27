@@ -19,18 +19,13 @@ module ChefLicensing
 
         logger.debug "Default action called for interaction id: #{interaction.id}"
 
-        # We need to display only if the interaction has messages.
-        # When a prompt_type is not given, we assume it to be say.
-        if interaction.messages && @prompt.respond_to?(interaction.prompt_type)
+        if interaction.messages
           response = @prompt.send(interaction.prompt_type, interaction.messages, interaction.prompt_attributes)
-          @processed_input.store(interaction.id, response)
+        elsif interaction.action
+          response = @tui_actions.send(interaction.action, @processed_input)
         end
 
-        # We need to call the action only if the interaction has an action.
-        if interaction.action && @tui_actions.respond_to?(interaction.action)
-          response = @tui_actions.send(interaction.action, @processed_input)
-          @processed_input.store(interaction.id, response)
-        end
+        @processed_input.store(interaction.id, response)
 
         logger.debug "Response for interaction #{interaction.id} is #{@processed_input[interaction.id]}"
 
