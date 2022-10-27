@@ -2,6 +2,7 @@ require_relative "../license_key_validator"
 require_relative "../license_key_generator"
 require_relative "../exceptions/invalid_license"
 require_relative "../exceptions/license_generation_failed"
+require_relative "../exceptions/license_generation_rejected"
 require_relative "../license_key_fetcher/base"
 
 module ChefLicensing
@@ -10,7 +11,7 @@ module ChefLicensing
     # Base class is required for constants like LICENSE_KEY_REGEX
     class TUIActions < LicenseKeyFetcher::Base
 
-      attr_accessor :logger, :output, :license_id
+      attr_accessor :logger, :output, :license_id, :error_msg, :rejection_msg
       def initialize(opts = {})
         @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
         @output = opts[:output] || STDOUT
@@ -62,7 +63,7 @@ module ChefLicensing
       end
 
       # TBD to add product name dynamically
-      def generate_license(inputs)
+      def generate_trial_license(inputs)
         puts "License generation in progress..."
         license_id = ChefLicensing::LicenseKeyGenerator.generate!(
           first_name: inputs[:gather_user_first_name_for_license_generation],
@@ -76,12 +77,49 @@ module ChefLicensing
         self.license_id = license_id
         return true
       rescue ChefLicensing::LicenseGenerationFailed => e
-        puts e.message
+        self.error_msg = e.message
         return false
+      rescue ChefLicensing::LicenseGenerationRejected => e
+        self.rejection_msg = e.message
+        return false
+      end
+
+      def generate_free_license(inputs)
+        puts "License generation in progress..."
+        license_id = ChefLicensing::LicenseKeyGenerator.generate_free_license!(
+          first_name: inputs[:gather_user_first_name_for_license_generation],
+          last_name: inputs[:gather_user_last_name_for_license_generation],
+          email_id: inputs[:gather_user_email_for_license_generation],
+          product: "inspec",
+          company: inputs[:gather_user_company_for_license_generation],
+          phone: inputs[:gather_user_phone_no_for_license_generation]
+        )
+        puts "License ID: #{license_id}"
+        self.license_id = license_id
+        return true
+      rescue ChefLicensing::LicenseGenerationFailed => e
+        self.error_msg = e.message
+        return false
+      rescue ChefLicensing::LicenseGenerationRejected => e
+        self.rejection_msg = e.message
+        return false
+      end
+
+      def generate_commercial_license_lead(inputs)
+        #TBD api implementation
+        false
       end
 
       def fetch_license_id(inputs)
         license_id
+      end
+
+      def fetch_license_failure_error_msg(inputs)
+        error_msg
+      end
+
+      def fetch_license_failure_rejection_msg(inputs)
+        rejection_msg
       end
 
       def select_license_generation_based_on_type(inputs)
@@ -107,8 +145,7 @@ module ChefLicensing
       end
 
       def license_generation_rejected?(inputs)
-        # TBD based on error handling in API
-        true
+        !!rejection_msg
       end
     end
   end

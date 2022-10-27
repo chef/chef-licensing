@@ -270,21 +270,21 @@ interactions:
       "commercial": generate_commercial_license
 
   generate_free_license:
-    action: generate_license
+    action: generate_free_license
     paths: [free_license_generation_success, license_generation_failure]
     response_path_map:
       "true": free_license_generation_success
       "false": license_generation_failure
 
   generate_trial_license:
-    action: generate_license
+    action: generate_trial_license
     paths: [trial_license_generation_success, license_generation_failure]
     response_path_map:
       "true": trial_license_generation_success
       "false": license_generation_failure
 
   generate_commercial_license:
-    action: generate_license
+    action: generate_commercial_license_lead
     paths: [commercial_license_generation_success, license_generation_failure]
     response_path_map:
       "true": commercial_license_generation_success
@@ -317,13 +317,21 @@ interactions:
 
   license_generation_failure:
     action: license_generation_rejected?
-    paths: [license_generation_with_errors, license_generation_rejected]
+    paths: [fetch_license_failure_error_msg, fetch_license_failure_rejection_msg]
     response_path_map:
-      "true": license_generation_rejected
-      "false": license_generation_with_errors
+      "true": fetch_license_failure_rejection_msg
+      "false": fetch_license_failure_error_msg
+
+  fetch_license_failure_error_msg:
+    action: fetch_license_failure_error_msg
+    paths: [license_generation_with_errors]
+
+  fetch_license_failure_rejection_msg:
+    action: fetch_license_failure_rejection_msg
+    paths: [license_generation_rejected]
 
   license_generation_rejected:
-    messages: ["Your request for a license was denied for the following reason <XXXXX>. Please select an Option", ["Try again", "Continue using non-premium features"]]
+    messages: ["Your request for a license was denied for the following reason <%= inputs[:fetch_license_failure_rejection_msg] %>. Please select an Option", ["Try again", "Continue using non-premium features"]]
     prompt_type: "select"
     paths: [pre_license_generation, exit]
     response_path_map:
@@ -331,7 +339,7 @@ interactions:
       "Continue using non-premium features": exit
 
   license_generation_with_errors:
-    messages: ["An error occurred while generating your license. Error code: <CODE>", ["Try again", "Continue using non-premium features"]]
+    messages: ["An error occurred while generating your license. Error message: <%= inputs[:fetch_license_failure_error_msg] %>", ["Try again", "Continue using non-premium features"]]
     prompt_type: "select"
     paths: [pre_license_generation, exit]
     response_path_map:

@@ -10,6 +10,10 @@ module ChefLicensing
       def generate!(kwargs)
         new(kwargs).generate!
       end
+
+      def generate_free_license!(kwargs)
+        new(kwargs).generate_free_license!
+      end
     end
 
     def initialize(kwargs, restful_client: ChefLicensing::RestfulClient::V1)
@@ -23,6 +27,12 @@ module ChefLicensing
       # need some logic around delivery
       # how the delivery is decided?
       response.licenseId
+    rescue RestfulClientError => e
+      raise ChefLicensing::LicenseGenerationFailed, e.message
+    end
+
+    def generate_free_license!
+      #TBD integration with free license generation api
     rescue RestfulClientError => e
       raise ChefLicensing::LicenseGenerationFailed, e.message
     end
