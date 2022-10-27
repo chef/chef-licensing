@@ -7,7 +7,7 @@ require_relative "tui_actions"
 module ChefLicensing
   class TUIEngine
 
-    attr_accessor :interaction_data, :tui_interactions, :opts, :logger
+    attr_accessor :interaction_data, :tui_interactions, :opts, :logger, :tui_prompt_methods, :tui_action_methods, :tui_interaction_attributes
 
     def initialize(opts = {})
       @opts = opts
@@ -79,11 +79,6 @@ module ChefLicensing
 
       raise ChefLicensing::TUIEngine::YAMLException, "`interactions` key not found in yaml file." unless @interaction_data["interactions"]
 
-      # Temporary objects to verify the yaml data
-      tui_actions = ChefLicensing::TUIEngine::TUIActions.new
-      tui_prompt = ChefLicensing::TUIEngine::TUIPrompt.new
-      tui_interaction = ChefLicensing::TUIEngine::TUIInteraction.new
-
       @interaction_data["interactions"].each do |i_id, opts|
         opts.transform_keys!(&:to_sym)
 
@@ -96,23 +91,61 @@ module ChefLicensing
 
         opts.each do |k, val|
           # check for invalid keys in an interaction
-          unless tui_interaction.respond_to?(k)
+          unless is_valid_tui_interaction_attribute?(k)
             warn "Invalid key `#{k}` found in yaml file for interaction #{i_id}."
-            warn "Valid keys are #{tui_interaction.instance_variables.join(", ")}."
+            warn "Valid keys are #{@tui_interaction_attributes.join(", ")}."
             warn "#{k} will be ignored.\nYour yaml file may not work as expected."
           end
 
           # check if tui_engine supports the prompt_type
-          if k == :prompt_type && !tui_prompt.respond_to?(val)
+          if k == :prompt_type && !is_valid_tui_prompt_method?(val)
             raise ChefLicensing::TUIEngine::YAMLException, "Invalid value `#{val}` for `prompt_type` key in yaml file for interaction #{i_id}."
           end
 
           # check if tui_engine supports the action
-          if k == :action && !tui_actions.respond_to?(val)
+          if k == :action && !is_valid_tui_action_method?(val)
             raise ChefLicensing::TUIEngine::YAMLException, "Invalid value `#{val}` for `action` key in yaml file for interaction #{i_id}."
           end
         end
       end
+    end
+
+    def is_valid_tui_prompt_method?(val)
+      return @methods_of_tui_prompt.include?(val.to_sym) if @methods_of_tui_prompt
+
+      # Find the getter methods of TUIPrompt class
+      tui_prompt_getter = ChefLicensing::TUIEngine::TUIPrompt.new.instance_variables.map { |var| var.to_s.delete("@").to_sym }
+
+      #  Find the setter methods of TUIPrompt class
+      tui_prompt_setter = tui_prompt_getter.map { |attr| "#{attr}=".to_sym }
+
+      # Subtract the getter and setter of TUIPrompt class from the instance methods of TUIPrompt class
+      @methods_of_tui_prompt = ChefLicensing::TUIEngine::TUIPrompt.instance_methods(false) - tui_prompt_getter - tui_prompt_setter
+
+      @methods_of_tui_prompt.include?(val.to_sym)
+    end
+
+    def is_valid_tui_action_method?(val)
+      return @methods_of_tui_action.include?(val.to_sym) if @methods_of_tui_action
+
+      # Find the getter methods of TUIActions class
+      tui_action_getter = ChefLicensing::TUIEngine::TUIActions.new.instance_variables.map { |var| var.to_s.delete("@").to_sym }
+
+      #  Find the setter methods of TUIActions class
+      tui_action_setter = tui_action_getter.map { |attr| "#{attr}=".to_sym }
+
+      # Subtract the getter and setter of TUIActions class from the instance methods of TUIActions class
+      @methods_of_tui_action = ChefLicensing::TUIEngine::TUIActions.instance_methods(false) - tui_action_getter - tui_action_setter
+
+      @methods_of_tui_action.include?(val.to_sym)
+    end
+
+    def is_valid_tui_interaction_attribute?(val)
+      return @tui_interaction_attributes.include?(val.to_sym) if @tui_interaction_attributes
+
+      @tui_interaction_attributes = ChefLicensing::TUIEngine::TUIInteraction.new.instance_variables.map { |var| var.to_s.delete("@").to_sym }
+
+      @tui_interaction_attributes.include?(val.to_sym)
     end
   end
 end
