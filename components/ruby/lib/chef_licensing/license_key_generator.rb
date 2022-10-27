@@ -32,7 +32,7 @@ module ChefLicensing
     end
 
     def generate_free_license!
-      #TBD integration with free license generation api
+      # TBD integration with free license generation api
     rescue RestfulClientError => e
       raise ChefLicensing::LicenseGenerationFailed, e.message
     end

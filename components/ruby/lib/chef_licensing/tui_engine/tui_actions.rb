@@ -37,7 +37,7 @@ module ChefLicensing
         output.puts "License validation in progress..."
         is_valid = ChefLicensing::LicenseKeyValidator.validate!(license_id)
         self.license_id = license_id
-        return is_valid
+        is_valid
       rescue ChefLicensing::InvalidLicense => e
         logger.debug e.message
         logger.debug("License is invalid")
@@ -46,15 +46,15 @@ module ChefLicensing
 
       def is_user_name_valid?(inputs)
         user_name = inputs[:gather_user_last_name_for_license_generation] || inputs[:gather_user_first_name_for_license_generation]
-        return (user_name =~ /\A[a-z_A-Z\-\`]{4,16}\Z/) == 0
+        (user_name =~ /\A[a-z_A-Z\-\`]{4,16}\Z/) == 0
       end
 
       def is_email_valid?(inputs)
-        return (inputs[:gather_user_email_for_license_generation]  =~ URI::MailTo::EMAIL_REGEXP) == 0
+        (inputs[:gather_user_email_for_license_generation] =~ URI::MailTo::EMAIL_REGEXP) == 0
       end
 
       def is_company_name_valid?(inputs)
-        return (inputs[:gather_user_company_for_license_generation] =~ /\A[a-z_.\sA-Z\-\`]{4,16}\Z/) == 0
+        (inputs[:gather_user_company_for_license_generation] =~ /\A[a-z_.\sA-Z\-\`]{4,16}\Z/) == 0
       end
 
       def is_phone_no_valid?(inputs)
@@ -75,13 +75,13 @@ module ChefLicensing
         )
         puts "License ID: #{license_id}"
         self.license_id = license_id
-        return true
+        true
       rescue ChefLicensing::LicenseGenerationFailed => e
         self.error_msg = e.message
-        return false
+        false
       rescue ChefLicensing::LicenseGenerationRejected => e
         self.rejection_msg = e.message
-        return false
+        false
       end
 
       def generate_free_license(inputs)
@@ -96,17 +96,17 @@ module ChefLicensing
         )
         puts "License ID: #{license_id}"
         self.license_id = license_id
-        return true
+        true
       rescue ChefLicensing::LicenseGenerationFailed => e
         self.error_msg = e.message
-        return false
+        false
       rescue ChefLicensing::LicenseGenerationRejected => e
         self.rejection_msg = e.message
-        return false
+        false
       end
 
       def generate_commercial_license_lead(inputs)
-        #TBD api implementation
+        # TBD api implementation
         false
       end
 
