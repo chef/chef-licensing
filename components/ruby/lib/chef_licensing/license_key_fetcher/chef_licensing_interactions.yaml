@@ -255,10 +255,10 @@ interactions:
 
   ask_for_review_confirmation:
     prompt_type: "select"
-    messages: ["Please select", ["Confirm and proceed", "Re-enter the details"]]
+    messages: ["Please select", ["Confirm the details and proceed", "Re-enter the details"]]
     paths: [pre_license_generation, info_of_license_types]
     response_path_map:
-      "Confirm and proceed": pre_license_generation
+      "Confirm the details and proceed": pre_license_generation
       "Re-enter the details": info_of_license_types
 
   pre_license_generation:
