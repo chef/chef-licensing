@@ -296,15 +296,15 @@ interactions:
 
       A copy has also been sent on your email.
 
-      You can also look up it in saleforce portal under the name of <username>
+      You can also look up it in saleforce portal under the name of <%= input[:gather_user_first_name_for_license_generation] + " " + input[:gather_user_last_name_for_license_generation] %>
       f you do not know your license key you can log into your Progress Chef customer portal to obtain your product serial number
     paths: [fetch_license_id]
 
   trial_license_generation_success:
     messages: |
       The license has been generated and registered.
-      A copy has also been sent on <email id>.
-      You can also look up it in saleforce portal under the name of <username>
+      A copy has also been sent on <%= input[:gather_user_email_for_license_generation] %>.
+      You can also look up it in saleforce portal under the name of <%= input[:gather_user_first_name_for_license_generation] + " " + input[:gather_user_last_name_for_license_generation] %>
     paths: [fetch_license_id]
 
   commercial_license_generation_success:
@@ -331,7 +331,7 @@ interactions:
     paths: [license_generation_rejected]
 
   license_generation_rejected:
-    messages: ["Your request for a license was denied for the following reason <%= inputs[:fetch_license_failure_rejection_msg] %>. Please select an Option", ["Try again", "Continue using non-premium features"]]
+    messages: ["Your request for a license was denied for the following reason <%= input[:fetch_license_failure_rejection_msg] %>. Please select an Option", ["Try again", "Continue using non-premium features"]]
     prompt_type: "select"
     paths: [pre_license_generation, exit]
     response_path_map:
@@ -339,7 +339,7 @@ interactions:
       "Continue using non-premium features": exit
 
   license_generation_with_errors:
-    messages: ["An error occurred while generating your license. Error message: <%= inputs[:fetch_license_failure_error_msg] %>", ["Try again", "Continue using non-premium features"]]
+    messages: ["An error occurred while generating your license. Error message: <%= input[:fetch_license_failure_error_msg] %>", ["Try again", "Continue using non-premium features"]]
     prompt_type: "select"
     paths: [pre_license_generation, exit]
     response_path_map:
