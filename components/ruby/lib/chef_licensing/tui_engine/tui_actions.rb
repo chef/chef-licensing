@@ -58,11 +58,11 @@ module ChefLicensing
       end
 
       def is_phone_no_valid?(inputs)
-        # TBD validation logic
+        # TODO validation logic
         true
       end
 
-      # TBD to add product name dynamically
+      # TODO to add product name dynamically
       def generate_trial_license(inputs)
         puts "License generation in progress..."
         license_id = ChefLicensing::LicenseKeyGenerator.generate!(
@@ -106,7 +106,7 @@ module ChefLicensing
       def generate_commercial_license_lead(inputs)
         false
 
-        # TBD stub method definition needs to be implemented
+        # TODO stub method definition needs to be implemented
 
         #   puts "License generation request in progress..."
         #   license_id = ChefLicensing.generate_commercial_license_lead!(
