@@ -34,7 +34,7 @@ module ChefLicensing
       raise ChefLicensing::TUIEngine::IncompleteFlowException, "Something went wrong in the flow." if current_interaction.nil? || current_interaction.id != :exit
 
       state.default_action(current_interaction)
-      state.processed_input
+      state.input
     end
 
     private

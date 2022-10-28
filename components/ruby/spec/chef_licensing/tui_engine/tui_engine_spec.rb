@@ -36,7 +36,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect(tui_engine.tui_interactions.keys).to eq(%i{start prompt_2 prompt_3 exit})
       end
 
-      it "should return processed_input as the interaction_id: nil hash" do
+      it "should return input as the interaction_id: nil hash" do
         expect(tui_engine.run_interaction).to eq({ start: nil, prompt_2: nil, prompt_3: nil, exit: nil })
       end
     end
@@ -68,7 +68,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect(tui_engine.tui_interactions.keys).to eq(%i{start prompt_2 prompt_3 prompt_4 exit})
       end
 
-      it "should return processed_input as the interaction_id: value hash but not prompt 4" do
+      it "should return input as the interaction_id: value hash but not prompt 4" do
         expect(tui_engine.run_interaction).to eq({ start: nil, prompt_2: "Option 1", prompt_3: nil, exit: nil })
       end
     end
@@ -92,7 +92,7 @@ RSpec.describe ChefLicensing::TUIEngine do
 
       let(:tui_engine) { described_class.new(config) }
 
-      it "should return processed_input as the interaction_id: value hash but not prompt 3" do
+      it "should return input as the interaction_id: value hash but not prompt 3" do
         expect(tui_engine.run_interaction).to eq({ start: nil, prompt_2: "Option 2", prompt_4: nil, exit: nil })
       end
     end
@@ -116,7 +116,7 @@ RSpec.describe ChefLicensing::TUIEngine do
 
       let(:tui_engine) { described_class.new(config) }
 
-      it "should return processed_input as the interaction_id: value hash" do
+      it "should return input as the interaction_id: value hash" do
         expect(tui_engine.run_interaction).to eq(
           {
             start: nil,
@@ -148,7 +148,7 @@ RSpec.describe ChefLicensing::TUIEngine do
 
       let(:tui_engine) { described_class.new(config) }
 
-      it "should return processed_input as the interaction_id: value hash" do
+      it "should return input as the interaction_id: value hash" do
         expect(tui_engine.run_interaction).to eq(
           {
             start: nil,
@@ -211,6 +211,30 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect { tui_engine.run_interaction }.to raise_error(SystemExit)
         expect(tui_output.string).to include("Timed out!")
         expect(tui_output.string).to include("Oops! Reflex too slow.")
+      end
+    end
+
+    context "when the interaction file has messages in erb template" do
+      let(:user_input) { StringIO.new }
+
+      before do
+        user_input.write("Chef User!\n")
+        user_input.rewind
+      end
+
+      let(:config) {
+        {
+          output: StringIO.new,
+          input: user_input,
+          logger: Logger.new(StringIO.new),
+          interaction_file: File.join(fixture_dir, "flow_with_erb_messages.yaml"),
+        }
+      }
+
+      let(:tui_engine) { described_class.new(config) }
+
+      it "should render the erb" do
+        expect(tui_engine.run_interaction).to eq({ start: nil, ask_user_name: "Chef User!", welcome_user_in_english: ["Hello, Chef User!"], welcome_user_in_hindi: ["Namaste, Chef User!"], exit: nil })
       end
     end
     context "when the yaml file has an interaction without messages or action key" do

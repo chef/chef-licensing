@@ -1,0 +1,28 @@
+interactions:
+  start:
+    messages: ["TUI GREET!"]
+    prompt_type: "say"
+    paths: [ask_user_name]
+    description: This is an optional field. WYOD (Write your own description)
+
+  ask_user_name:
+    messages: ["What is your name?"]
+    prompt_type: "ask"
+    paths: [welcome_user_in_english]
+    description: This is an optional field. WYOD (Write your own description)
+
+  welcome_user_in_english:
+    # You can provide variables/Constants of TUIEngineState
+    messages: ["Hello, <%= input[:ask_user_name] %>"]
+    prompt_type: "ok"
+    paths: [welcome_user_in_hindi]
+
+  welcome_user_in_hindi:
+    # You can provide variables/Constants of TUIEngineState
+    messages: ["Namaste, <%= input[:ask_user_name] %>"]
+    prompt_type: "ok"
+    paths: [exit]
+
+  exit:
+    messages: ["This is the exit prompt"]
+    prompt_type: "say"

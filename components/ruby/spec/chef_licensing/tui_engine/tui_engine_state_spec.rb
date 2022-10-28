@@ -15,8 +15,8 @@ RSpec.describe ChefLicensing::TUIEngine::TUIEngineState do
   let(:tui_engine_state) { described_class.new(config) }
 
   describe "when a tui_engine_state object is instantiated" do
-    it "should have processed_input field" do
-      expect(tui_engine_state.processed_input).to eq({})
+    it "should have input field" do
+      expect(tui_engine_state.input).to eq({})
     end
 
     it "should have logger field" do
