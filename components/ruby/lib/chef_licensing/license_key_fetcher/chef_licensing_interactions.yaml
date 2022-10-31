@@ -346,7 +346,7 @@ interactions:
       "Continue using non-premium features": exit
 
   license_generation_with_errors:
-    messages: ["An error occurred while generating your license. Error message: <%= input[:fetch_license_failure_error_msg] %>", ["Try again", "Continue using non-premium features"]]
+    messages: ["\nAn error occurred while generating your license.\nError message: <%= input[:fetch_license_failure_error_msg] %>\n", ["Try again", "Continue using non-premium features"]]
     prompt_type: "select"
     paths: [pre_license_generation, exit]
     response_path_map:
