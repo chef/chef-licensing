@@ -17,6 +17,8 @@ module ChefLicensing
         @output = opts[:output] || STDOUT
       end
 
+      # TODO: Change parameter name from inputs to input.
+
       def validate_license_id(inputs)
         output.puts "Welcome you finally got here, atleast you are not a robot"
       end
@@ -146,18 +148,6 @@ module ChefLicensing
         else
           "commercial"
         end
-      end
-
-      def print_review_details(inputs)
-        puts %{
-          User Details
-          ----------------------------------------------------
-          Name: #{inputs[:gather_user_first_name_for_license_generation]}
-          Last Name: #{inputs[:gather_user_last_name_for_license_generation]}
-          Email: #{inputs[:gather_user_email_for_license_generation]}
-          Company: #{inputs[:gather_user_company_for_license_generation]}
-          Phone number: #{inputs[:gather_user_phone_no_for_license_generation]}
-        }
       end
 
       def license_generation_rejected?(inputs)
