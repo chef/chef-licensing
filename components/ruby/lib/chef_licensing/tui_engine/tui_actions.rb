@@ -66,7 +66,7 @@ module ChefLicensing
 
       # TODO to add product name dynamically
       def generate_trial_license(inputs)
-        puts "License generation in progress..."
+        output.puts "License generation in progress..."
         license_id = ChefLicensing::LicenseKeyGenerator.generate!(
           first_name: inputs[:gather_user_first_name_for_license_generation],
           last_name: inputs[:gather_user_last_name_for_license_generation],
@@ -106,6 +106,7 @@ module ChefLicensing
       end
 
       def generate_commercial_license_lead(inputs)
+        warn "\n\nCommercial license generation is not yet implemented!\n\n"
         false
 
         # TODO stub method definition needs to be implemented
