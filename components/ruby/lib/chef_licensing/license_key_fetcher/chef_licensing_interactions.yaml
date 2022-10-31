@@ -246,7 +246,17 @@ interactions:
     paths: [gather_user_phone_no_for_license_generation]
 
   print_to_review_details:
-    action: print_review_details
+    messages: |
+      ----------------------------------------------------
+                         User Details
+
+          Name: <%= input[:gather_user_first_name_for_license_generation] %>
+          Last Name: <%= input[:gather_user_last_name_for_license_generation] %>
+          Email: <%= input[:gather_user_email_for_license_generation] %>
+          Company: <%= input[:gather_user_company_for_license_generation] %>
+          Phone number: <%= input[:gather_user_phone_no_for_license_generation] %>
+      ----------------------------------------------------
+    prompt_type: "say"
     paths: [ask_for_review_confirmation]
 
   ask_for_review_confirmation:
