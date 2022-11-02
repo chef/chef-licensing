@@ -85,6 +85,8 @@ module ChefLicensing
     def verify_interaction_data
       raise ChefLicensing::TUIEngine::YAMLException, "No interactions found in yaml file." unless @interaction_data
 
+      raise ChefLicensing::TUIEngine::YAMLException, "`file_format_version` key not found in yaml file." unless @interaction_data[:file_format_version]
+
       raise ChefLicensing::TUIEngine::YAMLException, "`interactions` key not found in yaml file." unless @interaction_data["interactions"]
 
       @interaction_data["interactions"].each do |i_id, opts|

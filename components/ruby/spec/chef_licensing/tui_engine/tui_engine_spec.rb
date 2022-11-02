@@ -178,7 +178,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       end
     end
 
-    context "when the yaml file is empty" do
+    context "when the yaml file has no interaction" do
       let(:config) {
         {
           output: StringIO.new,
@@ -307,6 +307,36 @@ RSpec.describe ChefLicensing::TUIEngine do
       }
 
       it "raises error" do
+        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException)
+      end
+    end
+
+    context "when the yaml file is empty" do
+      let(:config) {
+        {
+          output: StringIO.new,
+          input: StringIO.new,
+          logger: Logger.new(StringIO.new),
+          interaction_file: File.join(fixture_dir, "empty_interaction_file.yaml"),
+        }
+      }
+
+      it "should raise error while instantiating the class" do
+        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException)
+      end
+    end
+
+    context "when the yaml file has no file_format_version" do
+      let(:config) {
+        {
+          output: StringIO.new,
+          input: StringIO.new,
+          logger: Logger.new(StringIO.new),
+          interaction_file: File.join(fixture_dir, "flow_with_no_file_format_version.yaml"),
+        }
+      }
+
+      it "should raise error while instantiating the class" do
         expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException)
       end
     end
