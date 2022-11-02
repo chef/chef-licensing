@@ -1,3 +1,5 @@
+:file_format_version: 1.0.0
+
 interactions:
   start:
     messages: ["This is a start message"]
