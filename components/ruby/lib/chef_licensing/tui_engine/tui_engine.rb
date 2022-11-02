@@ -7,6 +7,8 @@ require_relative "tui_actions"
 module ChefLicensing
   class TUIEngine
 
+    INTERACTION_FILE_FORMAT_VERSION = "1.0.0".freeze
+
     attr_accessor :interaction_data, :tui_interactions, :opts, :logger, :prompt_methods, :action_methods, :interaction_attributes
 
     def initialize(opts = {})
@@ -56,6 +58,12 @@ module ChefLicensing
     end
 
     def store_interaction_objects
+      if major_version(@interaction_data[:file_format_version]) == major_version(INTERACTION_FILE_FORMAT_VERSION)
+        @contents
+      else
+        raise ChefLicensing::TUIEngine::UnsupportedInteractionFileFormat, "Unsupported interaction file format version.\nExpected #{INTERACTION_FILE_FORMAT_VERSION} but found #{@interaction_data[:file_format_version]}."
+      end
+
       @interaction_data["interactions"].each do |k, opts|
         opts.transform_keys!(&:to_sym)
         opts.store(:id, k.to_sym)
@@ -150,6 +158,10 @@ module ChefLicensing
       @interaction_attributes = ChefLicensing::TUIEngine::TUIInteraction.new.instance_variables.map { |var| var.to_s.delete("@").to_sym }
 
       @interaction_attributes.include?(val.to_sym)
+    end
+
+    def major_version(version)
+      Gem::Version.new(version).segments[0]
     end
   end
 end
