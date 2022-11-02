@@ -340,6 +340,21 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException)
       end
     end
+
+    context "when the yaml file has invalid file_format_version" do
+      let(:config) {
+        {
+          output: StringIO.new,
+          input: StringIO.new,
+          logger: Logger.new(StringIO.new),
+          interaction_file: File.join(fixture_dir, "flow_with_invalid_file_format_version.yaml"),
+        }
+      }
+
+      it "should raise error while instantiating the class" do
+        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::UnsupportedInteractionFileFormat)
+      end
+    end
   end
 
   describe "when a tui_engine object is instantiated with no input yaml file" do
