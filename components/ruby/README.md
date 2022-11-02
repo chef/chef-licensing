@@ -282,6 +282,8 @@ The different keys in an interaction file are:
    1.  `timeout_duration`: This attribute is supported by the `timeout_yes` prompt and can receive decimal values.
    2.  `timeout_message`: This attribute is supported by the `timeout_yes` prompt and can receive string values.
 
+10. `:file_format_version`: it defines the version of the interaction file's format. This key is a mandatory key in an interaction file. Currently supported version of interaction file is `1.x.x`
+
 ### Ways to define an interaction
 
 The different ways how we can define an interaction is shown below.
@@ -370,6 +372,8 @@ The different ways how we can define an interaction is shown below.
 
 ## Example of a basic interaction file
 ```YAML
+:file_format_version: 1.0.0
+
 interactions:
   start:
     messages: ["This is a start message"]
@@ -412,6 +416,8 @@ interactions:
 
 ## Example with timeout_yes prompt
 ```YAML
+:file_format_version: 1.0.0
+
 interactions:
   start:
     messages: ["Shall we begin the game?"]
@@ -438,6 +444,8 @@ interactions:
 
 ## Example with erb message
 ```YAML
+:file_format_version: 1.0.0
+
 interactions:
   start:
     messages: ["TUI GREET!"]
