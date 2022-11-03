@@ -28,7 +28,7 @@ interactions:
       "false": ask_for_license_generation
 
   ask_for_license_id:
-    messages: "Please input your License ID: "
+    messages: "Please enter your License ID: "
     prompt_type: "ask"
     paths: [validate_license_id_pattern]
 
@@ -57,7 +57,7 @@ interactions:
     paths: [ask_for_license_id]
 
   ask_for_license_generation:
-    messages: "Would you like to generate license?"
+    messages: "Would you like to generate a license?"
     prompt_type: "yes"
     paths: [info_of_license_types, license_generation_skipped]
     response_path_map:
@@ -68,26 +68,24 @@ interactions:
     messages: |
       License generation skipped!
 
-      License is required to in order to use inspec
+      A license is required to in order to use InSpec.
 
-      Visit <link> to know more about the licenses
+      Visit <link> to learn more about the licenses.
     paths: [exit]
 
   info_of_license_types:
     messages: |
-      Thank you for taking interest in inspec.
+      Thank you for taking interest in InSpec.
 
-      We have following types of licenses
-      Please choose the one that suits your requirements
+      We have the following types of licenses.
+      Please choose one that suits your requirements:
 
-
-      1.Free license
+      1.Free Tier License
         Validity : # Days
         Entitlement :
         No. of nodes : ##
         Free features : Yes
         Premium features : No
-
 
       2.Trial License
         Validity : # Days
@@ -96,7 +94,6 @@ interactions:
         Free features : Yes
         Premium features : No
 
-
       3.Commercial License
         Validity : # Days
         Entitlement :
@@ -104,9 +101,8 @@ interactions:
         Free features : Yes
         Premium features : No
 
-
-      To know more about license types, their respective entitlement and premium features, Visit
-      <link>"
+      To learn more about license types, their respective entitlement and premium features, visit
+      <link>.
     prompt_type: "say"
     paths: [ask_for_license_type]
 
@@ -165,7 +161,7 @@ interactions:
       "Quit": exit
 
   gather_user_first_name_for_license_generation:
-    messages: "Enter First name"
+    messages: "Enter First Name: "
     prompt_type: "ask"
     paths: [validate_user_first_name_for_license_generation]
 
@@ -182,7 +178,7 @@ interactions:
     paths: [gather_user_first_name_for_license_generation]
 
   gather_user_last_name_for_license_generation:
-    messages: "Enter last name"
+    messages: "Enter Last Name: "
     prompt_type: "ask"
     paths: [validate_user_last_name_for_license_generation]
 
@@ -199,7 +195,7 @@ interactions:
     paths: [gather_user_last_name_for_license_generation]
 
   gather_user_email_for_license_generation:
-    messages: "Enter Email address"
+    messages: "Enter Email Address: "
     prompt_type: "ask"
     paths: [validate_user_email_for_license_generation]
 
@@ -216,7 +212,7 @@ interactions:
     paths: [gather_user_email_for_license_generation]
 
   gather_user_company_for_license_generation:
-    messages: "Enter Company Name"
+    messages: "Enter Company Name: "
     prompt_type: "ask"
     paths: [validate_user_company_name_for_license_generation]
 
@@ -233,7 +229,7 @@ interactions:
     paths: [gather_user_company_for_license_generation]
 
   gather_user_phone_no_for_license_generation:
-    messages: "Enter Phone number"
+    messages: "Enter Phone Number: "
     prompt_type: "ask"
     paths: [validate_user_phone_no]
 
@@ -245,7 +241,7 @@ interactions:
       "false": user_phone_no_validation_failure
 
   user_phone_no_validation_failure:
-    messages: "Please enter valid phone no."
+    messages: "Please enter valid phone number."
     prompt_type: "error"
     paths: [gather_user_phone_no_for_license_generation]
 
@@ -294,17 +290,18 @@ interactions:
     messages: |
       The license has been generated and registered.
 
-      A copy has also been sent on your email.
+      A copy has also been sent to your email.
 
       You can also look up it in saleforce portal under the name of <%= input[:gather_user_first_name_for_license_generation] + " " + input[:gather_user_last_name_for_license_generation] %>
-      f you do not know your license key you can log into your Progress Chef customer portal to obtain your product serial number
+      If you do not know your license key, you can log into your Progress Chef customer portal to obtain your product serial number
     paths: [fetch_license_id]
 
   trial_license_generation_success:
     messages: |
       The license has been generated and registered.
-      A copy has also been sent on <%= input[:gather_user_email_for_license_generation] %>.
-      You can also look up it in saleforce portal under the name of <%= input[:gather_user_first_name_for_license_generation] + " " + input[:gather_user_last_name_for_license_generation] %>
+
+      A copy has also been sent to <%= input[:gather_user_email_for_license_generation] %>.
+      You can also look up it in saleforce portal under the name of <%= input[:gather_user_first_name_for_license_generation] + " " + input[:gather_user_last_name_for_license_generation] %>.
     paths: [fetch_license_id]
 
   commercial_license_generation_success:
