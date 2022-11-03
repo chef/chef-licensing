@@ -13,6 +13,8 @@ module ChefLicensing
         @output = opts[:output] || STDOUT
         @input = opts[:input] || STDIN
         @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
+        logger.level = Logger::INFO unless opts[:logger]
+
         @tty_prompt = TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit, output: output, input: input)
       end
 

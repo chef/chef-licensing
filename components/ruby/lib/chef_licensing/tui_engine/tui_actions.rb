@@ -11,6 +11,8 @@ module ChefLicensing
       attr_accessor :logger, :output
       def initialize(opts = {})
         @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
+        logger.level = Logger::INFO unless opts[:logger]
+
         @output = opts[:output] || STDOUT
       end
 

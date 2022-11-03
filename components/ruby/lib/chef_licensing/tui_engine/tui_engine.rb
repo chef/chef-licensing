@@ -12,6 +12,8 @@ module ChefLicensing
     def initialize(opts = {})
       @opts = opts
       @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
+      logger.level = Logger::INFO unless opts[:logger]
+
       @tui_interactions = {}
       initialization_of_engine(opts[:interaction_file])
     end
@@ -21,6 +23,8 @@ module ChefLicensing
       state = ChefLicensing::TUIEngine::TUIEngineState.new(@opts)
 
       until current_interaction.nil? || current_interaction.id == :exit
+        logger.debug "TUI Engine, starting interaction '#{current_interaction.id}'"
+
         state.default_action(current_interaction)
 
         if state.next_interaction_id.nil?

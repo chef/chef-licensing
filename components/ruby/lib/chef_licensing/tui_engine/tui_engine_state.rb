@@ -11,8 +11,10 @@ module ChefLicensing
       def initialize(opts = {})
         @input = {}
         @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
+        logger.level = Logger::INFO unless opts[:logger]
+
         @prompt = ChefLicensing::TUIEngine::TUIPrompt.new(opts)
-        @tui_actions = ChefLicensing::TUIEngine::TUIActions.new
+        @tui_actions = ChefLicensing::TUIEngine::TUIActions.new(opts) # TODO: TUIActions should be a mixin, not a class.
       end
 
       def default_action(interaction)
