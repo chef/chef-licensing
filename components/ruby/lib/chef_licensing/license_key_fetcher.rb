@@ -18,6 +18,8 @@ module ChefLicensing
     def initialize(opts = {})
       @config = opts
       @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
+      logger.level = Logger::INFO unless opts[:logger]
+
       @config[:output] ||= STDOUT
       config[:logger] = logger
       config[:dir] = opts[:dir]
