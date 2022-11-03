@@ -13,6 +13,7 @@ module ChefLicensing
       @opts = opts
       @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
       logger.level = Logger::INFO unless opts[:logger]
+      logger.level = Logger::DEBUG if ENV['CHEF_TUI_DEBUG']
 
       @tui_interactions = {}
       initialization_of_engine(opts[:interaction_file])
