@@ -42,18 +42,23 @@ interactions:
 
   validate_license_id_with_api:
     action: is_license_valid_on_server?
-    paths: [validation_success, validation_failure]
+    paths: [validation_success, fetch_invalid_license_msg]
     response_path_map:
       "true": validation_success
-      "false": validation_failure
+      "false": fetch_invalid_license_msg
     description: "is_license_valid_on_server? is a method defined in TUIActions class"
 
   validation_success:
     messages: "License validated successfully."
+    prompt_type: "ok"
     paths: [fetch_license_id]
 
+  fetch_invalid_license_msg:
+    action: fetch_invalid_license_msg
+    paths: [validation_failure]
+
   validation_failure:
-    messages: "License is not valid. Please try again."
+    messages: "License is not valid.\n<%= input[:fetch_invalid_license_msg] %>\nPlease try again."
     paths: [ask_for_license_id]
 
   ask_for_license_generation:
