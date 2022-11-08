@@ -1,18 +1,18 @@
 interactions:
   start:
     messages: |
-      -----------------------------------------------------
-                   Provide Your License ID
+      ------------------------------------------------------------
+        Welcome to Chef InSpec!
 
-        To access premium content and other special features,
-        you will need a Chef License ID.
+        To continue using Chef InSpec, a License ID is required.
+        (Free, Trial or Commercial)
 
-        If you already have one, you can enter it at the prompt
-        on the following screen.
+        If you have generated a license previously, you might
+        have received it in email.
 
-        If you need to get an evaluation or personal use license
-        ID, you can get one by providing your details.
-      -------------------------------------------------------
+        If you need to get a new license, please proceed with the
+        generation by providing your details.
+      ------------------------------------------------------------
     prompt_type: "say"
     paths: [ask_if_user_has_license_id]
 
@@ -49,7 +49,7 @@ interactions:
     description: "is_license_valid_on_server? is a method defined in TUIActions class"
 
   validation_success:
-    messages: "License validated successfully."
+    messages: "[Success] License validated successfully"
     prompt_type: "ok"
     paths: [fetch_license_id]
 
@@ -58,7 +58,12 @@ interactions:
     paths: [validation_failure]
 
   validation_failure:
-    messages: "License is not valid.\n<%= input[:fetch_invalid_license_msg] %>\nPlease try again."
+    messages: "[Error] License validation failed: <%= input[:fetch_invalid_license_msg] %>"
+    prompt_type: "error"
+    paths: [retry_message]
+
+  retry_message:
+    messages: "Please try again"
     paths: [ask_for_license_id]
 
   ask_for_license_generation:
@@ -85,35 +90,23 @@ interactions:
       We have the following types of licenses.
       Please choose one that suits your requirements:
 
-      1.Free Tier License
-        Validity : # Days
-        Entitlement :
-        No. of nodes : ##
-        Free features : Yes
-        Premium features : No
+      +----------------------------+------------------------------+------------------------------+
+      | 1. Free license.           | 2. Trial license             | 3. Commercial License        |
+      |     Validity: # Days       |     Validity: # Days         |     Validity : # Days        |
+      |     Entitlement:           |     Entitlement :            |     Entitlement :            |
+      |      No. of nodes: ##      |      No. of nodes : ##       |      No. of nodes : ##       |
+      |      Free features: Yes    |      Free features : Yes     |      Free features : Yes     |
+      |      Premium features: No  |      Premium features : Yes  |      Premium features : Yes  |
+      +----------------------------+------------------------------+------------------------------+
 
-      2.Trial License
-        Validity : # Days
-        Entitlement :
-        No. of nodes : ##
-        Free features : Yes
-        Premium features : No
-
-      3.Commercial License
-        Validity : # Days
-        Entitlement :
-        No. of nodes : ##
-        Free features : Yes
-        Premium features : No
-
-      To learn more about license types, their respective entitlement and premium features, visit
-      <link>.
+      To know more about license types, their respective entitlement and premium features, Visit
+      <link>
     prompt_type: "say"
     paths: [ask_for_license_type]
 
   ask_for_license_type:
     prompt_type: "select"
-    messages: ["" , [ "1.Free license", "2.Trial license", "3.Commercial license"]]
+    messages: ["\nSelect the type of license below and then enter user details" , [ "1.Free license", "2.Trial license", "3.Commercial license"]]
     paths: [free_license_selection, commercial_license_selection, trial_license_selection]
     response_path_map:
       "1.Free license": free_license_selection
