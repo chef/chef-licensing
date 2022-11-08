@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.3.10 -->
-## [0.3.10](https://github.com/chef/chef-licensing/tree/0.3.10) (2022-10-28)
+<!-- latest_release 0.3.11 -->
+## [0.3.11](https://github.com/chef/chef-licensing/tree/0.3.11) (2022-11-08)
 
 #### Merged Pull Requests
-- CFINSPEC-484: Extend support for ERB templating in TUI Engine [#28](https://github.com/chef/chef-licensing/pull/28) ([ahasunos](https://github.com/ahasunos))
+- CFINSPEC-496: Extend tui_prompt with timeout_select functionality [#37](https://github.com/chef/chef-licensing/pull/37) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CFINSPEC-496: Extend tui_prompt with timeout_select functionality [#37](https://github.com/chef/chef-licensing/pull/37) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.11 -->
 - CFINSPEC-484: Extend support for ERB templating in TUI Engine [#28](https://github.com/chef/chef-licensing/pull/28) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.10 -->
 - CFINSPEC-492: Improve TUI Engine [#32](https://github.com/chef/chef-licensing/pull/32) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.9 -->
 - CFINSPEC-490 authenticate requests [#31](https://github.com/chef/chef-licensing/pull/31) ([sathish-progress](https://github.com/sathish-progress)) <!-- 0.3.8 -->
