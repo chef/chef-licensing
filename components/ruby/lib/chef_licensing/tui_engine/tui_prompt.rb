@@ -78,11 +78,17 @@ module ChefLicensing
       # timeout_yes prompt wraps yes prompt with timeout.
       # prompt_attributes is added to extend the prompt in future.
       def timeout_yes(messages, prompt_attributes)
+        timeout_helper(messages, method(:yes), prompt_attributes)
+      end
+
+      private
+
+      def timeout_helper(messages, prompt_method, prompt_attributes)
         prompt_attributes.transform_keys!(&:to_sym)
         timeout_duration = prompt_attributes[:timeout_duration] || 60
 
         Timeout.timeout(timeout_duration, PromptTimeout) do
-          yes(messages, prompt_attributes)
+          prompt_method.call(messages, prompt_attributes)
         rescue PromptTimeout
           error(prompt_attributes[:timeout_message] || "Prompt Timeout", prompt_attributes)
           @tty_prompt.unsubscribe(@tty_prompt.reader)
