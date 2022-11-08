@@ -9,9 +9,6 @@ interactions:
 
         If you have generated a license previously, you might
         have received it in email.
-
-        If you need to get a new license, please proceed with the
-        generation by providing your details.
       ------------------------------------------------------------
     prompt_type: "say"
     paths: [ask_if_user_has_license_id]
@@ -118,15 +115,15 @@ interactions:
       Please choose one that suits your requirements:
 
       +----------------------------+------------------------------+------------------------------+
-      | 1. Free license.           | 2. Trial license             | 3. Commercial License        |
-      |     Validity: # Days       |     Validity: # Days         |     Validity : # Days        |
-      |     Entitlement:           |     Entitlement :            |     Entitlement :            |
-      |      No. of nodes: ##      |      No. of nodes : ##       |      No. of nodes : ##       |
-      |      Free features: Yes    |      Free features : Yes     |      Free features : Yes     |
-      |      Premium features: No  |      Premium features : Yes  |      Premium features : Yes  |
+      | 1. Free License            | 2. Trial License             | 3. Commercial License        |
+      |     Validity: Unlimited    |     Validity: 30 Days        |     Validity: Custom         |
+      |     Entitlement:           |     Entitlement:             |     Entitlement:             |
+      |      Nodes: 10             |      Nodes: Unlimited        |      Nodes: Custom           |
+      |      Basic Features: Yes   |      Basic Features : Yes    |      Basic Features: Yes     |
+      |      Premium Features: No  |      Premium Features : Yes  |      Premium Features : Yes  |
       +----------------------------+------------------------------+------------------------------+
 
-      To know more about license types, their respective entitlement and premium features, Visit
+      To know more about license types, their respective entitlement and premium features, visit
       <link>
     prompt_type: "say"
     paths: [ask_for_license_type]
@@ -142,47 +139,47 @@ interactions:
 
   free_license_selection:
     messages: |
-      
-      You have selected
+
+      You have selected:
         Free License
-          Validity : x Days
-          Entitlement :
-            No. of nodes : X
-            Free features : Yes
-            Premium features : No
+          Validity: Unlimited
+          Entitlement:
+            Nodes: 10
+            Basic Features: Yes
+            Premium Features: No
     prompt_type: "say"
     paths: [ask_for_user_details]
 
   trial_license_selection:
     messages: |
 
-      You have selected
+      You have selected:
         Trial License
-          Validity : x Days
-          Entitlement :
-            No. of nodes : X
-            Free features : Yes
-            Premium features : No
+          Validity: 30 Days
+          Entitlement:
+            Nodes: Unlimited
+            Free features: Yes
+            Premium features: Yes
     prompt_type: "say"
     paths: [ask_for_user_details]
 
   commercial_license_selection:
     messages: |
-      
-      You have selected
-        Commercial license
-          Validity : x Days
+
+      You have selected:
+        Commercial License
+          Validity : Custom
           Entitlement :
-            No. of nodes : X
+            No. of nodes : Custom
             Free features : Yes
-            Premium features : No
+            Premium features : Yes
     prompt_type: "say"
     paths: [ask_for_user_details]
 
   ask_for_user_details:
     messages: |
-      
-      Please input the below user details:
+
+      Please enter the following details:
       First Name, Last Name, Company, Email, Phone
 
     paths: [gather_user_first_name_for_license_generation]
@@ -328,8 +325,8 @@ interactions:
 
       A copy has also been sent to your email.
 
-      You can also look up it in saleforce portal under the name of <%= input[:gather_user_first_name_for_license_generation] + " " + input[:gather_user_last_name_for_license_generation] %>
-      If you do not know your license key, you can log into your Progress Chef customer portal to obtain your product serial number
+      You can also look up it in the SaleForce portal under the name of <%= input[:gather_user_first_name_for_license_generation] + " " + input[:gather_user_last_name_for_license_generation] %>.
+      If you do not know your license key, you can log into your Progress Chef customer portal to obtain your product serial number.
     paths: [fetch_license_id]
 
   trial_license_generation_success:
@@ -337,7 +334,7 @@ interactions:
       The license has been generated and registered.
 
       A copy has also been sent to <%= input[:gather_user_email_for_license_generation] %>.
-      You can also look up it in saleforce portal under the name of <%= input[:gather_user_first_name_for_license_generation] + " " + input[:gather_user_last_name_for_license_generation] %>.
+      You can also look up it in the SaleForce portal under the name of <%= input[:gather_user_first_name_for_license_generation] + " " + input[:gather_user_last_name_for_license_generation] %>.
     paths: [fetch_license_id]
 
   commercial_license_generation_success:
