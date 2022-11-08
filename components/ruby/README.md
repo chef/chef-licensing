@@ -265,6 +265,7 @@ The different keys in an interaction file are:
    - `enum_select`: displays the menu header and choices, returns the selected choice.
    - `ask`: displays the message, returns the input value.
    - `timeout_yes`: wraps the `yes` prompt with timeout feature. Default timeout duration is 60 seconds. However, the timeout duration and timeout message can be changed by providing the custom value in `prompt_attributes` key.
+   - `timeout_select`: wraps the `select` prompt with timeout feature. Default timeout duration is 60 seconds. However, the timeout duration and timeout message can be changed by providing the custom value in `prompt_attributes` key.
 
    This key is an optional and defaults to prompt_type of `say`.
 
@@ -456,5 +457,37 @@ interactions:
     paths: [exit]
   exit:
     messages: ["This is the exit prompt"]
+    prompt_type: "say"
+```
+
+## Example with timeout_select prompt
+```YAML
+interactions:
+  start:
+    messages: ["Shall we begin the game?", ["Yes", "No", "Exit"]]
+    prompt_type: "timeout_select"
+    prompt_attributes:
+      timeout_duration: 10
+      timeout_message: "Oops! Your reflex is too slow."
+    paths: [play, rest, exit]
+    response_path_map:
+      "Yes": play
+      "No": rest
+      "Exit": exit
+
+  play:
+    messages: ["Playing..."]
+    prompt_type: "ok"
+    paths: [exit]
+    description: WYOD.
+
+  rest:
+    messages: ["Resting..."]
+    prompt_type: "ok"
+    paths: [exit]
+    description: WYOD.
+
+  exit:
+    messages: ["Game over!"]
     prompt_type: "say"
 ```
