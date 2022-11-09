@@ -15,8 +15,7 @@ interactions:
 
   ask_if_user_has_license_id:
     messages: ["\nPlease choose one of the options below",["I already have a license ID", "I don't have a license ID and would like to generate a new license ID", "Skip"]]
-    # TODO: Change timeout to timeout_select once timeout_select PR is merged.
-    prompt_type: "select"
+    prompt_type: "timeout_select"
     prompt_attributes:
       timeout_duration: 60
       timeout_message: "\nPrompt timed out. Use non-interactive flags or enter an answer within 60 seconds."
