@@ -15,13 +15,12 @@ module ChefLicensing
         tui_engine = ChefLicensing::TUIEngine.new(@config)
 
         # Here info is a hash of { interaction_id: response }
-        info = tui_engine.run_interaction
+        info = tui_engine.run_interaction(config[:start_interaction])
 
         # The interaction_id ask_for_license_id holds the license key
         # TODO: Do we move this to tui_engine?
         if info[:fetch_license_id].nil?
-          # puts "Failed to obtain license."
-          exit
+          []
         else
           [info[:fetch_license_id]]
         end

@@ -141,12 +141,22 @@ module ChefLicensing
       end
 
       def select_license_generation_based_on_type(inputs)
-        if inputs.keys.include? :free_license_selection
+        interaction_ids = inputs.keys
+        if interaction_ids.include? :free_license_selection
           "free"
-        elsif inputs.keys.include? :trial_license_selection
+        elsif interaction_ids.include? :trial_license_selection
           "trial"
         else
           "commercial"
+        end
+      end
+
+      def check_license_renewal(inputs)
+        interaction_ids = inputs.keys
+        if (interaction_ids & %i{ prompt_license_about_to_expire prompt_license_expired }).empty?
+          "new"
+        else
+          "renew"
         end
       end
 
