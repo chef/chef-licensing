@@ -19,6 +19,8 @@ module ChefLicensing
       attr_writer :license_server_url, :license_server_api_key, :logger, :air_gap_detected
 
       def license_server_url
+        # TODO: Do we keep the ENV name as CHEF_LICENSE_SERVER
+        # or do we change it to CHEF_LICENSE_SERVER_URL to keep it consistent with the method name?
         arg_fetcher = ChefLicensing::ArgFetcher::String.new("license-server-url")
         env_fetcher = ChefLicensing::EnvFetcher::String.new("CHEF_LICENSE_SERVER_URL")
         @license_server_url ||= arg_fetcher.value || env_fetcher.value || ChefLicensing::Config::DEFAULT_LICENSE_SERVER_URL
@@ -44,6 +46,6 @@ module ChefLicensing
       end
     end
 
-    DEFAULT_LICENSE_SERVER_URL = "https://licensing.chef.co/License".freeze
+    DEFAULT_LICENSE_SERVER_URL = "https://licensing-acceptance.chef.co/License".freeze
   end
 end
