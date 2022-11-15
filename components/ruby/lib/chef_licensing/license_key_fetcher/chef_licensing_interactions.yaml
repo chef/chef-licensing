@@ -1,34 +1,62 @@
 interactions:
   start:
     messages: |
-      -----------------------------------------------------
-                   Provide Your License ID
+      ------------------------------------------------------------
+        License ID Validation
 
-        To access premium content and other special features,
-        you will need a Chef License ID.
+        To continue using Chef InSpec, a License ID is required.
+        (Free, Trial or Commercial)
 
-        If you already have one, you can enter it at the prompt
-        on the following screen.
-
-        If you need to get an evaluation or personal use license
-        ID, you can get one by providing your details.
-      -------------------------------------------------------
+        If you have generated a license previously, you might
+        have received it in email.
+      ------------------------------------------------------------
     prompt_type: "say"
     paths: [ask_if_user_has_license_id]
 
   ask_if_user_has_license_id:
-    messages: "Do you have a Chef License ID?"
-    prompt_type: "timeout_yes"
+    messages: ["\nPlease choose one of the options below",["I already have a license ID", "I don't have a license ID and would like to generate a new license ID", "Skip"]]
+    prompt_type: "timeout_select"
     prompt_attributes:
       timeout_duration: 60
       timeout_message: "\nPrompt timed out. Use non-interactive flags or enter an answer within 60 seconds."
-    paths: [ask_for_license_id, ask_for_license_generation]
+    paths: [ask_for_license_id, info_of_license_types, skip_message]
     response_path_map:
-      "true": ask_for_license_id
-      "false": ask_for_license_generation
+      "I already have a license ID": ask_for_license_id
+      "I don't have a license ID and would like to generate a new license ID": info_of_license_types
+      "Skip": skip_message
+
+  skip_message:
+    messages: ["\n! [WARNING] License is required to continue using the product"]
+    prompt_type: warn
+    paths: [skip_licensing]
+
+  skip_licensing:
+    messages: ["\nAre you sure to skip this step?",["Skip", "Generate a new license ID", "I already have a license ID"]]
+    prompt_type: "select"
+    paths: [ask_for_license_id, info_of_license_types, skipped]
+    response_path_map:
+      "I already have a license ID": ask_for_license_id
+      "Generate a new license ID": info_of_license_types
+      "Skip": skipped
+
+  skipped:
+    messages: |
+      License ID validation skipped!
+
+      To generate the new license again in future, you can use
+      the following command:
+      <command>
+
+      After generating the license, you can validate with the
+      help of the following command:
+      <command>
+
+      To know more about license types, their respective entitlement
+      and premium features, visit <link>
+    paths: [exit]
 
   ask_for_license_id:
-    messages: "Please input your License ID: "
+    messages: "Please enter your License ID: "
     prompt_type: "ask"
     paths: [validate_license_id_pattern]
 
@@ -40,33 +68,312 @@ interactions:
       "false": ask_for_license_id
     description: "is_license_with_valid_pattern? is a method defined in TUIActions class"
 
-  ask_for_license_generation:
-    messages: ["Would you like to generate a license id?"]
-    prompt_type: "yes"
-    paths: [display_type_of_license_id, exit]
-    response_path_map:
-      "true": display_type_of_license_id
-      "false": exit
-  
-  display_type_of_license_id:
-    messages: "This is yet to be implemented."
-    paths: [exit]
-
   validate_license_id_with_api:
     action: is_license_valid_on_server?
-    paths: [validation_success, validation_failure]
+    paths: [validation_success, fetch_invalid_license_msg]
     response_path_map:
       "true": validation_success
-      "false": validation_failure
+      "false": fetch_invalid_license_msg
     description: "is_license_valid_on_server? is a method defined in TUIActions class"
 
   validation_success:
-    messages: "License validated successfully."
-    paths: [exit]
-  
+    # TODO: Change + to tick later
+    messages: "\n+ [Success] License validated successfully"
+    prompt_type: "ok"
+    paths: [fetch_license_id]
+
+  fetch_invalid_license_msg:
+    action: fetch_invalid_license_msg
+    paths: [validation_failure]
+
   validation_failure:
-    messages: "License is not valid. Please try again."
+    # TODO: Change - to cross later
+    messages: "\n- [Error] License validation failed: <%= input[:fetch_invalid_license_msg] %>"
+    prompt_type: "error"
+    paths: [retry_message]
+
+  retry_message:
+    messages: "Please try again"
     paths: [ask_for_license_id]
+
+
+  license_generation_skipped:
+    messages: |
+      License generation skipped!
+
+      A license is required to in order to use InSpec.
+
+      Visit <link> to learn more about the licenses.
+    paths: [exit]
+
+  info_of_license_types:
+    messages: |
+      Thank you for taking interest in InSpec.
+
+      We have the following types of licenses.
+      Please choose one that suits your requirements:
+
+      +----------------------------+------------------------------+------------------------------+
+      | 1. Free License            | 2. Trial License             | 3. Commercial License        |
+      |     Validity: Unlimited    |     Validity: 30 Days        |     Validity: Custom         |
+      |     Entitlement:           |     Entitlement:             |     Entitlement:             |
+      |      Nodes: 10             |      Nodes: Unlimited        |      Nodes: Custom           |
+      |      Basic Features: Yes   |      Basic Features : Yes    |      Basic Features: Yes     |
+      |      Premium Features: No  |      Premium Features : Yes  |      Premium Features : Yes  |
+      +----------------------------+------------------------------+------------------------------+
+
+      To know more about license types, their respective entitlement and premium features, visit
+      <link>
+    prompt_type: "say"
+    paths: [ask_for_license_type]
+
+  ask_for_license_type:
+    prompt_type: "select"
+    messages: ["\nSelect the type of license below and then enter user details" , [ "1.Free license", "2.Trial license", "3.Commercial license"]]
+    paths: [free_license_selection, commercial_license_selection, trial_license_selection]
+    response_path_map:
+      "1.Free license": free_license_selection
+      "2.Trial license": trial_license_selection
+      "3.Commercial license": commercial_license_selection
+
+  free_license_selection:
+    messages: |
+
+      You have selected:
+        Free License
+          Validity: Unlimited
+          Entitlement:
+            Nodes: 10
+            Basic Features: Yes
+            Premium Features: No
+    prompt_type: "say"
+    paths: [ask_for_user_details]
+
+  trial_license_selection:
+    messages: |
+
+      You have selected:
+        Trial License
+          Validity: 30 Days
+          Entitlement:
+            Nodes: Unlimited
+            Free features: Yes
+            Premium features: Yes
+    prompt_type: "say"
+    paths: [ask_for_user_details]
+
+  commercial_license_selection:
+    messages: |
+
+      You have selected:
+        Commercial License
+          Validity : Custom
+          Entitlement :
+            No. of nodes : Custom
+            Free features : Yes
+            Premium features : Yes
+    prompt_type: "say"
+    paths: [ask_for_user_details]
+
+  ask_for_user_details:
+    messages: |
+
+      Please enter the following details:
+      First Name, Last Name, Company, Email, Phone
+
+    paths: [gather_user_first_name_for_license_generation]
+  gather_user_first_name_for_license_generation:
+    messages: "Enter First Name: "
+    prompt_type: "ask"
+    paths: [validate_user_first_name_for_license_generation]
+
+  validate_user_first_name_for_license_generation:
+    action: is_user_name_valid?
+    paths: [gather_user_last_name_for_license_generation, user_first_name_validation_failure]
+    response_path_map:
+      "true": gather_user_last_name_for_license_generation
+      "false": user_first_name_validation_failure
+
+  user_first_name_validation_failure:
+    messages: "Invalid name. It should contain only A-Z/a-z alphabets and _ , - or ` special characters."
+    prompt_type: "error"
+    paths: [gather_user_first_name_for_license_generation]
+
+  gather_user_last_name_for_license_generation:
+    messages: "Enter Last Name: "
+    prompt_type: "ask"
+    paths: [validate_user_last_name_for_license_generation]
+
+  validate_user_last_name_for_license_generation:
+    action: is_user_name_valid?
+    paths: [gather_user_email_for_license_generation, user_last_name_validation_failure]
+    response_path_map:
+      "true": gather_user_email_for_license_generation
+      "false": user_last_name_validation_failure
+
+  user_last_name_validation_failure:
+    messages: "Invalid name. It should contain only A-Z/a-z alphabets and _ , - or ` special characters."
+    prompt_type: "error"
+    paths: [gather_user_last_name_for_license_generation]
+
+  gather_user_email_for_license_generation:
+    messages: "Enter Email Address: "
+    prompt_type: "ask"
+    paths: [validate_user_email_for_license_generation]
+
+  validate_user_email_for_license_generation:
+    action: is_email_valid?
+    paths: [gather_user_company_for_license_generation, user_email_validation_failure]
+    response_path_map:
+      "true": gather_user_company_for_license_generation
+      "false": user_email_validation_failure
+
+  user_email_validation_failure:
+    messages: "Invalid email address."
+    prompt_type: "error"
+    paths: [gather_user_email_for_license_generation]
+
+  gather_user_company_for_license_generation:
+    messages: "Enter Company Name: "
+    prompt_type: "ask"
+    paths: [validate_user_company_name_for_license_generation]
+
+  validate_user_company_name_for_license_generation:
+    action: is_company_name_valid?
+    paths: [gather_user_phone_no_for_license_generation, user_company_name_validation_failure]
+    response_path_map:
+      "true": gather_user_phone_no_for_license_generation
+      "false": user_company_name_validation_failure
+
+  user_company_name_validation_failure:
+    messages: "Invalid company name. It should contain only A-Z/a-z alphabets and _ , . , - or ` special characters."
+    prompt_type: "error"
+    paths: [gather_user_company_for_license_generation]
+
+  gather_user_phone_no_for_license_generation:
+    messages: "Enter Phone Number: "
+    prompt_type: "ask"
+    paths: [validate_user_phone_no]
+
+  validate_user_phone_no:
+    action: is_phone_no_valid?
+    paths: [print_to_review_details, user_phone_no_validation_failure]
+    response_path_map:
+      "true": print_to_review_details
+      "false": user_phone_no_validation_failure
+
+  user_phone_no_validation_failure:
+    messages: "Please enter valid phone number."
+    prompt_type: "error"
+    paths: [gather_user_phone_no_for_license_generation]
+
+  print_to_review_details:
+    messages: |
+      ----------------------------------------------------
+        User Details
+
+        First Name: <%= input[:gather_user_first_name_for_license_generation] %>
+        Last Name: <%= input[:gather_user_last_name_for_license_generation] %>
+        Email: <%= input[:gather_user_email_for_license_generation] %>
+        Company: <%= input[:gather_user_company_for_license_generation] %>
+        Phone number: <%= input[:gather_user_phone_no_for_license_generation] %>
+      ----------------------------------------------------
+    prompt_type: "say"
+    paths: [ask_for_review_confirmation]
+
+  ask_for_review_confirmation:
+    prompt_type: "select"
+    messages: ["Please select", ["Confirm the details and proceed", "Choose again"]]
+    paths: [pre_license_generation, info_of_license_types]
+    response_path_map:
+      "Confirm the details and proceed": pre_license_generation
+      "Choose again": info_of_license_types
+
+  pre_license_generation:
+    action: select_license_generation_based_on_type
+    paths: [generate_free_license, generate_trial_license, generate_commercial_license]
+    response_path_map:
+      "free": generate_free_license
+      "trial": generate_trial_license
+      "commercial": generate_commercial_license
+
+  generate_free_license:
+    action: generate_free_license
+    paths: [free_license_generation_success, license_generation_failure]
+    response_path_map:
+      "true": free_license_generation_success
+      "false": license_generation_failure
+
+  generate_trial_license:
+    action: generate_trial_license
+    paths: [trial_license_generation_success, license_generation_failure]
+    response_path_map:
+      "true": trial_license_generation_success
+      "false": license_generation_failure
+
+  generate_commercial_license:
+    action: generate_commercial_license_lead
+    paths: [commercial_license_generation_success, license_generation_failure]
+    response_path_map:
+      "true": commercial_license_generation_success
+      "false": license_generation_failure
+
+  free_license_generation_success:
+    messages: |
+      The license has been generated and registered.
+
+      A copy has also been sent to your email.
+
+      You can also look up it in the SaleForce portal under the name of <%= input[:gather_user_first_name_for_license_generation] + " " + input[:gather_user_last_name_for_license_generation] %>.
+      If you do not know your license key, you can log into your Progress Chef customer portal to obtain your product serial number.
+    paths: [fetch_license_id]
+
+  trial_license_generation_success:
+    messages: |
+      The license has been generated and registered.
+
+      A copy has also been sent to <%= input[:gather_user_email_for_license_generation] %>.
+      You can also look up it in the SaleForce portal under the name of <%= input[:gather_user_first_name_for_license_generation] + " " + input[:gather_user_last_name_for_license_generation] %>.
+    paths: [fetch_license_id]
+
+  commercial_license_generation_success:
+    messages: "Our Sales team will get in touch with you with further steps."
+    paths: [exit]
+
+  fetch_license_id:
+    action: fetch_license_id
+    paths: [exit]
+
+  license_generation_failure:
+    action: license_generation_rejected?
+    paths: [fetch_license_failure_error_msg, fetch_license_failure_rejection_msg]
+    response_path_map:
+      "true": fetch_license_failure_rejection_msg
+      "false": fetch_license_failure_error_msg
+
+  fetch_license_failure_error_msg:
+    action: fetch_license_failure_error_msg
+    paths: [license_generation_with_errors]
+
+  fetch_license_failure_rejection_msg:
+    action: fetch_license_failure_rejection_msg
+    paths: [license_generation_rejected]
+
+  license_generation_rejected:
+    messages: ["Your request for a license was denied for the following reason <%= input[:fetch_license_failure_rejection_msg] %>. Please select an Option", ["Try again", "Skip"]]
+    prompt_type: "select"
+    paths: [pre_license_generation, skip_message]
+    response_path_map:
+      "Try again": pre_license_generation
+      "Skip": skip_message
+
+  license_generation_with_errors:
+    messages: ["\nAn error occurred while generating your license.\nError message: <%= input[:fetch_license_failure_error_msg] %>\n", ["Try again", "Skip"]]
+    prompt_type: "select"
+    paths: [pre_license_generation, skip_message]
+    response_path_map:
+      "Try again": pre_license_generation
+      "Skip": skip_message
 
   exit:
     messages: "Thank you."
