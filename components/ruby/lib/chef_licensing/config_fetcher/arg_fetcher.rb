@@ -25,9 +25,6 @@ module ChefLicensing
         # --arg_name=value or --arg_name value or both
         @value = ARGV.include?(@arg_name) ? ARGV[ARGV.index(@arg_name) + 1] : nil
       end
-
     end
-
-    class ArgFetcherException < StandardError; end
   end
 end

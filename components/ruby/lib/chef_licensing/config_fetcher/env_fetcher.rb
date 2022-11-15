@@ -22,7 +22,5 @@ module ChefLicensing
         @value = ENV.key?(@env_name) ? ENV[@env_name] : nil
       end
     end
-
-    class EnvFetcherException < StandardError; end
   end
 end
