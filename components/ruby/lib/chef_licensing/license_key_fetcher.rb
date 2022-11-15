@@ -3,6 +3,7 @@ require "chef-config/windows"
 require "logger"
 
 require_relative "config"
+require_relative "license_key_validator"
 require_relative "license_key_fetcher/argument"
 require_relative "license_key_fetcher/environment"
 require_relative "license_key_fetcher/file"
@@ -64,14 +65,31 @@ module ChefLicensing
       # If it has previously been fetched and persisted, read from disk and set runtime decision
       logger.debug "License Key fetcher examining file checks"
       if file_fetcher.persisted?
-        return @license_keys = file_fetcher.fetch
+        @license_keys = file_fetcher.fetch
+      end
+
+      # licenses expiration check
+      unless @license_keys.empty?
+        if ChefLicensing::LicenseKeyValidator.licenses_expired?(@license_keys)
+          config[:start_interaction] = :prompt_license_expired
+          prompt_fetcher.config = config
+        elsif ChefLicensing::LicenseKeyValidator.licenses_about_to_expire?(@license_keys)
+          config[:start_interaction] = :prompt_license_about_to_expire
+          prompt_fetcher.config = config
+        else
+          return @license_keys
+        end
       end
 
       # Lowest priority is to interactively prompt if we have a TTY
       if config[:output].isatty
         logger.debug "License Key fetcher - detected TTY, prompting..."
         new_keys = prompt_fetcher.fetch
-        unless new_keys.empty?
+
+        # Scenario: When a user is prompted for license expiry beforehand expiration and license is not yet renewed
+        if new_keys.empty? && (config[:start_interaction] == :prompt_license_about_to_expire)
+          return @license_keys
+        elsif !new_keys.empty?
           @license_keys.concat(new_keys)
           new_keys.each { |key| file_fetcher.persist(key) }
           return license_keys
