@@ -174,11 +174,11 @@ RSpec.describe ChefLicensing::TUIEngine do
       let(:tui_engine) { described_class.new(config) }
 
       it "should raise exception of incomplete path" do
-        expect { tui_engine.run_interaction }.to raise_error(ChefLicensing::TUIEngine::IncompleteFlowException)
+        expect { tui_engine.run_interaction }.to raise_error(ChefLicensing::TUIEngine::IncompleteFlowException, /Something went wrong in the flow./)
       end
     end
 
-    context "when the yaml file is empty" do
+    context "when the yaml file has no interaction" do
       let(:config) {
         {
           output: StringIO.new,
@@ -189,7 +189,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       }
 
       it "should raise error while instantiating the class" do
-        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException)
+        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException, /`interactions` key not found in yaml file./)
       end
     end
 
@@ -268,7 +268,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       }
 
       it "should raise error while instantiating the class" do
-        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException)
+        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException, /No action or messages found for interaction/)
       end
     end
   end
@@ -284,7 +284,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         }
       }
       it "should raise error while instantiating the class" do
-        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException)
+        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException, /`interactions` key not found in yaml file./ )
       end
     end
 
@@ -327,7 +327,52 @@ RSpec.describe ChefLicensing::TUIEngine do
       }
 
       it "raises error" do
-        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException)
+        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException, /Invalid value `shout-type` for `prompt_type` key in yaml file for interaction/)
+      end
+    end
+
+    context "when the yaml file is empty" do
+      let(:config) {
+        {
+          output: StringIO.new,
+          input: StringIO.new,
+          logger: Logger.new(StringIO.new),
+          interaction_file: File.join(fixture_dir, "empty_interaction_file.yaml"),
+        }
+      }
+
+      it "should raise error while instantiating the class" do
+        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException, /The interaction file has no data./)
+      end
+    end
+
+    context "when the yaml file has no file_format_version" do
+      let(:config) {
+        {
+          output: StringIO.new,
+          input: StringIO.new,
+          logger: Logger.new(StringIO.new),
+          interaction_file: File.join(fixture_dir, "flow_with_no_file_format_version.yaml"),
+        }
+      }
+
+      it "should raise error while instantiating the class" do
+        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException, /`file_format_version` key not found in yaml file./)
+      end
+    end
+
+    context "when the yaml file has invalid file_format_version" do
+      let(:config) {
+        {
+          output: StringIO.new,
+          input: StringIO.new,
+          logger: Logger.new(StringIO.new),
+          interaction_file: File.join(fixture_dir, "flow_with_invalid_file_format_version.yaml"),
+        }
+      }
+
+      it "should raise error while instantiating the class" do
+        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::UnsupportedInteractionFileFormat, /Unsupported interaction file format version./)
       end
     end
   end
@@ -344,7 +389,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       }
 
       it "should raise error while instantiating the class" do
-        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException)
+        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException, /Unable to load interaction file./)
       end
     end
   end

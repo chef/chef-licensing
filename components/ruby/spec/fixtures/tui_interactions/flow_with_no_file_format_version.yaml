@@ -1,10 +1,10 @@
-:file_format_version: 1.0.0
-
 interactions:
   start:
+    messages: ["This is a start message"]
+    prompt_type: "say"
     paths: [exit]
     description: This is an optional field. WYOD (Write your own description)
 
   exit:
-    messages: ["This is the exit prompt"]
+    messages: ["This is the exist prompt"]
     prompt_type: "say"

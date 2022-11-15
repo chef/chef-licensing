@@ -8,5 +8,7 @@ module ChefLicensing
     class PromptTimeout < Timeout::Error; end
 
     class IncompleteFlowException < StandardError; end
+
+    class UnsupportedInteractionFileFormat < StandardError; end
   end
 end
