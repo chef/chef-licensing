@@ -18,7 +18,7 @@ module ChefLicensing
 
     def validate!
       response = restful_client.validate(license)
-      response.data || raise(ChefLicensing::InvalidLicense)
+      response.data || raise(ChefLicensing::InvalidLicense, response.message)
     end
 
     private

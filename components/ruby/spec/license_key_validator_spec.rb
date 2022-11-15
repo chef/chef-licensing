@@ -19,15 +19,16 @@ RSpec.describe ChefLicensing::LicenseKeyValidator do
     end
     it { is_expected.to be_truthy }
 
-    context "when license is in valid" do
+    context "when license is invalid" do
+      let(:error_message) { "License Id is invalid" }
       before do
         stub_request(:get, "#{ChefLicensing.license_server_url}/v1/validate")
           .with(query: { licenseId: license_key })
-          .to_return(body: { data: false, message: "License Id is invalid", status_code: 200 }.to_json,
+          .to_return(body: { data: false, message: error_message, status_code: 200 }.to_json,
                      headers: { content_type: "application/json" })
       end
 
-      it { expect { subject }.to raise_error(ChefLicensing::InvalidLicense) }
+      it { expect { subject }.to raise_error(ChefLicensing::InvalidLicense, error_message) }
     end
   end
 end
