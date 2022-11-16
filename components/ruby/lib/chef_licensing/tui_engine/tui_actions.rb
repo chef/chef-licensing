@@ -17,12 +17,10 @@ module ChefLicensing
         @output = opts[:output] || STDOUT
       end
 
-      # TODO: Change parameter name from inputs to input.
-
-      def is_license_with_valid_pattern?(inputs)
-        license_id = inputs[:ask_for_license_id]
+      def is_license_with_valid_pattern?(input)
+        license_id = input[:ask_for_license_id]
         if !license_id.nil? && (match = license_id.match(/^#{LICENSE_KEY_REGEX}$/))
-          inputs[:ask_for_license_id] = match[1]
+          input[:ask_for_license_id] = match[1]
           true
         else
           output.puts "License pattern should be #{LICENSE_KEY_PATTERN_DESC}"
@@ -30,8 +28,8 @@ module ChefLicensing
         end
       end
 
-      def is_license_valid_on_server?(inputs)
-        license_id = inputs[:ask_for_license_id]
+      def is_license_valid_on_server?(input)
+        license_id = input[:ask_for_license_id]
         output.puts "License validation in progress..."
         is_valid = ChefLicensing::LicenseKeyValidator.validate!(license_id)
         self.license_id = license_id
@@ -41,34 +39,34 @@ module ChefLicensing
         false
       end
 
-      def is_user_name_valid?(inputs)
-        user_name = inputs[:gather_user_last_name_for_license_generation] || inputs[:gather_user_first_name_for_license_generation]
+      def is_user_name_valid?(input)
+        user_name = input[:gather_user_last_name_for_license_generation] || input[:gather_user_first_name_for_license_generation]
         (user_name =~ /\A[a-z_A-Z\-\`]{3,16}\Z/) == 0
       end
 
-      def is_email_valid?(inputs)
-        (inputs[:gather_user_email_for_license_generation] =~ URI::MailTo::EMAIL_REGEXP) == 0
+      def is_email_valid?(input)
+        (input[:gather_user_email_for_license_generation] =~ URI::MailTo::EMAIL_REGEXP) == 0
       end
 
-      def is_company_name_valid?(inputs)
-        (inputs[:gather_user_company_for_license_generation] =~ /\A[a-z_.\sA-Z\-\`]{3,16}\Z/) == 0
+      def is_company_name_valid?(input)
+        (input[:gather_user_company_for_license_generation] =~ /\A[a-z_.\sA-Z\-\`]{3,16}\Z/) == 0
       end
 
-      def is_phone_no_valid?(inputs)
+      def is_phone_no_valid?(input)
         # TODO validation logic
         true
       end
 
       # TODO to add product name dynamically
-      def generate_trial_license(inputs)
+      def generate_trial_license(input)
         output.puts "License generation in progress..."
         license_id = ChefLicensing::LicenseKeyGenerator.generate!(
-          first_name: inputs[:gather_user_first_name_for_license_generation],
-          last_name: inputs[:gather_user_last_name_for_license_generation],
-          email_id: inputs[:gather_user_email_for_license_generation],
+          first_name: input[:gather_user_first_name_for_license_generation],
+          last_name: input[:gather_user_last_name_for_license_generation],
+          email_id: input[:gather_user_email_for_license_generation],
           product: "inspec",
-          company: inputs[:gather_user_company_for_license_generation],
-          phone: inputs[:gather_user_phone_no_for_license_generation]
+          company: input[:gather_user_company_for_license_generation],
+          phone: input[:gather_user_phone_no_for_license_generation]
         )
         self.license_id = license_id
         true
@@ -80,15 +78,15 @@ module ChefLicensing
         false
       end
 
-      def generate_free_license(inputs)
+      def generate_free_license(input)
         puts "License generation in progress..."
         license_id = ChefLicensing::LicenseKeyGenerator.generate_free_license!(
-          first_name: inputs[:gather_user_first_name_for_license_generation],
-          last_name: inputs[:gather_user_last_name_for_license_generation],
-          email_id: inputs[:gather_user_email_for_license_generation],
+          first_name: input[:gather_user_first_name_for_license_generation],
+          last_name: input[:gather_user_last_name_for_license_generation],
+          email_id: input[:gather_user_email_for_license_generation],
           product: "inspec",
-          company: inputs[:gather_user_company_for_license_generation],
-          phone: inputs[:gather_user_phone_no_for_license_generation]
+          company: input[:gather_user_company_for_license_generation],
+          phone: input[:gather_user_phone_no_for_license_generation]
         )
         self.license_id = license_id
         true
@@ -100,7 +98,7 @@ module ChefLicensing
         false
       end
 
-      def generate_commercial_license_lead(inputs)
+      def generate_commercial_license_lead(input)
         warn "\n\nCommercial license generation is not yet implemented!\n\n"
         false
 
@@ -108,12 +106,12 @@ module ChefLicensing
 
         #   puts "License generation request in progress..."
         #   license_id = ChefLicensing.generate_commercial_license_lead!(
-        #     first_name: inputs[:gather_user_first_name_for_license_generation],
-        #     last_name: inputs[:gather_user_last_name_for_license_generation],
-        #     email_id: inputs[:gather_user_email_for_license_generation],
+        #     first_name: input[:gather_user_first_name_for_license_generation],
+        #     last_name: input[:gather_user_last_name_for_license_generation],
+        #     email_id: input[:gather_user_email_for_license_generation],
         #     product: "inspec",
-        #     company: inputs[:gather_user_company_for_license_generation],
-        #     phone: inputs[:gather_user_phone_no_for_license_generation]
+        #     company: input[:gather_user_company_for_license_generation],
+        #     phone: input[:gather_user_phone_no_for_license_generation]
         #   )
         #   true
         # rescue ChefLicensing::CommercialLicenseLeadGenerationFailed => e
@@ -124,33 +122,33 @@ module ChefLicensing
         #   false
       end
 
-      def fetch_license_id(inputs)
+      def fetch_license_id(input)
         license_id
       end
 
-      def fetch_license_failure_error_msg(inputs)
+      def fetch_license_failure_error_msg(input)
         error_msg
       end
 
-      def fetch_license_failure_rejection_msg(inputs)
+      def fetch_license_failure_rejection_msg(input)
         rejection_msg
       end
 
-      def select_license_generation_based_on_type(inputs)
-        if inputs.keys.include? :free_license_selection
+      def select_license_generation_based_on_type(input)
+        if input.keys.include? :free_license_selection
           "free"
-        elsif inputs.keys.include? :trial_license_selection
+        elsif input.keys.include? :trial_license_selection
           "trial"
         else
           "commercial"
         end
       end
 
-      def license_generation_rejected?(inputs)
+      def license_generation_rejected?(input)
         !!rejection_msg
       end
 
-      def fetch_invalid_license_msg(inputs)
+      def fetch_invalid_license_msg(input)
         invalid_license_msg
       end
     end
