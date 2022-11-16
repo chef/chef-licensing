@@ -3,19 +3,23 @@ require_relative "exceptions/invalid_license"
 
 module ChefLicensing
   class LicenseKeyValidator
-    attr_reader :license, :license_keys
+    attr_reader :license
 
     class << self
       def validate!(license)
         new(license).validate!
       end
 
-      def licenses_expired?(license_keys)
-        new(license_keys).licenses_expired?
+      def license_expired?(license)
+        new(license).license_expired?
       end
 
-      def licenses_about_to_expire?(license_keys)
-        new(license_keys).licenses_about_to_expire?
+      def license_about_to_expire?(license)
+        new(license).license_about_to_expire?
+      end
+
+      def license_type(license)
+        new(license).license_type
       end
     end
 
@@ -29,16 +33,22 @@ module ChefLicensing
       response.data || raise(ChefLicensing::InvalidLicense, response.message)
     end
 
-    def licenses_expired?
+    def license_expired?
       # TODO api call to validate expiry of inspec license
       # Dummy boolean value true
       true
     end
 
-    def licenses_about_to_expire?
+    def license_about_to_expire?
       # TODO api call to validate about to expire date of inspec license
       # Dummy boolean value true
       true
+    end
+
+    def license_type
+      # TODO api call to find license type
+      # Dummy boolean value commercial for commercial license
+      "commercial"
     end
 
     private

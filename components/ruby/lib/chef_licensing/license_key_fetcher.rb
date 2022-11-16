@@ -16,6 +16,8 @@ module ChefLicensing
     end
 
     attr_reader :config, :license_keys, :arg_fetcher, :env_fetcher, :file_fetcher, :prompt_fetcher, :logger
+    attr_accessor :commercial_license_expired
+
     def initialize(opts = {})
       @config = opts
       @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
@@ -63,13 +65,7 @@ module ChefLicensing
 
       # licenses expiration check
       unless @license_keys.empty?
-        if ChefLicensing::LicenseKeyValidator.licenses_expired?(@license_keys)
-          config[:start_interaction] = :prompt_license_expired
-          prompt_fetcher.config = config
-        elsif ChefLicensing::LicenseKeyValidator.licenses_about_to_expire?(@license_keys)
-          config[:start_interaction] = :prompt_license_about_to_expire
-          prompt_fetcher.config = config
-        else
+        unless licenses_require_renewal?(@license_keys)
           return @license_keys
         end
       end
@@ -79,9 +75,12 @@ module ChefLicensing
         logger.debug "License Key fetcher - detected TTY, prompting..."
         new_keys = prompt_fetcher.fetch
 
-        # Scenario: When a user is prompted for license expiry beforehand expiration and license is not yet renewed
-        if new_keys.empty? && (config[:start_interaction] == :prompt_license_about_to_expire)
-          return @license_keys
+        # Scenario 1: When a user is prompted for license expiry beforehand expiration and license is not yet renewed
+        # Scenario 2: When a user is prompted for license expired and it is a commercial license
+        if new_keys.empty?
+          if (config[:start_interaction] == :prompt_license_about_to_expire) || (config[:start_interaction] == :prompt_license_expired && commercial_license_expired)
+            return @license_keys
+          end
         elsif !new_keys.empty?
           @license_keys.concat(new_keys)
           new_keys.each { |key| file_fetcher.persist(key) }
@@ -105,6 +104,39 @@ module ChefLicensing
 
     def self.fetch(opts = {})
       new(opts).fetch
+    end
+
+    def licenses_require_renewal?(license_keys)
+      license_expiry_hash = {}
+      license_keys.each do |license_key|
+
+        # TODO API error handling to be done after API is available
+
+        # Fetching expiry info for each license
+        if ChefLicensing::LicenseKeyValidator.license_expired?(license_key)
+          license_expiry_hash[license_key] = "expired"
+        elsif ChefLicensing::LicenseKeyValidator.license_about_to_expire?(license_key)
+          license_expiry_hash[license_key] = "about_to_expire"
+        end
+
+        # Setting commercial license expiry flag incase expired
+        if license_expiry_hash[license_key] == "expired" && (ChefLicensing::LicenseKeyValidator.license_type(license_key) == "commercial")
+          self.commercial_license_expired = true
+        end
+      end
+
+      # Renewal check condition
+      if license_expiry_hash.values.all?("expired")
+        config[:start_interaction] = :prompt_license_expired
+        prompt_fetcher.config = config
+        return true
+      elsif license_expiry_hash.values.any?("about_to_expire")
+        config[:start_interaction] = :prompt_license_about_to_expire
+        prompt_fetcher.config = config
+        return true
+      end
+
+      false
     end
   end
 end
