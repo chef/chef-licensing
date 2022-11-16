@@ -189,7 +189,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       }
 
       it "should raise error while instantiating the class" do
-        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException, /`interactions` key not found in yaml file./)
+        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::BadInteractionFile, /`interactions` key not found in yaml file./)
       end
     end
 
@@ -268,7 +268,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       }
 
       it "should raise error while instantiating the class" do
-        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException, /No action or messages found for interaction/)
+        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::BadInteractionFile, /No action or messages found for interaction/)
       end
     end
   end
@@ -284,7 +284,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         }
       }
       it "should raise error while instantiating the class" do
-        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException, /`interactions` key not found in yaml file./ )
+        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::BadInteractionFile, /`interactions` key not found in yaml file./ )
       end
     end
 
@@ -327,7 +327,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       }
 
       it "raises error" do
-        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException, /Invalid value `shout-type` for `prompt_type` key in yaml file for interaction/)
+        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::BadInteractionFile, /Invalid value `shout-type` for `prompt_type` key in yaml file for interaction/)
       end
     end
 
@@ -342,7 +342,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       }
 
       it "should raise error while instantiating the class" do
-        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException, /The interaction file has no data./)
+        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::BadInteractionFile, /The interaction file has no data./)
       end
     end
 
@@ -357,7 +357,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       }
 
       it "should raise error while instantiating the class" do
-        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException, /`file_format_version` key not found in yaml file./)
+        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::BadInteractionFile, /`file_format_version` key not found in yaml file./)
       end
     end
 
@@ -389,7 +389,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       }
 
       it "should raise error while instantiating the class" do
-        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException, /Unable to load interaction file:/)
+        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::BadInteractionFile, /Unable to load interaction file:/)
       end
     end
 
@@ -404,7 +404,7 @@ RSpec.describe ChefLicensing::TUIEngine do
 
       it "should raise error while instantiating the class" do
         expect { described_class.new(config) }.to raise_error(
-          ChefLicensing::TUIEngine::YAMLException, /No interaction file found. Please provide a valid file path to continue/
+          ChefLicensing::TUIEngine::MissingInteractionFile, /No interaction file found. Please provide a valid file path to continue/
         )
       end
     end

@@ -42,7 +42,7 @@ module ChefLicensing
     private
 
     def initialization_of_engine(interaction_file)
-      raise ChefLicensing::TUIEngine::YAMLException, "No interaction file found. Please provide a valid file path to continue." unless interaction_file
+      raise ChefLicensing::TUIEngine::MissingInteractionFile, "No interaction file found. Please provide a valid file path to continue." unless interaction_file
 
       @interaction_data = inflate_interaction_data(interaction_file)
       verify_interaction_data
@@ -55,7 +55,7 @@ module ChefLicensing
       require "yaml" unless defined?(YAML)
       YAML.load_file(interaction_file)
     rescue => e
-      raise ChefLicensing::TUIEngine::YAMLException, "Unable to load interaction file: #{interaction_file}.\n#{e.message}"
+      raise ChefLicensing::TUIEngine::BadInteractionFile, "Unable to load interaction file: #{interaction_file}.\n#{e.message}"
     end
 
     def store_interaction_objects
@@ -84,18 +84,18 @@ module ChefLicensing
     end
 
     def verify_interaction_data
-      raise ChefLicensing::TUIEngine::YAMLException, "The interaction file has no data." unless @interaction_data
+      raise ChefLicensing::TUIEngine::BadInteractionFile, "The interaction file has no data." unless @interaction_data
 
-      raise ChefLicensing::TUIEngine::YAMLException, "`file_format_version` key not found in yaml file." unless @interaction_data[:file_format_version]
+      raise ChefLicensing::TUIEngine::BadInteractionFile, "`file_format_version` key not found in yaml file." unless @interaction_data[:file_format_version]
 
-      raise ChefLicensing::TUIEngine::YAMLException, "`interactions` key not found in yaml file." unless @interaction_data["interactions"]
+      raise ChefLicensing::TUIEngine::BadInteractionFile, "`interactions` key not found in yaml file." unless @interaction_data["interactions"]
 
       @interaction_data["interactions"].each do |i_id, opts|
         opts.transform_keys!(&:to_sym)
 
         # An interaction must be either action or a prompt to display messages.
         if opts[:action].nil? && opts[:messages].nil?
-          raise ChefLicensing::TUIEngine::YAMLException, "No action or messages found for interaction #{i_id}.\nAdd either action or messages to the interaction."
+          raise ChefLicensing::TUIEngine::BadInteractionFile, "No action or messages found for interaction #{i_id}.\nAdd either action or messages to the interaction."
         end
 
         # Supporting both could lead ambiguous flow in response_path_map
@@ -114,12 +114,12 @@ module ChefLicensing
 
           # check if tui_engine supports the prompt_type
           if k == :prompt_type && !is_valid_prompt_method?(val)
-            raise ChefLicensing::TUIEngine::YAMLException, "Invalid value `#{val}` for `prompt_type` key in yaml file for interaction #{i_id}."
+            raise ChefLicensing::TUIEngine::BadInteractionFile, "Invalid value `#{val}` for `prompt_type` key in yaml file for interaction #{i_id}."
           end
 
           # check if tui_engine supports the action
           if k == :action && !is_valid_action_method?(val)
-            raise ChefLicensing::TUIEngine::YAMLException, "Invalid value `#{val}` for `action` key in yaml file for interaction #{i_id}."
+            raise ChefLicensing::TUIEngine::BadInteractionFile, "Invalid value `#{val}` for `action` key in yaml file for interaction #{i_id}."
           end
         end
       end
