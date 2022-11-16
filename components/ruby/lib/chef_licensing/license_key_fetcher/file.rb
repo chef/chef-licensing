@@ -124,6 +124,7 @@ module ChefLicensing
         # Include local directory if provided. Not usual, but useful for testing.
         candidates << "#{local_dir}/#{LICENSE_KEY_FILE}" if local_dir
 
+        # Only picks up the first detected license file out of list of candidates
         @location = candidates.detect { |c| ::File.exist?(c) }
       end
 

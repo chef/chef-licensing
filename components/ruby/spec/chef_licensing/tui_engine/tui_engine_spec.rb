@@ -271,6 +271,44 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException, /No action or messages found for interaction/)
       end
     end
+
+    context "when the yaml file has a different start point other than `start`" do
+      let(:config) {
+        {
+          output: StringIO.new,
+          input: StringIO.new,
+          logger: Logger.new(StringIO.new),
+          interaction_file: File.join(fixture_dir, "basic_flow_with_different_start_point.yaml"),
+        }
+      }
+
+      let(:tui_engine) { described_class.new(config) }
+
+      it "should have a different starting interaction id" do
+        expect(tui_engine.tui_interactions.keys.first).to eq :start_point_1
+      end
+    end
+
+    context "when the interaction is run with different start point" do
+      let(:config) {
+        {
+          output: StringIO.new,
+          input: StringIO.new,
+          logger: Logger.new(StringIO.new),
+          interaction_file: File.join(fixture_dir, "basic_flow_with_different_start_point.yaml"),
+        }
+      }
+
+      let(:tui_engine) { described_class.new(config) }
+
+      it "should contain only start_point_2 as a starting interaction id" do
+        expect(tui_engine.run_interaction(:start_point_2)).to eq({ start_point_2: nil, prompt_2: nil, prompt_3: nil, exit: nil })
+      end
+
+      it "should contain only start_point_3 as a starting interaction id" do
+        expect(tui_engine.run_interaction(:start_point_3)).to eq({ start_point_3: nil, prompt_2: nil, prompt_3: nil, exit: nil })
+      end
+    end
   end
 
   describe "when a tui_engine object is instantiated with an invalid yaml file" do
