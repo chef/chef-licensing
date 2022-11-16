@@ -9,43 +9,41 @@ require_relative "config_fetcher/env_fetcher"
 # TODO: Find a better way to do ping check
 require_relative "air_gap_detection/ping"
 
-require_relative "chef_licensing_logger"
-
 module ChefLicensing
   class Config
 
-    class << self
+    attr_reader :license_server_url, :license_server_api_key, :logger, :status
 
-      attr_writer :license_server_url, :license_server_api_key, :logger, :air_gap_detected
-
-      def license_server_url
-        # TODO: Do we keep the ENV name as CHEF_LICENSE_SERVER
-        # or do we change it to CHEF_LICENSE_SERVER_URL to keep it consistent with the method name?
-        arg_fetcher = ChefLicensing::ArgFetcher::String.new("license-server-url")
-        env_fetcher = ChefLicensing::EnvFetcher::String.new("CHEF_LICENSE_SERVER_URL")
-        @license_server_url ||= arg_fetcher.value || env_fetcher.value || ChefLicensing::Config::DEFAULT_LICENSE_SERVER_URL
-      end
-
-      def license_server_api_key
-        arg_fetcher = ChefLicensing::ArgFetcher::String.new("license-server-api-key")
-        env_fetcher = ChefLicensing::EnvFetcher::String.new("CHEF_LICENSE_SERVER_API_KEY")
-        @license_server_api_key ||= arg_fetcher.value || env_fetcher.value
-      end
-
-      def logger
-        @logger ||= ChefLicensing::ChefLicensingLogger.new
-      end
-
-      def air_gap_detected?
-        arg_fetcher = ChefLicensing::ArgFetcher::Boolean.new("airgap")
-        env_fetcher = ChefLicensing::EnvFetcher::Boolean.new("CHEF_AIR_GAP")
-
-        # TODO: Find a better way to do ping check
-        ping_check = AirGapDetection::Ping.new(license_server_url)
-        @air_gap_detected ||= arg_fetcher.value || env_fetcher.value || ping_check.detected?
-      end
+    def initialize(logger = nil)
+      @logger = logger || Logger.new(STDERR)
+      @license_server_api_key = set_license_server_api_key
+      @license_server_url = set_license_server_url
     end
 
-    DEFAULT_LICENSE_SERVER_URL = "https://licensing-acceptance.chef.co/License".freeze
+    def air_gap_detected?
+      return @status unless @status.nil?
+
+      arg_fetcher = ChefLicensing::ArgFetcher::Boolean.new("airgap")
+      env_fetcher = ChefLicensing::EnvFetcher::Boolean.new("CHEF_AIR_GAP")
+
+      # TODO: Find a better way to do ping check
+      ping_check = AirGapDetection::Ping.new(license_server_url)
+
+      @status = arg_fetcher.value || env_fetcher.value || ping_check.detected?
+    end
+
+    private
+
+    def set_license_server_url
+      arg_fetcher = ChefLicensing::ArgFetcher::String.new("license-server")
+      env_fetcher = ChefLicensing::EnvFetcher::String.new("CHEF_LICENSE_SERVER")
+      arg_fetcher.value || env_fetcher.value
+    end
+
+    def set_license_server_api_key
+      arg_fetcher = ChefLicensing::ArgFetcher::String.new("license-server-api-key")
+      env_fetcher = ChefLicensing::EnvFetcher::String.new("CHEF_LICENSE_SERVER_API_KEY")
+      arg_fetcher.value || env_fetcher.value
+    end
   end
 end
