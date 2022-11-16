@@ -455,8 +455,8 @@ The different keys in an interaction file are:
 
 2. `<interaction_id>`: `<interaction_id>` key is the identifier of any interaction, which defines a particular interaction.
 
-   Evert interaction file must have the `start` and `exit` interaction.
-   The flow of interaction starts from the `start` interaction and always ends on `exit` interaction.
+   Every interaction file must have an `exit` interaction.
+   The flow of interaction can run from any defined start interaction and always ends on `exit` interaction.
 
 3. `messages`:  `messages` key contains the texts to be displayed to the user at each interaction. `messages` can receive texts as an array or a string.
 
@@ -578,6 +578,34 @@ The different ways how we can define an interaction is shown below.
       description: "is_number_valid? is a method and should be defined by the user in TUI Actions"
    ```
    Here, after the action is performed, based on the response of the action it could lead to different paths with the mapped interaction id.
+
+6. An interaction with a different starting interaction id other than `start`.
+   ```YAML
+   interactions:
+      greeting:
+        messages: "The greeting message to be displayed in this interaction"
+        paths: [exit]
+
+       exit:
+         messages: "Thank you"
+   ```
+   It is not mandatory to name starting interaction id with `start`.
+
+7. An interaction can have multiple starting points.
+  ```YAML
+   interactions:
+      greeting:
+        messages: "The greeting message to be displayed in this interaction"
+        paths: [exit]
+
+      good_bye:
+        messages: "The good bye message to be displayed in this interaction"
+        paths: [exit]
+
+       exit:
+         messages: "Thank you"
+   ```
+   In case of multiple starting interaction ids, interaction is run by passing selected starting interaction id.
 
 ## Troubleshooting
 - Do not have response_path_map based on the response from prompts and action together in a single interaction, this could lead to ambiguity. So, atomize the interaction to either: 

@@ -19,7 +19,7 @@ module ChefLicensing
     end
 
     def run_interaction(start_interaction = nil)
-      start_interaction_id = start_interaction || :start
+      start_interaction_id = start_interaction || @tui_interactions.keys.first
       current_interaction = @tui_interactions[start_interaction_id]
 
       state = ChefLicensing::TUIEngine::TUIEngineState.new(@opts)
