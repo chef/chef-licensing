@@ -389,7 +389,23 @@ RSpec.describe ChefLicensing::TUIEngine do
       }
 
       it "should raise error while instantiating the class" do
-        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException, /Unable to load interaction file./)
+        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::YAMLException, /Unable to load interaction file:/)
+      end
+    end
+
+    context "when interaction file is not provided." do
+      let(:config) {
+        {
+          output: StringIO.new,
+          input: StringIO.new,
+          logger: Logger.new(StringIO.new),
+        }
+      }
+
+      it "should raise error while instantiating the class" do
+        expect { described_class.new(config) }.to raise_error(
+          ChefLicensing::TUIEngine::YAMLException, /No interaction file found. Please provide a valid file path to continue/
+        )
       end
     end
   end
