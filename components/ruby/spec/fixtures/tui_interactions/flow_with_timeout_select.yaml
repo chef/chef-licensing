@@ -1,3 +1,5 @@
+:file_format_version: 1.0.0
+
 interactions:
   start:
     messages: ["Shall we begin the game?", ["Yes", "No", "Exit"]]
