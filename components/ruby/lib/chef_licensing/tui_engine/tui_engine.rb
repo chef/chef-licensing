@@ -42,7 +42,8 @@ module ChefLicensing
     private
 
     def initialization_of_engine(interaction_file)
-      interaction_file ||= File.join(File.dirname(__FILE__), "default_interactions.yaml")
+      raise ChefLicensing::TUIEngine::YAMLException, "No interaction file found. Please provide a valid file path to continue." unless interaction_file
+
       @interaction_data = inflate_interaction_data(interaction_file)
       verify_interaction_data
       store_interaction_objects
@@ -54,7 +55,7 @@ module ChefLicensing
       require "yaml" unless defined?(YAML)
       YAML.load_file(interaction_file)
     rescue => e
-      raise ChefLicensing::TUIEngine::YAMLException, "Unable to load interaction file. #{e.message}"
+      raise ChefLicensing::TUIEngine::YAMLException, "Unable to load interaction file: #{interaction_file}.\n#{e.message}"
     end
 
     def store_interaction_objects

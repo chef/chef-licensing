@@ -19,10 +19,6 @@ module ChefLicensing
 
       # TODO: Change parameter name from inputs to input.
 
-      def validate_license_id(inputs)
-        output.puts "Welcome you finally got here, atleast you are not a robot"
-      end
-
       def is_license_with_valid_pattern?(inputs)
         license_id = inputs[:ask_for_license_id]
         if !license_id.nil? && (match = license_id.match(/^#{LICENSE_KEY_REGEX}$/))
