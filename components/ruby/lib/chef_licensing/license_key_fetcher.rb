@@ -126,14 +126,16 @@ module ChefLicensing
       end
 
       # Renewal check condition
-      if license_expiry_hash.values.all?("expired")
-        config[:start_interaction] = :prompt_license_expired
-        prompt_fetcher.config = config
-        return true
-      elsif license_expiry_hash.values.any?("about_to_expire")
-        config[:start_interaction] = :prompt_license_about_to_expire
-        prompt_fetcher.config = config
-        return true
+      unless license_expiry_hash.values.empty?
+        if license_expiry_hash.values.all?("expired")
+          config[:start_interaction] = :prompt_license_expired
+          prompt_fetcher.config = config
+          return true
+        elsif license_expiry_hash.values.any?("about_to_expire")
+          config[:start_interaction] = :prompt_license_about_to_expire
+          prompt_fetcher.config = config
+          return true
+        end
       end
 
       false
