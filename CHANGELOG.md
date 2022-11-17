@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.3.15 -->
-## [0.3.15](https://github.com/chef/chef-licensing/tree/0.3.15) (2022-11-16)
+<!-- latest_release 0.3.16 -->
+## [0.3.16](https://github.com/chef/chef-licensing/tree/0.3.16) (2022-11-17)
 
 #### Merged Pull Requests
-- Update failing test on main [#40](https://github.com/chef/chef-licensing/pull/40) ([ahasunos](https://github.com/ahasunos))
+- CFINSPEC-507: Raise exception when no interaction file is provided to TUI Engine [#39](https://github.com/chef/chef-licensing/pull/39) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CFINSPEC-507: Raise exception when no interaction file is provided to TUI Engine [#39](https://github.com/chef/chef-licensing/pull/39) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.16 -->
 - Update failing test on main [#40](https://github.com/chef/chef-licensing/pull/40) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.15 -->
 - delegate error message from API [#36](https://github.com/chef/chef-licensing/pull/36) ([sathish-progress](https://github.com/sathish-progress)) <!-- 0.3.14 -->
 - CFINSPEC-494: Implement versioning in interaction file of TUI Engine [#35](https://github.com/chef/chef-licensing/pull/35) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.13 -->
