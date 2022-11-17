@@ -3,6 +3,7 @@ require_relative "license_server_url"
 
 # TODO: Remove above lines once we are ready to ship this component
 
+require "singleton"
 require_relative "config_fetcher/arg_fetcher"
 require_relative "config_fetcher/env_fetcher"
 
@@ -11,6 +12,7 @@ require_relative "air_gap_detection/ping"
 
 module ChefLicensing
   class Config
+    include Singleton
 
     attr_reader :license_server_url, :license_server_api_key, :logger, :status
 
@@ -35,13 +37,13 @@ module ChefLicensing
     private
 
     def set_license_server_url
-      arg_fetcher = ChefLicensing::ArgFetcher::String.new("license-server")
+      arg_fetcher = ChefLicensing::ArgFetcher::String.new("--chef-license-server")
       env_fetcher = ChefLicensing::EnvFetcher::String.new("CHEF_LICENSE_SERVER")
       arg_fetcher.value || env_fetcher.value
     end
 
     def set_license_server_api_key
-      arg_fetcher = ChefLicensing::ArgFetcher::String.new("license-server-api-key")
+      arg_fetcher = ChefLicensing::ArgFetcher::String.new("--chef-license-server-api-key")
       env_fetcher = ChefLicensing::EnvFetcher::String.new("CHEF_LICENSE_SERVER_API_KEY")
       arg_fetcher.value || env_fetcher.value
     end
