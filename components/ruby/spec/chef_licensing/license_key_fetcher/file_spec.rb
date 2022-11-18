@@ -62,6 +62,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
         Dir.mkdir(non_writable_dir_path, 0466)
         file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: non_writable_dir_path, logger: logger })
         expect(logger).to receive(:warn).once
+        expect(logger).to receive(:debug).once
         file_fetcher.persist("tmns-0f76efaf-e45e-4d92-86b2-2d144ce73dfa-150")
       end
     end

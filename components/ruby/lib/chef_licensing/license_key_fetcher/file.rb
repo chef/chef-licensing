@@ -80,6 +80,7 @@ module ChefLicensing
           []
         rescue StandardError => e
           logger.warn "#{msg}\n\t#{e.message}"
+          logger.debug "#{e.backtrace.join("\n\t")}"
           [e]
         end
       end
