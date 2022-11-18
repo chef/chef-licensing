@@ -1,3 +1,5 @@
+require_relative "error"
+
 module ChefLicensing
   class LicenseGenerationRejected < Error
     def message

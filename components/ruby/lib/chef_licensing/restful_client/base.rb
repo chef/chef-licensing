@@ -16,7 +16,10 @@ module ChefLicensing
         FEATURE_BY_ID: "license-service/featurebyid",
         ENTITLEMENT_BY_NAME: "license-service/entitlementbyname",
         ENTITLEMENT_BY_ID: "license-service/entitlementbyid",
+        DOWNLOAD: "download",
       }.freeze
+
+      CURRENT_ENDPOINT_VERSION = 2
 
       def validate(license)
         handle_connection do |connection|
@@ -80,6 +83,12 @@ module ChefLicensing
         end
       end
 
+      def download(license)
+        handle_connection do |connection|
+          connection.get(self.class::END_POINTS[:DOWNLOAD], { licenseId: license, version: self.class::CURRENT_ENDPOINT_VERSION }).body
+        end
+      end
+
       def handle_connection
         # handle faraday errors
         yield connection
@@ -94,6 +103,8 @@ module ChefLicensing
         Faraday.new(url: ChefLicensing.license_server_url) do |config|
           config.request :json
           config.response :json, parser_options: { object_class: OpenStruct }
+          # To remove line 105 once the download response is corrected from licensing team
+          config.response :json, content_type: "text/plain", parser_options: { object_class: OpenStruct }
         end
       end
 
