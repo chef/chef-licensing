@@ -1,21 +1,18 @@
 module ChefLicensing
   class EnvFetcher
 
-    class Boolean
-      attr_accessor :value, :env_name
+    attr_accessor :env
 
-      def initialize(env_name)
-        @env_name = env_name
-        @value = ENV.key?(@env_name)
-      end
+    def initialize(env)
+      @env = env
     end
 
-    class String
-      attr_accessor :value, :env_name
-
-      def initialize(env_name)
-        @env_name = env_name
-        @value = ENV.key?(@env_name) ? ENV[@env_name] : nil
+    def fetch_value(env_name, env_type = :string)
+      case env_type
+      when :boolean
+        env.key?(env_name)
+      when :string
+        env.fetch(env_name, nil)
       end
     end
   end

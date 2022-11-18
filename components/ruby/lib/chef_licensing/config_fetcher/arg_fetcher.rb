@@ -1,25 +1,19 @@
 module ChefLicensing
   class ArgFetcher
 
-    class Boolean
+    attr_accessor :argv
 
-      attr_accessor :value, :arg_name
-
-      def initialize(arg_name)
-        @arg_name = arg_name
-        @value = ARGV.include?(@arg_name)
-      end
+    def initialize(argv)
+      @argv = argv
     end
 
-    class String
-
-      attr_accessor :value, :arg_name
-
-      def initialize(arg_name)
-        @arg_name = arg_name
-        # TODO: Discuss with the team if we need to support:
-        # --arg_name=value or --arg_name value or both
-        @value = ARGV.include?(@arg_name) ? ARGV[ARGV.index(@arg_name) + 1] : nil
+    def fetch_value(arg_name, arg_type = :string)
+      # TODO: Change to use OptionParser
+      case arg_type
+      when :boolean
+        argv.include?(arg_name)
+      when :string
+        argv.include?(arg_name) ? argv[argv.index(arg_name) + 1] : nil
       end
     end
   end
