@@ -43,6 +43,17 @@ RSpec.describe ChefLicensing::Api::LicenseFeatureEntitlement do
     }
   }
 
+  let(:opts) {
+    {
+      env_vars: {
+        "CHEF_LICENSE_SERVER" => "http://localhost-license-server/License",
+        "CHEF_LICENSE_SERVER_API_KEY" =>  "xDblv65Xt84wULmc8qTN78a3Dr2OuuKxa6GDvb67",
+      },
+    }
+  }
+
+  let(:config) { ChefLicensing::Config.clone.instance(opts) }
+
   subject { described_class.check_entitlement!(license_keys: [license_key], feature_name: feature_name) }
 
   describe ".check_entitlement!" do
@@ -53,7 +64,7 @@ RSpec.describe ChefLicensing::Api::LicenseFeatureEntitlement do
       }
 
       before do
-        stub_request(:post, "#{ChefLicensing.license_server_url}/license-service/featurebyname")
+        stub_request(:post, "#{config.license_server_url}/license-service/featurebyname")
           .with(body: payload)
           .to_return(body: successful_response.to_json,
                      headers: { content_type: "application/json" })
@@ -75,7 +86,7 @@ RSpec.describe ChefLicensing::Api::LicenseFeatureEntitlement do
         }
 
         before do
-          stub_request(:post, "#{ChefLicensing.license_server_url}/license-service/featurebyname")
+          stub_request(:post, "#{config.license_server_url}/license-service/featurebyname")
             .with(body: payload)
             .to_return(body: invalid_license_response.to_json,
                        headers: { content_type: "application/json" }, status: 400)
@@ -94,7 +105,7 @@ RSpec.describe ChefLicensing::Api::LicenseFeatureEntitlement do
         }
 
         before do
-          stub_request(:post, "#{ChefLicensing.license_server_url}/license-service/featurebyname")
+          stub_request(:post, "#{config.license_server_url}/license-service/featurebyname")
             .with(body: payload)
             .to_return(body: failure_response.to_json,
                        headers: { content_type: "application/json" })
@@ -125,7 +136,7 @@ RSpec.describe ChefLicensing::Api::LicenseFeatureEntitlement do
       subject { described_class.check_entitlement!(license_keys: [license_key], feature_id: feature_id) }
 
       before do
-        stub_request(:post, "#{ChefLicensing.license_server_url}/license-service/featurebyid")
+        stub_request(:post, "#{config.license_server_url}/license-service/featurebyid")
           .with(body: payload)
           .to_return(body: successful_response.to_json,
                      headers: { content_type: "application/json" })
@@ -147,7 +158,7 @@ RSpec.describe ChefLicensing::Api::LicenseFeatureEntitlement do
         }
 
         before do
-          stub_request(:post, "#{ChefLicensing.license_server_url}/license-service/featurebyid")
+          stub_request(:post, "#{config.license_server_url}/license-service/featurebyid")
             .with(body: payload)
             .to_return(body: invalid_license_response.to_json,
                        headers: { content_type: "application/json" }, status: 400)
@@ -166,7 +177,7 @@ RSpec.describe ChefLicensing::Api::LicenseFeatureEntitlement do
         }
 
         before do
-          stub_request(:post, "#{ChefLicensing.license_server_url}/license-service/featurebyid")
+          stub_request(:post, "#{config.license_server_url}/license-service/featurebyid")
             .with(body: payload)
             .to_return(body: failure_response.to_json,
                        headers: { content_type: "application/json" })
