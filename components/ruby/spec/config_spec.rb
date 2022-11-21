@@ -43,8 +43,4 @@ RSpec.describe ChefLicensing::Config do
       expect(instance_2.license_server_api_key).to eq("4n0th3r4p1k3y")
     end
   end
-
-  after do
-    ChefLicensing::Config.reset!
-  end
 end

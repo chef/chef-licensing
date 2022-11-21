@@ -18,7 +18,6 @@ module ChefLicensing
       }.freeze
 
       def initialize(cl_config: nil)
-        # require 'byebug'; byebug
         @cl_config = cl_config || ChefLicensing::Config.instance
       end
 

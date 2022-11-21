@@ -144,7 +144,7 @@ RSpec.describe ChefLicensing::Api::LicenseSoftwareEntitlement do
         }
       }
 
-      subject { described_class.check!(license_keys: [license_key], software_entitlement_id: software_entitlement_id) }
+      subject { described_class.check!(license_keys: [license_key], software_entitlement_id: software_entitlement_id, cl_config: config) }
 
       context "when software is entitled to the license" do
         before do
@@ -193,9 +193,5 @@ RSpec.describe ChefLicensing::Api::LicenseSoftwareEntitlement do
       end
 
     end
-  end
-
-  after do
-    ChefLicensing::Config.reset!
   end
 end

@@ -133,7 +133,7 @@ RSpec.describe ChefLicensing::Api::LicenseFeatureEntitlement do
           ],
         }
       }
-      subject { described_class.check_entitlement!(license_keys: [license_key], feature_id: feature_id) }
+      subject { described_class.check_entitlement!(license_keys: [license_key], feature_id: feature_id, cl_config: config) }
 
       before do
         stub_request(:post, "#{config.license_server_url}/license-service/featurebyid")
@@ -186,10 +186,6 @@ RSpec.describe ChefLicensing::Api::LicenseFeatureEntitlement do
         it { expect { subject }.to raise_error(ChefLicensing::FeatureNotEntitled) }
       end
     end
-  end
-
-  after do
-    ChefLicensing::Config.reset!
   end
 end
 

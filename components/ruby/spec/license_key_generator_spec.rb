@@ -124,9 +124,5 @@ RSpec.describe ChefLicensing::LicenseKeyGenerator do
       it { expect { described_class.generate!(params, cl_config: new_config) }.to raise_error(ChefLicensing::LicenseGenerationFailed) }
     end
   end
-
-  after do
-    ChefLicensing::Config.reset!
-  end
 end
 
