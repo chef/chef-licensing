@@ -1,6 +1,7 @@
 require "ostruct" unless defined?(OpenStruct)
 
 # License contain info of license ID, it's type, expiry and different entitlements belonging to it.
+# TODO Document this once the specs for API is finalised
 module ChefLicensing
   class License
 
