@@ -17,9 +17,6 @@ module ChefLicensing
 
     attr_reader :license_server_url, :license_server_api_key, :logger, :air_gap_status, :arg_fetcher, :env_fetcher
 
-    # A simple semaphore lock for mutually exclusive access to some shared resource.
-    @instance_mutex = Mutex.new
-
     def initialize(opts = {})
       @arg_fetcher = ChefLicensing::ArgFetcher.new(opts[:cli_args] || ARGV)
       @env_fetcher = ChefLicensing::EnvFetcher.new(opts[:env_vars] || ENV)
@@ -28,15 +25,14 @@ module ChefLicensing
       @license_server_url = set_license_server_url
     end
 
-    # The static method that controls the access to the singleton instance.
-    # TODO: Learn more about this
     def self.instance(opts = {})
       return @instance if @instance
 
-      @instance_mutex.synchronize do
-        @instance ||= new(opts)
-      end
-      @instance
+      @instance = new(opts)
+    end
+
+    def self.reset!
+      @instance = nil
     end
 
     def air_gap_detected?

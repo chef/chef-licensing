@@ -7,19 +7,19 @@ module ChefLicensing
 
     class << self
       # @param [Hash] KWARGS keys accepted are [first_name, last_name, email_id, product, company, phone]
-      def generate!(kwargs)
-        new(kwargs).generate!
+      def generate!(kwargs, cl_config: nil)
+        new(kwargs, cl_config: cl_config).generate!
       end
 
-      def generate_free_license!(kwargs)
-        new(kwargs).generate_free_license!
+      def generate_free_license!(kwargs, cl_config: nil)
+        new(kwargs, cl_config: cl_config).generate_free_license!
       end
     end
 
-    def initialize(kwargs, restful_client: ChefLicensing::RestfulClient::V1)
+    def initialize(kwargs, restful_client: ChefLicensing::RestfulClient::V1, cl_config: nil)
       # TODO: validate kwargs
       @payload = build_payload_from(kwargs)
-      @restful_client = restful_client.new
+      @restful_client = restful_client.new(cl_config: cl_config)
     end
 
     def generate!

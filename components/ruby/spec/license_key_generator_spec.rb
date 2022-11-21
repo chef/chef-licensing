@@ -58,7 +58,7 @@ RSpec.describe ChefLicensing::LicenseKeyGenerator do
     { 'x-api-key': api_key }
   }
 
-  subject { described_class.generate!(params) }
+  subject { described_class.generate!(params, cl_config: config) }
 
   describe ".generate!" do
     before do
@@ -104,15 +104,29 @@ RSpec.describe ChefLicensing::LicenseKeyGenerator do
         { "message": "Forbidden" }.to_json
       }
 
+      let(:opts_2) {
+        {
+          env_vars: {
+            "CHEF_LICENSE_SERVER" => "http://localhost-license-server/License",
+            "CHEF_LICENSE_SERVER_API_KEY" =>  api_key,
+          },
+        }
+      }
+
+      let(:new_config) { ChefLicensing::Config.clone.instance(opts_2) }
+
       before do
-        allow(ChefLicensing).to receive(:license_server_api_key).and_return(api_key)
         stub_request(:post, "#{config.license_server_url}/v1/triallicense")
           .with(body: payload.to_json, headers: headers)
           .to_return(body: expected_response, headers: { content_type: "application/json" }, status: 403)
       end
 
-      it { expect { subject }.to raise_error(ChefLicensing::LicenseGenerationFailed) }
+      it { expect { described_class.generate!(params, cl_config: new_config) }.to raise_error(ChefLicensing::LicenseGenerationFailed) }
     end
+  end
+
+  after do
+    ChefLicensing::Config.reset!
   end
 end
 

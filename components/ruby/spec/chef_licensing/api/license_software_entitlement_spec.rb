@@ -71,7 +71,7 @@ RSpec.describe ChefLicensing::Api::LicenseSoftwareEntitlement do
 
   let(:config) { ChefLicensing::Config.clone.instance(opts) }
 
-  subject { described_class.check!(license_keys: [license_key], software_entitlement_name: software_entitlement_name) }
+  subject { described_class.check!(license_keys: [license_key], software_entitlement_name: software_entitlement_name, cl_config: config) }
 
   describe "check!" do
     context "when checked for software entitlement by name" do
@@ -193,5 +193,9 @@ RSpec.describe ChefLicensing::Api::LicenseSoftwareEntitlement do
       end
 
     end
+  end
+
+  after do
+    ChefLicensing::Config.reset!
   end
 end

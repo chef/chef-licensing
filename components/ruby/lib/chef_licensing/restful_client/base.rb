@@ -1,7 +1,6 @@
 require "faraday" unless defined?(Faraday)
 require_relative "../exceptions/restful_client_error"
 require_relative "../config"
-require_relative "../license_server_api_key"
 
 module ChefLicensing
   module RestfulClient
@@ -18,6 +17,11 @@ module ChefLicensing
         ENTITLEMENT_BY_ID: "license-service/entitlementbyid",
       }.freeze
 
+      def initialize(cl_config: nil)
+        # require 'byebug'; byebug
+        @cl_config = cl_config || ChefLicensing::Config.instance
+      end
+
       def validate(license)
         handle_connection do |connection|
           connection.get(self.class::END_POINTS[:VALIDATE], { licenseId: license }).body
@@ -28,7 +32,7 @@ module ChefLicensing
         handle_connection do |connection|
           response = connection.post(self.class::END_POINTS[:GENERATE_LICENSE]) do |request|
             request.body = payload.to_json
-            request.headers = { 'x-api-key': ChefLicensing.license_server_api_key }
+            request.headers = { 'x-api-key': cl_config.license_server_api_key }
           end
           raise RestfulClientError, format_error_from(response) unless response.success?
 
@@ -90,8 +94,10 @@ module ChefLicensing
 
       private
 
+      attr_reader :cl_config
+
       def connection
-        Faraday.new(url: ChefLicensing.license_server_url) do |config|
+        Faraday.new(url: cl_config.license_server_url) do |config|
           config.request :json
           config.response :json, parser_options: { object_class: OpenStruct }
         end

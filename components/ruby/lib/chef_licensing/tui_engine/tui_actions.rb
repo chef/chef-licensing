@@ -12,7 +12,9 @@ module ChefLicensing
     class TUIActions < LicenseKeyFetcher::Base
 
       attr_accessor :logger, :output, :license_id, :error_msg, :rejection_msg, :invalid_license_msg
-      def initialize(opts = {})
+      attr_reader :cl_config # TODO: Should we make this private?
+      def initialize(opts = {}, cl_config: nil)
+        @cl_config = cl_config
         @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
         @output = opts[:output] || STDOUT
       end
@@ -66,7 +68,8 @@ module ChefLicensing
           email_id: input[:gather_user_email_for_license_generation],
           product: "inspec",
           company: input[:gather_user_company_for_license_generation],
-          phone: input[:gather_user_phone_no_for_license_generation]
+          phone: input[:gather_user_phone_no_for_license_generation],
+          cl_config: cl_config
         )
         self.license_id = license_id
         true
@@ -86,7 +89,8 @@ module ChefLicensing
           email_id: input[:gather_user_email_for_license_generation],
           product: "inspec",
           company: input[:gather_user_company_for_license_generation],
-          phone: input[:gather_user_phone_no_for_license_generation]
+          phone: input[:gather_user_phone_no_for_license_generation],
+          cl_config: cl_config
         )
         self.license_id = license_id
         true

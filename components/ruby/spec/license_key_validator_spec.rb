@@ -41,4 +41,7 @@ RSpec.describe ChefLicensing::LicenseKeyValidator do
       it { expect { subject }.to raise_error(ChefLicensing::InvalidLicense, error_message) }
     end
   end
+  after do
+    ChefLicensing::Config.reset!
+  end
 end

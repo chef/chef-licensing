@@ -54,7 +54,7 @@ RSpec.describe ChefLicensing::Api::LicenseFeatureEntitlement do
 
   let(:config) { ChefLicensing::Config.clone.instance(opts) }
 
-  subject { described_class.check_entitlement!(license_keys: [license_key], feature_name: feature_name) }
+  subject { described_class.check_entitlement!(license_keys: [license_key], feature_name: feature_name, cl_config: config) }
 
   describe ".check_entitlement!" do
 
@@ -186,6 +186,10 @@ RSpec.describe ChefLicensing::Api::LicenseFeatureEntitlement do
         it { expect { subject }.to raise_error(ChefLicensing::FeatureNotEntitled) }
       end
     end
+  end
+
+  after do
+    ChefLicensing::Config.reset!
   end
 end
 

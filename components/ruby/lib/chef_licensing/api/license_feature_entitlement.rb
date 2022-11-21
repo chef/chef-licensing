@@ -6,19 +6,19 @@ module ChefLicensing
       attr_reader :license_keys
 
       class << self
-        def check_entitlement!(license_keys: [], feature_name: nil, feature_id: nil)
-          new(license_keys: license_keys, feature_name: feature_name , feature_id: feature_id).check_entitlement!
+        def check_entitlement!(license_keys: [], feature_name: nil, feature_id: nil, cl_config: nil)
+          new(license_keys: license_keys, feature_name: feature_name , feature_id: feature_id, cl_config: cl_config).check_entitlement!
         end
       end
 
-      def initialize(license_keys: [], feature_name: nil, feature_id: nil, restful_client: ChefLicensing::RestfulClient::V1)
+      def initialize(license_keys: [], feature_name: nil, feature_id: nil, restful_client: ChefLicensing::RestfulClient::V1, cl_config: nil)
         license_keys || raise(ArgumentError, "Missing Params: `license_keys`")
         @license_keys = license_keys.is_a?(Array) ? license_keys : [license_keys]
         @feature_name = feature_name
         @feature_id = feature_id
         raise ArgumentError, "Either of `feature_id` or `feature_name` should be provided" if feature_name.nil? && feature_id.nil?
 
-        @restful_client = restful_client.new
+        @restful_client = restful_client.new(cl_config: cl_config)
       end
 
       def check_entitlement!
