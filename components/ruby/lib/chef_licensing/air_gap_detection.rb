@@ -1,3 +1,5 @@
+# TODO: Delete this file. Not required after config implementation.
+
 require_relative "air_gap_detection/ping"
 require_relative "air_gap_detection/environment"
 require_relative "air_gap_detection/argument"
