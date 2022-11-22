@@ -38,6 +38,14 @@ RSpec.describe ChefLicensing::ArgFetcher do
         expect(arg_fetcher.fetch_value("--chef-license-server-api-key", :string)).to eq nil
       end
     end
+
+    context "when no type is specified for an argument" do
+      let(:argv) { ["--chef-license-server=http://localhost:8080", "chef-license-server-api-key", "s0m3r4nd0mk3y"] }
+      it "assumes the value is a string" do
+        expect(arg_fetcher.fetch_value("--chef-license-server")).to eq "http://localhost:8080"
+        expect(arg_fetcher.fetch_value("chef-license-server-api-key")).to eq "s0m3r4nd0mk3y"
+      end
+    end
   end
 
   describe "arg_fetcher cannot fetch multiple values for same argument" do
