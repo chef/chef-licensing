@@ -84,7 +84,11 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
           # expect(output_stream.string).to include("Could not write telemetry license_key file #{non_writable_dir_path}/licenses.yaml")
           # expect(output_stream.string).to include("Permission denied")
           # expect(access_error[0]).to be_a_kind_of(Errno::EACCES)
-          puts access_error
+
+          # Assuming it doesn't print the error message
+          # it means the license is persisted
+          expect(file_fetcher.fetch).to eq(["tmns-0f76efaf-e45e-4d92-86b2-2d144ce73dfa-150"])
+          puts file_fetcher.fetch
         end
       end
 
