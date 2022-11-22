@@ -59,16 +59,34 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
     end
 
     # TODO: Works on local but fails in CI pipeline
-    it "does not write the file, if dir is not writable" do
-      Dir.mktmpdir do |tmpdir|
-        non_writable_dir_path = File.join(tmpdir, "non_writable")
-        Dir.mkdir(non_writable_dir_path, 0466)
-        file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: non_writable_dir_path, logger: logger })
-        # expect(logger).to receive(:warn).once
-        # expect(logger).to receive(:debug).once
-        # file_fetcher.persist("tmns-0f76efaf-e45e-4d92-86b2-2d144ce73dfa-150")
-        expect(file_fetcher.persisted?).to eq(false)
+    # it "warns if disk to write the file is not writable" do
+    #   Dir.mktmpdir do |tmpdir|
+    #     non_writable_dir_path = File.join(tmpdir, "non_writable")
+    #     Dir.mkdir(non_writable_dir_path, 0466)
+    #     file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: non_writable_dir_path, logger: logger })
+    #     expect(logger).to receive(:warn).once
+    #     expect(logger).to receive(:debug).once
+    #     file_fetcher.persist("tmns-0f76efaf-e45e-4d92-86b2-2d144ce73dfa-150")
+    #   end
+    # end
+
+    context "when license file is not writable" do
+      let(:output_stream) { StringIO.new }
+      let(:new_logger) { Logger.new(output_stream) }
+
+      it "does not persist on the directory" do
+        Dir.mktmpdir do |tmpdir|
+          non_writable_dir_path = File.join(tmpdir, "non_writable")
+          Dir.mkdir(non_writable_dir_path, 0466)
+          file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: non_writable_dir_path, logger: new_logger })
+          file_fetcher.persist("tmns-0f76efaf-e45e-4d92-86b2-2d144ce73dfa-152")
+          # TODO: Ideally, the below line should be uncommented, but it fails in CI pipeline
+          # expect(output_stream.string).to include("Could not write telemetry license_key file")
+          # expect(output_stream.string).to include("Permission denied")
+          expect(file_fetcher.persisted?).to eq(false)
+        end
       end
+
     end
   end
 end
