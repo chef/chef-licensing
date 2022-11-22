@@ -8,11 +8,21 @@ RSpec.describe ChefLicensing::LicenseKeyValidator do
     "tmns-90564f0a-ad22-482f-b57d-569f3fb1c11e-6620"
   }
 
+  let(:opts) {
+    {
+      env_vars: {
+        "CHEF_LICENSE_SERVER" => "http://localhost-license-server/License",
+      },
+    }
+  }
+
+  let(:config) { ChefLicensing::Config.clone.instance(opts) }
+
   subject { described_class.validate!(license_key) }
 
   describe ".validate!" do
     before do
-      stub_request(:get, "#{ChefLicensing.license_server_url}/v1/validate")
+      stub_request(:get, "#{config.license_server_url}/v1/validate")
         .with(query: { licenseId: license_key })
         .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
                    headers: { content_type: "application/json" })
@@ -22,7 +32,7 @@ RSpec.describe ChefLicensing::LicenseKeyValidator do
     context "when license is invalid" do
       let(:error_message) { "License Id is invalid" }
       before do
-        stub_request(:get, "#{ChefLicensing.license_server_url}/v1/validate")
+        stub_request(:get, "#{config.license_server_url}/v1/validate")
           .with(query: { licenseId: license_key })
           .to_return(body: { data: false, message: error_message, status_code: 200 }.to_json,
                      headers: { content_type: "application/json" })

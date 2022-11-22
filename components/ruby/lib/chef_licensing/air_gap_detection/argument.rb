@@ -1,3 +1,5 @@
+# TODO: Delete this file. Not required after config implementation.
+
 module ChefLicensing
   class AirGapDetection
     class Argument

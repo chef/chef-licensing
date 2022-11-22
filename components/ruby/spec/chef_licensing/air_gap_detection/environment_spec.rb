@@ -1,3 +1,5 @@
+# TODO: Delete this file. Not required after config implementation.
+
 require "chef_licensing/air_gap_detection/environment"
 require "chef_licensing/air_gap_detection"
 
