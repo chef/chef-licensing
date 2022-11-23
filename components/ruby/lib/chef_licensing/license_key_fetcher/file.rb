@@ -71,7 +71,7 @@ module ChefLicensing
               file_format_version: LICENSE_FILE_FORMAT_VERSION,
             }
             msg = "Could not create directory for license_key file #{dir}"
-            FileUtils.mkdir_p(dir)
+            FileUtils.mkdir_p(dir) unless ::File.exist?(dir)
           end
 
           # write/overwrite license file content in the file
