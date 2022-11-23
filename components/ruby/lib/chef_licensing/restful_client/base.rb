@@ -17,13 +17,15 @@ module ChefLicensing
         ENTITLEMENT_BY_ID: "license-service/entitlementbyid",
       }.freeze
 
+      CURRENT_ENDPOINT_VERSION = 2
+
       def initialize(cl_config: nil)
         @cl_config = cl_config || ChefLicensing::Config.instance
       end
 
       def validate(license)
         handle_connection do |connection|
-          connection.get(self.class::END_POINTS[:VALIDATE], { licenseId: license }).body
+          connection.get(self.class::END_POINTS[:VALIDATE], { licenseId: license, version: CURRENT_ENDPOINT_VERSION }).body
         end
       end
 
