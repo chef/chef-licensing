@@ -79,7 +79,7 @@ module ChefLicensing
           ::File.write(license_key_file_path, YAML.dump(@contents))
           []
         rescue StandardError => e
-          logger.info "#{msg}\n\t#{e.message}"
+          logger.warn "#{msg}\n\t#{e.message}"
           logger.debug "#{e.backtrace.join("\n\t")}"
           [e]
         end
