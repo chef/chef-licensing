@@ -1,4 +1,3 @@
-require "chef_licensing/air_gap_detection"
 require "chef_licensing/air_gap_detection/ping"
 require_relative "../../spec_helper"
 
