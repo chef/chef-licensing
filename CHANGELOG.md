@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.3.19 -->
-## [0.3.19](https://github.com/chef/chef-licensing/tree/0.3.19) (2022-11-23)
+<!-- latest_release 0.3.20 -->
+## [0.3.20](https://github.com/chef/chef-licensing/tree/0.3.20) (2022-11-25)
 
 #### Merged Pull Requests
-- CFINSPEC-508 Handle case in which disk to write the license file is not writable. [#42](https://github.com/chef/chef-licensing/pull/42) ([Vasu1105](https://github.com/Vasu1105))
+- Clean-up use of old configs in the project [#45](https://github.com/chef/chef-licensing/pull/45) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Clean-up use of old configs in the project [#45](https://github.com/chef/chef-licensing/pull/45) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.20 -->
 - CFINSPEC-508 Handle case in which disk to write the license file is not writable. [#42](https://github.com/chef/chef-licensing/pull/42) ([Vasu1105](https://github.com/Vasu1105)) <!-- 0.3.19 -->
 - Added version in license validate api call [#43](https://github.com/chef/chef-licensing/pull/43) ([Nik08](https://github.com/Nik08)) <!-- 0.3.18 -->
 - CFINSPEC-482: Config and Logging [#33](https://github.com/chef/chef-licensing/pull/33) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.17 -->
