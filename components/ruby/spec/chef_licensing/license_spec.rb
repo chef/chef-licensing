@@ -4,7 +4,6 @@ RSpec.describe ChefLicensing::License do
   let(:data) {
     {
       "id": "tmns-bea68bbb-1e85-44ea-8b98-a654b011174b-4227",
-      "type": "trial",
       "feature_entitlements": [
         {
           "name": "Inspec-Parallel",
@@ -50,7 +49,6 @@ RSpec.describe ChefLicensing::License do
     it "access license data successfully" do
       license = ChefLicensing::License.new(data: data, product_name: "inspec")
       expect(license.id).to eq "tmns-bea68bbb-1e85-44ea-8b98-a654b011174b-4227"
-      expect(license.license_type).to eq "trial"
       expect(license.feature_entitlements.length).to eq 1
       expect(license.software_entitlements.length).to eq 4
       expect(license.asset_entitlements.length).to eq 0
