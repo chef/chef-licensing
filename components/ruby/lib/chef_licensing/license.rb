@@ -1,95 +1,118 @@
 require "ostruct" unless defined?(OpenStruct)
+require "chef_licensing/api/parser/client" unless defined?(ChefLicensing::Api::Parser::Client)
+require "chef_licensing/api/parser/describe" unless defined?(ChefLicensing::Api::Parser::Describe)
 
-# License contain info of license ID, it's type, expiry and different entitlements belonging to it.
+# License contain info of license ID, it's type, expiration and different entitlements belonging to it.
 # TODO Document this once the specs for API is finalised
 module ChefLicensing
   class License
 
-    attr_reader :id, :expiry_date, :feature_entitlements, :software_entitlements, :asset_entitlements
+    attr_reader :id, :license_type , :status, :expiration_date, :expiration_status
 
     def initialize(opts = {})
-      @meta_data = opts[:data]
+      # API parser based on the API call
+      @parser = opts[:api_parser].new(opts[:data])
+
       @product_name = opts[:product_name]
-      @id = fetch_license_id
-      @expiry_data = fetch_expiry_date
 
-      # TODO To revisit this again after API specs are finalised
-      @feature_entitlements = fetch_feature_entitlements
-      @software_entitlements = fetch_software_entitlements
-      @asset_entitlements = fetch_asset_entitlements
+      @id = @parser.parse_id
+      @status = @parser.parse_status
+      @license_type = @parser.parse_license_type
+
+      # expiration details
+      @expiration_date = @parser.parse_expiration_date
+      @expiration_status = @parser.parse_license_expiration_status
+
+      # usage details
+      @limits = []
+
+      # Entitlements
+      @feature_entitlements = []
+      @software_entitlements = []
+      @asset_entitlements = []
     end
 
-    private
+    def feature_entitlements
+      return @feature_entitlements unless @feature_entitlements.empty?
 
-    attr_reader :meta_data, :product_name
-
-    def fetch_license_id
-      # TODO fetch license type from meta-data
-      meta_data[:id]
-    end
-
-    def fetch_feature_entitlements
-      # License has list of feature entitlements
       feat_entitlements = []
-      feat_entitlements_data = meta_data[:feature_entitlements] || []
+      feat_entitlements_data = @parser.parse_feature_entitlements || []
       feat_entitlements_data.each do |data|
         feat_entitlements << FeatureEntitlement.new(data)
       end
-      feat_entitlements
+      @feature_entitlements = feat_entitlements
     end
 
-    def fetch_software_entitlements
-      # License has list of software entitlements
+    def software_entitlements
+      return @software_entitlements unless @software_entitlements.empty?
+
       sw_entitlements = []
-      sw_entitlements_data = meta_data[:software_entitlements] || []
+      sw_entitlements_data = @parser.parse_software_entitlements || []
       sw_entitlements_data.each do |data|
         sw_entitlements << SoftwareEntitlement.new(data)
       end
-      sw_entitlements
+      @software_entitlements = sw_entitlements
     end
 
-    def fetch_asset_entitlements
-      # License has list of asset entitlements
+    def asset_entitlements
+      return @asset_entitlements unless @asset_entitlements.empty?
+
       asset_entitlements = []
-      asset_entitlements_data = meta_data[:asset_entitlements] || []
+      asset_entitlements_data = @parser.parse_asset_entitlements || []
       asset_entitlements_data.each do |data|
         asset_entitlements << AssetEntitlement.new(data)
       end
-      asset_entitlements
+      @asset_entitlements = asset_entitlements
     end
 
-    def fetch_expiry_date
-      # TODO logic to fetch expiry date from meta-data depending on the product
+    def limits
+      return @limits unless @limits.empty?
+
+      limits = []
+      limits_data = @parser.parse_limits || []
+      limits_data.each do |data|
+        limits << Limit.new(data)
+      end
+      @limits = limits
+    end
+
+    class Limit
+      attr_reader :usage_status, :usage_limit, :usage_measure, :used, :software
+
+      def initialize(limit_data)
+        @usage_status = limit_data["usage_status"]
+        @usage_limit = limit_data["usage_limit"]
+        @usage_measure = limit_data["usage_measure"]
+        @used = limit_data["used"]
+        @software = limit_data["software"] || @product_name
+      end
     end
 
     class FeatureEntitlement
-      attr_reader :id, :name, :expiry_date
+      attr_reader :id, :name
 
       def initialize(entitlement_data)
-        @id = entitlement_data[:id]
-        @name = entitlement_data[:name]
-        @expiry_date = entitlement_data[:expiry_date]
+        @id = entitlement_data["id"]
+        @name = entitlement_data["name"]
       end
     end
 
     class SoftwareEntitlement
-      attr_reader :id, :name, :expiry_date, :node, :limit
+      attr_reader :id, :name, :entitled
 
       def initialize(entitlement_data)
-        @id = entitlement_data[:id]
-        @name = entitlement_data[:name]
-        @expiry_date = entitlement_data[:expiry_date]
-        @node = entitlement_data[:node]
-        @limit = entitlement_data[:limit]
+        @id = entitlement_data["id"]
+        @name = entitlement_data["name"]
+        @entitled = entitlement_data["entitled"]
       end
     end
 
     class AssetEntitlement
-      attr_reader :id, :expiry_date
+      attr_reader :id, :name
 
       def initialize(entitlement_data)
-        @id = entitlement_data[:id]
-        @expiry_date = entitlement_data[:expiry_date]
+        @id = entitlement_data["id"]
+        @name = entitlement_data["name"]
       end
     end
   end
