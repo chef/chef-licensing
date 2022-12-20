@@ -3,6 +3,8 @@ module ChefLicensing
     module Parser
       class Client
 
+        # Using /client API
+
         attr_reader :data
 
         def initialize(data)
@@ -50,7 +52,9 @@ module ChefLicensing
         end
 
         def parse_software_entitlements
-          [data["Entitlement"]]
+          require "date"
+          entitlement_status = (data["Entitlement"]["end"] >= Date.today.to_s) ? "active" : "expired"
+          [data["Entitlement"].merge!({ "status" => entitlement_status })] # sending status based on end date
         end
 
         def parse_asset_entitlements

@@ -89,30 +89,35 @@ module ChefLicensing
     end
 
     class FeatureEntitlement
-      attr_reader :id, :name
-
-      def initialize(entitlement_data)
-        @id = entitlement_data["id"]
-        @name = entitlement_data["name"]
-      end
-    end
-
-    class SoftwareEntitlement
-      attr_reader :id, :name, :entitled
+      attr_reader :id, :name, :entitled, :status
 
       def initialize(entitlement_data)
         @id = entitlement_data["id"]
         @name = entitlement_data["name"]
         @entitled = entitlement_data["entitled"]
+        @status = entitlement_data["status"]
       end
     end
 
-    class AssetEntitlement
-      attr_reader :id, :name
+    class SoftwareEntitlement
+      attr_reader :id, :name, :entitled, :status
 
       def initialize(entitlement_data)
         @id = entitlement_data["id"]
         @name = entitlement_data["name"]
+        @entitled = entitlement_data["entitled"]
+        @status = entitlement_data["status"]
+      end
+    end
+
+    class AssetEntitlement
+      attr_reader :id, :name, :entitled, :status
+
+      def initialize(entitlement_data)
+        @id = entitlement_data["id"]
+        @name = entitlement_data["name"]
+        @entitled = entitlement_data["entitled"]
+        @status = entitlement_data["status"]
       end
     end
   end
