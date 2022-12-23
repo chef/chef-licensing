@@ -3,30 +3,32 @@ module ChefLicensing
     module Parser
       class Describe
 
-        # Using /describe API
+        # Uses response from /describe API
+        # This parser formats the response which will enable creation of license data object.
 
-        attr_reader :data
+        attr_reader :data, :license_data
 
         def initialize(data)
           @data = data
+          @license_data = data["license"] || {}
         end
 
         def parse_id
-          data["license"]["licenseKey"]
+          license_data["licenseKey"]
         end
 
         def parse_license_type
-          data["license"]["name"]
+          license_data["name"]
         end
 
         def parse_status
-          data["license"]["status"]
+          license_data["status"]
         end
 
         # Parse expiration details
 
         def parse_expiration_date
-          data["license"]["end"]
+          license_data["end"]
         end
 
         def parse_license_expiration_status
@@ -37,7 +39,7 @@ module ChefLicensing
 
         def parse_limits
           limits = []
-          data["license"]["limits"].each do |limit|
+          license_data["limits"].each do |limit|
             limit_details = {
               "usage_status" => limit["status"],
               "usage_limit" => limit["amount"],

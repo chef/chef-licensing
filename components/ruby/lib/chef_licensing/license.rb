@@ -2,8 +2,8 @@ require "ostruct" unless defined?(OpenStruct)
 require "chef_licensing/api/parser/client" unless defined?(ChefLicensing::Api::Parser::Client)
 require "chef_licensing/api/parser/describe" unless defined?(ChefLicensing::Api::Parser::Describe)
 
-# License contain info of license ID, it's type, expiration and different entitlements belonging to it.
-# TODO Document this once the specs for API is finalised
+# License data model has an id, status, type of license, entitlements and limits.
+
 module ChefLicensing
   class License
 
@@ -71,7 +71,7 @@ module ChefLicensing
       limits = []
       limits_data = @parser.parse_limits || []
       limits_data.each do |data|
-        limits << Limit.new(data)
+        limits << Limit.new(data, { product_name: @product_name })
       end
       @limits = limits
     end
@@ -79,12 +79,12 @@ module ChefLicensing
     class Limit
       attr_reader :usage_status, :usage_limit, :usage_measure, :used, :software
 
-      def initialize(limit_data)
+      def initialize(limit_data, opts = {})
         @usage_status = limit_data["usage_status"]
         @usage_limit = limit_data["usage_limit"]
         @usage_measure = limit_data["usage_measure"]
         @used = limit_data["used"]
-        @software = limit_data["software"] || @product_name
+        @software = limit_data["software"] || opts[:product_name]
       end
     end
 

@@ -31,7 +31,7 @@ RSpec.describe ChefLicensing::License do
         "end" => "2024-11-01",
         "licenses" => 2,
         "limits" => [ { "measure" => "nodes", "amount" => 2 } ],
-        "entitled" => "false",
+        "entitled" => false,
       },
     }
   }
@@ -47,7 +47,7 @@ RSpec.describe ChefLicensing::License do
         "end" => "2023-12-02",
         "limits" => [
            {
-            "testing" => "software",
+             "software" => "Inspec",
              "id" => "guid",
              "amount" => 2,
              "measure" => 2,
@@ -60,7 +60,7 @@ RSpec.describe ChefLicensing::License do
         {
           "id" => "assetguid",
           "name" => "Testing Asset",
-          "entitled" => "true",
+          "entitled" => true,
           "from" => [
             {
                 "license" => "guidlicensekey",
@@ -72,7 +72,7 @@ RSpec.describe ChefLicensing::License do
         {
           "id" => "softwareguid",
           "name" => "Testing Software",
-          "entitled" => "true",
+          "entitled" => true,
           "from" => [
             {
                 "license" => "guidlicensekey",
@@ -84,7 +84,7 @@ RSpec.describe ChefLicensing::License do
         {
           "id" => "featureguid",
           "name" => "Testing Feature",
-          "entitled" => "true",
+          "entitled" => true,
           "from" => [
             {
                 "license" => "guidlicensekey",
@@ -96,7 +96,7 @@ RSpec.describe ChefLicensing::License do
         {
           "id" => "guid",
           "name" => "testing",
-          "entitled" => "true",
+          "entitled" => true,
           "from" => [
             {
                 "license" => "guidlicensekey",
@@ -110,6 +110,7 @@ RSpec.describe ChefLicensing::License do
   describe "initialising object using client api parser" do
     it "access license data successfully" do
       license = ChefLicensing::License.new(data: client_data, product_name: "inspec", api_parser: ChefLicensing::Api::Parser::Client)
+
       expect(license.id).to eq nil
       expect(license.status.downcase).to eq "active"
       expect(license.license_type).to eq "Trial"
@@ -119,6 +120,31 @@ RSpec.describe ChefLicensing::License do
       expect(license.software_entitlements.length).to eq 1
       expect(license.asset_entitlements.length).to eq 2
       expect(license.limits.length).to eq 1
+
+      # Each feature entitlement data test
+      expect(license.feature_entitlements[0].id).to eq "featureguid1"
+      expect(license.feature_entitlements[0].name).to eq "Test Feature 1"
+      expect(license.feature_entitlements[1].id).to eq "featureguid2"
+      expect(license.feature_entitlements[1].name).to eq "Test Feature 2"
+
+      # Each asset entitlement data test
+      expect(license.asset_entitlements[0].id).to eq "assetguid1"
+      expect(license.asset_entitlements[0].name).to eq "Test Asset 1"
+      expect(license.asset_entitlements[1].id).to eq "assetguid2"
+      expect(license.asset_entitlements[1].name).to eq "Test Asset 2"
+
+      # Software entitlement data test
+      expect(license.software_entitlements[0].id).to eq "entitlementguid"
+      expect(license.software_entitlements[0].name).to eq "Inspec"
+      expect(license.software_entitlements[0].entitled).to eq false
+      expect(license.software_entitlements[0].status).to eq "active"
+
+      # License limit data test
+      expect(license.limits[0].usage_status.downcase).to eq "active"
+      expect(license.limits[0].usage_limit).to eq 2
+      expect(license.limits[0].usage_measure).to eq 2
+      expect(license.limits[0].used).to eq 2
+      expect(license.limits[0].software).to eq "inspec"
     end
   end
 
@@ -134,6 +160,31 @@ RSpec.describe ChefLicensing::License do
       expect(license.software_entitlements.length).to eq 1
       expect(license.asset_entitlements.length).to eq 1
       expect(license.limits.length).to eq 1
+
+      # Feature entitlement data test
+      expect(license.feature_entitlements[0].id).to eq "featureguid"
+      expect(license.feature_entitlements[0].name).to eq "Testing Feature"
+      expect(license.feature_entitlements[0].entitled).to eq true
+      expect(license.feature_entitlements[0].status).to eq "expired"
+
+      # Asset entitlement data test
+      expect(license.asset_entitlements[0].id).to eq "assetguid"
+      expect(license.asset_entitlements[0].name).to eq "Testing Asset"
+      expect(license.asset_entitlements[0].entitled).to eq true
+      expect(license.asset_entitlements[0].status).to eq "expired"
+
+      # Software entitlement data test
+      expect(license.software_entitlements[0].id).to eq "softwareguid"
+      expect(license.software_entitlements[0].name).to eq "Testing Software"
+      expect(license.software_entitlements[0].entitled).to eq true
+      expect(license.software_entitlements[0].status).to eq "expired"
+
+      # License limit data test
+      expect(license.limits[0].usage_status.downcase).to eq "active"
+      expect(license.limits[0].usage_limit).to eq 2
+      expect(license.limits[0].usage_measure).to eq 2
+      expect(license.limits[0].used).to eq 2
+      expect(license.limits[0].software).to eq "Inspec"
     end
   end
 end
