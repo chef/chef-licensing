@@ -39,30 +39,36 @@ module ChefLicensing
         # Parse usage details
 
         def parse_limits
-          [{
-            "usage_status" => client_data["usage"],
-            "usage_limit" => client_data["limit"],
-            "usage_measure" => client_data["measure"],
-            "used" => client_data["used"],
-          }]
+          if client_data.empty?
+            []
+          else
+            [{
+              "usage_status" => client_data["usage"],
+              "usage_limit" => client_data["limit"],
+              "usage_measure" => client_data["measure"],
+              "used" => client_data["used"],
+            }]
+          end
         end
 
         # Parse entitlements
 
         def parse_feature_entitlements
-          data["Features"]
+          data["Features"] || []
         end
 
         def parse_software_entitlements
-          unless data["Entitlement"].empty?
+          if !data["Entitlement"].nil? && !data["Entitlement"].empty?
             require "date"
             entitlement_status = (data["Entitlement"]["end"] >= Date.today.to_s) ? "active" : "expired"
             [data["Entitlement"].merge!({ "status" => entitlement_status })] # sending status based on end date
+          else
+            []
           end
         end
 
         def parse_asset_entitlements
-          data["Assets"]
+          data["Assets"] || []
         end
       end
     end

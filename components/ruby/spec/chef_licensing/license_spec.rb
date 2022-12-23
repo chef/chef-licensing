@@ -146,6 +146,19 @@ RSpec.describe ChefLicensing::License do
       expect(license.limits[0].used).to eq 2
       expect(license.limits[0].software).to eq "inspec"
     end
+
+    it "does not break parsing with empty data" do
+      license = ChefLicensing::License.new(data: {}, product_name: "inspec", api_parser: ChefLicensing::Api::Parser::Client)
+      expect(license.id).to eq nil
+      expect(license.status).to eq nil
+      expect(license.license_type).to eq nil
+      expect(license.expiration_date).to eq nil
+      expect(license.expiration_status).to eq nil
+      expect(license.feature_entitlements.length).to eq 0
+      expect(license.software_entitlements.length).to eq 0
+      expect(license.asset_entitlements.length).to eq 0
+      expect(license.limits.length).to eq 0
+    end
   end
 
   describe "initialising object using describe api parser" do
@@ -185,6 +198,19 @@ RSpec.describe ChefLicensing::License do
       expect(license.limits[0].usage_measure).to eq 2
       expect(license.limits[0].used).to eq 2
       expect(license.limits[0].software).to eq "Inspec"
+    end
+
+    it "does not break parsing with empty data" do
+      license = ChefLicensing::License.new(data: {}, product_name: "inspec", api_parser: ChefLicensing::Api::Parser::Describe)
+      expect(license.id).to eq nil
+      expect(license.status).to eq nil
+      expect(license.license_type).to eq nil
+      expect(license.expiration_date).to eq nil
+      expect(license.expiration_status).to eq nil
+      expect(license.feature_entitlements.length).to eq 0
+      expect(license.software_entitlements.length).to eq 0
+      expect(license.asset_entitlements.length).to eq 0
+      expect(license.limits.length).to eq 0
     end
   end
 end

@@ -39,7 +39,8 @@ module ChefLicensing
 
         def parse_limits
           limits = []
-          license_data["limits"].each do |limit|
+          limits_data = license_data["limits"] || []
+          limits_data.each do |limit|
             limit_details = {
               "usage_status" => limit["status"],
               "usage_limit" => limit["amount"],
@@ -56,7 +57,8 @@ module ChefLicensing
 
         def parse_feature_entitlements
           features = []
-          data["features"].each do |feature|
+          features_data = data["features"] || []
+          features_data.each do |feature|
             feature["from"].each do |from_info|
               if from_info["license"] == parse_id
                 feature.merge!( { "status" => from_info["status"] } )
@@ -70,7 +72,8 @@ module ChefLicensing
 
         def parse_software_entitlements
           softwares = []
-          data["software"].select do |software|
+          softwares_data = data["software"] || []
+          softwares_data.select do |software|
             software["from"].each do |from_info|
               if from_info["license"] == parse_id
                 software.merge!( { "status" => from_info["status"] } )
@@ -84,7 +87,8 @@ module ChefLicensing
 
         def parse_asset_entitlements
           assets = []
-          data["assets"].select do |asset|
+          assets_data = data["assets"] || []
+          assets_data.select do |asset|
             asset["from"].each do |from_info|
               if from_info["license"] == parse_id
                 asset.merge!( { "status" => from_info["status"] } )
