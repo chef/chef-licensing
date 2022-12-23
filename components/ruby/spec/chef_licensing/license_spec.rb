@@ -1,6 +1,4 @@
 require "chef_licensing/license"
-require "chef_licensing/api/parser/client" unless defined?(ChefLicensing::Api::Parser::Client)
-require "chef_licensing/api/parser/describe" unless defined?(ChefLicensing::Api::Parser::Describe)
 
 RSpec.describe ChefLicensing::License do
   let(:client_data) {

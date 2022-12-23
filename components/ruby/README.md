@@ -499,3 +499,53 @@ interactions:
     messages: ["Game over!"]
     prompt_type: "say"
 ```
+
+# License Data Model
+
+## Summary:
+
+License data model is a license object created from the license data received in different formats from `/client` and `/describe` API.
+
+## License Data Model Creation Syntax:
+
+```ruby
+require "chef_licensing/license"
+
+ChefLicensing::License.new(
+  data: CLIENT_API_RESPONSE,
+  product_name: "inspec",
+  api_parser: ChefLicensing::Api::Parser::Client
+)
+```
+
+OR
+
+```ruby
+require "chef_licensing/license"
+
+ChefLicensing::License.new(
+  data: DESCRIBE_API_RESPONSE_FOR_EACH_LICENSE,
+  product_name: "inspec",
+  api_parser: ChefLicensing::Api::Parser::Describe
+)
+```
+
+where:
+
+- **CLIENT_API_RESPONSE** should contain `Client`, `Features`, `Entitlement` & `Assets` keys for proper object creation.
+- **DESCRIBE_API_RESPONSE_FOR_EACH_LICENSE** should contain `license`, `features` `software` & `assets` keys for proper object creation.
+- The `/describe` API is the metadata of all licenses and it is a list. Therefore, license data model should be called by iterating over the list of licenses. And data of each license should be passed with a mandatory `license` key.
+
+## License Data Model Attributes:
+
+On success, license data model contains these attributes:
+
+- `id` is license key value.
+- `license_type` is the type of license (Trial, Free, Commercial).
+- `status` can have values like `Active`, `Expired` or `Grace`.
+- `expiration_date` is the date after which license will be expired.
+- `expiration_status` is the status of the license post expiration. It could be with `Expired` or `Grace`.
+- `feature_entitlements` is the list of features which are entitled to the license.
+- `software_entitlements` is the list of softwares which are entitled to the license.
+- `asset_entitlements` is the list of assets which are entitled to the license.
+- `limits` is the list of information around license usage, measure, limits and used info for different softwares.
