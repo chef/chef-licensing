@@ -37,7 +37,6 @@ module ChefLicensing
         end
 
         # Parse usage details
-
         def parse_limits
           if client_data.empty?
             []
@@ -58,12 +57,12 @@ module ChefLicensing
         end
 
         def parse_software_entitlements
-          if !data["Entitlement"].nil? && !data["Entitlement"].empty?
+          if data["Entitlement"].nil? || data["Entitlement"].empty?
+            []
+          else
             require "date"
             entitlement_status = (data["Entitlement"]["end"] >= Date.today.to_s) ? "active" : "expired"
             [data["Entitlement"].merge!({ "status" => entitlement_status })] # sending status based on end date
-          else
-            []
           end
         end
 

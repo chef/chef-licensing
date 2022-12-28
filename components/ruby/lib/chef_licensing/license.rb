@@ -1,4 +1,3 @@
-require "ostruct" unless defined?(OpenStruct)
 require "chef_licensing/api/parser/client" unless defined?(ChefLicensing::Api::Parser::Client)
 require "chef_licensing/api/parser/describe" unless defined?(ChefLicensing::Api::Parser::Describe)
 
@@ -76,6 +75,7 @@ module ChefLicensing
       @limits = limits
     end
 
+    # License has list of limits for different softwares which includes usage details.
     class Limit
       attr_reader :usage_status, :usage_limit, :usage_measure, :used, :software
 
@@ -88,6 +88,7 @@ module ChefLicensing
       end
     end
 
+    # License can be entitled to list of features.
     class FeatureEntitlement
       attr_reader :id, :name, :entitled, :status
 
@@ -99,6 +100,7 @@ module ChefLicensing
       end
     end
 
+    # License can be entitled to list of softwares.
     class SoftwareEntitlement
       attr_reader :id, :name, :entitled, :status
 
@@ -110,6 +112,7 @@ module ChefLicensing
       end
     end
 
+    # License can be entitled to list of assets.
     class AssetEntitlement
       attr_reader :id, :name, :entitled, :status
 
