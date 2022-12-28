@@ -210,6 +210,60 @@ Docs TODO
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
+## Client API
+
+Client API contains details of a license and it's entitlement to several features, softwares and assets. It also contains information on expiration date , the status of license after expiration and the license usage details.
+
+### Usage
+
+```ruby
+require "chef_licensing"
+ChefLicensing.client(license_keys: [LIST_OF_LICENSE_KEYS], entitlement_id: ENTITLEMENT_ID)
+```
+
+### Response
+
+```json
+{
+  "Cache": {
+    "LastModified": "date",
+    "EvaluatedOn": "date",
+    "Expires": "date",
+    "CacheControl": "date"
+  },
+  "Client": {
+    "license": "Trial/Event/Free/Commercial",
+    "status": "Active/Grace/Expired",
+    "changesTo": "Grace/Expired",
+    "changesOn": "date",
+    "changesIn": "xxxx (days)",
+    "usage": "Active/Grace/Exhausted",
+    "used": "number",
+    "limit": "number",
+    "measure": "number"
+},
+  "Assets": [{"id": "guid", "name": "string"}],
+  "Features": [ {"id": "guid", "name": "string"}],
+  "Entitlement": {
+    "id": "guid",
+    "name": "string",
+    "start": "date",
+    "end": "date",
+    "licenses": "number",
+    "limits": [ {"measure": "string", "amount": "number"} ],
+    "entitled": "boolean"
+  }
+}
+```
+
+### Errors
+
+* in case of error in client API it would raise license client error.
+
+```ruby
+ChefLicensing::LicenseClientError
+```
+
 
 ## Describe API for licenses metadata
 
