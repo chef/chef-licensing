@@ -15,6 +15,7 @@ module ChefLicensing
         FEATURE_BY_ID: "license-service/featurebyid",
         ENTITLEMENT_BY_NAME: "license-service/entitlementbyname",
         ENTITLEMENT_BY_ID: "license-service/entitlementbyid",
+        CLIENT: "client",
         DESCRIBE: "desc",
       }.freeze
 
@@ -84,6 +85,10 @@ module ChefLicensing
 
           response.body
         end
+      end
+
+      def client(params = {})
+        connection.get(self.class::END_POINTS[:CLIENT], { licenseKeys: params[:license_keys], entitlementId: params[:entilement_id] }).body
       end
 
       def describe(params = {})
