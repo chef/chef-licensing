@@ -21,9 +21,9 @@ module ChefLicensing
 
       def client
         response = restful_client.client(license_keys: license_keys, entitlement_id: entitlement_id)
-        if response["Client"]
+        if response.data
           ChefLicensing::License.new(
-            data: response,
+            data: response.data,
             product_name: "inspec",
             api_parser: ChefLicensing::Api::Parser::Client
           )
