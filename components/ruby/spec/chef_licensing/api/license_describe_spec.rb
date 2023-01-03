@@ -12,7 +12,7 @@ RSpec.describe ChefLicensing::Api::LicenseDescribe do
     "testing_entitlement_id"
   }
 
-  let(:describe_api_data){
+  let(:describe_api_data) {
     {
       "license" => [{
         "licenseKey" => "guid",
@@ -98,7 +98,7 @@ RSpec.describe ChefLicensing::Api::LicenseDescribe do
       let(:error_message) { "Invalid licenses" }
       before do
         stub_request(:get, "#{ChefLicensing.license_server_url}/describe")
-        .with(query: { licenseKeys: license_keys, entitlementId: entitlement_id })
+          .with(query: { licenseKeys: license_keys, entitlementId: entitlement_id })
           .to_return(body: { data: false, message: error_message, status_code: 400 }.to_json,
                      headers: { content_type: "application/json" })
       end
