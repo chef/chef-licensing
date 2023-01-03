@@ -23,12 +23,16 @@ module ChefLicensing
         response = restful_client.describe(license_keys: license_keys, entitlement_id: entitlement_id)
         if response.data
           list_of_licenses = []
+
           response.data["license"].each do |license|
-            license_object = {}
-            license_object["license"] = license
-            license_object.merge!({ "assets" => response.data["assets"] })
-            license_object.merge!({ "features" => response.data["features"] })
-            license_object.merge!({ "software" => response["software"] })
+
+            # license object created to be fed to parser
+            license_object = {
+              "license": license,
+              "assets": response.data["assets"],
+              "features": response.data["features"],
+              "software": response.data["software"],
+            }
 
             list_of_licenses << ChefLicensing::License.new(
               data: license_object,
@@ -36,6 +40,7 @@ module ChefLicensing
               api_parser: ChefLicensing::Api::Parser::Describe
             )
           end
+          # returns list of license data model object
           list_of_licenses
         else
           raise(ChefLicensing::LicenseDescribeError, response.message)
