@@ -60,7 +60,7 @@ RSpec.describe ChefLicensing::Api::LicenseClient do
       let(:error_message) { "Invalid licenses" }
       before do
         stub_request(:get, "#{ChefLicensing.license_server_url}/client")
-        .with(query: { licenseKeys: license_keys, entitlementId: entitlement_id })
+          .with(query: { licenseKeys: license_keys, entitlementId: entitlement_id })
           .to_return(body: { data: false, message: error_message, status_code: 400 }.to_json,
                      headers: { content_type: "application/json" })
       end
