@@ -1,6 +1,7 @@
 require_relative "../restful_client/v1"
 require_relative "../exceptions/license_client_error"
 require_relative "../license"
+require_relative "../config"
 
 module ChefLicensing
   module Api
@@ -24,7 +25,7 @@ module ChefLicensing
         if response.data
           ChefLicensing::License.new(
             data: response.data,
-            product_name: "inspec",
+            product_name: ChefLicensing.chef_product_name,
             api_parser: ChefLicensing::Api::Parser::Client
           )
         else
