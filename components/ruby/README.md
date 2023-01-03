@@ -223,6 +223,9 @@ ChefLicensing.client(license_keys: [LIST_OF_LICENSE_KEYS], entitlement_id: ENTIT
 
 ### Response
 
+Returns an object of license data model which uses JSON data returned from the API.
+
+API JSON response:
 ```json
 {
   "Cache": {
