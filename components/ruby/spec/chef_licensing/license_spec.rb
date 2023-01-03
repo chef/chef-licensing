@@ -1,4 +1,6 @@
 require "chef_licensing/license"
+require "chef_licensing/config"
+require "spec_helper"
 
 RSpec.describe ChefLicensing::License do
   let(:client_data) {
@@ -107,7 +109,7 @@ RSpec.describe ChefLicensing::License do
 
   describe "initialising object using client api parser" do
     it "access license data successfully" do
-      license = ChefLicensing::License.new(data: client_data, product_name: "inspec", api_parser: ChefLicensing::Api::Parser::Client)
+      license = ChefLicensing::License.new(data: client_data, product_name: ChefLicensing.chef_product_name, api_parser: ChefLicensing::Api::Parser::Client)
 
       expect(license.id).to eq nil
       expect(license.status.downcase).to eq "active"
@@ -146,7 +148,7 @@ RSpec.describe ChefLicensing::License do
     end
 
     it "does not break parsing with empty data" do
-      license = ChefLicensing::License.new(data: {}, product_name: "inspec", api_parser: ChefLicensing::Api::Parser::Client)
+      license = ChefLicensing::License.new(data: {}, product_name: ChefLicensing.chef_product_name, api_parser: ChefLicensing::Api::Parser::Client)
       expect(license.id).to eq nil
       expect(license.status).to eq nil
       expect(license.license_type).to eq nil
@@ -161,7 +163,7 @@ RSpec.describe ChefLicensing::License do
 
   describe "initialising object using describe api parser" do
     it "access license data successfully" do
-      license = ChefLicensing::License.new(data: describe_data, product_name: "inspec", api_parser: ChefLicensing::Api::Parser::Describe)
+      license = ChefLicensing::License.new(data: describe_data, product_name: ChefLicensing.chef_product_name, api_parser: ChefLicensing::Api::Parser::Describe)
       expect(license.id).to eq "guidlicensekey"
       expect(license.status.downcase).to eq "active"
       expect(license.license_type).to eq "Trial"
@@ -199,7 +201,7 @@ RSpec.describe ChefLicensing::License do
     end
 
     it "does not break parsing with empty data" do
-      license = ChefLicensing::License.new(data: {}, product_name: "inspec", api_parser: ChefLicensing::Api::Parser::Describe)
+      license = ChefLicensing::License.new(data: {}, product_name: ChefLicensing.chef_product_name, api_parser: ChefLicensing::Api::Parser::Describe)
       expect(license.id).to eq nil
       expect(license.status).to eq nil
       expect(license.license_type).to eq nil

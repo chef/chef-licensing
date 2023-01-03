@@ -18,6 +18,7 @@ end
 
 ENV["CHEF_LICENSE_SERVER"] = "http://localhost-license-server/License"
 ENV["CHEF_LICENSE_SERVER_API_KEY"] = "xDblv65Xt84wULmc8qTN78a3Dr2OuuKxa6GDvb67"
+ENV["CHEF_PRODUCT_NAME"] = "inspec"
 
 # This is required when mocked down key pressed in tui_engine_spec.rb
 class StringIO
