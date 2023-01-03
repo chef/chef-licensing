@@ -1,6 +1,7 @@
 require_relative "../restful_client/v1"
 require_relative "../exceptions/license_describe_error"
 require_relative "../license"
+require_relative "../config"
 
 module ChefLicensing
   module Api
@@ -36,7 +37,7 @@ module ChefLicensing
 
             list_of_licenses << ChefLicensing::License.new(
               data: license_object,
-              product_name: "inspec",
+              product_name: ChefLicensing.chef_product_name,
               api_parser: ChefLicensing::Api::Parser::Describe
             )
           end
