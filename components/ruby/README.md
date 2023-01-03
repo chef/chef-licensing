@@ -211,6 +211,107 @@ Docs TODO
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 
+## Describe API
+
+Describe API contains details of list of licenses and their entitlements to several features, softwares, assets and the usage limits for each license.
+
+### Usage
+
+```ruby
+require "chef_licensing"
+ChefLicensing.describe(license_keys: [LIST_OF_LICENSE_KEYS], entitlement_id: ENTITLEMENT_ID)
+```
+
+### Response
+
+Returns a list of objects of license data model which uses JSON data returned from the API.
+
+API JSON response:
+
+```json
+{
+  "license": [{
+    "licenseKey": "guid",
+    "serialNumber": "testing",
+    "name": "testing",
+    "status": "active",
+    "start": "2022-12-02",
+    "end": "2023-12-02",
+    "limits": [
+        {
+        "testing": "software",
+          "id": "guid",
+          "amount": 2,
+          "measure": 2,
+          "used": 2,
+          "status": "Active",
+        },
+      ],
+    },
+  ],
+  "assets": [
+    {
+      "id": "guid",
+      "name": "testing",
+      "entitled": true,
+      "from": [
+        {
+            "license": "guid",
+            "status": "expired",
+        },
+      ],
+    }
+  ],
+  "software": [
+    {
+      "id": "guid",
+      "name": "testing",
+      "entitled": true,
+      "from": [
+        {
+            "license": "guid",
+            "status": "expired",
+        },
+      ],
+    },
+  ],
+  "features": [
+    {
+      "id": "guid",
+      "name": "testing",
+      "entitled": true,
+      "from": [
+        {
+            "license": "guid",
+            "status": "expired",
+        },
+      ],
+    },
+  ],
+  "services": [
+    {
+      "id": "guid",
+      "name": "testing",
+      "entitled": true,
+      "from": [
+        {
+            "license": "guid",
+            "status": "expired",
+        },
+      ],
+    },
+  ],
+}
+```
+
+### Errors
+
+* in case of error in describe API it would raise license describe error.
+
+```ruby
+ChefLicensing::LicenseDescribeError
+```
+
 # TUI Engine
 
 TUI Engine helps to build a text user interface considering each step involved in the text user interface as interaction.

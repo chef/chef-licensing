@@ -87,7 +87,7 @@ module ChefLicensing
       end
 
       def describe(params = {})
-        connection.get(self.class::END_POINTS[:DESCRIBE], { licenseKeys: params[:license_keys], entitlementId: params[:entilement_id] }).body
+        connection.get(self.class::END_POINTS[:DESCRIBE], { licenseKeys: params[:license_keys], entitlementId: params[:entitlement_id] }).body
       end
 
       def handle_connection
