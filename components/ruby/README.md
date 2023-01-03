@@ -545,7 +545,7 @@ On success, license data model contains these attributes:
 - `status` can have values like `Active`, `Expired` or `Grace`.
 - `expiration_date` is the date after which license will be expired.
 - `expiration_status` is the status of the license post expiration. It could be with `Expired` or `Grace`.
-- `feature_entitlements` is the list of features which are entitled to the license.
-- `software_entitlements` is the list of softwares which are entitled to the license.
-- `asset_entitlements` is the list of assets which are entitled to the license.
-- `limits` is the list of information around license usage, measure, limits and used info for different softwares.
+- `feature_entitlements` is the list of features which are entitled to the license. It contains attributes `id`, `name`, `entitled` and `status`.
+- `software_entitlements` is the list of softwares which are entitled to the license. It contains attributes `id`, `name`, `entitled` and `status`.
+- `asset_entitlements` is the list of assets which are entitled to the license. It contains attributes `id`, `name`, `entitled` and `status`.
+- `limits` is the list of information around license usage, measure, limits and used info for different softwares. It contains attributes `usage_status`, `usage_limit`, `usage_measure`, `used` and `software`.
