@@ -211,7 +211,7 @@ Docs TODO
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 
-## Describe API
+## Describe API for licenses metadata
 
 Describe API contains details of list of licenses and their entitlements to several features, softwares, assets and the usage limits for each license.
 
@@ -219,8 +219,12 @@ Describe API contains details of list of licenses and their entitlements to seve
 
 ```ruby
 require "chef_licensing"
-ChefLicensing.licenses_metadata(license_keys: [LIST_OF_LICENSE_KEYS], entitlement_id: ENTITLEMENT_ID)
+ChefLicensing.licenses_metadata(license_keys: [LIST_OF_LICENSE_KEYS], entitlement_id: ChefLicensing::Config.instance.entitlement_id)
 ```
+
+where:
+
+- ENV["CHEF_ENTITLEMENT_ID"] needs to be set to fetch value from `ChefLicensing::Config.instance.chef_entitlement_id` or needs to be passed through argument using `--chef-entitlement-id` in CLI.
 
 ### Response
 
