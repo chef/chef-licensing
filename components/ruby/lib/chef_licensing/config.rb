@@ -10,7 +10,7 @@ module ChefLicensing
   class Config
     include Singleton
 
-    attr_reader :license_server_url, :license_server_api_key, :logger, :air_gap_status, :arg_fetcher, :env_fetcher
+    attr_reader :license_server_url, :license_server_api_key, :logger, :air_gap_status, :arg_fetcher, :env_fetcher, :chef_product_name, :chef_entitlement_id
 
     def initialize(opts = {})
       @arg_fetcher = ChefLicensing::ArgFetcher.new(opts[:cli_args] || ARGV)
@@ -18,6 +18,8 @@ module ChefLicensing
       @logger = opts[:logger] || set_default_logger
       @license_server_api_key = set_license_server_api_key
       @license_server_url = set_license_server_url
+      @chef_product_name = set_chef_product_name
+      @chef_entitlement_id = set_chef_entitlement_id
     end
 
     def self.instance(opts = {})
@@ -48,6 +50,14 @@ module ChefLicensing
 
     def set_license_server_api_key
       @arg_fetcher.fetch_value("--chef-license-server-api-key", :string) || @env_fetcher.fetch_value("CHEF_LICENSE_SERVER_API_KEY", :string)
+    end
+
+    def set_chef_product_name
+      @arg_fetcher.fetch_value("--chef-product-name", :string) || @env_fetcher.fetch_value("CHEF_PRODUCT_NAME", :string)
+    end
+
+    def set_chef_entitlement_id
+      @arg_fetcher.fetch_value("--chef-entitlement-id", :string) || @env_fetcher.fetch_value("CHEF_ENTITLEMENT_ID", :string)
     end
 
     def set_default_logger

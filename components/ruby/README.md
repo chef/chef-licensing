@@ -513,7 +513,7 @@ require "chef_licensing/license"
 
 ChefLicensing::License.new(
   data: CLIENT_API_RESPONSE,
-  product_name: ChefLicensing.chef_product_name,
+  product_name: ChefLicensing::Config.instance.chef_product_name,
   api_parser: ChefLicensing::Api::Parser::Client
 )
 ```
@@ -525,7 +525,7 @@ require "chef_licensing/license"
 
 ChefLicensing::License.new(
   data: DESCRIBE_API_RESPONSE_FOR_EACH_LICENSE,
-  product_name: ChefLicensing.chef_product_name,
+  product_name: ChefLicensing::Config.instance.chef_product_name,
   api_parser: ChefLicensing::Api::Parser::Describe
 )
 ```
@@ -534,7 +534,7 @@ where:
 
 - **CLIENT_API_RESPONSE** should contain `Client`, `Features`, `Entitlement` & `Assets` keys for proper object creation.
 - **DESCRIBE_API_RESPONSE_FOR_EACH_LICENSE** should contain `license`, `features` `software` & `assets` keys for proper object creation.
-- ENV["CHEF_PRODUCT_NAME"] needs to be set to fetch value from `ChefLicensing.chef_product_name`.
+- ENV["CHEF_PRODUCT_NAME"] needs to be set to fetch value from `ChefLicensing::Config.instance.chef_product_name` or needs to be passed through argument using `--chef-product-name` in CLI.
 - The `/describe` API is the metadata of all licenses and it is a list. Therefore, license data model should be called by iterating over the list of licenses. And data of each license should be passed with a mandatory `license` key.
 
 ## License Data Model Attributes:

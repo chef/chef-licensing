@@ -107,9 +107,24 @@ RSpec.describe ChefLicensing::License do
       }
   }
 
+  let(:opts) {
+    {
+      env_vars: {
+        "CHEF_LICENSE_SERVER" => "http://localhost-license-server/License",
+        "CHEF_LICENSE_SERVER_API_KEY" =>  "xDblv65Xt84wULmc8qTN78a3Dr2OuuKxa6GDvb67",
+        "CHEF_PRODUCT_NAME" => "inspec",
+        "CHEF_ENTITLEMENT_ID" => "testing_entitlement_id",
+      },
+    }
+  }
+
+  let(:config) {
+    ChefLicensing::Config.clone.instance(opts)
+  }
+
   describe "initialising object using client api parser" do
     it "access license data successfully" do
-      license = ChefLicensing::License.new(data: client_data, product_name: ChefLicensing.chef_product_name, api_parser: ChefLicensing::Api::Parser::Client)
+      license = ChefLicensing::License.new(data: client_data, product_name: config.chef_product_name, api_parser: ChefLicensing::Api::Parser::Client)
 
       expect(license.id).to eq nil
       expect(license.status.downcase).to eq "active"
@@ -148,7 +163,7 @@ RSpec.describe ChefLicensing::License do
     end
 
     it "does not break parsing with empty data" do
-      license = ChefLicensing::License.new(data: {}, product_name: ChefLicensing.chef_product_name, api_parser: ChefLicensing::Api::Parser::Client)
+      license = ChefLicensing::License.new(data: {}, product_name: config.chef_product_name, api_parser: ChefLicensing::Api::Parser::Client)
       expect(license.id).to eq nil
       expect(license.status).to eq nil
       expect(license.license_type).to eq nil
@@ -163,7 +178,7 @@ RSpec.describe ChefLicensing::License do
 
   describe "initialising object using describe api parser" do
     it "access license data successfully" do
-      license = ChefLicensing::License.new(data: describe_data, product_name: ChefLicensing.chef_product_name, api_parser: ChefLicensing::Api::Parser::Describe)
+      license = ChefLicensing::License.new(data: describe_data, product_name: config.chef_product_name, api_parser: ChefLicensing::Api::Parser::Describe)
       expect(license.id).to eq "guidlicensekey"
       expect(license.status.downcase).to eq "active"
       expect(license.license_type).to eq "Trial"
@@ -201,7 +216,7 @@ RSpec.describe ChefLicensing::License do
     end
 
     it "does not break parsing with empty data" do
-      license = ChefLicensing::License.new(data: {}, product_name: ChefLicensing.chef_product_name, api_parser: ChefLicensing::Api::Parser::Describe)
+      license = ChefLicensing::License.new(data: {}, product_name: config.chef_product_name, api_parser: ChefLicensing::Api::Parser::Describe)
       expect(license.id).to eq nil
       expect(license.status).to eq nil
       expect(license.license_type).to eq nil
