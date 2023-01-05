@@ -17,7 +17,8 @@ module ChefLicensing
       def initialize(opts = {})
         @license_keys = opts[:license_keys] || raise(ArgumentError, "Missing Params: `license_keys`")
         @entitlement_id = opts[:entitlement_id] || raise(ArgumentError, "Missing Params: `entitlement_id`")
-        @restful_client = opts[:restful_client] ? opts[:restful_client].new : ChefLicensing::RestfulClient::V1.new
+        @cl_config = opts[:cl_config] || ChefLicensing::Config.instance
+        @restful_client = opts[:restful_client] ? opts[:restful_client].new : ChefLicensing::RestfulClient::V1.new(cl_config: cl_config)
       end
 
       def client
@@ -25,7 +26,7 @@ module ChefLicensing
         if response.data
           ChefLicensing::License.new(
             data: response.data,
-            product_name: ChefLicensing.chef_product_name,
+            product_name: cl_config.chef_product_name,
             api_parser: ChefLicensing::Api::Parser::Client
           )
         else
@@ -35,7 +36,7 @@ module ChefLicensing
 
       private
 
-      attr_reader :restful_client
+      attr_reader :restful_client, :cl_config
     end
   end
 end
