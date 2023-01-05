@@ -218,8 +218,12 @@ Client API contains details of a license and it's entitlement to several feature
 
 ```ruby
 require "chef_licensing"
-ChefLicensing.client(license_keys: [LIST_OF_LICENSE_KEYS], entitlement_id: ENTITLEMENT_ID)
+ChefLicensing.client(license_keys: [LIST_OF_LICENSE_KEYS], entitlement_id: ChefLicensing::Config.instance.entitlement_id)
 ```
+
+where:
+
+- ENV["CHEF_ENTITLEMENT_ID"] needs to be set to fetch value from `ChefLicensing::Config.instance.chef_entitlement_id` or needs to be passed through argument using `--chef-entitlement-id` in CLI.
 
 ### Response
 
