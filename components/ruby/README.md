@@ -219,7 +219,7 @@ Describe API contains details of list of licenses and their entitlements to seve
 
 ```ruby
 require "chef_licensing"
-ChefLicensing.describe(license_keys: [LIST_OF_LICENSE_KEYS], entitlement_id: ENTITLEMENT_ID)
+ChefLicensing.licenses_metadata(license_keys: [LIST_OF_LICENSE_KEYS], entitlement_id: ENTITLEMENT_ID)
 ```
 
 ### Response
