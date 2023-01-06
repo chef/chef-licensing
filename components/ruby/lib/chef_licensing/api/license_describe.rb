@@ -30,10 +30,10 @@ module ChefLicensing
 
             # license object created to be fed to parser
             license_object = {
-              "license": license,
-              "assets": response.data["assets"],
-              "features": response.data["features"],
-              "software": response.data["software"],
+              "license" => license,
+              "assets" => response.data["assets"],
+              "features" => response.data["features"],
+              "software" => response.data["software"],
             }
 
             list_of_licenses << ChefLicensing::License.new(
