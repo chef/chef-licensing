@@ -20,6 +20,10 @@ module ChefLicensing
       ChefLicensing::LicenseKeyFetcher.fetch_and_persist
     end
 
+    def list_license_keys_info(opts = {})
+      ChefLicensing::ListLicenseKeys.display(opts)
+    end
+
     def client(opts = {})
       @license ||= ChefLicensing::Api::Client.info(opts)
     end
