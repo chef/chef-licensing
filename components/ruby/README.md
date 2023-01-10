@@ -202,6 +202,14 @@ ChefLicensing::InvalidLicense
 ChefLicensing::InvalidEntitlement
 ```
 
+## List Licenses
+Obtain the information about the licenses and its associated values.
+
+```ruby
+require "chef_licensing"
+ChefLicensing.list_license_keys_info
+```
+
 ## Usage
 
 Docs TODO
