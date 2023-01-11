@@ -1,5 +1,6 @@
 require_relative "license_key_fetcher"
 require_relative "api/license_describe"
+require_relative "exceptions/license_describe_error"
 require "pastel" unless defined?(Pastel)
 module ChefLicensing
   class ListLicenseKeys
@@ -9,32 +10,20 @@ module ChefLicensing
 
     def initialize(opts = {})
       @cl_config = opts[:cl_config] || ChefLicensing::Config.instance
-      @license_keys = opts[:license_keys] || ChefLicensing::LicenseKeyFetcher.fetch_and_persist({
-                                                                                                  logger: cl_config.logger,
-                                                                                                })
+      @logger = cl_config.logger
+      @output = opts[:output] || STDOUT
       @pastel = Pastel.new
     end
 
     def display
-      # TODO: Entitlement ID is not required for describe API;
-      # it could be obtained from the cl_config
-      licenses_metadata = ChefLicensing::Api::LicenseDescribe.list({
-                                                                     license_keys: license_keys,
-                                                                     entitlement_id: "something",
-                                                                     cl_config: cl_config,
-                                                                   })
+      licenses_metadata = fetch_licenses_metadata
 
-      if licenses_metadata.empty?
-        puts_bold "No license keys information found on your system."
-        return
-      end
-
-      puts "+---------- License Keys Information ----------+"
-      puts "Total License Keys found: #{licenses_metadata.length}\n\n"
+      output.puts "+------------ Licenses Information ------------+"
+      output.puts "Total License Keys found: #{licenses_metadata.length}\n\n"
 
       licenses_metadata.each do |license|
         puts_bold "License Key     : #{license.id}"
-        puts <<~LICENSE
+        output.puts <<~LICENSE
           Type            : #{license.license_type}
           Status          : #{license.status}
           Expiration Date : #{license.expiration_date}
@@ -47,7 +36,7 @@ module ChefLicensing
 
         puts_bold "License Limits"
         license.limits.each do |limit|
-          puts <<~LIMIT
+          output.puts <<~LIMIT
             Usage Status  : #{limit.usage_status}
             Usage Limit   : #{limit.usage_limit}
             Usage Measure : #{limit.usage_measure}
@@ -55,22 +44,22 @@ module ChefLicensing
             Software      : #{limit.software}
           LIMIT
         end
-        puts "+----------------------------------------------+"
+        output.puts "+----------------------------------------------+"
       end
     end
 
     private
 
-    attr_reader :license_keys, :cl_config, :pastel
+    attr_reader :cl_config, :pastel, :output, :logger
 
     def display_info(component)
-      puts <<~INFO
+      output.puts <<~INFO
         ID       : #{component.id}
         Name     : #{component.name}
         Status   : #{component.status}
         Entitled : #{component.entitled}
       INFO
-      puts "\n"
+      output.puts "\n"
     end
 
     def iterate_attributes(component, header)
@@ -81,7 +70,36 @@ module ChefLicensing
     end
 
     def puts_bold(title)
-      puts pastel.bold(title)
+      output.puts pastel.bold(title)
+    end
+
+    def fetch_licenses_metadata
+      # Note: Currently fetch only returns license keys from file stored on disk.
+      # Note: We are not yet covering the case where the disk is not writable.
+      # TODO: Do we need to fetch license keys from env and arg as well?
+      license_keys = ChefLicensing::LicenseKeyFetcher.fetch({ logger: cl_config.logger })
+      logger.debug "License keys fetched from disk: #{license_keys}"
+
+      licenses_metadata = ChefLicensing::Api::LicenseDescribe.list({
+        license_keys: license_keys,
+        entitlement_id: cl_config.chef_entitlement_id,
+        cl_config: cl_config,
+      })
+      logger.debug "License metadata fetched from server: #{licenses_metadata}"
+
+      licenses_metadata
+    rescue ChefLicensing::LicenseKeyFetcher::LicenseKeyNotFetchedError => e
+      logger.error "Error occured while fetching license keys from disk: #{e.message}"
+      output.puts "Error occured while fetching license keys from disk: #{e.message}"
+      # TODO: Exit with a non-zero status code
+      exit
+    rescue ChefLicensing::LicenseDescribeError => e
+      logger.error "Error occured while fetching licenses information: #{e.message}"
+      output.puts "Error occured while fetching licenses information: #{e.message}"
+      # TODO: Exit with a non-zero status code
+      exit
     end
   end
 end
+
+ChefLicensing::ListLicenseKeys.display
