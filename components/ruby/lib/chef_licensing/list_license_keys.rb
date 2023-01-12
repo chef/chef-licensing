@@ -13,13 +13,14 @@ module ChefLicensing
       @logger = cl_config.logger
       @output = opts[:output] || STDOUT
       @pastel = Pastel.new
+      @license_keys = fetch_license_keys(opts)
     end
 
     def display
       licenses_metadata = fetch_licenses_metadata
 
       output.puts "+------------ Licenses Information ------------+"
-      output.puts "Total License Keys found: #{licenses_metadata.length}\n\n"
+      output.puts "Total Licenses found: #{licenses_metadata.length}\n\n"
 
       licenses_metadata.each do |license|
         puts_bold "License Key     : #{license.id}"
@@ -50,7 +51,7 @@ module ChefLicensing
 
     private
 
-    attr_reader :cl_config, :pastel, :output, :logger
+    attr_reader :cl_config, :pastel, :output, :logger, :license_keys
 
     def display_info(component)
       output.puts <<~INFO
@@ -73,13 +74,29 @@ module ChefLicensing
       output.puts pastel.bold(title)
     end
 
-    def fetch_licenses_metadata
-      # Note: Currently fetch only returns license keys from file stored on disk.
-      # Note: We are not yet covering the case where the disk is not writable.
+    def fetch_license_keys(opts = {})
+      # Note: - Currently fetch only returns license keys from file stored on disk.
+      # - We are not yet covering the case where the disk is not writable.
+      # - Ability to fetch license_keys from opts makes testing easy and fast.
       # TODO: Do we need to fetch license keys from env and arg as well?
-      license_keys = ChefLicensing::LicenseKeyFetcher.fetch({ logger: cl_config.logger })
+      license_keys = opts[:license_keys] || ChefLicensing::LicenseKeyFetcher.fetch({ logger: cl_config.logger, dir: opts[:dir] })
+
+      if license_keys.empty?
+        logger.debug "No license keys found on disk."
+        output.puts "No license keys found on disk."
+        exit
+      end
       logger.debug "License keys fetched from disk: #{license_keys}"
 
+      license_keys
+    rescue ChefLicensing::LicenseKeyFetcher::LicenseKeyNotFetchedError => e
+      logger.debug "Error occured while fetching license keys from disk: #{e.message}"
+      output.puts "Error occured while fetching license keys from disk: #{e.message}"
+      # TODO: Exit with a non-zero status code
+      exit
+    end
+
+    def fetch_licenses_metadata
       licenses_metadata = ChefLicensing::Api::LicenseDescribe.list({
         license_keys: license_keys,
         entitlement_id: cl_config.chef_entitlement_id,
@@ -88,18 +105,11 @@ module ChefLicensing
       logger.debug "License metadata fetched from server: #{licenses_metadata}"
 
       licenses_metadata
-    rescue ChefLicensing::LicenseKeyFetcher::LicenseKeyNotFetchedError => e
-      logger.error "Error occured while fetching license keys from disk: #{e.message}"
-      output.puts "Error occured while fetching license keys from disk: #{e.message}"
-      # TODO: Exit with a non-zero status code
-      exit
     rescue ChefLicensing::LicenseDescribeError => e
-      logger.error "Error occured while fetching licenses information: #{e.message}"
+      logger.debug "Error occured while fetching licenses information: #{e.message}"
       output.puts "Error occured while fetching licenses information: #{e.message}"
       # TODO: Exit with a non-zero status code
       exit
     end
   end
 end
-
-ChefLicensing::ListLicenseKeys.display
