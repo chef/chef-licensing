@@ -124,18 +124,17 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
     }
 
     before do
-      stub_request(:get, "#{cl_config.license_server_url}/describe")
-        .with(query: { licenseKeys: license_keys, entitlementId: cl_config.chef_entitlement_id })
+      stub_request(:get, "#{cl_config.license_server_url}/desc")
+        .with(query: { licenseId: license_keys.join(","), entitlementId: cl_config.chef_entitlement_id })
         .to_return(body: { data: describe_api_data, status_code: 200 }.to_json,
                    headers: { content_type: "application/json" })
     end
 
     it "displays the information about the license keys without errors" do
-      # TODO: Some issues need to be fixed on the describe api parser.
-      # expect { described_class.new(opts_for_llk).display }.to_not raise_error
-      # expect(output_stream.string).to include("+------------ Licenses Information ------------+")
-      # expect(output_stream.string).to include("License Key     :")
-      # expect(output_stream.string).to include("Type            :")
+      expect { described_class.new(opts_for_llk).display }.to_not raise_error
+      expect(output_stream.string).to include("+------------ Licenses Information ------------+")
+      expect(output_stream.string).to include("License Key     :")
+      expect(output_stream.string).to include("Type            :")
     end
   end
 
@@ -153,13 +152,13 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
     }
 
     before do
-      stub_request(:get, "#{cl_config.license_server_url}/describe")
-        .with(query: { licenseKeys: license_keys, entitlementId: cl_config.chef_entitlement_id })
+      stub_request(:get, "#{cl_config.license_server_url}/desc")
+        .with(query: { licenseId: license_keys.join(","), entitlementId: cl_config.chef_entitlement_id })
         .to_return(body: { status_code: 404 }.to_json,
                    headers: { content_type: "application/json" })
     end
 
-    it "displays the information about the license keys without errors" do
+    it "exits with error message about LicenseDescribeError" do
       expect { described_class.new(opts_for_llk).display }.to raise_error(SystemExit)
       expect(output_stream.string).to include("Error occured while fetching licenses information: ChefLicensing::LicenseDescribeError")
     end
