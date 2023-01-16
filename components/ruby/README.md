@@ -219,7 +219,7 @@ Describe API contains details of list of licenses and their entitlements to seve
 
 ```ruby
 require "chef_licensing"
-ChefLicensing.licenses_metadata(license_keys: [LIST_OF_LICENSE_KEYS], entitlement_id: ChefLicensing::Config.instance.entitlement_id)
+ChefLicensing.licenses_metadata(license_keys: [LIST_OF_LICENSE_KEYS])
 ```
 
 where:
@@ -253,7 +253,7 @@ API JSON response:
       ],
     },
   ],
-  "assets": [
+  "Assets": [
     {
       "id": "guid",
       "name": "testing",
@@ -266,7 +266,7 @@ API JSON response:
       ],
     }
   ],
-  "software": [
+  "Software": [
     {
       "id": "guid",
       "name": "testing",
@@ -279,7 +279,7 @@ API JSON response:
       ],
     },
   ],
-  "features": [
+  "Features": [
     {
       "id": "guid",
       "name": "testing",
@@ -292,7 +292,7 @@ API JSON response:
       ],
     },
   ],
-  "services": [
+  "Services": [
     {
       "id": "guid",
       "name": "testing",

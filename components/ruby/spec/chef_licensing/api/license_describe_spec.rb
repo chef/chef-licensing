@@ -43,7 +43,7 @@ RSpec.describe ChefLicensing::Api::LicenseDescribe do
            },
         ],
       }],
-      "assets" => [
+      "Assets" => [
         {
           "id" => "guid",
           "name" => "testing",
@@ -55,7 +55,7 @@ RSpec.describe ChefLicensing::Api::LicenseDescribe do
             },
           ],
         }],
-      "software" => [
+      "Software" => [
         {
           "id" => "guid",
           "name" => "testing",
@@ -67,7 +67,7 @@ RSpec.describe ChefLicensing::Api::LicenseDescribe do
             },
           ],
         }],
-      "features" => [
+      "Features" => [
         {
           "id" => "guid",
           "name" => "testing",
@@ -79,7 +79,7 @@ RSpec.describe ChefLicensing::Api::LicenseDescribe do
             },
           ],
         }],
-      "services" => [
+      "Services" => [
         {
           "id" => "guid",
           "name" => "testing",
@@ -94,12 +94,12 @@ RSpec.describe ChefLicensing::Api::LicenseDescribe do
       }
   }
 
-  subject { described_class.list(license_keys: license_keys, entitlement_id: config.chef_entitlement_id, cl_config: config) }
+  subject { described_class.list(license_keys: license_keys, cl_config: config) }
 
   describe ".list" do
     before do
-      stub_request(:get, "#{config.license_server_url}/describe")
-        .with(query: { licenseKeys: license_keys, entitlementId: config.chef_entitlement_id })
+      stub_request(:get, "#{config.license_server_url}/desc")
+        .with(query: { licenseId: license_keys.join(","), entitlementId: config.chef_entitlement_id })
         .to_return(body: { data: describe_api_data, status_code: 200 }.to_json,
                    headers: { content_type: "application/json" })
     end
@@ -108,8 +108,8 @@ RSpec.describe ChefLicensing::Api::LicenseDescribe do
     context "when license is invalid" do
       let(:error_message) { "Invalid licenses" }
       before do
-        stub_request(:get, "#{config.license_server_url}/describe")
-          .with(query: { licenseKeys: license_keys, entitlementId: config.chef_entitlement_id })
+        stub_request(:get, "#{config.license_server_url}/desc")
+          .with(query: { licenseId: license_keys.join(","), entitlementId: config.chef_entitlement_id })
           .to_return(body: { data: false, message: error_message, status_code: 400 }.to_json,
                      headers: { content_type: "application/json" })
       end

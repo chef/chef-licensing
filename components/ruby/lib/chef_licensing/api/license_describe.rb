@@ -2,11 +2,12 @@ require_relative "../restful_client/v1"
 require_relative "../exceptions/license_describe_error"
 require_relative "../license"
 require_relative "../config"
+require "ostruct" unless defined?(OpenStruct)
 
 module ChefLicensing
   module Api
     class LicenseDescribe
-      attr_reader :license_keys, :entitlement_id
+      attr_reader :license_keys
 
       class << self
         def list(opts = {})
@@ -16,25 +17,24 @@ module ChefLicensing
 
       def initialize(opts = {})
         @license_keys = opts[:license_keys] || raise(ArgumentError, "Missing Params: `license_keys`")
-        @entitlement_id = opts[:entitlement_id] || raise(ArgumentError, "Missing Params: `entitlement_id`")
         @cl_config = opts[:cl_config] || ChefLicensing::Config.instance
         @restful_client = opts[:restful_client] ? opts[:restful_client].new : ChefLicensing::RestfulClient::V1.new(cl_config: cl_config)
       end
 
       def list
-        response = restful_client.describe(license_keys: license_keys, entitlement_id: entitlement_id)
+        response = restful_client.describe(license_keys: license_keys.join(","), entitlement_id: cl_config.chef_entitlement_id)
         if response.data
           list_of_licenses = []
 
-          response.data["license"].each do |license|
+          response.data.license.each do |license|
 
             # license object created to be fed to parser
-            license_object = {
+            license_object = OpenStruct.new({
               "license" => license,
-              "assets" => response.data["assets"],
-              "features" => response.data["features"],
-              "software" => response.data["software"],
-            }
+              "assets" => response.data.Assets,
+              "features" => response.data.Features,
+              "software" => response.data.Software,
+            })
 
             list_of_licenses << ChefLicensing::License.new(
               data: license_object,

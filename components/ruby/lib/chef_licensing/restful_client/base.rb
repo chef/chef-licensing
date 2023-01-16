@@ -15,7 +15,7 @@ module ChefLicensing
         FEATURE_BY_ID: "license-service/featurebyid",
         ENTITLEMENT_BY_NAME: "license-service/entitlementbyname",
         ENTITLEMENT_BY_ID: "license-service/entitlementbyid",
-        DESCRIBE: "describe",
+        DESCRIBE: "desc",
       }.freeze
 
       CURRENT_ENDPOINT_VERSION = 2
@@ -87,7 +87,7 @@ module ChefLicensing
       end
 
       def describe(params = {})
-        connection.get(self.class::END_POINTS[:DESCRIBE], { licenseKeys: params[:license_keys], entitlementId: params[:entitlement_id] }).body
+        connection.get(self.class::END_POINTS[:DESCRIBE], { licenseId: params[:license_keys], entitlementId: params[:entitlement_id] }).body
       end
 
       def handle_connection
