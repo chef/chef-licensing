@@ -126,7 +126,7 @@ RSpec.describe ChefLicensing::License do
 
   describe "initialising object using client api parser" do
     it "access license data successfully" do
-      license = ChefLicensing::License.new(data: client_data, api_parser: ChefLicensing::Api::Parser::Client)
+      license = ChefLicensing::License.new(data: client_data, api_parser: ChefLicensing::Api::Parser::Client, cl_config: config)
       expect(license.id).to eq nil
       expect(license.status.downcase).to eq "active"
       expect(license.license_type).to eq "Trial"
@@ -164,7 +164,7 @@ RSpec.describe ChefLicensing::License do
     end
 
     it "does not break parsing with empty data" do
-      license = ChefLicensing::License.new(data: {}, api_parser: ChefLicensing::Api::Parser::Client)
+      license = ChefLicensing::License.new(data: {}, api_parser: ChefLicensing::Api::Parser::Client, cl_config: config)
       expect(license.id).to eq nil
       expect(license.status).to eq nil
       expect(license.license_type).to eq nil
@@ -180,7 +180,7 @@ RSpec.describe ChefLicensing::License do
   describe "initialising object using describe api parser" do
     it "access license data successfully" do
       ostruct_desc_data = JSON.parse(describe_data.to_json, object_class: OpenStruct)
-      license = ChefLicensing::License.new(data: ostruct_desc_data, api_parser: ChefLicensing::Api::Parser::Describe)
+      license = ChefLicensing::License.new(data: ostruct_desc_data, api_parser: ChefLicensing::Api::Parser::Describe, cl_config: config)
       expect(license.id).to eq "guidlicensekey"
       expect(license.status.downcase).to eq "active"
       expect(license.license_type).to eq "Trial"
@@ -219,7 +219,7 @@ RSpec.describe ChefLicensing::License do
 
     it "does not break parsing with empty data" do
       ostruct_blank_data = JSON.parse({}.to_json, object_class: OpenStruct)
-      license = ChefLicensing::License.new(data: ostruct_blank_data, api_parser: ChefLicensing::Api::Parser::Describe)
+      license = ChefLicensing::License.new(data: ostruct_blank_data, api_parser: ChefLicensing::Api::Parser::Describe, cl_config: config)
       expect(license.id).to eq nil
       expect(license.status).to eq nil
       expect(license.license_type).to eq nil
