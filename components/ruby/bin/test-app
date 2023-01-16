@@ -3,168 +3,12 @@
 require "bundler/setup"
 require "chef_licensing"
 require "chef_licensing/license_key_fetcher"
-# require "chef_licensing/air_gap_detection"
+require "chef_licensing/air_gap_detection"
 require "logger"
 require "byebug"
 
 logger = Logger.new(STDERR)
 logger.level = Logger::INFO
-
-require "chef_licensing/license"
-data = {
-  "id": "tmns-bea68bbb-1e85-44ea-8b98-a654b011174b-4227",
-  "type": "trial",
-  "feature_entitlements": [
-    {
-      "name": "Inspec-Parallel",
-      "id": "c891f0fa-fa71-8b98-b694-7b5462595f35",
-      "expiry_date": "2022-11-27",
-    },
-  ],
-  "asset_entitlements": [],
-  "software_entitlements": [
-    {
-      "name": "Automate",
-      "id": "c770f0fa-7fa1-4c5b-b694-7b5462595f35",
-      "expiry_date": "2022-11-27",
-      "measure": "node",
-      "limit": 10,
-    },
-    {
-      "name": "Habitat",
-      "id": "07f7ab25-6e5d-4e04-b786-a87dabcef659",
-      "expiry_date": "2022-11-27",
-      "measure": "node",
-      "limit": 10,
-    },
-    {
-      "name": "InSpec",
-      "id": "3ff52c37-e41f-4f6c-ad4d-365192205968",
-      "expiry_date": "2022-11-27",
-      "measure": "node",
-      "limit": 10,
-    },
-    {
-      "name": "Infra",
-      "id": "a5213d76-181f-4924-adba-4b7ed2b098b5",
-      "expiry_date": "2022-11-27",
-      "measure": "node",
-      "limit": 10,
-    },
-  ],
-}
-
-data =
-{
-  "Cache" => {
-    "LastModified" => "2023-11-01",
-    "EvaluatedOn" => "2023-11-01",
-    "Expires" => "2023-11-01",
-    "CacheControl" => "2023-11-01",
-  },
-  "Client" => {
-    "license" => "Trial",
-    "status" => "Active",
-    "changesTo" => "Grace",
-    "changesOn" => "2023-11-01",
-    "changesIn" => "2 days",
-    "usage" => "Active",
-    "used" => 2,
-    "limit" => 2,
-    "measure" => 2,
-  },
-  "Assets" => [ { "id" => "guid", "name" => "test" } ],
-  "Features" => [ { "id" => "guid", "name" => "test" } ],
-  "Entitlement" => {
-    "id" => "guid",
-    "name" => "test",
-    "start" => "2023-11-01",
-    "end" => "2023-11-01",
-    "licenses" => 2,
-    "limits" => [ { "measure" => "test", "amount" => 2 } ],
-    "entitled" => false,
-  },
-}
-
-data =
-{
-  "license" => [{
-    "licenseKey" => "guid",
-    "serialNumber" => "testing",
-    "name" => "testing",
-    "status" => "active",
-    "start" => "2022-12-02",
-    "end" => "2023-12-02",
-    "limits" => [
-       {
-        "testing" => "software",
-         "id" => "guid",
-         "amount" => 2,
-         "measure" => 2,
-         "used" => 2,
-         "status" => "Active",
-       },
-    ],
-  }],
-  "assets" => [
-    {
-      "id" => "guid",
-      "name" => "testing",
-      "entitled" => true,
-      "from" => [
-        {
-            "license" => "guid",
-            "status" => "expired",
-        },
-      ],
-    }],
-  "software" => [
-    {
-      "id" => "guid",
-      "name" => "testing",
-      "entitled" => true,
-      "from" => [
-        {
-            "license" => "guid",
-            "status" => "expired",
-        },
-      ],
-    }],
-  "features" => [
-    {
-      "id" => "guid",
-      "name" => "testing",
-      "entitled" => true,
-      "from" => [
-        {
-            "license" => "guid",
-            "status" => "expired",
-        },
-      ],
-    }],
-  "services" => [
-    {
-      "id" => "guid",
-      "name" => "testing",
-      "entitled" => true,
-      "from" => [
-        {
-            "license" => "guid",
-            "status" => "expired",
-        },
-      ],
-    }],
-  }
-
-require "chef_licensing/api/parser/client"
-require "chef_licensing/api/parser/describe"
-
-a = ChefLicensing.licenses_metadata(license_keys: ["tmns-bea68bbb-1e85-44ea-8b98-a654b011174b-4227"], entitlement_id: "3ff52c37-e41f-4f6c-ad4d-365192205968")
-# a = ChefLicensing::License.new(data: data, product_name: "inspec", api_parser: ChefLicensing::Api::Parser::Client)
-# a = ChefLicensing::License.new(data: data, product_name: "inspec", api_parser: ChefLicensing::Api::Parser::Describe)
-a.first.feature_entitlements
-# require "byebug"; byebug
-# a.feature_entitlements
 
 ENV["LICENSE_SERVER"] = "https://licensing-acceptance.chef.co/License"
 puts "Calling fetch_and_persist:"
@@ -172,5 +16,4 @@ ChefLicensing::LicenseKeyFetcher.fetch_and_persist(logger: logger).each do |lice
   puts "License Key: #{license_key}"
 end
 
-# byebug
-# puts "Airgap is " + (ChefLicensing.air_gap_detected? ? true : false)
+puts "Airgap is " + (ChefLicensing.air_gap_detected? ? true : false)
