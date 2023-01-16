@@ -99,7 +99,6 @@ module ChefLicensing
     def fetch_licenses_metadata
       licenses_metadata = ChefLicensing::Api::LicenseDescribe.list({
         license_keys: license_keys,
-        entitlement_id: cl_config.chef_entitlement_id,
         cl_config: cl_config,
       })
       logger.debug "License metadata fetched from server: #{licenses_metadata}"
