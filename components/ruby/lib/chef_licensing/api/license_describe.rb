@@ -39,7 +39,8 @@ module ChefLicensing
             list_of_licenses << ChefLicensing::License.new(
               data: license_object,
               product_name: cl_config.chef_product_name,
-              api_parser: ChefLicensing::Api::Parser::Describe
+              api_parser: ChefLicensing::Api::Parser::Describe,
+              cl_config: cl_config
             )
           end
           # returns list of license data model object
