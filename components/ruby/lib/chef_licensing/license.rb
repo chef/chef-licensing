@@ -1,5 +1,6 @@
 require "chef_licensing/api/parser/client" unless defined?(ChefLicensing::Api::Parser::Client)
 require "chef_licensing/api/parser/describe" unless defined?(ChefLicensing::Api::Parser::Describe)
+require_relative "config"
 
 # License data model has an id, status, type of license, entitlements and limits.
 
@@ -12,7 +13,8 @@ module ChefLicensing
       # API parser based on the API call
       @parser = opts[:api_parser].new(opts[:data])
 
-      @product_name = opts[:product_name]
+      @cl_config = opts[:cl_config] || ChefLicensing::Config.instance
+      @product_name = cl_config.chef_product_name
 
       @id = @parser.parse_id
       @status = @parser.parse_status
@@ -123,5 +125,9 @@ module ChefLicensing
         @status = entitlement_data["status"]
       end
     end
+
+    private
+
+    attr_reader :cl_config
   end
 end

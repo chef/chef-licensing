@@ -513,7 +513,6 @@ require "chef_licensing/license"
 
 ChefLicensing::License.new(
   data: CLIENT_API_RESPONSE,
-  product_name: ChefLicensing::Config.instance.chef_product_name,
   api_parser: ChefLicensing::Api::Parser::Client
 )
 ```
@@ -525,7 +524,6 @@ require "chef_licensing/license"
 
 ChefLicensing::License.new(
   data: DESCRIBE_API_RESPONSE_FOR_EACH_LICENSE,
-  product_name: ChefLicensing::Config.instance.chef_product_name,
   api_parser: ChefLicensing::Api::Parser::Describe
 )
 ```
