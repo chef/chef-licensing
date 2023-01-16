@@ -52,6 +52,7 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
       }
     }
 
+
     let(:describe_api_data) {
       {
         "license" => [{
@@ -72,7 +73,7 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
              },
           ],
         }],
-        "assets" => [
+        "Assets" => [
           {
             "id" => "guid",
             "name" => "testing",
@@ -84,7 +85,7 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
               },
             ],
           }],
-        "software" => [
+        "Software" => [
           {
             "id" => "guid",
             "name" => "testing",
@@ -96,7 +97,7 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
               },
             ],
           }],
-        "features" => [
+        "Features" => [
           {
             "id" => "guid",
             "name" => "testing",
@@ -108,7 +109,7 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
               },
             ],
           }],
-        "services" => [
+        "Services" => [
           {
             "id" => "guid",
             "name" => "testing",

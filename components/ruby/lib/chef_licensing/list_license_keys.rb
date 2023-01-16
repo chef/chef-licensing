@@ -65,6 +65,7 @@ module ChefLicensing
 
     def iterate_attributes(component, header)
       puts_bold header
+      puts "No #{header.downcase} found.\n\n" if component.empty?
       component.each do |attribute|
         display_info(attribute)
       end
