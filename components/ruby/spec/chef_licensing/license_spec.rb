@@ -11,7 +11,7 @@ RSpec.describe ChefLicensing::License do
         "lastModified": "2023-01-16T12:05:40Z",
         "evaluatedOn": "2023-01-16T12:07:20.114370692Z",
         "expires": "2023-01-17T12:07:20.114370783Z",
-        "cacheControl": "private,max-age:42460"
+        "cacheControl": "private,max-age:42460",
       },
       "client" => {
         "license" => "Trial",

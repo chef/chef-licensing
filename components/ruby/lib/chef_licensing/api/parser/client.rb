@@ -59,7 +59,7 @@ module ChefLicensing
           features_data.each do |feature|
             feature_info = {
               "id" => feature.id,
-              "name" => feature.name
+              "name" => feature.name,
             }
             features << feature_info
           end
@@ -77,7 +77,7 @@ module ChefLicensing
               "id" => data.entitlement.id,
               "name" => data.entitlement.name,
               "entitled" => data.entitlement.entitled,
-              "status" => entitlement_status
+              "status" => entitlement_status,
             }]
           end
         end
@@ -88,7 +88,7 @@ module ChefLicensing
           assets_data.each do |asset|
             asset_info = {
               "id" => asset.id,
-              "name" => asset.name
+              "name" => asset.name,
             }
             assets << asset_info
           end
