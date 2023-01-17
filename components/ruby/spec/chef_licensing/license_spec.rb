@@ -7,13 +7,13 @@ require "json"
 RSpec.describe ChefLicensing::License do
   let(:client_data) {
     {
-      "Cache" => {
-        "LastModified" => "2022-11-01",
-        "EvaluatedOn" => "2022-11-01",
-        "Expires" => "2024-11-01",
-        "CacheControl" => "2022-11-01",
+      "cache": {
+        "lastModified": "2023-01-16T12:05:40Z",
+        "evaluatedOn": "2023-01-16T12:07:20.114370692Z",
+        "expires": "2023-01-17T12:07:20.114370783Z",
+        "cacheControl": "private,max-age:42460"
       },
-      "Client" => {
+      "client" => {
         "license" => "Trial",
         "status" => "Active",
         "changesTo" => "Grace",
@@ -24,9 +24,9 @@ RSpec.describe ChefLicensing::License do
         "limit" => 2,
         "measure" => 2,
       },
-      "Assets" => [ { "id" => "assetguid1", "name" => "Test Asset 1" }, { "id" => "assetguid2", "name" => "Test Asset 2" } ],
-      "Features" => [ { "id" => "featureguid1", "name" => "Test Feature 1" }, { "id" => "featureguid2", "name" => "Test Feature 2" } ],
-      "Entitlement" => {
+      "assets" => [ { "id" => "assetguid1", "name" => "Test Asset 1" }, { "id" => "assetguid2", "name" => "Test Asset 2" } ],
+      "features" => [ { "id" => "featureguid1", "name" => "Test Feature 1" }, { "id" => "featureguid2", "name" => "Test Feature 2" } ],
+      "entitlement" => {
         "id" => "entitlementguid",
         "name" => "Inspec",
         "start" => "2022-11-01",
@@ -126,7 +126,8 @@ RSpec.describe ChefLicensing::License do
 
   describe "initialising object using client api parser" do
     it "access license data successfully" do
-      license = ChefLicensing::License.new(data: client_data, api_parser: ChefLicensing::Api::Parser::Client, cl_config: config)
+      ostruct_client_data = JSON.parse(client_data.to_json, object_class: OpenStruct)
+      license = ChefLicensing::License.new(data: ostruct_client_data, api_parser: ChefLicensing::Api::Parser::Client, cl_config: config)
       expect(license.id).to eq nil
       expect(license.status.downcase).to eq "active"
       expect(license.license_type).to eq "Trial"
@@ -153,7 +154,7 @@ RSpec.describe ChefLicensing::License do
       expect(license.software_entitlements[0].id).to eq "entitlementguid"
       expect(license.software_entitlements[0].name).to eq "Inspec"
       expect(license.software_entitlements[0].entitled).to eq false
-      expect(license.software_entitlements[0].status).to eq "active"
+      expect(license.software_entitlements[0].status.downcase).to eq "active"
 
       # License limit data test
       expect(license.limits[0].usage_status.downcase).to eq "active"
@@ -164,7 +165,8 @@ RSpec.describe ChefLicensing::License do
     end
 
     it "does not break parsing with empty data" do
-      license = ChefLicensing::License.new(data: {}, api_parser: ChefLicensing::Api::Parser::Client, cl_config: config)
+      ostruct_blank_data = JSON.parse({}.to_json, object_class: OpenStruct)
+      license = ChefLicensing::License.new(data: ostruct_blank_data, api_parser: ChefLicensing::Api::Parser::Client, cl_config: config)
       expect(license.id).to eq nil
       expect(license.status).to eq nil
       expect(license.license_type).to eq nil
