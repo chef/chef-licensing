@@ -218,7 +218,7 @@ Client API contains details of a license and it's entitlement to several feature
 
 ```ruby
 require "chef_licensing"
-ChefLicensing.client(license_keys: [LIST_OF_LICENSE_KEYS], entitlement_id: ChefLicensing::Config.instance.entitlement_id)
+ChefLicensing.client(license_keys: [LIST_OF_LICENSE_KEYS])
 ```
 
 where:
@@ -232,13 +232,13 @@ Returns an object of license data model which uses JSON data returned from the A
 API JSON response:
 ```json
 {
-  "Cache": {
-    "LastModified": "date",
-    "EvaluatedOn": "date",
-    "Expires": "date",
-    "CacheControl": "date"
+  "cache": {
+    "lastModified": "date",
+    "evaluatedOn": "date",
+    "expires": "date",
+    "cacheControl": "date"
   },
-  "Client": {
+  "client": {
     "license": "Trial/Event/Free/Commercial",
     "status": "Active/Grace/Expired",
     "changesTo": "Grace/Expired",
@@ -249,9 +249,9 @@ API JSON response:
     "limit": "number",
     "measure": "number"
 },
-  "Assets": [{"id": "guid", "name": "string"}],
-  "Features": [ {"id": "guid", "name": "string"}],
-  "Entitlement": {
+  "assets": [{"id": "guid", "name": "string"}],
+  "features": [ {"id": "guid", "name": "string"}],
+  "entitlement": {
     "id": "guid",
     "name": "string",
     "start": "date",
