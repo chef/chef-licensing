@@ -76,9 +76,8 @@ module ChefLicensing
       raise LicenseKeyNotFetchedError.new("Unable to obtain a License Key.")
     end
 
-    # Assumes fetch_and_persist has been called and succeeded
     def fetch
-      @file_fetcher.fetch
+      (@arg_fetcher.fetch << @env_fetcher.fetch << @file_fetcher.fetch).flatten.uniq
     end
 
     def self.fetch_and_persist(opts = {})
