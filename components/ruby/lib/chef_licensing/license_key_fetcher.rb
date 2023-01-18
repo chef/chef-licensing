@@ -76,6 +76,7 @@ module ChefLicensing
       raise LicenseKeyNotFetchedError.new("Unable to obtain a License Key.")
     end
 
+    # Note: Fetching from arg and env as well, to be able to fetch license when disk is non-writable
     def fetch
       (@arg_fetcher.fetch << @env_fetcher.fetch << @file_fetcher.fetch).flatten.uniq
     end
