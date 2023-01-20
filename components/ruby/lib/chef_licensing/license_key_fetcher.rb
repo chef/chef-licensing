@@ -25,9 +25,12 @@ module ChefLicensing
       # This is the whole point - to obtain the license keys.
       @license_keys = []
 
+      argv = opts[:argv] || ARGV
+      env = opts[:env] || ENV
+
       # The various things that have a say in fetching the license Key.
-      @arg_fetcher = LicenseKeyFetcher::Argument.new(ARGV)
-      @env_fetcher = LicenseKeyFetcher::Environment.new(ENV)
+      @arg_fetcher = LicenseKeyFetcher::Argument.new(argv)
+      @env_fetcher = LicenseKeyFetcher::Environment.new(env)
       @file_fetcher = LicenseKeyFetcher::File.new(config)
       @prompt_fetcher = LicenseKeyFetcher::Prompt.new(config)
     end
