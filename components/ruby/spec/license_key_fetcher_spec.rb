@@ -6,7 +6,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
     let(:output) { StringIO.new }
     let(:logger) { Logger.new(output) }
     let(:argv)  { ["--chef-license-key=tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"] }
-    let(:env) { { "CHEF_LICENSE_KEY" => "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-152" } } 
+    let(:env) { { "CHEF_LICENSE_KEY" => "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-152" } }
 
     context "the license keys are passed in via the CLI and ENV; & file doesn't exist" do
       let(:opts) {
@@ -22,7 +22,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       let(:license_key_fetcher) { ChefLicensing::LicenseKeyFetcher.new(opts) }
 
       it "returns both license keys" do
-        expect(license_key_fetcher.fetch).to eq(["tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-152"])
+        expect(license_key_fetcher.fetch).to eq(%w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150 tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-152})
       end
     end
 
@@ -42,7 +42,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       let(:license_key_fetcher) { ChefLicensing::LicenseKeyFetcher.new(opts) }
 
       it "returns all unique license keys" do
-        expect(license_key_fetcher.fetch).to eq(["tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-152", "tmns-0f76efaf-c45c-4d92-86b2-2d144ce73dfa-150"])
+        expect(license_key_fetcher.fetch).to eq(%w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150 tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-152 tmns-0f76efaf-c45c-4d92-86b2-2d144ce73dfa-150})
       end
     end
 
