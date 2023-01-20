@@ -47,10 +47,15 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
     end
 
     context "no license keys are passed via any means" do
+      let(:argv) { [] }
+      let(:env) { {} }
+
       let(:opts) {
         {
           logger: logger,
           output: output,
+          argv: argv,
+          env: env,
           dir: nil,
         }
       }
