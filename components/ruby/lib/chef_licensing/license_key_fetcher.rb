@@ -3,11 +3,11 @@ require "chef-config/windows"
 require "logger"
 
 require_relative "config"
-require_relative "license_key_validator"
 require_relative "license_key_fetcher/argument"
 require_relative "license_key_fetcher/environment"
 require_relative "license_key_fetcher/file"
 require_relative "license_key_fetcher/prompt"
+require "chef_licensing"
 
 # LicenseKeyFetcher allows us to inspect obtain the license Key from the user in a variety of ways.
 module ChefLicensing
@@ -36,6 +36,7 @@ module ChefLicensing
       @env_fetcher = LicenseKeyFetcher::Environment.new(env)
       @file_fetcher = LicenseKeyFetcher::File.new(config)
       @prompt_fetcher = LicenseKeyFetcher::Prompt.new(config)
+      @client = nil
     end
 
     #
@@ -45,40 +46,19 @@ module ChefLicensing
       # TODO: handle non-persistent cases
       # If a fetch is made by CLI arg, persist and return
       logger.debug "License Key fetcher examining CLI arg checks"
-
-      new_keys = arg_fetcher.fetch
-      unless new_keys.empty?
-        @license_keys.concat(new_keys)
-        file_fetcher.validate_and_persist(new_keys.first, cl_config: cl_config)
-        return new_keys
-      end
+      fetch_from_arguments
 
       # If a fetch is made by ENV, persist and return
       logger.debug "License Key fetcher examining ENV checks"
-      new_keys = env_fetcher.fetch
-      unless new_keys.empty?
-        @license_keys.concat(new_keys)
-        file_fetcher.validate_and_persist(new_keys.first, cl_config: cl_config)
-        return new_keys
-      end
+      fetch_from_env
 
       # If it has previously been fetched and persisted, read from disk and set runtime decision
       logger.debug "License Key fetcher examining file checks"
-      if file_fetcher.persisted?
-        @license_keys = file_fetcher.fetch
-      end
+      fetch_from_file
 
       # licenses expiration check
       unless @license_keys.empty?
-        if ChefLicensing::LicenseKeyValidator.licenses_expired?(@license_keys)
-          config[:start_interaction] = :prompt_license_expired
-          prompt_fetcher.config = config
-        elsif ChefLicensing::LicenseKeyValidator.licenses_about_to_expire?(@license_keys)
-          config[:start_interaction] = :prompt_license_about_to_expire
-          prompt_fetcher.config = config
-        else
-          return @license_keys
-        end
+        return @license_keys if licenses_active?
       end
 
       # Lowest priority is to interactively prompt if we have a TTY
@@ -87,8 +67,10 @@ module ChefLicensing
         new_keys = prompt_fetcher.fetch
 
         # Scenario: When a user is prompted for license expiry beforehand expiration and license is not yet renewed
-        if new_keys.empty? && (config[:start_interaction] == :prompt_license_about_to_expire)
-          return @license_keys
+        if new_keys.empty?
+          if (config[:start_interaction] == :prompt_license_about_to_expire) || have_grace?
+            return @license_keys
+          end
         elsif !new_keys.empty?
           @license_keys.concat(new_keys)
           new_keys.each { |key| file_fetcher.persist(key) }
@@ -117,5 +99,61 @@ module ChefLicensing
     private
 
     attr_reader :cl_config
+    attr_accessor :client
+
+    def fetch_from_arguments
+      new_keys = arg_fetcher.fetch
+      unless new_keys.empty?
+        @license_keys.concat(new_keys)
+        file_fetcher.validate_and_persist(new_keys.first, cl_config: cl_config)
+      end
+      @license_keys
+    end
+
+    def fetch_from_env
+      new_keys = env_fetcher.fetch
+      unless new_keys.empty?
+        @license_keys.concat(new_keys)
+        file_fetcher.validate_and_persist(new_keys.first, cl_config: cl_config)
+      end
+      @license_keys
+    end
+
+    def fetch_from_file
+      if file_fetcher.persisted?
+        # This could be useful if the file was writable in past but is not writable in current scenario and new keys are not persisted in the file
+        file_keys = file_fetcher.fetch
+        @license_keys.concat(file_keys).uniq # uniq is required in case file was a writable and to avoid repeated values.
+      end
+      @license_keys
+    end
+
+    def licenses_active?
+      self.client = ChefLicensing.client(license_keys: @license_keys)
+      if expired? || have_grace?
+        config[:start_interaction] = :prompt_license_expired
+        prompt_fetcher.config = config
+        false
+      elsif about_to_expire?
+        config[:start_interaction] = :prompt_license_about_to_expire
+        prompt_fetcher.config = config
+        false
+      else
+        true
+      end
+    end
+
+    def have_grace?
+      client.status.eql?("Grace")
+    end
+
+    def expired?
+      client.status.eql?("Expired") && client.expiration_status.eql?("Expired")
+    end
+
+    def about_to_expire?
+      require "Date" unless defined?(Date)
+      client.status.eql?("Active") && client.expiration_status.eql?("Expired") && (Date.parse(client.expiration_date) - Date.today).to_i.eql?(1)
+    end
   end
 end
