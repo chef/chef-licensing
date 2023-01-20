@@ -36,6 +36,15 @@ module ChefLicensing
         licenses.collect { |x| x[:license_key] }
       end
 
+      def validate_and_persist(license_key)
+        validate_license_key(license_key)
+        persist(license_key)
+      end
+
+      def validate_license_key(license_key)
+        # TODO
+      end
+
       # Writes a license_id file to disk in the location specified,
       # with the content given.
       # @return Array of Errors
