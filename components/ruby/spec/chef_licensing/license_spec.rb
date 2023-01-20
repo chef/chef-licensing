@@ -43,7 +43,7 @@ RSpec.describe ChefLicensing::License do
       "license" => {
         "licenseKey" => "guidlicensekey",
         "serialNumber" => "testing",
-        "name" => "Trial",
+        "licenseType" => "Trial",
         "status" => "active",
         "start" => "2022-12-02",
         "end" => "2023-12-02",

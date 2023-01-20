@@ -28,7 +28,7 @@ RSpec.describe ChefLicensing::Api::LicenseDescribe do
       "license" => [{
         "licenseKey" => "guid",
         "serialNumber" => "testing",
-        "name" => "testing",
+        "licenseType" => "testing",
         "status" => "active",
         "start" => "2022-12-02",
         "end" => "2023-12-02",
