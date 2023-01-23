@@ -42,7 +42,12 @@ module ChefLicensing
       end
 
       def validate_license_key(license_key)
-        # TODO
+        is_valid = ChefLicensing::LicenseKeyValidator.validate!(license_key)
+        is_valid
+      rescue ChefLicensing::InvalidLicense => e
+        error_message = e.message || "Something went wrong while validating the license"
+        puts "\n- [Error] License validation failed: #{error_message}"
+        false
       end
 
       # Writes a license_id file to disk in the location specified,
