@@ -7,6 +7,7 @@ require_relative "license_key_fetcher/argument"
 require_relative "license_key_fetcher/environment"
 require_relative "license_key_fetcher/file"
 require_relative "license_key_fetcher/prompt"
+require_relative "exceptions/license_client_error"
 require "chef_licensing"
 
 # LicenseKeyFetcher allows us to inspect obtain the license Key from the user in a variety of ways.
@@ -58,7 +59,7 @@ module ChefLicensing
 
       # licenses expiration check
       unless @license_keys.empty?
-        return @license_keys if licenses_active?
+        return @license_keys if licenses_active? || client_error
       end
 
       # Lowest priority is to interactively prompt if we have a TTY
@@ -68,7 +69,7 @@ module ChefLicensing
 
         # Scenario: When a user is prompted for license expiry beforehand expiration and license is not yet renewed
         if new_keys.empty?
-          if (config[:start_interaction] == :prompt_license_about_to_expire) || have_grace?
+          if (config[:start_interaction] == :prompt_license_about_to_expire) || ((config[:start_interaction] == :prompt_license_expired) && have_grace?)
             return @license_keys
           end
         elsif !new_keys.empty?
@@ -99,7 +100,7 @@ module ChefLicensing
     private
 
     attr_reader :cl_config
-    attr_accessor :client
+    attr_accessor :client, :client_error
 
     def fetch_from_arguments
       new_keys = arg_fetcher.fetch
@@ -141,6 +142,10 @@ module ChefLicensing
       else
         true
       end
+    rescue ChefLicensing::LicenseClientError => e
+      self.client_error = e.message
+      puts "\n- [Error] Something went wrong: #{client_error}"
+      false
     end
 
     def have_grace?
