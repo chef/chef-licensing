@@ -47,6 +47,7 @@ module ChefLicensing
       unless new_keys.empty?
         @license_keys.concat(new_keys)
         file_fetcher.validate_and_persist(new_keys.first)
+        return new_keys if file_fetcher.invalid_keys_not_persisted
       end
 
       # If a fetch is made by ENV, persist and return
@@ -55,6 +56,7 @@ module ChefLicensing
       unless new_keys.empty?
         @license_keys.concat(new_keys)
         file_fetcher.validate_and_persist(new_keys.first)
+        return new_keys if file_fetcher.invalid_keys_not_persisted
       end
 
       # If it has previously been fetched and persisted, read from disk and set runtime decision

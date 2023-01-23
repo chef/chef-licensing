@@ -4,6 +4,7 @@ require "yaml"
 require "date"
 require "fileutils" unless defined?(FileUtils)
 require_relative "../license_key_fetcher"
+require_relative "../exceptions/invalid_license"
 
 module ChefLicensing
   class LicenseKeyFetcher
@@ -15,6 +16,7 @@ module ChefLicensing
 
       attr_reader :logger, :contents, :location
       attr_accessor :local_dir # Optional local path to use to seek
+      attr_accessor :invalid_keys_not_persisted
 
       def initialize(opts)
         @opts = opts
@@ -37,8 +39,12 @@ module ChefLicensing
       end
 
       def validate_and_persist(license_key)
-        validate_license_key(license_key)
-        persist(license_key)
+        is_valid = validate_license_key(license_key)
+        if is_valid
+          persist(license_key)
+        else
+          self.invalid_keys_not_persisted = true
+        end
       end
 
       def validate_license_key(license_key)
