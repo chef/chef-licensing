@@ -28,10 +28,12 @@ module ChefLicensing
       argv = opts[:argv] || ARGV
       env = opts[:env] || ENV
 
+      @cl_config = opts[:cl_config] || ChefLicensing::Config.instance
+
       # The various things that have a say in fetching the license Key.
       @arg_fetcher = LicenseKeyFetcher::Argument.new(argv)
       @env_fetcher = LicenseKeyFetcher::Environment.new(env)
-      @file_fetcher = LicenseKeyFetcher::File.new(config)
+      @file_fetcher = LicenseKeyFetcher::File.new(config.merge!({cl_config: cl_config}))
       @prompt_fetcher = LicenseKeyFetcher::Prompt.new(config)
     end
 
@@ -93,5 +95,9 @@ module ChefLicensing
     def self.fetch(opts = {})
       new(opts).fetch
     end
+
+    private
+
+    attr_reader :cl_config
   end
 end
