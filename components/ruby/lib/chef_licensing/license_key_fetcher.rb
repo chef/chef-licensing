@@ -38,6 +38,7 @@ module ChefLicensing
       @file_fetcher = LicenseKeyFetcher::File.new(config)
       @prompt_fetcher = LicenseKeyFetcher::Prompt.new(config)
       @client = nil
+      @cl_config = opts[:cl_config] || ChefLicensing::Config.instance
     end
 
     #
@@ -57,6 +58,7 @@ module ChefLicensing
       logger.debug "License Key fetcher examining file checks"
       fetch_from_file
 
+      @license_keys = @license_keys.uniq
       # licenses expiration check
       unless @license_keys.empty?
         return @license_keys if licenses_active? || client_error
@@ -101,6 +103,7 @@ module ChefLicensing
 
     attr_reader :cl_config
     attr_accessor :client, :client_error
+    attr_reader :cl_config
 
     def fetch_from_arguments
       new_keys = arg_fetcher.fetch
@@ -130,7 +133,7 @@ module ChefLicensing
     end
 
     def licenses_active?
-      self.client = ChefLicensing.client(license_keys: @license_keys)
+      self.client = ChefLicensing.client(license_keys: @license_keys, cl_config: cl_config)
       if expired? || have_grace?
         config[:start_interaction] = :prompt_license_expired
         prompt_fetcher.config = config

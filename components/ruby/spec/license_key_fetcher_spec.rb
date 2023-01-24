@@ -96,6 +96,38 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
 
     let(:api_version) {
       2
+
+    let(:client_data) {
+      {
+        "cache": {
+          "lastModified": "2023-01-16T12:05:40Z",
+          "evaluatedOn": "2023-01-16T12:07:20.114370692Z",
+          "expires": "2023-01-17T12:07:20.114370783Z",
+          "cacheControl": "private,max-age:42460",
+        },
+        "client" => {
+          "license" => "Trial",
+          "status" => "Active",
+          "changesTo" => "Grace",
+          "changesOn" => "2024-11-01",
+          "changesIn" => "2 days",
+          "usage" => "Active",
+          "used" => 2,
+          "limit" => 2,
+          "measure" => 2,
+        },
+        "assets" => [ { "id" => "assetguid1", "name" => "Test Asset 1" }, { "id" => "assetguid2", "name" => "Test Asset 2" } ],
+        "features" => [ { "id" => "featureguid1", "name" => "Test Feature 1" }, { "id" => "featureguid2", "name" => "Test Feature 2" } ],
+        "entitlement" => {
+          "id" => "3ff52c37-e41f-4f6c-ad4d-365192205968",
+          "name" => "Inspec",
+          "start" => "2022-11-01",
+          "end" => "2024-11-01",
+          "licenses" => 2,
+          "limits" => [ { "measure" => "nodes", "amount" => 2 } ],
+          "entitled" => false,
+        },
+      }
     }
 
     context "the file does not exist; and no license keys are set either via arg or env" do
@@ -112,56 +144,74 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       end
     end
 
-    context "the license is set via the argument and is getting validated" do
-      let(:license_key) {
-        "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"
+    context "the license is set via the argument & environment; the file does not exist" do
+      let(:opts) {
+        {
+          dir: Dir.mktmpdir,
+          output: output,
+          logger: logger,
+          argv: argv,
+          env: env,
+          cl_config: config,
+        }
       }
+      let(:license_keys) {
+        %w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150 tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-152}
+      }
+      let(:license_key_fetcher) { described_class.new(opts) }
       before do
         stub_request(:get, "#{config.license_server_url}/v1/validate")
-          .with(query: { licenseId: license_key, version: api_version })
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", version: api_version })
           .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
                      headers: { content_type: "application/json" })
+        stub_request(:get, "#{config.license_server_url}/v1/validate")
+        .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-152", version: api_version })
+        .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+                  headers: { content_type: "application/json" })
+        stub_request(:get, "#{config.license_server_url}/client")
+          .with(query: { licenseId: license_keys.join(","), entitlementId: config.chef_entitlement_id })
+          .to_return(body: { data: client_data, status_code: 200 }.to_json,
+                     headers: { content_type: "application/json" })
       end
-      Dir.mktmpdir do |tmpdir|
-        let(:opts) {
-          {
-            dir: tmpdir,
-            output: output,
-            logger: logger,
-            argv: argv,
-            cl_config: config,
-          }
-        }
-        let(:license_key_fetcher) { described_class.new(opts) }
-        it "creates file, persist both license keys in the file, returns them all" do
-          expect(license_key_fetcher.fetch_and_persist).to eq(%w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150})
-        end
+      it "creates file, persist both license keys in the file, returns them all" do
+        expect(license_key_fetcher.fetch_and_persist).to eq(%w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150 tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-152})
       end
     end
 
-    context "the license is set via the environment and is getting validated" do
-      let(:license_key) {
-        "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-152"
+    context "the license is set via the argument & environment; and the file exists" do
+      let(:license_keys) {
+        %w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150 tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-152}
       }
       before do
         stub_request(:get, "#{config.license_server_url}/v1/validate")
-          .with(query: { licenseId: license_key, version: api_version })
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", version: api_version })
           .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
                      headers: { content_type: "application/json" })
+        stub_request(:get, "#{config.license_server_url}/v1/validate")
+        .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-152", version: api_version })
+        .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+                  headers: { content_type: "application/json" })
+        stub_request(:get, "#{config.license_server_url}/client")
+          .with(query: { licenseId: license_keys.join(","), entitlementId: config.chef_entitlement_id })
+          .to_return(body: { data: client_data, status_code: 200 }.to_json,
+                     headers: { content_type: "application/json" })
       end
+
       Dir.mktmpdir do |tmpdir|
         let(:opts) {
           {
-            dir: tmpdir,
-            output: output,
             logger: logger,
+            argv: argv,
             env: env,
+            output: output,
+            dir: tmpdir,
             cl_config: config,
           }
         }
+
         let(:license_key_fetcher) { described_class.new(opts) }
-        it "creates file, persist both license keys in the file, returns them all" do
-          expect(license_key_fetcher.fetch_and_persist).to eq(%w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-152})
+        it "returns all the license keys" do
+          expect(license_key_fetcher.fetch_and_persist).to eq(%w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150 tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-152})
         end
       end
     end
