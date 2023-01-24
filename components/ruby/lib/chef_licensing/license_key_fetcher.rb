@@ -33,7 +33,7 @@ module ChefLicensing
       # The various things that have a say in fetching the license Key.
       @arg_fetcher = LicenseKeyFetcher::Argument.new(argv)
       @env_fetcher = LicenseKeyFetcher::Environment.new(env)
-      @file_fetcher = LicenseKeyFetcher::File.new(config.merge!({cl_config: cl_config}))
+      @file_fetcher = LicenseKeyFetcher::File.new(config)
       @prompt_fetcher = LicenseKeyFetcher::Prompt.new(config)
     end
 
@@ -48,7 +48,7 @@ module ChefLicensing
       new_keys = arg_fetcher.fetch
       unless new_keys.empty?
         @license_keys.concat(new_keys)
-        file_fetcher.validate_and_persist(new_keys.first)
+        file_fetcher.validate_and_persist(new_keys.first, cl_config: cl_config)
         return new_keys if file_fetcher.invalid_keys_not_persisted
       end
 
@@ -57,7 +57,7 @@ module ChefLicensing
       new_keys = env_fetcher.fetch
       unless new_keys.empty?
         @license_keys.concat(new_keys)
-        file_fetcher.validate_and_persist(new_keys.first)
+        file_fetcher.validate_and_persist(new_keys.first, cl_config: cl_config)
         return new_keys if file_fetcher.invalid_keys_not_persisted
       end
 

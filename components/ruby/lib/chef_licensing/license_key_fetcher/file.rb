@@ -5,7 +5,6 @@ require "date"
 require "fileutils" unless defined?(FileUtils)
 require_relative "../license_key_fetcher"
 require_relative "../exceptions/invalid_license"
-require_relative "../config"
 
 module ChefLicensing
   class LicenseKeyFetcher
@@ -15,7 +14,7 @@ module ChefLicensing
       LICENSE_KEY_FILE = "licenses.yaml".freeze
       LICENSE_FILE_FORMAT_VERSION = "2.0.0".freeze
 
-      attr_reader :logger, :contents, :location, :cl_config
+      attr_reader :logger, :contents, :location
       attr_accessor :local_dir # Optional local path to use to seek
       attr_accessor :invalid_keys_not_persisted
 
@@ -27,7 +26,6 @@ module ChefLicensing
 
         @opts[:dir] ||= LicenseKeyFetcher::File.default_file_location
         @local_dir = @opts[:dir]
-        @cl_config = opts[:cl_config] || ChefLicensing::Config.instance
       end
 
       def fetch
@@ -40,8 +38,8 @@ module ChefLicensing
         licenses.collect { |x| x[:license_key] }
       end
 
-      def validate_and_persist(license_key)
-        is_valid = validate_license_key(license_key)
+      def validate_and_persist(license_key, cl_config: nil)
+        is_valid = validate_license_key(license_key, cl_config: cl_config)
         if is_valid
           persist(license_key)
         else
@@ -49,7 +47,7 @@ module ChefLicensing
         end
       end
 
-      def validate_license_key(license_key)
+      def validate_license_key(license_key, cl_config: nil)
         is_valid = ChefLicensing::LicenseKeyValidator.validate!(license_key, cl_config: cl_config)
         is_valid
       rescue ChefLicensing::InvalidLicense => e
