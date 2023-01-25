@@ -239,12 +239,12 @@ API JSON response:
     "cacheControl": "date"
   },
   "client": {
-    "license": "Trial/Event/Free/Commercial",
-    "status": "Active/Grace/Expired",
-    "changesTo": "Grace/Expired",
+    "license": "Trial|Event|Free|Commercial",
+    "status": "Active|Grace|Expired",
+    "changesTo": "Grace|Expired",
     "changesOn": "date",
     "changesIn": "xxxx (days)",
-    "usage": "Active/Grace/Exhausted",
+    "usage": "Active|Grace|Exhausted",
     "used": "number",
     "limit": "number",
     "measure": "number"
