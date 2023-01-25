@@ -221,9 +221,16 @@ Describe API contains details of list of licenses and their entitlements to seve
 require "chef_licensing"
 ChefLicensing.licenses_metadata(license_keys: [LIST_OF_LICENSE_KEYS])
 ```
+or
+
+```ruby
+require "chef_licensing/api/license_describe"
+ChefLicensing::Api::LicenseDescribe.list(options_hash)
+```
 
 where:
 
+- values possible of options_hash are `license_keys` and `restful_client`. Default value of restful_client is `ChefLicensing::RestfulClient::V1`.
 - ENV["CHEF_ENTITLEMENT_ID"] needs to be set to fetch value from `ChefLicensing::Config.instance.chef_entitlement_id` or needs to be passed through argument using `--chef-entitlement-id` in CLI.
 
 ### Response
