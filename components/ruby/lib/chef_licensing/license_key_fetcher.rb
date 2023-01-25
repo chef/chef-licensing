@@ -61,7 +61,8 @@ module ChefLicensing
       @license_keys = @license_keys.uniq
       # licenses expiration check
       unless @license_keys.empty?
-        return @license_keys if licenses_active? || client_error
+        return @license_keys if licenses_active?
+        raise LicenseKeyNotFetchedError if client_error
       end
 
       # Lowest priority is to interactively prompt if we have a TTY
