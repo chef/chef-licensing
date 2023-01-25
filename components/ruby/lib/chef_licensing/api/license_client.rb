@@ -17,7 +17,7 @@ module ChefLicensing
       def initialize(opts = {})
         @license_keys = opts[:license_keys] || raise(ArgumentError, "Missing Params: `license_keys`")
         @cl_config = opts[:cl_config] || ChefLicensing::Config.instance
-        @restful_client = opts[:restful_client] ? opts[:restful_client].new : ChefLicensing::RestfulClient::V1.new(cl_config: cl_config)
+        @restful_client = opts[:restful_client] ? opts[:restful_client].new(cl_config: cl_config) : ChefLicensing::RestfulClient::V1.new(cl_config: cl_config)
       end
 
       def client
