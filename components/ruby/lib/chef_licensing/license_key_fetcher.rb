@@ -62,7 +62,7 @@ module ChefLicensing
       # licenses expiration check
       unless @license_keys.empty?
         return @license_keys if licenses_active?
-        raise LicenseKeyNotFetchedError if client_error
+        raise LicenseKeyNotFetchedError.new(client_error) if client_error
       end
 
       # Lowest priority is to interactively prompt if we have a TTY
@@ -79,6 +79,17 @@ module ChefLicensing
           @license_keys.concat(new_keys)
           new_keys.each { |key| file_fetcher.persist(key) }
           return license_keys
+        end
+      else
+        if (config[:start_interaction] == :prompt_license_about_to_expire)
+          logger.warn "Your trial license is going to expire tomorrow."
+        elsif config[:start_interaction] == :prompt_license_expired
+          if have_grace?
+            logger.error "Your license has been expired."
+          else
+            logger.error "Your license has been expired."
+            raise LicenseKeyNotFetchedError.new("License has been expired.")
+          end
         end
       end
 
