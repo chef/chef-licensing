@@ -21,7 +21,7 @@ interactions:
     paths: [ask_if_user_has_renewed_license_id]
 
   prompt_license_about_to_expire:
-    messages: "! [WARNING] Your trial license is going to expire tomorrow."
+    messages: "! [WARNING] Your license is going to expire tomorrow."
     prompt_type: "warn"
     paths: [ask_if_user_has_renewed_license_id]
 
