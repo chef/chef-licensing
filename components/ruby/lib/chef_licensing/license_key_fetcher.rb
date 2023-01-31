@@ -82,12 +82,12 @@ module ChefLicensing
         end
       else
         if (config[:start_interaction] == :prompt_license_about_to_expire)
-          logger.warn "Your trial license is going to expire tomorrow."
+          logger.warn "Your #{client.license_type} license is going to expire tomorrow."
         elsif config[:start_interaction] == :prompt_license_expired
           if have_grace?
-            logger.error "Your license has been expired."
+            logger.error "Your #{client.license_type} license has been expired."
           else
-            logger.error "Your license has been expired."
+            logger.error "Your #{client.license_type} license has been expired."
             raise LicenseKeyNotFetchedError.new("License has been expired.")
           end
         end
