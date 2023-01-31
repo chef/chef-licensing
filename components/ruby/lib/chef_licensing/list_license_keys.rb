@@ -19,7 +19,7 @@ module ChefLicensing
     def display
       licenses_metadata = fetch_licenses_metadata
 
-      output.puts "+------------ Licenses Information ------------+"
+      output.puts "+------------ License Information ------------+"
       output.puts "Total Licenses found: #{licenses_metadata.length}\n\n"
 
       licenses_metadata.each do |license|
@@ -76,10 +76,6 @@ module ChefLicensing
     end
 
     def fetch_license_keys(opts = {})
-      # Note: - Currently fetch only returns license keys from file stored on disk.
-      # - We are not yet covering the case where the disk is not writable.
-      # - Ability to fetch license_keys from opts makes testing easy and fast.
-      # TODO: Do we need to fetch license keys from env and arg as well?
       license_keys = opts[:license_keys] || ChefLicensing::LicenseKeyFetcher.fetch({ logger: cl_config.logger, dir: opts[:dir] })
 
       if license_keys.empty?
@@ -106,8 +102,8 @@ module ChefLicensing
 
       licenses_metadata
     rescue ChefLicensing::LicenseDescribeError => e
-      logger.debug "Error occured while fetching licenses information: #{e.message}"
-      output.puts "Error occured while fetching licenses information: #{e.message}"
+      logger.debug "Error occured while fetching license information: #{e.message}"
+      output.puts "Error occured while fetching license information: #{e.message}"
       # TODO: Exit with a non-zero status code
       exit
     end
