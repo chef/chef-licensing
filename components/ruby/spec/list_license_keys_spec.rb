@@ -133,7 +133,7 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
 
     it "displays the information about the license keys without errors" do
       expect { described_class.new(opts_for_llk).display }.to_not raise_error
-      expect(output_stream.string).to include("+------------ Licenses Information ------------+")
+      expect(output_stream.string).to include("+------------ License Information ------------+")
       expect(output_stream.string).to include("License Key     :")
       expect(output_stream.string).to include("Type            :")
     end
@@ -161,7 +161,7 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
 
     it "exits with error message about LicenseDescribeError" do
       expect { described_class.new(opts_for_llk).display }.to raise_error(SystemExit)
-      expect(output_stream.string).to include("Error occured while fetching licenses information: ChefLicensing::LicenseDescribeError")
+      expect(output_stream.string).to include("Error occured while fetching license information: ChefLicensing::LicenseDescribeError")
     end
   end
 
