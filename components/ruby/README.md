@@ -210,6 +210,73 @@ Docs TODO
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
+## Client API
+
+Client API contains details of a license and it's entitlement to several features, softwares and assets. It also contains information on expiration date , the status of license after expiration and the license usage details.
+
+### Usage
+
+```ruby
+require "chef_licensing"
+ChefLicensing.client(license_keys: [LIST_OF_LICENSE_KEYS])
+```
+
+or
+```ruby
+require "chef_licensing/api/client"
+ChefLicensing::Api::Client.info(options_hash)
+```
+
+where:
+- values possible of options_hash are `license_keys` and `restful_client`. Default value of restful_client is `ChefLicensing::RestfulClient::V1`.
+- ENV["CHEF_ENTITLEMENT_ID"] needs to be set to fetch value from `ChefLicensing::Config.instance.chef_entitlement_id` or needs to be passed through argument using `--chef-entitlement-id` in CLI.
+
+### Response
+
+Returns an object of license data model which uses JSON data returned from the API.
+
+API JSON response:
+```json
+{
+  "cache": {
+    "lastModified": "date",
+    "evaluatedOn": "date",
+    "expires": "date",
+    "cacheControl": "date"
+  },
+  "client": {
+    "license": "Trial|Event|Free|Commercial",
+    "status": "Active|Grace|Expired",
+    "changesTo": "Grace|Expired",
+    "changesOn": "date",
+    "changesIn": "xxxx (days)",
+    "usage": "Active|Grace|Exhausted",
+    "used": "number",
+    "limit": "number",
+    "measure": "number"
+},
+  "assets": [{"id": "guid", "name": "string"}],
+  "features": [ {"id": "guid", "name": "string"}],
+  "entitlement": {
+    "id": "guid",
+    "name": "string",
+    "start": "date",
+    "end": "date",
+    "licenses": "number",
+    "limits": [ {"measure": "string", "amount": "number"} ],
+    "entitled": "boolean"
+  }
+}
+```
+
+### Errors
+
+* in case of error in client API it would raise license client error.
+
+```ruby
+ChefLicensing::ClientError
+```
+
 
 ## Describe API for licenses metadata
 
