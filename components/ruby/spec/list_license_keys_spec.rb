@@ -52,7 +52,6 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
       }
     }
 
-
     let(:describe_api_data) {
       {
         "license" => [{
