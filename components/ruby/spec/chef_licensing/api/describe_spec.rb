@@ -1,8 +1,8 @@
 require "spec_helper"
-require "chef_licensing/api/license_describe"
+require "chef_licensing/api/describe"
 require "chef_licensing/config"
 
-RSpec.describe ChefLicensing::Api::LicenseDescribe do
+RSpec.describe ChefLicensing::Api::Describe do
 
   let(:license_keys) {
     ["tmns-bea68bbb-1e85-44ea-8b98-a654b011174b-4227"]
@@ -114,7 +114,7 @@ RSpec.describe ChefLicensing::Api::LicenseDescribe do
                      headers: { content_type: "application/json" })
       end
 
-      it { expect { subject }.to raise_error(ChefLicensing::LicenseDescribeError, error_message) }
+      it { expect { subject }.to raise_error(ChefLicensing::DescribeError, error_message) }
     end
   end
 end

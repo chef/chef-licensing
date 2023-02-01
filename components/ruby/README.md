@@ -218,14 +218,8 @@ Describe API contains details of list of licenses and their entitlements to seve
 ### Usage
 
 ```ruby
-require "chef_licensing"
-ChefLicensing.licenses_metadata(license_keys: [LIST_OF_LICENSE_KEYS])
-```
-or
-
-```ruby
-require "chef_licensing/api/license_describe"
-ChefLicensing::Api::LicenseDescribe.list(options_hash)
+require "chef_licensing/api/describe"
+ChefLicensing::Api::Describe.list(options_hash)
 ```
 
 where:
@@ -320,7 +314,7 @@ API JSON response:
 * in case of error in describe API it would raise license describe error.
 
 ```ruby
-ChefLicensing::LicenseDescribeError
+ChefLicensing::DescribeError
 ```
 
 # TUI Engine

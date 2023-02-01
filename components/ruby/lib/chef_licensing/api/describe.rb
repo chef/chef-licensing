@@ -1,12 +1,12 @@
 require_relative "../restful_client/v1"
-require_relative "../exceptions/license_describe_error"
+require_relative "../exceptions/describe_error"
 require_relative "../license"
 require_relative "../config"
 require "ostruct" unless defined?(OpenStruct)
 
 module ChefLicensing
   module Api
-    class LicenseDescribe
+    class Describe
       attr_reader :license_keys
 
       class << self
@@ -46,7 +46,7 @@ module ChefLicensing
           # returns list of license data model object
           list_of_licenses
         else
-          raise(ChefLicensing::LicenseDescribeError, response.message)
+          raise(ChefLicensing::DescribeError, response.message)
         end
       end
 
