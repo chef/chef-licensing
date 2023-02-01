@@ -3,6 +3,8 @@ require "chef_licensing/api/license_feature_entitlement"
 require "chef_licensing/license_key_fetcher"
 require "chef_licensing/config"
 require "chef_licensing/api/license_software_entitlement"
+require "chef_licensing/api/describe"
+require "chef_licensing/list_license_keys"
 require "chef_licensing/api/client"
 
 module ChefLicensing
@@ -18,6 +20,10 @@ module ChefLicensing
     # @note no in-memory caching of the licenses so that it fetches updated licenses always
     def license_keys
       ChefLicensing::LicenseKeyFetcher.fetch_and_persist
+    end
+
+    def list_license_keys_info(opts = {})
+      ChefLicensing::ListLicenseKeys.display(opts)
     end
 
     def client(opts = {})

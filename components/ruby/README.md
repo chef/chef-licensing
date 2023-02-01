@@ -202,6 +202,51 @@ ChefLicensing::InvalidLicense
 ChefLicensing::InvalidEntitlement
 ```
 
+## List Licenses
+Obtain the information about the licenses and its associated values.
+
+```ruby
+require "chef_licensing"
+ChefLicensing.list_license_keys_info
+```
+
+A simple output on calling `list_license_keys_info`
+```
++---------- License Keys Information ----------+
+Total License Keys found: 1
+
+License Key     : guid
+Type            : testing
+Status          : active
+Expiration Date : 2023-12-02
+
+Software Entitlements
+ID       : guid
+Name     : testing
+Status   : expired
+Entitled : true
+
+Asset Entitlements
+ID       : guid
+Name     : testing
+Status   : expired
+Entitled : true
+
+Feature Entitlements
+ID       : guid
+Name     : testing
+Status   : expired
+Entitled : true
+
+License Limits
+Usage Status  : Active
+Usage Limit   : 2
+Usage Measure : 2
+Used          : 2
+Software      : 
++----------------------------------------------+
+```
+
 ## Usage
 
 Docs TODO
