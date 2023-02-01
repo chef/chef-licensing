@@ -81,7 +81,7 @@ module ChefLicensing
           return license_keys
         end
       else
-        if (config[:start_interaction] == :prompt_license_about_to_expire)
+        if config[:start_interaction] == :prompt_license_about_to_expire
           logger.warn "Your #{client.license_type} license is going to expire tomorrow."
         elsif config[:start_interaction] == :prompt_license_expired
           if have_grace?
