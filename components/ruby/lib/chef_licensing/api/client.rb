@@ -1,16 +1,16 @@
 require_relative "../restful_client/v1"
-require_relative "../exceptions/license_client_error"
+require_relative "../exceptions/client_error"
 require_relative "../license"
 require_relative "../config"
 
 module ChefLicensing
   module Api
-    class LicenseClient
+    class Client
       attr_reader :license_keys, :entitlement_id
 
       class << self
-        def client(opts = {})
-          new(opts).client
+        def info(opts = {})
+          new(opts).info
         end
       end
 
@@ -20,7 +20,7 @@ module ChefLicensing
         @restful_client = opts[:restful_client] ? opts[:restful_client].new(cl_config: cl_config) : ChefLicensing::RestfulClient::V1.new(cl_config: cl_config)
       end
 
-      def client
+      def info
         response = restful_client.client(license_keys: license_keys.join(","), entitlement_id: cl_config.chef_entitlement_id)
         if response.data
           ChefLicensing::License.new(
@@ -29,7 +29,7 @@ module ChefLicensing
             cl_config: cl_config
           )
         else
-          raise(ChefLicensing::LicenseClientError, response.message)
+          raise(ChefLicensing::ClientError, response.message)
         end
       end
 

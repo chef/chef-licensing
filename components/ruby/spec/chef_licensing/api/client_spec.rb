@@ -1,8 +1,8 @@
 require "spec_helper"
-require "chef_licensing/api/license_client"
+require "chef_licensing/api/client"
 require "chef_licensing/config"
 
-RSpec.describe ChefLicensing::Api::LicenseClient do
+RSpec.describe ChefLicensing::Api::Client do
 
   let(:license_keys) {
     ["tmns-bea68bbb-1e85-44ea-8b98-a654b011174b-4227"]
@@ -56,9 +56,9 @@ RSpec.describe ChefLicensing::Api::LicenseClient do
     }
   }
 
-  subject { described_class.client(license_keys: license_keys, entitlement_id: config.chef_entitlement_id, cl_config: config) }
+  subject { described_class.info(license_keys: license_keys, entitlement_id: config.chef_entitlement_id, cl_config: config) }
 
-  describe ".client" do
+  describe ".info" do
     before do
       stub_request(:get, "#{config.license_server_url}/client")
         .with(query: { licenseId: license_keys.join(","), entitlementId: config.chef_entitlement_id })
@@ -76,7 +76,7 @@ RSpec.describe ChefLicensing::Api::LicenseClient do
                      headers: { content_type: "application/json" })
       end
 
-      it { expect { subject }.to raise_error(ChefLicensing::LicenseClientError, error_message) }
+      it { expect { subject }.to raise_error(ChefLicensing::ClientError, error_message) }
     end
   end
 end

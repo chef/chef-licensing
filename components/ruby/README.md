@@ -223,8 +223,8 @@ ChefLicensing.client(license_keys: [LIST_OF_LICENSE_KEYS])
 
 or
 ```ruby
-require "chef_licensing/api/license_client"
-ChefLicensing::Api::LicenseClient.client(options_hash)
+require "chef_licensing/api/client"
+ChefLicensing::Api::Client.info(options_hash)
 ```
 
 where:
@@ -274,7 +274,7 @@ API JSON response:
 * in case of error in client API it would raise license client error.
 
 ```ruby
-ChefLicensing::LicenseClientError
+ChefLicensing::ClientError
 ```
 
 

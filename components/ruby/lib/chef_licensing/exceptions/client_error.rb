@@ -1,7 +1,7 @@
 require_relative "error"
 
 module ChefLicensing
-  class LicenseClientError < Error
+  class ClientError < Error
     def message
       super || "License Client API failure"
     end

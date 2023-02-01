@@ -3,7 +3,7 @@ require "chef_licensing/api/license_feature_entitlement"
 require "chef_licensing/license_key_fetcher"
 require "chef_licensing/config"
 require "chef_licensing/api/license_software_entitlement"
-require "chef_licensing/api/license_client"
+require "chef_licensing/api/client"
 
 module ChefLicensing
   class << self
@@ -21,7 +21,7 @@ module ChefLicensing
     end
 
     def client(opts = {})
-      @license ||= ChefLicensing::Api::LicenseClient.client(opts)
+      @license ||= ChefLicensing::Api::Client.info(opts)
     end
   end
 end
