@@ -211,6 +211,112 @@ Docs TODO
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 
+## Describe API for licenses metadata
+
+Describe API contains details of list of licenses and their entitlements to several features, softwares, assets and the usage limits for each license.
+
+### Usage
+
+```ruby
+require "chef_licensing/api/describe"
+ChefLicensing::Api::Describe.list(options_hash)
+```
+
+where:
+
+- values possible of options_hash are `license_keys` and `restful_client`. Default value of restful_client is `ChefLicensing::RestfulClient::V1`.
+- ENV["CHEF_ENTITLEMENT_ID"] needs to be set to fetch value from `ChefLicensing::Config.instance.chef_entitlement_id` or needs to be passed through argument using `--chef-entitlement-id` in CLI.
+
+### Response
+
+Returns a list of objects of license data model which uses JSON data returned from the API.
+
+API JSON response:
+
+```json
+{
+  "license": [{
+    "licenseKey": "guid",
+    "serialNumber": "testing",
+    "name": "testing",
+    "status": "active",
+    "start": "2022-12-02",
+    "end": "2023-12-02",
+    "limits": [
+        {
+        "testing": "software",
+          "id": "guid",
+          "amount": 2,
+          "measure": 2,
+          "used": 2,
+          "status": "Active",
+        },
+      ],
+    },
+  ],
+  "Assets": [
+    {
+      "id": "guid",
+      "name": "testing",
+      "entitled": true,
+      "from": [
+        {
+            "license": "guid",
+            "status": "expired",
+        },
+      ],
+    }
+  ],
+  "Software": [
+    {
+      "id": "guid",
+      "name": "testing",
+      "entitled": true,
+      "from": [
+        {
+            "license": "guid",
+            "status": "expired",
+        },
+      ],
+    },
+  ],
+  "Features": [
+    {
+      "id": "guid",
+      "name": "testing",
+      "entitled": true,
+      "from": [
+        {
+            "license": "guid",
+            "status": "expired",
+        },
+      ],
+    },
+  ],
+  "Services": [
+    {
+      "id": "guid",
+      "name": "testing",
+      "entitled": true,
+      "from": [
+        {
+            "license": "guid",
+            "status": "expired",
+        },
+      ],
+    },
+  ],
+}
+```
+
+### Errors
+
+* in case of error in describe API it would raise license describe error.
+
+```ruby
+ChefLicensing::DescribeError
+```
+
 # TUI Engine
 
 TUI Engine helps to build a text user interface considering each step involved in the text user interface as interaction.

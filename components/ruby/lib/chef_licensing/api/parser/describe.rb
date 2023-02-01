@@ -19,7 +19,7 @@ module ChefLicensing
         end
 
         def parse_license_type
-          license_data.name
+          license_data.licenseType
         end
 
         def parse_status

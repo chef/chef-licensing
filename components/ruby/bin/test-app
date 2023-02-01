@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require "bundler/setup"
+require "chef_licensing"
 require "chef_licensing/license_key_fetcher"
 require "chef_licensing/air_gap_detection"
 require "logger"
@@ -15,5 +16,4 @@ ChefLicensing::LicenseKeyFetcher.fetch_and_persist(logger: logger).each do |lice
   puts "License Key: #{license_key}"
 end
 
-# byebug
-puts "Airgap is " + (ChefLicensing.air_gap_detected? ? "true" : "false")
+puts "Airgap is " + (ChefLicensing.air_gap_detected? ? true : false)
