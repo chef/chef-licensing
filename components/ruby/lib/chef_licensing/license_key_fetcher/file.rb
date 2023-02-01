@@ -16,7 +16,6 @@ module ChefLicensing
 
       attr_reader :logger, :contents, :location
       attr_accessor :local_dir # Optional local path to use to seek
-      attr_accessor :invalid_keys_not_persisted
 
       def initialize(opts)
         @opts = opts
@@ -40,20 +39,11 @@ module ChefLicensing
 
       def validate_and_persist(license_key, cl_config: nil)
         is_valid = validate_license_key(license_key, cl_config: cl_config)
-        if is_valid
-          persist(license_key)
-        else
-          self.invalid_keys_not_persisted = true
-        end
+        persist(license_key) if is_valid
       end
 
       def validate_license_key(license_key, cl_config: nil)
-        is_valid = ChefLicensing::LicenseKeyValidator.validate!(license_key, cl_config: cl_config)
-        is_valid
-      rescue ChefLicensing::InvalidLicense => e
-        error_message = e.message || "Something went wrong while validating the license"
-        puts "\n- [Error] License validation failed: #{error_message}"
-        false
+        ChefLicensing::LicenseKeyValidator.validate!(license_key, cl_config: cl_config)
       end
 
       # Writes a license_id file to disk in the location specified,
