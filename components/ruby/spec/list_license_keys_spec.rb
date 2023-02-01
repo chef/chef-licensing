@@ -159,9 +159,9 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
                    headers: { content_type: "application/json" })
     end
 
-    it "exits with error message about LicenseDescribeError" do
+    it "exits with error message about DescribeError" do
       expect { described_class.new(opts_for_llk).display }.to raise_error(SystemExit)
-      expect(output_stream.string).to include("Error occured while fetching license information: ChefLicensing::LicenseDescribeError")
+      expect(output_stream.string).to include("Error occured while fetching license information: ChefLicensing::DescribeError")
     end
   end
 

@@ -1,6 +1,6 @@
 require_relative "license_key_fetcher"
-require_relative "api/license_describe"
-require_relative "exceptions/license_describe_error"
+require_relative "api/describe"
+require_relative "exceptions/describe_error"
 require "pastel" unless defined?(Pastel)
 module ChefLicensing
   class ListLicenseKeys
@@ -94,14 +94,14 @@ module ChefLicensing
     end
 
     def fetch_licenses_metadata
-      licenses_metadata = ChefLicensing::Api::LicenseDescribe.list({
+      licenses_metadata = ChefLicensing::Api::Describe.list({
         license_keys: license_keys,
         cl_config: cl_config,
       })
       logger.debug "License metadata fetched from server: #{licenses_metadata}"
 
       licenses_metadata
-    rescue ChefLicensing::LicenseDescribeError => e
+    rescue ChefLicensing::DescribeError => e
       logger.debug "Error occured while fetching license information: #{e.message}"
       output.puts "Error occured while fetching license information: #{e.message}"
       # TODO: Exit with a non-zero status code

@@ -3,7 +3,7 @@ require "chef_licensing/api/license_feature_entitlement"
 require "chef_licensing/license_key_fetcher"
 require "chef_licensing/config"
 require "chef_licensing/api/license_software_entitlement"
-require "chef_licensing/api/license_describe"
+require "chef_licensing/api/describe"
 require "chef_licensing/list_license_keys"
 require "chef_licensing/api/client"
 
