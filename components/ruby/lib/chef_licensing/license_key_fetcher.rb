@@ -7,7 +7,6 @@ require_relative "license_key_fetcher/argument"
 require_relative "license_key_fetcher/environment"
 require_relative "license_key_fetcher/file"
 require_relative "license_key_fetcher/prompt"
-require_relative "exceptions/client_error"
 require "chef_licensing"
 
 # LicenseKeyFetcher allows us to inspect obtain the license Key from the user in a variety of ways.
@@ -62,7 +61,6 @@ module ChefLicensing
       # licenses expiration check
       unless @license_keys.empty?
         return @license_keys if licenses_active?
-        raise LicenseKeyNotFetchedError.new(client_error) if client_error
       end
 
       # Lowest priority is to interactively prompt if we have a TTY
@@ -113,8 +111,7 @@ module ChefLicensing
 
     private
 
-    attr_reader :cl_config
-    attr_accessor :client, :client_error
+    attr_accessor :client
     attr_reader :cl_config
 
     def fetch_from_arguments
@@ -157,10 +154,6 @@ module ChefLicensing
       else
         true
       end
-    rescue ChefLicensing::ClientError => e
-      self.client_error = e.message
-      puts "\n- [Error] Something went wrong: #{client_error}"
-      false
     end
 
     def have_grace?
