@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.3.24 -->
-## [0.3.24](https://github.com/chef/chef-licensing/tree/0.3.24) (2023-02-01)
+<!-- latest_release 0.3.25 -->
+## [0.3.25](https://github.com/chef/chef-licensing/tree/0.3.25) (2023-02-03)
 
 #### Merged Pull Requests
-- CFINSPEC-505: Command to list licenses [#48](https://github.com/chef/chef-licensing/pull/48) ([ahasunos](https://github.com/ahasunos))
+- CFINSPEC-559 License key Validation for argument and environment licenses [#51](https://github.com/chef/chef-licensing/pull/51) ([Nik08](https://github.com/Nik08))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CFINSPEC-559 License key Validation for argument and environment licenses [#51](https://github.com/chef/chef-licensing/pull/51) ([Nik08](https://github.com/Nik08)) <!-- 0.3.25 -->
 - CFINSPEC-505: Command to list licenses [#48](https://github.com/chef/chef-licensing/pull/48) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.24 -->
 - CFINSPEC-539 Client API integration [#46](https://github.com/chef/chef-licensing/pull/46) ([Nik08](https://github.com/Nik08)) <!-- 0.3.23 -->
 - CFINSPEC-512 Describe API implementation [#47](https://github.com/chef/chef-licensing/pull/47) ([Nik08](https://github.com/Nik08)) <!-- 0.3.22 -->
