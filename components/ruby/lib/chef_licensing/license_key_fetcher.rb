@@ -28,6 +28,8 @@ module ChefLicensing
       argv = opts[:argv] || ARGV
       env = opts[:env] || ENV
 
+      @cl_config = opts[:cl_config] || ChefLicensing::Config.instance
+
       # The various things that have a say in fetching the license Key.
       @arg_fetcher = LicenseKeyFetcher::Argument.new(argv)
       @env_fetcher = LicenseKeyFetcher::Environment.new(env)
@@ -46,7 +48,8 @@ module ChefLicensing
       new_keys = arg_fetcher.fetch
       unless new_keys.empty?
         @license_keys.concat(new_keys)
-        file_fetcher.persist(new_keys.first)
+        file_fetcher.validate_and_persist(new_keys.first, cl_config: cl_config)
+        return new_keys
       end
 
       # If a fetch is made by ENV, persist and return
@@ -54,7 +57,8 @@ module ChefLicensing
       new_keys = env_fetcher.fetch
       unless new_keys.empty?
         @license_keys.concat(new_keys)
-        file_fetcher.persist(new_keys.first)
+        file_fetcher.validate_and_persist(new_keys.first, cl_config: cl_config)
+        return new_keys
       end
 
       # If it has previously been fetched and persisted, read from disk and set runtime decision
@@ -91,5 +95,9 @@ module ChefLicensing
     def self.fetch(opts = {})
       new(opts).fetch
     end
+
+    private
+
+    attr_reader :cl_config
   end
 end
