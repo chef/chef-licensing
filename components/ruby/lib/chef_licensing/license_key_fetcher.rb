@@ -1,7 +1,5 @@
 require "chef-config/path_helper"
 require "chef-config/windows"
-require "logger"
-
 require_relative "config"
 require_relative "license_key_fetcher/argument"
 require_relative "license_key_fetcher/environment"
@@ -17,9 +15,7 @@ module ChefLicensing
     attr_reader :config, :license_keys, :arg_fetcher, :env_fetcher, :file_fetcher, :prompt_fetcher, :logger
     def initialize(opts = {})
       @config = opts
-      @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
       @config[:output] ||= STDOUT
-      config[:logger] = logger
       config[:dir] = opts[:dir]
 
       # This is the whole point - to obtain the license keys.
@@ -29,6 +25,8 @@ module ChefLicensing
       env = opts[:env] || ENV
 
       @cl_config = opts[:cl_config] || ChefLicensing::Config.instance
+      @logger = cl_config.logger
+      config[:logger] = logger
 
       # The various things that have a say in fetching the license Key.
       @arg_fetcher = LicenseKeyFetcher::Argument.new(argv)

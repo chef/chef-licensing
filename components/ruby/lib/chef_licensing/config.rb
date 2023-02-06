@@ -15,6 +15,7 @@ module ChefLicensing
     def initialize(opts = {})
       @arg_fetcher = ChefLicensing::ArgFetcher.new(opts[:cli_args] || ARGV)
       @env_fetcher = ChefLicensing::EnvFetcher.new(opts[:env_vars] || ENV)
+      @output = opts[:output] || set_output_stream
       @logger = opts[:logger] || set_default_logger
       @license_server_api_key = set_license_server_api_key
       @license_server_url = set_license_server_url
@@ -61,9 +62,16 @@ module ChefLicensing
     end
 
     def set_default_logger
-      logger = Logger.new(STDERR)
-      logger.level = Logger::INFO
+      logger = Logger.new(@output)
+      logger_level = @arg_fetcher.fetch_value("--chef-license-logger-level", :string) || @env_fetcher.fetch_value("CHEF_LICENSE_LOGGER_LEVEL", :string)
+      logger.level = logger_level ? Logger.const_get(logger_level.upcase) : Logger::INFO
       logger
+    end
+
+    def set_output_stream
+      # TODO: Add support for output stream
+      # output_stream 0= @arg_fetcher.fetch_value("--chef-license-output", :string) || @env_fetcher.fetch_value("CHEF_LICENSE_OUTPUT", :string)
+      STDOUT
     end
   end
 end
