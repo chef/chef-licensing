@@ -5,10 +5,11 @@ module ChefLicensing
     class Ping
 
       # If status is true, airgap mode is on - we are isolated.
-      attr_reader :url, :status
+      attr_reader :url, :status, :logger
 
-      def initialize(base_url_string)
+      def initialize(base_url_string, logger)
         @url = URI(base_url_string + "/v1/version")
+        @logger = logger
       end
 
       # Ping Airgap is "detected" if the host is unreachable in an HTTP sense.
@@ -24,8 +25,8 @@ module ChefLicensing
         end
         @status
 
-      rescue #  => exception
-        # TODO: Wish I had a logger here for exception.message
+      rescue => e
+        logger.debug("Airgap detection ping failed: #{e.message}")
         @status = true
       end
     end

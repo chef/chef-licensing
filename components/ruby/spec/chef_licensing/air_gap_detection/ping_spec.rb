@@ -1,11 +1,14 @@
 require "chef_licensing/air_gap_detection/ping"
 require_relative "../../spec_helper"
+require "stringio"
 
 RSpec.describe ChefLicensing::AirGapDetection::Ping do
 
+  let(:logger) { Logger.new(StringIO.new) }
+
   describe "#detected?" do
     context "when the public licensing server is reachable" do
-      let(:ping_air_gap) { described_class.new("https://localhost-license-server/License") }
+      let(:ping_air_gap) { described_class.new("https://localhost-license-server/License", logger) }
 
       # Remember, "airgap disabled means online, reachable"
       # so ping detected? => false
@@ -17,7 +20,7 @@ RSpec.describe ChefLicensing::AirGapDetection::Ping do
     end
 
     context "when the public licensing server is not reachable" do
-      let(:ping_air_gap) { described_class.new("https://wrong-url.co") }
+      let(:ping_air_gap) { described_class.new("https://wrong-url.co", logger) }
 
       # Remember, "airgap detected means isolated, unreachable"
       # so ping detected? => true

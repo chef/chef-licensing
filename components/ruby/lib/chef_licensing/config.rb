@@ -37,7 +37,7 @@ module ChefLicensing
       return @air_gap_status unless @air_gap_status.nil?
 
       # TODO: Find a better way to do ping check
-      ping_check = AirGapDetection::Ping.new(license_server_url)
+      ping_check = AirGapDetection::Ping.new(license_server_url, @logger)
       @air_gap_status = arg_fetcher.fetch_value("--airgap", :boolean) ||
         env_fetcher.fetch_value("CHEF_AIR_GAP", :boolean) ||
         ping_check.detected?
