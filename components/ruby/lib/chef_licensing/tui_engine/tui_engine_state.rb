@@ -10,7 +10,8 @@ module ChefLicensing
 
       def initialize(opts = {})
         @input = {}
-        @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
+        @cl_config = opts[:cl_config] || ChefLicensing::Config.instance
+        @logger = cl_config.logger
         @prompt = ChefLicensing::TUIEngine::TUIPrompt.new(opts)
         @tui_actions = ChefLicensing::TUIEngine::TUIActions.new
       end
@@ -41,6 +42,8 @@ module ChefLicensing
       end
 
       private
+
+      attr_reader :cl_config
 
       def erb_result(message)
         ERB.new(message).result_with_hash(input: input)
