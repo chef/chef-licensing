@@ -13,7 +13,8 @@ module ChefLicensing
 
     def initialize(opts = {})
       @opts = opts
-      @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
+      @cl_config = opts[:cl_config] || ChefLicensing::Config.instance
+      @logger = cl_config.logger
       @tui_interactions = {}
       initialization_of_engine(opts[:interaction_file])
     end
@@ -40,6 +41,8 @@ module ChefLicensing
     end
 
     private
+
+    attr_reader :cl_config
 
     def initialization_of_engine(interaction_file)
       raise ChefLicensing::TUIEngine::MissingInteractionFile, "No interaction file found. Please provide a valid file path to continue." unless interaction_file
