@@ -1,13 +1,22 @@
 require "chef_licensing/tui_engine/tui_prompt"
+require "chef_licensing/config"
 require "spec_helper"
 
 RSpec.describe ChefLicensing::TUIEngine::TUIPrompt do
+
+  let(:opts) {
+    {
+      logger: Logger.new(StringIO.new),
+    }
+  }
+
+  let(:cl_config) { ChefLicensing::Config.clone.instance(opts) }
 
   let(:config) {
     {
       output: STDOUT,
       input: STDIN,
-      logger: Logger.new(STDOUT),
+      cl_config: cl_config,
     }
   }
 
@@ -23,7 +32,7 @@ RSpec.describe ChefLicensing::TUIEngine::TUIPrompt do
     end
 
     it "should have logger field" do
-      expect(tui_prompt.logger).to eq(config[:logger])
+      expect(tui_prompt.logger).to eq(opts[:logger])
     end
 
     it "should have tty_prompt field" do

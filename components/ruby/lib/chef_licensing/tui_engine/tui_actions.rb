@@ -4,6 +4,7 @@ require_relative "../exceptions/invalid_license"
 require_relative "../exceptions/license_generation_failed"
 require_relative "../exceptions/license_generation_rejected"
 require_relative "../license_key_fetcher/base"
+require_relative "../config"
 
 module ChefLicensing
   class TUIEngine
@@ -12,10 +13,10 @@ module ChefLicensing
     class TUIActions < LicenseKeyFetcher::Base
 
       attr_accessor :logger, :output, :license_id, :error_msg, :rejection_msg, :invalid_license_msg
-      attr_reader :cl_config # TODO: Should we make this private?
-      def initialize(opts = {}, cl_config: nil)
-        @cl_config = cl_config
-        @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
+
+      def initialize(opts = {})
+        @cl_config = opts[:cl_config] || ChefLicensing::Config.instance
+        @logger = @cl_config.logger
         @output = opts[:output] || STDOUT
       end
 
@@ -155,6 +156,10 @@ module ChefLicensing
       def fetch_invalid_license_msg(input)
         invalid_license_msg
       end
+
+      private
+
+      attr_reader :cl_config
     end
   end
 end

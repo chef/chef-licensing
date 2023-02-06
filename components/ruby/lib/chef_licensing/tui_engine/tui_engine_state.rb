@@ -1,7 +1,7 @@
-require "logger"
 require_relative "tui_prompt"
 require_relative "tui_actions"
 require "erb" unless defined?(Erb)
+require_relative "../config"
 
 module ChefLicensing
   class TUIEngine
@@ -13,7 +13,7 @@ module ChefLicensing
         @cl_config = opts[:cl_config] || ChefLicensing::Config.instance
         @logger = cl_config.logger
         @prompt = ChefLicensing::TUIEngine::TUIPrompt.new(opts)
-        @tui_actions = ChefLicensing::TUIEngine::TUIActions.new
+        @tui_actions = ChefLicensing::TUIEngine::TUIActions.new(opts)
       end
 
       def default_action(interaction)

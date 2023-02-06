@@ -3,6 +3,7 @@ require_relative "tui_interaction"
 require_relative "tui_engine_state"
 require_relative "tui_prompt"
 require_relative "tui_actions"
+require_relative "../config"
 
 module ChefLicensing
   class TUIEngine
@@ -132,7 +133,7 @@ module ChefLicensing
       return @prompt_methods.include?(val.to_sym) if @prompt_methods
 
       # Find the getter methods of TUIPrompt class
-      prompt_getter = ChefLicensing::TUIEngine::TUIPrompt.new.instance_variables.map { |var| var.to_s.delete("@").to_sym }
+      prompt_getter = ChefLicensing::TUIEngine::TUIPrompt.new(@opts).instance_variables.map { |var| var.to_s.delete("@").to_sym }
 
       #  Find the setter methods of TUIPrompt class
       prompt_setter = prompt_getter.map { |attr| "#{attr}=".to_sym }
@@ -147,7 +148,7 @@ module ChefLicensing
       return @action_methods.include?(val.to_sym) if @action_methods
 
       # Find the getter methods of TUIActions class
-      action_getter = ChefLicensing::TUIEngine::TUIActions.new.instance_variables.map { |var| var.to_s.delete("@").to_sym }
+      action_getter = ChefLicensing::TUIEngine::TUIActions.new(@opts).instance_variables.map { |var| var.to_s.delete("@").to_sym }
 
       #  Find the setter methods of TUIActions class
       action_setter = action_getter.map { |attr| "#{attr}=".to_sym }

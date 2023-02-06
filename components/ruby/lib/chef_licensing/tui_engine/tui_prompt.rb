@@ -1,8 +1,8 @@
 require "timeout" unless defined?(Timeout)
 require "tty-prompt"
-require "logger"
 require_relative "tui_exceptions"
 require "erb" unless defined?(Erb)
+require_relative "../config"
 
 module ChefLicensing
   class TUIEngine
@@ -10,9 +10,10 @@ module ChefLicensing
       attr_accessor :output, :input, :logger, :tty_prompt
 
       def initialize(opts = {})
+        @cl_config = opts[:cl_config] || ChefLicensing::Config.instance
         @output = opts[:output] || STDOUT
         @input = opts[:input] || STDIN
-        @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
+        @logger = cl_config.logger
         @tty_prompt = TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit, output: output, input: input)
       end
 
@@ -86,6 +87,8 @@ module ChefLicensing
       end
 
       private
+
+      attr_reader :cl_config
 
       def timeout_helper(messages, prompt_method, prompt_attributes)
         prompt_attributes.transform_keys!(&:to_sym)
