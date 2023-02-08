@@ -41,21 +41,21 @@ To redirect the output stream to a buffer or file, pass the `--chef-license-stea
 Additional parameters is required to write to a file. Pass the file path using the `--chef-license-output-file` argument or set the file path in the `CHEF_LICENSE_OUTPUT_FILE` environment variable.
 
 #### Logger
-The logger can be configured to use different log levels, else it defaults to `INFO` level. The output stream for the logger is the same as output stream set for general outputs.
+The logger can be configured to use different log levels, else it defaults to `INFO` level. The output stream for the logger is the same as the output stream set for general outputs.
 
 To set the logger level, pass the valid ruby logger's level (example: `warn`, `info`, `debug`, `error` etc.) to the `--chef-license-logger-level` argument or set it in the `CHEF_LICENSE_LOGGER_LEVEL` environment variable.
 
 #### license server API key
-Currently the license server API key can be passed either in the argument of `--chef-license-server-api-key` or be set in the `CHEF_LICENSE_SERVER_API_KEY` environment variable.
+The license server API key can be passed either in the argument of `--chef-license-server-api-key` or be set in the `CHEF_LICENSE_SERVER_API_KEY` environment variable.
 
 #### license server URL
-Currently the license server URL can be passed either in the argument of `--chef-license-server` or be set in the `CHEF_LICENSE_SERVER` environment variable.
+The license server URL can be passed either in the argument of `--chef-license-server` or be set in the `CHEF_LICENSE_SERVER` environment variable.
 
 #### chef product name
-Currently the chef product name can be passed either in the argument of `--chef-product-name` or be set in the `CHEF_PRODUCT_NAME` environment variable.
+The chef product name can be passed either in the argument of `--chef-product-name` or be set in the `CHEF_PRODUCT_NAME` environment variable.
 
 #### chef entitlement id
-Currently the chef entitlement id can be passed either in the argument of `--chef-entitlement-id` or be set in the `CHEF_ENTITLEMENT_ID` environment variable.
+The chef entitlement id can be passed either in the argument of `--chef-entitlement-id` or be set in the `CHEF_ENTITLEMENT_ID` environment variable.
 
 #### air_gap_detected
 Detecting an air gap condition is needed so that the licensing system can detect when to operate in an offline mode.
@@ -83,7 +83,7 @@ cl_config = ChefLicensing::Config.instance
 ```
 
 ### Using the Configurations in tests
-Since, the `ChefLicensing::Config` is a singleton class, we need to clone the instance during test to create newer copies of the config for different tests.
+Since the `ChefLicensing::Config` is a singleton class, we need to clone the instance to create newer copies of the config for each tests.
 
 Example:
 
