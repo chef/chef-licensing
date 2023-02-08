@@ -10,6 +10,7 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
         "CHEF_LICENSE_SERVER_API_KEY" =>  "xDblv65Xt84wULmc8qTN78a3Dr2OuuKxa6GDvb67",
         "CHEF_PRODUCT_NAME" => "inspec",
         "CHEF_ENTITLEMENT_ID" => "testing_entitlement_id",
+        "CHEF_LICENSE_STEALTH_MODE" => "true",
       },
       logger: Logger.new(StringIO.new),
     }
@@ -35,7 +36,7 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
 
     it "exits with no information about licenses" do
       expect { described_class.new(opts_for_llk).display }.to raise_error(SystemExit)
-      expect(output_stream.string).to include("No license keys found on disk.")
+      expect(cl_config.output.string).to include("No license keys found on disk.")
     end
   end
 
@@ -132,9 +133,9 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
 
     it "displays the information about the license keys without errors" do
       expect { described_class.new(opts_for_llk).display }.to_not raise_error
-      expect(output_stream.string).to include("+------------ License Information ------------+")
-      expect(output_stream.string).to include("License Key     :")
-      expect(output_stream.string).to include("Type            :")
+      expect(cl_config.output.string).to include("+------------ License Information ------------+")
+      expect(cl_config.output.string).to include("License Key     :")
+      expect(cl_config.output.string).to include("Type            :")
     end
   end
 
@@ -160,7 +161,7 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
 
     it "exits with error message about DescribeError" do
       expect { described_class.new(opts_for_llk).display }.to raise_error(SystemExit)
-      expect(output_stream.string).to include("Error occured while fetching license information: ChefLicensing::DescribeError")
+      expect(cl_config.output.string).to include("Error occured while fetching license information: ChefLicensing::DescribeError")
     end
   end
 
@@ -176,7 +177,7 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
 
     it "exits with error message about LicenseKeyNotFetchedError" do
       expect { described_class.new(opts_for_llk).display }.to raise_error(SystemExit)
-      expect(output_stream.string).to include("Error occured while fetching license keys from disk")
+      expect(cl_config.output.string).to include("Error occured while fetching license keys from disk")
     end
   end
 end

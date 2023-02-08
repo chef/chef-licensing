@@ -15,7 +15,6 @@ module ChefLicensing
     attr_reader :config, :license_keys, :arg_fetcher, :env_fetcher, :file_fetcher, :prompt_fetcher, :logger
     def initialize(opts = {})
       @config = opts
-      @config[:output] ||= STDOUT
       config[:dir] = opts[:dir]
 
       # This is the whole point - to obtain the license keys.
@@ -26,6 +25,8 @@ module ChefLicensing
 
       @cl_config = opts[:cl_config] || ChefLicensing::Config.instance
       @logger = cl_config.logger
+      @config[:output] = cl_config.output
+
       config[:logger] = logger
 
       # The various things that have a say in fetching the license Key.

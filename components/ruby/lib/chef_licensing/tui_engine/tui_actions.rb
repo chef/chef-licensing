@@ -83,7 +83,7 @@ module ChefLicensing
       end
 
       def generate_free_license(input)
-        puts "License generation in progress..."
+        output.puts "License generation in progress..."
         license_id = ChefLicensing::LicenseKeyGenerator.generate_free_license!(
           first_name: input[:gather_user_first_name_for_license_generation],
           last_name: input[:gather_user_last_name_for_license_generation],

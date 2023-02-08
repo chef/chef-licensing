@@ -10,7 +10,7 @@ module ChefLicensing
   class Config
     include Singleton
 
-    attr_reader :license_server_url, :license_server_api_key, :logger, :air_gap_status, :arg_fetcher, :env_fetcher, :chef_product_name, :chef_entitlement_id
+    attr_reader :license_server_url, :license_server_api_key, :logger, :air_gap_status, :arg_fetcher, :env_fetcher, :chef_product_name, :chef_entitlement_id, :output
 
     def initialize(opts = {})
       @arg_fetcher = ChefLicensing::ArgFetcher.new(opts[:cli_args] || ARGV)
@@ -69,9 +69,17 @@ module ChefLicensing
     end
 
     def set_output_stream
-      # TODO: Add support for output stream
-      # output_stream 0= @arg_fetcher.fetch_value("--chef-license-output", :string) || @env_fetcher.fetch_value("CHEF_LICENSE_OUTPUT", :string)
-      STDOUT
+      # TODO: Improve the experience maybe?
+      # TODO: Improve the flag/arugment name
+
+      # Check the flag first if user wants to write to a file or to stdout
+      stealth_check = @arg_fetcher.fetch_value("--chef-license-stealth-mode", :boolean) || @env_fetcher.fetch_value("CHEF_LICENSE_STEALTH_MODE", :boolean)
+
+      return $stdout unless stealth_check
+
+      # If user wants to write to a file, check if the file path is provided
+      file_path = @arg_fetcher.fetch_value("--chef-license-output-file", :string) || @env_fetcher.fetch_value("CHEF_LICENSE_OUTPUT_FILE", :string)
+      file_path ? File.open(file_path, "a") : StringIO.new
     end
   end
 end

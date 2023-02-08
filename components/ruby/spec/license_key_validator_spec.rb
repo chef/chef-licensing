@@ -21,7 +21,7 @@ RSpec.describe ChefLicensing::LicenseKeyValidator do
 
   let(:config) { ChefLicensing::Config.clone.instance(opts) }
 
-  subject { described_class.validate!(license_key) }
+  subject { described_class.validate!(license_key, cl_config: config) }
 
   describe ".validate!" do
     before do

@@ -2,6 +2,8 @@ require_relative "license_key_fetcher"
 require_relative "api/describe"
 require_relative "exceptions/describe_error"
 require "pastel" unless defined?(Pastel)
+require_relative "config"
+
 module ChefLicensing
   class ListLicenseKeys
     def self.display(opts = {})
@@ -11,7 +13,7 @@ module ChefLicensing
     def initialize(opts = {})
       @cl_config = opts[:cl_config] || ChefLicensing::Config.instance
       @logger = cl_config.logger
-      @output = opts[:output] || STDOUT
+      @output = cl_config.output
       @pastel = Pastel.new
       @license_keys = fetch_license_keys(opts)
     end
@@ -65,7 +67,7 @@ module ChefLicensing
 
     def iterate_attributes(component, header)
       puts_bold header
-      puts "No #{header.downcase} found.\n\n" if component.empty?
+      output.puts "No #{header.downcase} found.\n\n" if component.empty?
       component.each do |attribute|
         display_info(attribute)
       end
@@ -76,7 +78,7 @@ module ChefLicensing
     end
 
     def fetch_license_keys(opts = {})
-      license_keys = opts[:license_keys] || ChefLicensing::LicenseKeyFetcher.fetch({ logger: cl_config.logger, dir: opts[:dir] })
+      license_keys = opts[:license_keys] || ChefLicensing::LicenseKeyFetcher.fetch({ logger: cl_config.logger, dir: opts[:dir], cl_config: cl_config })
 
       if license_keys.empty?
         logger.debug "No license keys found on disk."

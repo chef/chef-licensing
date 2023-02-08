@@ -11,6 +11,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
         "CHEF_LICENSE_SERVER_API_KEY" =>  "xDblv65Xt84wULmc8qTN78a3Dr2OuuKxa6GDvb67",
         "CHEF_PRODUCT_NAME" => "inspec",
         "CHEF_ENTITLEMENT_ID" => "3ff52c37-e41f-4f6c-ad4d-365192205968",
+        "CHEF_LICENSE_STEALTH_MODE" => "true",
       },
     }
   }
