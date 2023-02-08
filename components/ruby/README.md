@@ -20,19 +20,91 @@ TODO
 
 TODO
 
-## Air Gap Detection
+## Configurations of Chef Licensing
+ChefLicensing::Config class is a singleton class that helps to maintain the values for the configuration parameters to be used in Chef Licensing consistent throughout the running process. It sets the following configuration parameters from the values provided either in the CLI argument or environment:
+- output stream
+- logger
+- license server API key
+- license server URL
+- chef product name
+- chef entitlement id
 
+Additionally, it helps to check the air gap condition with the help of the air gap method.
+
+### Setting values for the Configurations
+
+#### Output stream
+The default output stream is `STDOUT` and no additional flags or environment variable is required. However, the output stream can be redirected to a `StringIO` buffer or a file.
+
+To redirect the output stream to a buffer or file, pass the `--chef-license-stealth-mode` in the argument or set the `CHEF_LICENSE_STEALTH_MODE` environment variable to 1.
+
+Additional parameters is required to write to a file. Pass the file path using the `--chef-license-output-file` argument or set the file path in the `CHEF_LICENSE_OUTPUT_FILE` environment variable.
+
+#### Logger
+The logger can be configured to use different log levels, else it defaults to `INFO` level. The output stream for the logger is the same as output stream set for general outputs.
+
+To set the logger level, pass the valid ruby logger's level (example: `warn`, `info`, `debug`, `error` etc.) to the `--chef-license-logger-level` argument or set it in the `CHEF_LICENSE_LOGGER_LEVEL` environment variable.
+
+#### license server API key
+Currently the license server API key can be passed either in the argument of `--chef-license-server-api-key` or be set in the `CHEF_LICENSE_SERVER_API_KEY` environment variable.
+
+#### license server URL
+Currently the license server URL can be passed either in the argument of `--chef-license-server` or be set in the `CHEF_LICENSE_SERVER` environment variable.
+
+#### chef product name
+Currently the chef product name can be passed either in the argument of `--chef-product-name` or be set in the `CHEF_PRODUCT_NAME` environment variable.
+
+#### chef entitlement id
+Currently the chef entitlement id can be passed either in the argument of `--chef-entitlement-id` or be set in the `CHEF_ENTITLEMENT_ID` environment variable.
+
+#### air_gap_detected
 Detecting an air gap condition is needed so that the licensing system can detect when to operate in an offline mode.
 
 Air gap detection may be specified by CLI argument, ENV variable, or by attempting to reach the licensing server through HTTP.
 
-### ChefLicensing.air_gap_detected?
+The main entry point to air gap detection is this function. Simply call it, and it will check for (in order) whether the `CHEF_AIR_GAP` env variable has been set, whether `--airgap` is present in ARGV, and finally whether the Licensing Server URL (its /v1/version endpoint) can be reached by HTTPS. The return value is a boolean, and is cached for the life of the process - airgap detection happens only once.
 
-The main entry point to air gap detection is this function. Simply call it, and it will check for (in order) whether the CHEF_AIR_GAP env variable has been set, whether `--airgap` is present in ARGV, and finally whether the Licensing Server URL (its /v1/version endpoint) can be reached by HTTPS. The return value is a boolean, and is cached for the life of the process - airgap detection happens only once.
+### Using the Configurations in the codebase
+To use the configurations in Chef Licensing:
 
-## TUI Engine
+```ruby
+require "chef_licensing/config"
 
-TODO
+cl_config = ChefLicensing::Config.instance
+
+# You can now use the cl_config instance to access
+# the different configuration values
+
+# Example:
+# cl_config.ouput
+# cl_config.logger
+# cl_config.license_server_url
+
+```
+
+### Using the Configurations in tests
+Since, the `ChefLicensing::Config` is a singleton class, we need to clone the instance during test to create newer copies of the config for different tests.
+
+Example:
+
+```ruby
+require "chef_licensing/config"
+
+# Set the arguments and environments specific to your tests
+let(:opts) {
+  {
+    cli_args: ["--airgap", "--chef-license-server-api-key", "s0m3r4nd0m4p1k3y"],
+    env_vars: {
+      "CHEF_LICENSE_SERVER" => "https://license.chef.io",
+    },
+    logger: Logger.new(STDERR),
+  }
+}
+
+let(:cl_config) { ChefLicensing::Config.clone.instance(opts) }
+
+# You can use the cl_config instance now for your tests
+```
 
 ## Licensing Server API
 
