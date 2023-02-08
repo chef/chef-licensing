@@ -18,10 +18,11 @@ module ChefLicensing
         @license_keys = opts[:license_keys] || raise(ArgumentError, "Missing Params: `license_keys`")
         @cl_config = opts[:cl_config] || ChefLicensing::Config.instance
         @restful_client = opts[:restful_client] ? opts[:restful_client].new(cl_config: cl_config) : ChefLicensing::RestfulClient::V1.new(cl_config: cl_config)
+        @entitlement_id = cl_config.chef_entitlement_id || raise(ArgumentError, "Missing Params: `entitlement_id`")
       end
 
       def info
-        response = restful_client.client(license_keys: license_keys.join(","), entitlement_id: cl_config.chef_entitlement_id)
+        response = restful_client.client(license_keys: license_keys.join(","), entitlement_id: entitlement_id)
         if response.data
           ChefLicensing::License.new(
             data: response.data,
