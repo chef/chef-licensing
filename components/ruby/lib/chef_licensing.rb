@@ -5,6 +5,7 @@ require "chef_licensing/api/describe"
 require "chef_licensing/list_license_keys"
 require "chef_licensing/exceptions/feature_not_entitled"
 require "chef_licensing/exceptions/software_not_entitled"
+require "chef_licensing/exceptions/client_error"
 require "chef_licensing/api/client"
 
 module ChefLicensing
@@ -21,12 +22,15 @@ module ChefLicensing
     end
 
     def check_software_entitlement!
-      # Checking for software entitlements presence
-      license = client(license_keys: license_keys)
-      if license.software_entitlements.empty?
+      # If API call is not breaking that means license is entitled.
+      client(license_keys: license_keys)
+      true
+    rescue ChefLicensing::ClientError => e
+      # Checking specific text phrase for entitlement error
+      if e.message.match?(/not entitled/)
         raise(ChefLicensing::SoftwareNotEntitled)
       else
-        true
+        raise
       end
     end
 
