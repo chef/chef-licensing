@@ -16,7 +16,7 @@ module ChefLicensing
       end
 
       def license_server_api_key
-        @license_server_api_key ||= ChefLicensing::ArgFetcher.fetch_value("--chef-license-api-key", :string) || ChefLicensing::EnvFetcher.fetch_value("CHEF_LICENSE_API_KEY", :string)
+        @license_server_api_key ||= ChefLicensing::ArgFetcher.fetch_value("--chef-license-server-api-key", :string) || ChefLicensing::EnvFetcher.fetch_value("CHEF_LICENSE_SERVER_API_KEY", :string)
       end
 
       def air_gap_detected?
