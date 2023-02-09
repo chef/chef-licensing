@@ -1,23 +1,17 @@
 require "spec_helper"
-require_relative "../lib/chef_licensing/config"
+require_relative "../lib/chef_licensing"
 require "tmpdir"
 
 RSpec.describe ChefLicensing::LicenseKeyFetcher do
 
-  let(:env_opts) {
-    {
-      env_vars: {
-        "CHEF_LICENSE_SERVER" => "http://localhost-license-server/License",
-        "CHEF_LICENSE_SERVER_API_KEY" =>  "xDblv65Xt84wULmc8qTN78a3Dr2OuuKxa6GDvb67",
-        "CHEF_PRODUCT_NAME" => "inspec",
-        "CHEF_ENTITLEMENT_ID" => "3ff52c37-e41f-4f6c-ad4d-365192205968",
-      },
-    }
-  }
-
-  let(:config) {
-    ChefLicensing::Config.clone.instance(env_opts)
-  }
+  before do
+    ChefLicensing.configure do |config|
+      config.chef_product_name = "inspec"
+      config.chef_entitlement_id = "3ff52c37-e41f-4f6c-ad4d-365192205968"
+      config.license_server_url = "http://localhost-license-server/License"
+      config.license_server_api_key = "xDblv65Xt84wULmc8qTN78a3Dr2OuuKxa6GDvb67"
+    end
+  end
 
   describe "fetch" do
     let(:output) { StringIO.new }
@@ -33,7 +27,6 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
           env: env,
           output: output,
           dir: nil,
-          cl_config: config,
         }
       }
 
@@ -54,7 +47,6 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
           env: env,
           output: output,
           dir: multiple_keys_license_dir,
-          cl_config: config,
         }
       }
 
@@ -76,7 +68,6 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
           argv: argv,
           env: env,
           dir: nil,
-          cl_config: config,
         }
       }
 
@@ -136,7 +127,6 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
         {
           output: output,
           logger: logger,
-          cl_config: config,
         }
       }
       let(:license_key_fetcher) { described_class.new(opts) }
@@ -153,7 +143,6 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
           logger: logger,
           argv: argv,
           env: env,
-          cl_config: config,
         }
       }
       let(:license_keys) {
@@ -161,16 +150,16 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       }
       let(:license_key_fetcher) { described_class.new(opts) }
       before do
-        stub_request(:get, "#{config.license_server_url}/v1/validate")
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
           .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", version: api_version })
           .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
                      headers: { content_type: "application/json" })
-        stub_request(:get, "#{config.license_server_url}/v1/validate")
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
           .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-152", version: api_version })
           .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
                   headers: { content_type: "application/json" })
-        stub_request(:get, "#{config.license_server_url}/client")
-          .with(query: { licenseId: license_keys.join(","), entitlementId: config.chef_entitlement_id })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/client")
+          .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: client_data, status_code: 200 }.to_json,
                      headers: { content_type: "application/json" })
       end
@@ -184,16 +173,16 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
         %w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150 tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-152}
       }
       before do
-        stub_request(:get, "#{config.license_server_url}/v1/validate")
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
           .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", version: api_version })
           .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
                      headers: { content_type: "application/json" })
-        stub_request(:get, "#{config.license_server_url}/v1/validate")
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
           .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-152", version: api_version })
           .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
                   headers: { content_type: "application/json" })
-        stub_request(:get, "#{config.license_server_url}/client")
-          .with(query: { licenseId: license_keys.join(","), entitlementId: config.chef_entitlement_id })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/client")
+          .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: client_data, status_code: 200 }.to_json,
                      headers: { content_type: "application/json" })
       end
@@ -206,7 +195,6 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
             env: env,
             output: output,
             dir: tmpdir,
-            cl_config: config,
           }
         }
 

@@ -1,22 +1,22 @@
 require "chef_licensing/list_license_keys"
 require "chef_licensing/config"
 require "spec_helper"
+require "logger"
 
 RSpec.describe ChefLicensing::ListLicenseKeys do
-  let(:opts) {
-    {
-      env_vars: {
-        "CHEF_LICENSE_SERVER" => "http://localhost-license-server/License",
-        "CHEF_LICENSE_SERVER_API_KEY" =>  "xDblv65Xt84wULmc8qTN78a3Dr2OuuKxa6GDvb67",
-        "CHEF_PRODUCT_NAME" => "inspec",
-        "CHEF_ENTITLEMENT_ID" => "testing_entitlement_id",
-      },
-      logger: Logger.new(StringIO.new),
-    }
-  }
-  let(:cl_config) {
-    ChefLicensing::Config.clone.instance(opts)
-  }
+
+  let(:logger) { Logger.new(STDERR) }
+
+  before do
+    logger.level = Logger::INFO
+    ChefLicensing.configure do |conf|
+      conf.chef_product_name = "inspec"
+      conf.chef_entitlement_id = "testing_entitlement_id"
+      conf.license_server_url = "http://localhost-license-server/License"
+      conf.license_server_api_key = "xDblv65Xt84wULmc8qTN78a3Dr2OuuKxa6GDvb67"
+      conf.logger = logger
+    end
+  end
 
   let(:output_stream) {
     StringIO.new
@@ -29,7 +29,6 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
       {
         output: output_stream,
         license_keys: license_keys,
-        cl_config: cl_config,
       }
     }
 
@@ -48,7 +47,6 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
       {
         output: output_stream,
         license_keys: license_keys,
-        cl_config: cl_config,
       }
     }
 
@@ -124,8 +122,8 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
     }
 
     before do
-      stub_request(:get, "#{cl_config.license_server_url}/desc")
-        .with(query: { licenseId: license_keys.join(","), entitlementId: cl_config.chef_entitlement_id })
+      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/desc")
+        .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
         .to_return(body: { data: describe_api_data, status_code: 200 }.to_json,
                    headers: { content_type: "application/json" })
     end
@@ -147,13 +145,12 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
       {
         output: output_stream,
         license_keys: license_keys,
-        cl_config: cl_config,
       }
     }
 
     before do
-      stub_request(:get, "#{cl_config.license_server_url}/desc")
-        .with(query: { licenseId: license_keys.join(","), entitlementId: cl_config.chef_entitlement_id })
+      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/desc")
+        .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
         .to_return(body: { status_code: 404 }.to_json,
                    headers: { content_type: "application/json" })
     end
@@ -169,7 +166,6 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
     let(:opts_for_llk) {
       {
         output: output_stream,
-        cl_config: cl_config,
         dir: unsupported_version_license_dir,
       }
     }
