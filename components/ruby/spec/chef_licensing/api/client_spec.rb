@@ -8,20 +8,14 @@ RSpec.describe ChefLicensing::Api::Client do
     ["tmns-bea68bbb-1e85-44ea-8b98-a654b011174b-4227"]
   }
 
-  let(:opts) {
-    {
-      env_vars: {
-        "CHEF_LICENSE_SERVER" => "http://localhost-license-server/License",
-        "CHEF_LICENSE_SERVER_API_KEY" =>  "xDblv65Xt84wULmc8qTN78a3Dr2OuuKxa6GDvb67",
-        "CHEF_PRODUCT_NAME" => "inspec",
-        "CHEF_ENTITLEMENT_ID" => "3ff52c37-e41f-4f6c-ad4d-365192205968",
-      },
-    }
-  }
-
-  let(:config) {
-    ChefLicensing::Config.clone.instance(opts)
-  }
+  before do
+    ChefLicensing.configure do |conf|
+      conf.license_server_api_key = "xDblv65Xt84wULmc8qTN78a3Dr2OuuKxa6GDvb67"
+      conf.license_server_url = "http://localhost-license-server/License"
+      conf.chef_product_name = "inspec"
+      conf.chef_entitlement_id = "3ff52c37-e41f-4f6c-ad4d-365192205968"
+    end
+  end
 
   let(:client_data) {
     {
@@ -56,12 +50,12 @@ RSpec.describe ChefLicensing::Api::Client do
     }
   }
 
-  subject { described_class.info(license_keys: license_keys, entitlement_id: config.chef_entitlement_id, cl_config: config) }
+  subject { described_class.info(license_keys: license_keys, entitlement_id: ChefLicensing::Config.chef_entitlement_id) }
 
   describe ".info" do
     before do
-      stub_request(:get, "#{config.license_server_url}/client")
-        .with(query: { licenseId: license_keys.join(","), entitlementId: config.chef_entitlement_id })
+      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/client")
+        .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
         .to_return(body: { data: client_data, status_code: 200 }.to_json,
                    headers: { content_type: "application/json" })
     end
@@ -70,8 +64,8 @@ RSpec.describe ChefLicensing::Api::Client do
     context "when license client call raises error" do
       let(:error_message) { "Invalid licenses" }
       before do
-        stub_request(:get, "#{config.license_server_url}/client")
-          .with(query: { licenseId: license_keys.join(","), entitlementId: config.chef_entitlement_id })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/client")
+          .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: false, message: error_message, status_code: 400 }.to_json,
                      headers: { content_type: "application/json" })
       end

@@ -37,13 +37,13 @@ module ChefLicensing
         licenses.collect { |x| x[:license_key] }
       end
 
-      def validate_and_persist(license_key, cl_config: nil)
-        is_valid = validate_license_key(license_key, cl_config: cl_config)
+      def validate_and_persist(license_key)
+        is_valid = validate_license_key(license_key)
         persist(license_key) if is_valid
       end
 
-      def validate_license_key(license_key, cl_config: nil)
-        ChefLicensing::LicenseKeyValidator.validate!(license_key, cl_config: cl_config)
+      def validate_license_key(license_key)
+        ChefLicensing::LicenseKeyValidator.validate!(license_key)
       end
 
       # Writes a license_id file to disk in the location specified,

@@ -6,23 +6,19 @@ module ChefLicensing
     attr_reader :license
 
     class << self
-      def validate!(license, cl_config: nil)
-        new(license, cl_config: cl_config).validate!
+      def validate!(license)
+        new(license).validate!
       end
     end
 
-    def initialize(license, restful_client: ChefLicensing::RestfulClient::V1, cl_config: nil)
+    def initialize(license, restful_client: ChefLicensing::RestfulClient::V1)
       @license = license || raise(ArgumentError, "Missing Params: `license`")
-      @restful_client = restful_client.new(cl_config: cl_config)
+      @restful_client = restful_client.new
     end
 
     def validate!
-      response = restful_client.validate(license)
+      response = @restful_client.validate(license)
       response.data || raise(ChefLicensing::InvalidLicense, response.message)
     end
-
-    private
-
-    attr_reader :restful_client
   end
 end

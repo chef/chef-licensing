@@ -17,12 +17,11 @@ module ChefLicensing
 
       def initialize(opts = {})
         @license_keys = opts[:license_keys] || raise(ArgumentError, "Missing Params: `license_keys`")
-        @cl_config = opts[:cl_config] || ChefLicensing::Config.instance
-        @restful_client = opts[:restful_client] ? opts[:restful_client].new(cl_config: cl_config) : ChefLicensing::RestfulClient::V1.new(cl_config: cl_config)
+        @restful_client = opts[:restful_client] ? opts[:restful_client].new : ChefLicensing::RestfulClient::V1.new
       end
 
       def list
-        response = restful_client.describe(license_keys: license_keys.join(","), entitlement_id: cl_config.chef_entitlement_id)
+        response = restful_client.describe(license_keys: license_keys.join(","), entitlement_id: ChefLicensing::Config.chef_entitlement_id)
         if response.data
           list_of_licenses = []
 
@@ -38,9 +37,8 @@ module ChefLicensing
 
             list_of_licenses << ChefLicensing::License.new(
               data: license_object,
-              product_name: cl_config.chef_product_name,
-              api_parser: ChefLicensing::Api::Parser::Describe,
-              cl_config: cl_config
+              product_name: ChefLicensing::Config.chef_product_name,
+              api_parser: ChefLicensing::Api::Parser::Describe
             )
           end
           # returns list of license data model object
@@ -52,7 +50,7 @@ module ChefLicensing
 
       private
 
-      attr_reader :restful_client, :cl_config
+      attr_reader :restful_client
     end
   end
 end

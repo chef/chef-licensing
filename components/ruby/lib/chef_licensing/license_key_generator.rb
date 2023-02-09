@@ -7,23 +7,23 @@ module ChefLicensing
 
     class << self
       # @param [Hash] KWARGS keys accepted are [first_name, last_name, email_id, product, company, phone]
-      def generate!(kwargs, cl_config: nil)
-        new(kwargs, cl_config: cl_config).generate!
+      def generate!(kwargs)
+        new(kwargs).generate!
       end
 
-      def generate_free_license!(kwargs, cl_config: nil)
-        new(kwargs, cl_config: cl_config).generate_free_license!
+      def generate_free_license!(kwargs)
+        new(kwargs).generate_free_license!
       end
     end
 
-    def initialize(kwargs, restful_client: ChefLicensing::RestfulClient::V1, cl_config: nil)
+    def initialize(kwargs, restful_client: ChefLicensing::RestfulClient::V1)
       # TODO: validate kwargs
       @payload = build_payload_from(kwargs)
-      @restful_client = restful_client.new(cl_config: cl_config)
+      @restful_client = restful_client.new
     end
 
     def generate!
-      response = restful_client.generate_license(payload)
+      response = @restful_client.generate_license(payload)
       # need some logic around delivery
       # how the delivery is decided?
       response.licenseId
@@ -39,8 +39,6 @@ module ChefLicensing
     end
 
     private
-
-    attr_reader :restful_client
 
     def build_payload_from(kwargs)
       kwargs.slice(:first_name, :last_name, :email_id, :product, :company, :phone)
