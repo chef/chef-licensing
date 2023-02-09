@@ -1,16 +1,9 @@
 module ChefLicensing
   class ArgFetcher
-
-    attr_accessor :argv
-
-    def initialize(argv)
-      @argv = argv
-    end
-
-    def fetch_value(arg_name, arg_type = :string)
+    def self.fetch_value(arg_name, arg_type = :string)
       case arg_type
       when :boolean
-        argv.include?(arg_name)
+        ARGV.include?(arg_name)
       when :string
         # TODO: Refactor this code to use some library in near future
         # There were some issues with OptionParser, so we are using this
@@ -21,12 +14,12 @@ module ChefLicensing
         # 2. --chef-license-server=foo
 
         # Check if argument is passed as: --chef-license-server foo
-        arg_value = argv.include?(arg_name) ? argv[argv.index(arg_name) + 1] : nil
+        arg_value = ARGV.include?(arg_name) ? ARGV[ARGV.index(arg_name) + 1] : nil
 
         # Check if argument is passed as: --chef-license-server=foo
         # only if arg_value is nil
         if arg_value.nil?
-          arg_value = argv.select { |arg| arg.start_with?("#{arg_name}=") }.first
+          arg_value = ARGV.select { |arg| arg.start_with?("#{arg_name}=") }.first
           arg_value = arg_value.split("=").last if arg_value
         end
         arg_value

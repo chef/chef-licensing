@@ -9,6 +9,16 @@ require "chef_licensing/api/client"
 
 module ChefLicensing
   class << self
+
+    # @example
+    #   ChefLicensing.configure do |config|
+    #     config.licensing_server_url  = 'LICENSE_SERVER'
+    #     config.logger = Logger.new($stdout)
+    #   end
+    def configure(&block)
+      yield(ChefLicensing::Config)
+    end
+
     def check_feature_entitlement!(feature_name: nil, feature_id: nil)
       ChefLicensing::Api::LicenseFeatureEntitlement.check_entitlement!(license_keys: license_keys, feature_name: feature_name, feature_id: feature_id)
     end
