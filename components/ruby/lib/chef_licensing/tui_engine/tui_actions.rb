@@ -66,7 +66,7 @@ module ChefLicensing
           email_id: input[:gather_user_email_for_license_generation],
           product: "inspec",
           company: input[:gather_user_company_for_license_generation],
-          phone: input[:gather_user_phone_no_for_license_generation],
+          phone: input[:gather_user_phone_no_for_license_generation]
         )
         self.license_id = license_id
         true
@@ -86,7 +86,7 @@ module ChefLicensing
           email_id: input[:gather_user_email_for_license_generation],
           product: "inspec",
           company: input[:gather_user_company_for_license_generation],
-          phone: input[:gather_user_phone_no_for_license_generation],
+          phone: input[:gather_user_phone_no_for_license_generation]
         )
         self.license_id = license_id
         true
