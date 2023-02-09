@@ -96,6 +96,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
 
     let(:api_version) {
       2
+    }
 
     let(:client_data) {
       {
@@ -165,8 +166,8 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
           .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
                      headers: { content_type: "application/json" })
         stub_request(:get, "#{config.license_server_url}/v1/validate")
-        .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-152", version: api_version })
-        .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-152", version: api_version })
+          .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
                   headers: { content_type: "application/json" })
         stub_request(:get, "#{config.license_server_url}/client")
           .with(query: { licenseId: license_keys.join(","), entitlementId: config.chef_entitlement_id })
@@ -188,8 +189,8 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
           .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
                      headers: { content_type: "application/json" })
         stub_request(:get, "#{config.license_server_url}/v1/validate")
-        .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-152", version: api_version })
-        .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-152", version: api_version })
+          .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
                   headers: { content_type: "application/json" })
         stub_request(:get, "#{config.license_server_url}/client")
           .with(query: { licenseId: license_keys.join(","), entitlementId: config.chef_entitlement_id })

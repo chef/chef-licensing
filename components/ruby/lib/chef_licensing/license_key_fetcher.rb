@@ -37,7 +37,6 @@ module ChefLicensing
       @file_fetcher = LicenseKeyFetcher::File.new(config)
       @prompt_fetcher = LicenseKeyFetcher::Prompt.new(config)
       @client = nil
-      @cl_config = opts[:cl_config] || ChefLicensing::Config.instance
     end
 
     #
