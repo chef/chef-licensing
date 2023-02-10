@@ -297,7 +297,19 @@ ChefLicensing::Api::Client.info(options_hash)
 
 where:
 - values possible of options_hash are `license_keys` and `restful_client`. Default value of restful_client is `ChefLicensing::RestfulClient::V1`.
-- ENV["CHEF_ENTITLEMENT_ID"] needs to be set to fetch value from `ChefLicensing::Config.chef_entitlement_id` or needs to be passed through argument using `--chef-entitlement-id` in CLI.
+- The value for chef entitlement id needs to be set in either of the following ways:
+  - Set the value in the environment variable `ENV["CHEF_ENTITLEMENT_ID"]`
+  - Pass the value through the cli argument `--chef-entitlement-id`
+  - Set the value in the library where chef-licensing is consumed using the following block
+    ```
+    require "chef_licensing"
+
+    ChefLicensing.configure do |config|
+      config.chef_entitlement_id = "chef123"
+    end
+    ```
+    The value is fetched using `ChefLicensing::Config.chef_entitlement_id`
+
 
 ### Response
 
@@ -360,7 +372,17 @@ ChefLicensing::Api::Describe.list(options_hash)
 where:
 
 - values possible of options_hash are `license_keys` and `restful_client`. Default value of restful_client is `ChefLicensing::RestfulClient::V1`.
-- ENV["CHEF_ENTITLEMENT_ID"] needs to be set to fetch value from `ChefLicensing::Config.chef_entitlement_id` or needs to be passed through argument using `--chef-entitlement-id` in CLI.
+- The value for chef entitlement id needs to be set in either of the following ways:
+  - Set the value in the environment variable `ENV["CHEF_ENTITLEMENT_ID"]`
+  - Pass the value through the cli argument `--chef-entitlement-id`
+  - Set the value in the library where chef-licensing is consumed using the following block
+    ```
+    require "chef_licensing"
+
+    ChefLicensing.configure do |config|
+      config.chef_entitlement_id = "chef123"
+    end
+    ```
 
 ### Response
 
@@ -801,7 +823,18 @@ where:
 
 - **CLIENT_API_RESPONSE** should contain `Client`, `Features`, `Entitlement` & `Assets` keys for proper object creation.
 - **DESCRIBE_API_RESPONSE_FOR_EACH_LICENSE** should contain `license`, `features` `software` & `assets` keys for proper object creation.
-- ENV["CHEF_PRODUCT_NAME"] needs to be set to fetch value from `ChefLicensing::Config.chef_product_name` or needs to be passed through argument using `--chef-product-name` in CLI.
+- The value for chef product name needs to be set in either of the following ways:
+  - Set the value in the environment variable `ENV["CHEF_PRODUCT_NAME"]`
+  - Pass the value through the cli argument `--chef-product-name`
+  - Set the value in the library where chef-licensing is consumed using the following block
+    ```
+    require "chef_licensing"
+
+    ChefLicensing.configure do |config|
+      config.chef_product_name = "inspec"
+    end
+    ```
+    The value is fetched using `ChefLicensing::Config.chef_product_name`
 - The `/describe` API is the metadata of all licenses and it is a list. Therefore, license data model should be called by iterating over the list of licenses. And data of each license should be passed with a mandatory `license` key.
 
 ## License Data Model Attributes:
