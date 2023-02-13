@@ -3,6 +3,7 @@ require_relative "tui_interaction"
 require_relative "tui_engine_state"
 require_relative "tui_prompt"
 require_relative "tui_actions"
+require_relative "../config"
 
 module ChefLicensing
   class TUIEngine
@@ -13,7 +14,7 @@ module ChefLicensing
 
     def initialize(opts = {})
       @opts = opts
-      @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
+      @logger = opts[:logger] || ChefLicensing::Config.logger
       @tui_interactions = {}
       initialization_of_engine(opts[:interaction_file])
     end

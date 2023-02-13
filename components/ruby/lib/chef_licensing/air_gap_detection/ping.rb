@@ -1,14 +1,16 @@
 require "net/http" unless defined?(Net::HTTP)
+require_relative "../config"
 
 module ChefLicensing
   class AirGapDetection
     class Ping
 
       # If status is true, airgap mode is on - we are isolated.
-      attr_reader :url, :status
+      attr_reader :url, :status, :logger
 
       def initialize(base_url_string)
         @url = URI(base_url_string + "/v1/version")
+        @logger = ChefLicensing::Config.logger
       end
 
       # Ping Airgap is "detected" if the host is unreachable in an HTTP sense.
@@ -24,8 +26,8 @@ module ChefLicensing
         end
         @status
 
-      rescue #  => exception
-        # TODO: Wish I had a logger here for exception.message
+      rescue => exception
+        @logger.debug "Airgap ping failed.\n#{exception.message}\nAssuming airgap mode is on."
         @status = true
       end
     end
