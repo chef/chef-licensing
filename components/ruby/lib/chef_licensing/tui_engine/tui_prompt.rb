@@ -10,9 +10,9 @@ module ChefLicensing
       attr_accessor :output, :input, :logger, :tty_prompt
 
       def initialize(opts = {})
-        @output = opts[:output] || ChefLicensing::Config.output
+        @output = ChefLicensing::Config.output
         @input = opts[:input] || STDIN
-        @logger = opts[:logger] || ChefLicensing::Config.logger
+        @logger = ChefLicensing::Config.logger
         @tty_prompt = TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit, output: output, input: input)
       end
 

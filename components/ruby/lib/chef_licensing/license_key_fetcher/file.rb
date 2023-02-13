@@ -20,7 +20,7 @@ module ChefLicensing
 
       def initialize(opts)
         @opts = opts
-        @logger = opts[:logger] || ChefLicensing::Config.logger
+        @logger = ChefLicensing::Config.logger
         @contents_ivar = nil
         @location = nil
 

@@ -4,18 +4,21 @@ require "tmpdir"
 
 RSpec.describe ChefLicensing::LicenseKeyFetcher do
 
+  let(:output) { StringIO.new }
+  let(:logger) { Logger.new(output) }
+
   before do
     ChefLicensing.configure do |config|
       config.chef_product_name = "inspec"
       config.chef_entitlement_id = "3ff52c37-e41f-4f6c-ad4d-365192205968"
       config.license_server_url = "http://localhost-license-server/License"
       config.license_server_api_key = "xDblv65Xt84wULmc8qTN78a3Dr2OuuKxa6GDvb67"
+      config.output = output
+      config.logger = logger
     end
   end
 
   describe "fetch" do
-    let(:output) { StringIO.new }
-    let(:logger) { Logger.new(output) }
     let(:argv)  { ["--chef-license-key=tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"] }
     let(:env) { { "CHEF_LICENSE_KEY" => "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-152" } }
 
@@ -80,8 +83,6 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
   end
 
   describe "fetch_and_persist" do
-    let(:output) { StringIO.new }
-    let(:logger) { Logger.new(output) }
     let(:argv) { ["--chef-license-key=tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"] }
     let(:env) { { "CHEF_LICENSE_KEY" => "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-152" } }
 

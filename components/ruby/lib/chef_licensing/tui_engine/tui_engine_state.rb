@@ -10,7 +10,7 @@ module ChefLicensing
 
       def initialize(opts = {})
         @input = {}
-        @logger = opts[:logger] || ChefLicensing::Config.logger
+        @logger = ChefLicensing::Config.logger
         @prompt = ChefLicensing::TUIEngine::TUIPrompt.new(opts)
         @tui_actions = ChefLicensing::TUIEngine::TUIActions.new
       end
