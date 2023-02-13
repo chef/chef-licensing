@@ -1,6 +1,5 @@
 require "chef-config/path_helper"
 require "chef-config/windows"
-require "logger"
 
 require_relative "config"
 require_relative "license_key_fetcher/argument"
@@ -18,7 +17,7 @@ module ChefLicensing
     attr_reader :config, :license_keys, :arg_fetcher, :env_fetcher, :file_fetcher, :prompt_fetcher, :logger
     def initialize(opts = {})
       @config = opts
-      @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
+      @logger = opts[:logger] || ChefLicensing::Config.logger
       @config[:output] ||= STDOUT
       config[:logger] = logger
       config[:dir] = opts[:dir]

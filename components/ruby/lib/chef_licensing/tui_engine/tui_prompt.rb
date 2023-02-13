@@ -1,8 +1,8 @@
 require "timeout" unless defined?(Timeout)
 require "tty-prompt"
-require "logger"
 require_relative "tui_exceptions"
 require "erb" unless defined?(Erb)
+require_relative "../config"
 
 module ChefLicensing
   class TUIEngine
@@ -12,7 +12,7 @@ module ChefLicensing
       def initialize(opts = {})
         @output = opts[:output] || STDOUT
         @input = opts[:input] || STDIN
-        @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
+        @logger = opts[:logger] || ChefLicensing::Config.logger
         @tty_prompt = TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit, output: output, input: input)
       end
 

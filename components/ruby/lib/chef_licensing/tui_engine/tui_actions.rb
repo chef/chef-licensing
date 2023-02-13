@@ -4,6 +4,7 @@ require_relative "../exceptions/invalid_license"
 require_relative "../exceptions/license_generation_failed"
 require_relative "../exceptions/license_generation_rejected"
 require_relative "../license_key_fetcher/base"
+require_relative "../config"
 
 module ChefLicensing
   class TUIEngine
@@ -13,7 +14,7 @@ module ChefLicensing
 
       attr_accessor :logger, :output, :license_id, :error_msg, :rejection_msg, :invalid_license_msg
       def initialize(opts = {})
-        @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
+        @logger = opts[:logger] || ChefLicensing::Config.logger
         @output = opts[:output] || STDOUT
       end
 
