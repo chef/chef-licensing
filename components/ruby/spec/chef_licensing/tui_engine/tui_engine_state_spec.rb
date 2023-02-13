@@ -2,13 +2,23 @@ require "chef_licensing/tui_engine/tui_prompt"
 require "chef_licensing/tui_engine/tui_actions"
 require "chef_licensing/tui_engine/tui_engine_state"
 require "spec_helper"
+require "chef_licensing"
 
 RSpec.describe ChefLicensing::TUIEngine::TUIEngineState do
+
+  let(:output) { StringIO.new }
+  let(:logger) { Logger.new(output) }
+
+  before do
+    ChefLicensing.configure do |conf|
+      conf.logger = logger
+      conf.output = output
+    end
+  end
+
   let(:config) {
     {
-      output: STDOUT,
       input: STDIN,
-      logger: Logger.new(STDOUT),
     }
   }
 
@@ -20,7 +30,7 @@ RSpec.describe ChefLicensing::TUIEngine::TUIEngineState do
     end
 
     it "should have logger field" do
-      expect(tui_engine_state.logger).to eq(config[:logger])
+      expect(tui_engine_state.logger).to eq(logger)
     end
 
     it "should have prompt field" do

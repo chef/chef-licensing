@@ -14,7 +14,7 @@ module ChefLicensing
 
     def initialize(opts = {})
       @opts = opts
-      @logger = opts[:logger] || ChefLicensing::Config.logger
+      @logger = ChefLicensing::Config.logger
       @tui_interactions = {}
       initialization_of_engine(opts[:interaction_file])
     end

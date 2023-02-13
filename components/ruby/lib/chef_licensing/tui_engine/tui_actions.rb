@@ -14,8 +14,8 @@ module ChefLicensing
 
       attr_accessor :logger, :output, :license_id, :error_msg, :rejection_msg, :invalid_license_msg
       def initialize(opts = {})
-        @logger = opts[:logger] || ChefLicensing::Config.logger
-        @output = opts[:output] || ChefLicensing::Config.output
+        @logger = ChefLicensing::Config.logger
+        @output = ChefLicensing::Config.output
       end
 
       def is_license_with_valid_pattern?(input)

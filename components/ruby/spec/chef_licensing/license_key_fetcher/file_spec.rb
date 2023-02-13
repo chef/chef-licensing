@@ -2,6 +2,7 @@ require "spec_helper"
 require "tmpdir"
 require "chef_licensing/license_key_fetcher/file"
 require "logger"
+require "chef_licensing"
 
 RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
   let(:fixture_dir) { "spec/fixtures" }
@@ -9,6 +10,12 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
   let(:unsupported_vesion_license_dir) { "spec/fixtures/unsupported_version_license" }
   let(:multiple_keys_license_dir) { "spec/fixtures/multiple_license_keys_license" }
   let(:logger) { double("Logger") }
+
+  before do
+    ChefLicensing.configure do |config|
+      config.logger = logger
+    end
+  end
 
   describe "#fetch" do
     it "returns license key from file" do

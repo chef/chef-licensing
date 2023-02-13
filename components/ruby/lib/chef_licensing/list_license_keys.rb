@@ -11,8 +11,8 @@ module ChefLicensing
     end
 
     def initialize(opts = {})
-      @logger = opts[:logger] || ChefLicensing::Config.logger
-      @output = opts[:output] || ChefLicensing::Config.output
+      @logger = ChefLicensing::Config.logger
+      @output = ChefLicensing::Config.output
       @pastel = Pastel.new
       @license_keys = fetch_license_keys(opts)
     end

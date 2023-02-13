@@ -7,6 +7,10 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
 
   let(:logger) { Logger.new(STDERR) }
 
+  let(:output_stream) {
+    StringIO.new
+  }
+
   before do
     logger.level = Logger::INFO
     ChefLicensing.configure do |conf|
@@ -15,12 +19,9 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
       conf.license_server_url = "http://localhost-license-server/License"
       conf.license_server_api_key = "xDblv65Xt84wULmc8qTN78a3Dr2OuuKxa6GDvb67"
       conf.logger = logger
+      conf.output = output_stream
     end
   end
-
-  let(:output_stream) {
-    StringIO.new
-  }
 
   describe "when there are no license_keys on the system" do
     let(:license_keys) { [] }
