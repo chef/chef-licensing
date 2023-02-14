@@ -15,7 +15,7 @@ interactions:
 
   welcome_user_in_english:
     # You can provide variables/Constants of TUIEngineState
-    messages: ["Hello, <%= input[:ask_user_name] %>"]
+    messages: ["Hello, <%= input[:ask_user_name] %> <%= input[:extra_info] %>"]
     prompt_type: "ok"
     paths: [welcome_user_in_hindi]
 
