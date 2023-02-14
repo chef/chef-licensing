@@ -17,13 +17,11 @@ module ChefLicensing
       @logger = ChefLicensing::Config.logger
       @tui_interactions = {}
       initialization_of_engine(opts[:interaction_file])
+      @state = ChefLicensing::TUIEngine::TUIEngineState.new(@opts)
     end
 
-    def run_interaction(start_interaction = nil)
-      start_interaction_id = start_interaction || @tui_interactions.keys.first
-      current_interaction = @tui_interactions[start_interaction_id]
-
-      state = ChefLicensing::TUIEngine::TUIEngineState.new(@opts)
+    def run_interaction
+      current_interaction = @tui_interactions[:start]
 
       until current_interaction.nil? || current_interaction.id == :exit
         state.default_action(current_interaction)
@@ -42,7 +40,13 @@ module ChefLicensing
       state.input
     end
 
+    def append_info_to_input(key_values)
+      state.append_info_to_input(key_values)
+    end
+
     private
+
+    attr_accessor :state
 
     def initialization_of_engine(interaction_file)
       raise ChefLicensing::TUIEngine::MissingInteractionFile, "No interaction file found. Please provide a valid file path to continue." unless interaction_file
