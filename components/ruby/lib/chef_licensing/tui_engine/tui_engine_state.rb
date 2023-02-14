@@ -40,6 +40,10 @@ module ChefLicensing
         end
       end
 
+      def append_info_to_input(key_values)
+        @input.merge!(key_values)
+      end
+
       private
 
       def erb_result(message)
