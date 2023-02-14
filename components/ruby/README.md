@@ -60,10 +60,6 @@ Air gap detection may be specified by CLI argument, ENV variable, or by attempti
 
 The main entry point to air gap detection is this function. Simply call it, and it will check for (in order) whether the CHEF_AIR_GAP env variable has been set, whether `--airgap` is present in ARGV, and finally whether the Licensing Server URL (its /v1/version endpoint) can be reached by HTTPS. The return value is a boolean, and is cached for the life of the process - airgap detection happens only once.
 
-## TUI Engine
-
-TODO
-
 ## Licensing Server API
 
 ### Pre-requisites
@@ -484,6 +480,20 @@ ChefLicensing::DescribeError
 # TUI Engine
 
 TUI Engine helps to build a text user interface considering each step involved in the text user interface as interaction.
+
+## Usage
+
+```ruby
+require "tui_engine"
+tui_engine = ChefLicensing::TUIEngine.new(config)
+# config is a hash containing key values like interaction_file_path
+
+# to append additional information to input for dynamic message display
+tui_engine.append_info_to_input({ extra_info: "Welcome!" })
+
+# Now extra_info could be used to display as part of text user interace in the erb template
+# Examle: messages: "This is a dynamic message, <% input[:extra_info] $>
+```
 
 ## Syntax
 
