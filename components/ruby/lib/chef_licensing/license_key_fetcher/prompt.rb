@@ -3,17 +3,14 @@ require_relative "../tui_engine"
 module ChefLicensing
   class LicenseKeyFetcher
     class Prompt
-      attr_accessor :config
+      attr_accessor :config, :tui_engine
 
       def initialize(config = {})
         @config = config
+        initialize_tui_engine
       end
 
       def fetch
-        interaction_file_path = ::File.join(::File.dirname(__FILE__), "chef_licensing_interactions.yaml")
-        @config.store(:interaction_file, interaction_file_path)
-        tui_engine = ChefLicensing::TUIEngine.new(@config)
-
         # Here info is a hash of { interaction_id: response }
         info = tui_engine.run_interaction(config[:start_interaction])
 
@@ -24,6 +21,21 @@ module ChefLicensing
         else
           [info[:fetch_license_id]]
         end
+      end
+
+      def append_info_to_tui_engine(extra_info_hash)
+        tui_engine.append_info_to_input(extra_info_hash)
+      end
+
+      private
+
+      def initialize_tui_engine
+        # use the default interaction file if interaction_file is nil
+        if config[:interaction_file].nil?
+          interaction_file_path =  ::File.join(::File.dirname(__FILE__), "chef_licensing_interactions.yaml")
+          @config.store(:interaction_file, interaction_file_path)
+        end
+        @tui_engine = ChefLicensing::TUIEngine.new(@config)
       end
     end
   end
