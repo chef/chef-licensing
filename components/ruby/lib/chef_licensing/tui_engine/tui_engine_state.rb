@@ -40,8 +40,8 @@ module ChefLicensing
         end
       end
 
-      def append_info_to_input(key_values)
-        @input.merge!(key_values)
+      def append_info_to_input(extra_info_hash)
+        @input.merge!(extra_info_hash)
       end
 
       private

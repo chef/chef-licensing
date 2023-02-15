@@ -40,8 +40,8 @@ module ChefLicensing
       state.input
     end
 
-    def append_info_to_input(key_values)
-      state.append_info_to_input(key_values)
+    def append_info_to_input(extra_info_hash)
+      state.append_info_to_input(extra_info_hash)
     end
 
     private
