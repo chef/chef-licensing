@@ -80,9 +80,11 @@ module ChefLicensing
       else
         if config[:start_interaction] == :prompt_license_about_to_expire
           logger.warn "Your #{client.license_type} license is going to expire tomorrow."
+          return false
         elsif config[:start_interaction] == :prompt_license_expired
           if have_grace?
             logger.error "Your #{client.license_type} license has been expired."
+            return false
           else
             logger.error "Your #{client.license_type} license has been expired."
             raise LicenseKeyNotFetchedError.new("License has been expired.")
@@ -160,7 +162,7 @@ module ChefLicensing
     end
 
     def expired?
-      client.status.eql?("Expired") && client.expiration_status.eql?("Expired")
+      client.status.eql?("Expired")
     end
 
     def about_to_expire?
