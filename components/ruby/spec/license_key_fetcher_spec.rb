@@ -21,6 +21,25 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
   describe "fetch" do
     let(:argv)  { ["--chef-license-key=tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"] }
     let(:env) { { "CHEF_LICENSE_KEY" => "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-152" } }
+    let(:argv_with_space) { ["--chef-license-key", "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"] }
+
+    context "the license keys are passed in via the CLI with space and ENV; & file doesn't exist" do
+      let(:opts) {
+        {
+          logger: logger,
+          argv: argv_with_space,
+          env: env,
+          output: output,
+          dir: nil,
+        }
+      }
+
+      let(:license_key_fetcher) { ChefLicensing::LicenseKeyFetcher.new(opts) }
+
+      it "returns both license keys" do
+        expect(license_key_fetcher.fetch).to eq(%w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150 tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-152})
+      end
+    end
 
     context "the license keys are passed in via the CLI and ENV; & file doesn't exist" do
       let(:opts) {
