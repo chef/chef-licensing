@@ -2,8 +2,9 @@ require "chef-config/path_helper"
 require "chef-config/windows"
 
 require_relative "config"
-require_relative "license_key_fetcher/argument"
-require_relative "license_key_fetcher/environment"
+require_relative "config_fetcher/arg_fetcher"
+require_relative "config_fetcher/env_fetcher"
+require_relative "license_key_fetcher/base"
 require_relative "license_key_fetcher/file"
 require_relative "license_key_fetcher/prompt"
 
@@ -28,8 +29,8 @@ module ChefLicensing
       env = opts[:env] || ENV
 
       # The various things that have a say in fetching the license Key.
-      @arg_fetcher = LicenseKeyFetcher::Argument.new(argv)
-      @env_fetcher = LicenseKeyFetcher::Environment.new(env)
+      @arg_fetcher = ChefLicensing::ArgFetcher.new(argv)
+      @env_fetcher = ChefLicensing::EnvFetcher.new(env)
       @file_fetcher = LicenseKeyFetcher::File.new(config)
       @prompt_fetcher = LicenseKeyFetcher::Prompt.new(config)
     end
@@ -42,7 +43,7 @@ module ChefLicensing
       # If a fetch is made by CLI arg, persist and return
       logger.debug "License Key fetcher examining CLI arg checks"
 
-      new_keys = arg_fetcher.fetch
+      new_keys = fetch_license_key_from_arg
       unless new_keys.empty?
         @license_keys.concat(new_keys)
         file_fetcher.validate_and_persist(new_keys.first)
@@ -51,7 +52,7 @@ module ChefLicensing
 
       # If a fetch is made by ENV, persist and return
       logger.debug "License Key fetcher examining ENV checks"
-      new_keys = env_fetcher.fetch
+      new_keys = fetch_license_key_from_env
       unless new_keys.empty?
         @license_keys.concat(new_keys)
         file_fetcher.validate_and_persist(new_keys.first)
@@ -82,7 +83,7 @@ module ChefLicensing
 
     # Note: Fetching from arg and env as well, to be able to fetch license when disk is non-writable
     def fetch
-      (@arg_fetcher.fetch << @env_fetcher.fetch << @file_fetcher.fetch).flatten.uniq
+      (fetch_license_key_from_arg << fetch_license_key_from_env << @file_fetcher.fetch).flatten.uniq
     end
 
     def self.fetch_and_persist(opts = {})
@@ -92,5 +93,28 @@ module ChefLicensing
     def self.fetch(opts = {})
       new(opts).fetch
     end
+
+    private
+
+    def fetch_license_key_from_arg
+      new_key = @arg_fetcher.fetch_value("--chef-license-key")
+      validate_license_key_format(new_key)
+    end
+
+    def fetch_license_key_from_env
+      new_key = @env_fetcher.fetch_value("CHEF_LICENSE_KEY")
+      validate_license_key_format(new_key)
+    end
+
+    def validate_license_key_format(license_key)
+      return [] if license_key.nil?
+
+      unless license_key.match(/^#{ ChefLicensing::LicenseKeyFetcher::Base::LICENSE_KEY_REGEX}$/)
+        raise LicenseKeyNotFetchedError.new("Malformed License Key passed on command line - should be #{ChefLicensing::LicenseKeyFetcher::Base::LICENSE_KEY_PATTERN_DESC}")
+      end
+
+      [license_key]
+    end
+
   end
 end
