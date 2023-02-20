@@ -18,8 +18,10 @@ module ChefLicensing
       initialization_of_engine(opts[:interaction_file])
     end
 
-    def run_interaction
-      current_interaction = @tui_interactions[:start]
+    def run_interaction(start_interaction = nil)
+      start_interaction_id = start_interaction || @tui_interactions.keys.first
+      current_interaction = @tui_interactions[start_interaction_id]
+
       state = ChefLicensing::TUIEngine::TUIEngineState.new(@opts)
 
       until current_interaction.nil? || current_interaction.id == :exit

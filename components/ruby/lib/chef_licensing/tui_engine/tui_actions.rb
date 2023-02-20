@@ -138,17 +138,27 @@ module ChefLicensing
         rejection_msg
       end
 
-      def select_license_generation_based_on_type(input)
-        if input.keys.include? :free_license_selection
+      def select_license_generation_based_on_type(inputs)
+        interaction_ids = inputs.keys
+        if interaction_ids.include? :free_license_selection
           "free"
-        elsif input.keys.include? :trial_license_selection
+        elsif interaction_ids.include? :trial_license_selection
           "trial"
         else
           "commercial"
         end
       end
 
-      def license_generation_rejected?(input)
+      def check_license_renewal(inputs)
+        interaction_ids = inputs.keys
+        if (interaction_ids & %i{ prompt_license_about_to_expire prompt_license_expired }).empty?
+          "new"
+        else
+          "renew"
+        end
+      end
+
+      def license_generation_rejected?(inputs)
         !!rejection_msg
       end
 
