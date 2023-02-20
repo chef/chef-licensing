@@ -243,8 +243,12 @@ RSpec.describe ChefLicensing::TUIEngine do
 
       let(:tui_engine) { described_class.new(config) }
 
+      before do
+        tui_engine.append_info_to_input({ extra_info: "Welcome!" })
+      end
+
       it "should render the erb" do
-        expect(tui_engine.run_interaction).to eq({ start: nil, ask_user_name: "Chef User!", welcome_user_in_english: ["Hello, Chef User!"], welcome_user_in_hindi: ["Namaste, Chef User!"], exit: nil })
+        expect(tui_engine.run_interaction).to eq({ start: nil, ask_user_name: "Chef User!", welcome_user_in_english: ["Hello, Chef User! Welcome!"], welcome_user_in_hindi: ["Namaste, Chef User!"], exit: nil, extra_info: "Welcome!" })
       end
     end
     context "when the yaml file has an interaction without messages or action key" do
