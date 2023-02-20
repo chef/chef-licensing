@@ -1,4 +1,8 @@
 require "faraday" unless defined?(Faraday)
+require "faraday/http_cache"
+require "logger"
+require "active_support"
+require "tmpdir" unless defined?(Dir.mktmpdir)
 require_relative "../exceptions/restful_client_error"
 require_relative "../config"
 
@@ -24,13 +28,13 @@ module ChefLicensing
       def initialize; end
 
       def validate(license)
-        handle_connection do |connection|
+        handle_get_connection do |connection|
           connection.get(self.class::END_POINTS[:VALIDATE], { licenseId: license, version: CURRENT_ENDPOINT_VERSION }).body
         end
       end
 
       def generate_license(payload)
-        handle_connection do |connection|
+        handle_post_connection do |connection|
           response = connection.post(self.class::END_POINTS[:GENERATE_LICENSE]) do |request|
             request.body = payload.to_json
             request.headers = { 'x-api-key': ChefLicensing::Config.license_server_api_key }
@@ -42,7 +46,7 @@ module ChefLicensing
       end
 
       def feature_by_name(payload)
-        handle_connection do |connection|
+        handle_post_connection do |connection|
           response = connection.post(self.class::END_POINTS[:FEATURE_BY_NAME]) do |request|
             request.body = payload.to_json
           end
@@ -53,7 +57,7 @@ module ChefLicensing
       end
 
       def feature_by_id(payload)
-        handle_connection do |connection|
+        handle_post_connection do |connection|
           response = connection.post(self.class::END_POINTS[:FEATURE_BY_ID]) do |request|
             request.body = payload.to_json
           end
@@ -64,7 +68,7 @@ module ChefLicensing
       end
 
       def entitlement_by_name(payload)
-        handle_connection do |connection|
+        handle_post_connection do |connection|
           response = connection.post(self.class::END_POINTS[:ENTITLEMENT_BY_NAME]) do |request|
             request.body = payload.to_json
           end
@@ -75,7 +79,7 @@ module ChefLicensing
       end
 
       def entitlement_by_id(payload)
-        handle_connection do |connection|
+        handle_post_connection do |connection|
           response = connection.post(self.class::END_POINTS[:ENTITLEMENT_BY_ID]) do |request|
             request.body = payload.to_json
           end
@@ -86,16 +90,28 @@ module ChefLicensing
       end
 
       def client(params = {})
-        connection.get(self.class::END_POINTS[:CLIENT], { licenseId: params[:license_keys], entitlementId: params[:entitlement_id] }).body
+        handle_get_connection do |connection|
+          connection.get(self.class::END_POINTS[:CLIENT], { licenseId: params[:license_keys], entitlementId: params[:entitlement_id] }).body
+        end
       end
 
       def describe(params = {})
-        connection.get(self.class::END_POINTS[:DESCRIBE], { licenseId: params[:license_keys], entitlementId: params[:entitlement_id] }).body
+        handle_get_connection do |connection|
+          connection.get(self.class::END_POINTS[:DESCRIBE], { licenseId: params[:license_keys], entitlementId: params[:entitlement_id] }).body
+        end
       end
 
-      def handle_connection
+      def handle_get_connection
         # handle faraday errors
-        yield connection
+        yield get_connection
+      rescue Faraday::ClientError => e
+        # log errors
+        raise RestfulClientError, e.message
+      end
+
+      def handle_post_connection
+        # handle faraday errors
+        yield post_connection
       rescue Faraday::ClientError => e
         # log errors
         raise RestfulClientError, e.message
@@ -103,7 +119,17 @@ module ChefLicensing
 
       private
 
-      def connection
+      def get_connection
+        store = ::ActiveSupport::Cache.lookup_store(:file_store, [Dir.tmpdir])
+        Faraday.new(url: ChefLicensing::Config.license_server_url) do |config|
+          config.request :json
+          config.response :json, parser_options: { object_class: OpenStruct }
+          config.use Faraday::HttpCache, shared_cache: false, logger: Logger.new(STDOUT), store: store
+          config.adapter Faraday.default_adapter
+        end
+      end
+
+      def post_connection
         Faraday.new(url: ChefLicensing::Config.license_server_url) do |config|
           config.request :json
           config.response :json, parser_options: { object_class: OpenStruct }
