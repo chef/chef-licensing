@@ -1,20 +1,37 @@
 require "chef_licensing/version"
-require "chef_licensing/api/license_feature_entitlement"
 require "chef_licensing/license_key_fetcher"
 require "chef_licensing/config"
-require "chef_licensing/api/license_software_entitlement"
 require "chef_licensing/api/describe"
 require "chef_licensing/list_license_keys"
+require "chef_licensing/exceptions/feature_not_entitled"
+require "chef_licensing/exceptions/software_not_entitled"
+require "chef_licensing/exceptions/client_error"
 require "chef_licensing/api/client"
 
 module ChefLicensing
   class << self
     def check_feature_entitlement!(feature_name: nil, feature_id: nil)
-      ChefLicensing::Api::LicenseFeatureEntitlement.check_entitlement!(license_keys: license_keys, feature_name: feature_name, feature_id: feature_id)
+      # Checking for feature presence in license feature entitlements
+      license = client(license_keys: license_keys)
+      feature_entitlements = license.feature_entitlements.select { |feature| feature.id == feature_id || feature.name == feature_name }
+      if feature_entitlements.empty?
+        raise(ChefLicensing::FeatureNotEntitled)
+      else
+        true
+      end
     end
 
-    def check_software_entitlement!(software_entitlement_name: nil, software_entitlement_id: nil)
-      ChefLicensing::Api::LicenseSoftwareEntitlement.check!(license_keys: license_keys, software_entitlement_name: software_entitlement_name, software_entitlement_id: software_entitlement_id)
+    def check_software_entitlement!
+      # If API call is not breaking that means license is entitled.
+      client(license_keys: license_keys)
+      true
+    rescue ChefLicensing::ClientError => e
+      # Checking specific text phrase for entitlement error
+      if e.message.match?(/not entitled/)
+        raise(ChefLicensing::SoftwareNotEntitled)
+      else
+        raise
+      end
     end
 
     # @note no in-memory caching of the licenses so that it fetches updated licenses always

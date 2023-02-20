@@ -105,23 +105,16 @@ Software entitlement check validates the software entitlement against given lice
 
 ### ChefLicensing.check_software_entitlement
 
-Accepts the software_entitlement_name or software_entitlement_id as parameter.
-
-* check_software_entitlment by name:
-
 ```ruby
 require "chef_licensing"
-ChefLicensing.check_software_entitlement!(software_entitlement_name: "Software-Name")
+ChefLicensing.check_software_entitlement!
 ```
 
-* check_software_entitlment by id:
+* Returns `true` if software is entitled to the license else raises `ChefLicensing::SoftwareNotEntitled` exception.
 
-```ruby
-require "chef_licensing"
-ChefLicensing.check_software_entitlement!(software_entitlement_id: "Software-ID")
-```
-
-* Returns `true` if software is entitled to the license else raises `ChefLicensing::InvalidEntitlement` exception.
+where:
+- ENV["CHEF_ENTITLEMENT_ID"] needs to be set to fetch value from `ChefLicensing::Config.instance.chef_entitlement_id` or needs to be passed through argument using `--chef-entitlement-id` in CLI.
+- This check internally uses `/client` API call.
 
 ### Software Entitlement API service class usage:
 
@@ -139,7 +132,7 @@ require 'chef_licensing/license_software_entitlement'
 ChefLicensing::LicenseSoftwareEntitlement.check!(license_keys: license_keys, software_entitlement_id: software_entitlement_id)
 ```
 
-* Returns `true` if software is entitled to the license else raises `ChefLicensing::InvalidEntitlement` exception.
+* Returns `true` if software is entitled to the license else raises `ChefLicensing::SoftwareNotEntitled` exception.
 
 ## Features Entitlement
 
@@ -199,7 +192,7 @@ ChefLicensing::InvalidLicense
 * in case of invalid entitlements it would raise an invalid entitlement exception
 
 ```ruby
-ChefLicensing::InvalidEntitlement
+ChefLicensing::FeatureNotEntitled
 ```
 
 ## List Licenses
