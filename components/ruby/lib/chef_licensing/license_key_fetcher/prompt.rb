@@ -32,7 +32,7 @@ module ChefLicensing
       def initialize_tui_engine
         # use the default interaction file if interaction_file is nil
         if config[:interaction_file].nil?
-          interaction_file_path =  ::File.join(::File.dirname(__FILE__), "chef_licensing_interactions.yaml")
+          interaction_file_path = ::File.join(::File.dirname(__FILE__), "chef_licensing_interactions.yaml")
           @config.store(:interaction_file, interaction_file_path)
         end
         @tui_engine = ChefLicensing::TUIEngine.new(@config)

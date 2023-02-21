@@ -28,7 +28,6 @@ module ChefLicensing
       argv = opts[:argv] || ARGV
       env = opts[:env] || ENV
 
-
       # The various things that have a say in fetching the license Key.
       @arg_fetcher = LicenseKeyFetcher::Argument.new(argv)
       @env_fetcher = LicenseKeyFetcher::Environment.new(env)

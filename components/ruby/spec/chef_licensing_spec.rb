@@ -6,20 +6,18 @@ require_relative "../lib/chef_licensing/exceptions/client_error"
 
 RSpec.describe ChefLicensing do
 
-  let(:env_opts) {
-    {
-      env_vars: {
-        "CHEF_LICENSE_SERVER" => "http://localhost-license-server/License",
-        "CHEF_LICENSE_SERVER_API_KEY" =>  "xDblv65Xt84wULmc8qTN78a3Dr2OuuKxa6GDvb67",
-        "CHEF_PRODUCT_NAME" => "inspec",
-        "CHEF_ENTITLEMENT_ID" => "3ff52c37-e41f-4f6c-ad4d-365192205968",
-      },
-    }
-  }
+  let(:logger) { Logger.new(STDOUT) }
 
-  let(:config) {
-    ChefLicensing::Config.clone.instance(env_opts)
-  }
+  before do
+    described_class.configure do |config|
+      config.license_server_url = "http://localhost-license-server/License"
+      config.license_server_api_key = "xDblv65Xt84wULmc8qTN78a3Dr2OuuKxa6GDvb67"
+      config.air_gap_status = false
+      config.chef_product_name = "inspec"
+      config.chef_entitlement_id = "3ff52c37-e41f-4f6c-ad4d-365192205968"
+      config.logger = logger
+    end
+  end
 
   let(:client_data) {
     {
@@ -66,8 +64,8 @@ RSpec.describe ChefLicensing do
     subject { described_class.check_feature_entitlement!(feature_name: feature, feature_id: nil) }
 
     before do
-      stub_request(:get, "#{config.license_server_url}/client")
-        .with(query: { licenseId: license_keys.join(","), entitlementId: config.chef_entitlement_id })
+      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/client")
+        .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
         .to_return(body: { data: client_data, status_code: 200 }.to_json,
                      headers: { content_type: "application/json" })
       allow(ChefLicensing::LicenseKeyFetcher).to receive(:fetch_and_persist).and_return(license_keys)
@@ -90,8 +88,8 @@ RSpec.describe ChefLicensing do
       }
 
       before do
-        stub_request(:get, "#{config.license_server_url}/client")
-          .with(query: { licenseId: license_keys.join(","), entitlementId: config.chef_entitlement_id })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/client")
+          .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: false, status_code: 400 }.to_json,
                      headers: { content_type: "application/json" })
         allow(ChefLicensing).to receive(:check_feature_entitlement!)
@@ -110,8 +108,8 @@ RSpec.describe ChefLicensing do
     subject { described_class.check_software_entitlement! }
 
     before do
-      stub_request(:get, "#{config.license_server_url}/client")
-        .with(query: { licenseId: license_keys.join(","), entitlementId: config.chef_entitlement_id })
+      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/client")
+        .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
         .to_return(body: { data: client_data, status_code: 200 }.to_json,
                      headers: { content_type: "application/json" })
       allow(ChefLicensing::LicenseKeyFetcher).to receive(:fetch_and_persist).and_return(license_keys)
@@ -141,8 +139,8 @@ RSpec.describe ChefLicensing do
       }
 
       before do
-        stub_request(:get, "#{config.license_server_url}/client")
-          .with(query: { licenseId: license_keys.join(","), entitlementId: config.chef_entitlement_id })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/client")
+          .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: false, status_code: 400 }.to_json,
                      headers: { content_type: "application/json" })
         allow(ChefLicensing).to receive(:check_software_entitlement!)

@@ -21,7 +21,6 @@ module ChefLicensing
 
       def info
         response = restful_client.client(license_keys: license_keys.join(","), entitlement_id: ChefLicensing::Config.chef_entitlement_id)
-        response = restful_client.client(license_keys: license_keys.join(","), entitlement_id: ChefLicensing::Config.chef_entitlement_id)
         if response.data
           ChefLicensing::License.new(
             data: response.data,
