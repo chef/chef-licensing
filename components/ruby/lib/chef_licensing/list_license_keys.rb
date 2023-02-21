@@ -2,6 +2,8 @@ require_relative "license_key_fetcher"
 require_relative "api/describe"
 require_relative "exceptions/describe_error"
 require "pastel" unless defined?(Pastel)
+require_relative "config"
+
 module ChefLicensing
   class ListLicenseKeys
     def self.display(opts = {})
@@ -9,9 +11,8 @@ module ChefLicensing
     end
 
     def initialize(opts = {})
-      @cl_config = opts[:cl_config] || ChefLicensing::Config.instance
-      @logger = cl_config.logger
-      @output = opts[:output] || STDOUT
+      @logger = ChefLicensing::Config.logger
+      @output = ChefLicensing::Config.output
       @pastel = Pastel.new
       @license_keys = fetch_license_keys(opts)
     end
@@ -51,7 +52,7 @@ module ChefLicensing
 
     private
 
-    attr_reader :cl_config, :pastel, :output, :logger, :license_keys
+    attr_reader :pastel, :output, :logger, :license_keys
 
     def display_info(component)
       output.puts <<~INFO
@@ -76,7 +77,7 @@ module ChefLicensing
     end
 
     def fetch_license_keys(opts = {})
-      license_keys = opts[:license_keys] || ChefLicensing::LicenseKeyFetcher.fetch({ logger: cl_config.logger, dir: opts[:dir] })
+      license_keys = opts[:license_keys] || ChefLicensing::LicenseKeyFetcher.fetch({ logger: logger, dir: opts[:dir] })
 
       if license_keys.empty?
         logger.debug "No license keys found on disk."
@@ -96,7 +97,6 @@ module ChefLicensing
     def fetch_licenses_metadata
       licenses_metadata = ChefLicensing::Api::Describe.list({
         license_keys: license_keys,
-        cl_config: cl_config,
       })
       logger.debug "License metadata fetched from server: #{licenses_metadata}"
 

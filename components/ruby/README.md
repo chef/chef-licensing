@@ -20,19 +20,45 @@ TODO
 
 TODO
 
+
+## Configurations of Chef Licensing
+`ChefLicensing::Config` maintains the values for the configuration parameters to be used in Chef Licensing project. Below is the list of parameters and it's associated flag and environment variable which can be used to set the values.
+
+| Configuration Parameters | Argument Flag | Environment Variable |
+|----------|----------|----------|
+| license_server_url | `--chef-license-server` | `CHEF_LICENSE_SERVER` |
+| license_server_api_key | `--chef-license-server-api-key`| `CHEF_LICENSE_SERVER_API_KEY` |
+| chef_product_name | `--chef-product-name` | `CHEF_PRODUCT_NAME` |
+| chef_entitlement_id | `--chef-entitlement-id` | `CHEF_ENTITLEMENT_ID` |
+| logger | - | - |
+
+Additionally, it helps to check the air gap condition with the help of the `air_gap_detected` method.
+
+### Configure the Parameters from a ruby library
+
+```ruby
+require "chef_licensing"
+
+ChefLicensing.configure do |config|
+  config.license_server_url = "https://license.chef.io"
+  config.license_server_api_key = "1234567890"
+  config.air_gap_status = false
+  config.chef_product_name = "chef"
+  config.chef_entitlement_id = "chef123"
+  config.logger = Logger.new($stdout)
+end
+
+```
+
 ## Air Gap Detection
 
 Detecting an air gap condition is needed so that the licensing system can detect when to operate in an offline mode.
 
 Air gap detection may be specified by CLI argument, ENV variable, or by attempting to reach the licensing server through HTTP.
 
-### ChefLicensing.air_gap_detected?
+### ChefLicensing::Config.air_gap_detected?
 
 The main entry point to air gap detection is this function. Simply call it, and it will check for (in order) whether the CHEF_AIR_GAP env variable has been set, whether `--airgap` is present in ARGV, and finally whether the Licensing Server URL (its /v1/version endpoint) can be reached by HTTPS. The return value is a boolean, and is cached for the life of the process - airgap detection happens only once.
-
-## TUI Engine
-
-TODO
 
 ## Licensing Server API
 
@@ -267,7 +293,19 @@ ChefLicensing::Api::Client.info(options_hash)
 
 where:
 - values possible of options_hash are `license_keys` and `restful_client`. Default value of restful_client is `ChefLicensing::RestfulClient::V1`.
-- ENV["CHEF_ENTITLEMENT_ID"] needs to be set to fetch value from `ChefLicensing::Config.instance.chef_entitlement_id` or needs to be passed through argument using `--chef-entitlement-id` in CLI.
+- The value for chef entitlement id needs to be set in either of the following ways:
+  - Set the value in the environment variable `ENV["CHEF_ENTITLEMENT_ID"]`
+  - Pass the value through the cli argument `--chef-entitlement-id`
+  - Set the value in the library where chef-licensing is consumed using the following block
+    ```
+    require "chef_licensing"
+
+    ChefLicensing.configure do |config|
+      config.chef_entitlement_id = "chef123"
+    end
+    ```
+    The value is fetched using `ChefLicensing::Config.chef_entitlement_id`
+
 
 ### Response
 
@@ -330,7 +368,17 @@ ChefLicensing::Api::Describe.list(options_hash)
 where:
 
 - values possible of options_hash are `license_keys` and `restful_client`. Default value of restful_client is `ChefLicensing::RestfulClient::V1`.
-- ENV["CHEF_ENTITLEMENT_ID"] needs to be set to fetch value from `ChefLicensing::Config.instance.chef_entitlement_id` or needs to be passed through argument using `--chef-entitlement-id` in CLI.
+- The value for chef entitlement id needs to be set in either of the following ways:
+  - Set the value in the environment variable `ENV["CHEF_ENTITLEMENT_ID"]`
+  - Pass the value through the cli argument `--chef-entitlement-id`
+  - Set the value in the library where chef-licensing is consumed using the following block
+    ```
+    require "chef_licensing"
+
+    ChefLicensing.configure do |config|
+      config.chef_entitlement_id = "chef123"
+    end
+    ```
 
 ### Response
 
@@ -425,6 +473,20 @@ ChefLicensing::DescribeError
 # TUI Engine
 
 TUI Engine helps to build a text user interface considering each step involved in the text user interface as interaction.
+
+## Usage
+
+```ruby
+require "tui_engine"
+tui_engine = ChefLicensing::TUIEngine.new(config)
+# config is a hash containing key values like interaction_file_path
+
+# to append additional information to input for dynamic message display
+tui_engine.append_info_to_input({ extra_info: "Welcome!" })
+
+# Now extra_info could be used to display as part of text user interace in the erb template
+# Examle: messages: "This is a dynamic message, <% input[:extra_info] $>
+```
 
 ## Syntax
 
@@ -771,7 +833,18 @@ where:
 
 - **CLIENT_API_RESPONSE** should contain `Client`, `Features`, `Entitlement` & `Assets` keys for proper object creation.
 - **DESCRIBE_API_RESPONSE_FOR_EACH_LICENSE** should contain `license`, `features` `software` & `assets` keys for proper object creation.
-- ENV["CHEF_PRODUCT_NAME"] needs to be set to fetch value from `ChefLicensing::Config.instance.chef_product_name` or needs to be passed through argument using `--chef-product-name` in CLI.
+- The value for chef product name needs to be set in either of the following ways:
+  - Set the value in the environment variable `ENV["CHEF_PRODUCT_NAME"]`
+  - Pass the value through the cli argument `--chef-product-name`
+  - Set the value in the library where chef-licensing is consumed using the following block
+    ```
+    require "chef_licensing"
+
+    ChefLicensing.configure do |config|
+      config.chef_product_name = "inspec"
+    end
+    ```
+    The value is fetched using `ChefLicensing::Config.chef_product_name`
 - The `/describe` API is the metadata of all licenses and it is a list. Therefore, license data model should be called by iterating over the list of licenses. And data of each license should be passed with a mandatory `license` key.
 
 ## License Data Model Attributes:

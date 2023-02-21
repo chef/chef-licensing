@@ -1,6 +1,5 @@
 require "chef-config/path_helper"
 require "chef-config/windows"
-require "logger"
 
 require_relative "config"
 require_relative "license_key_fetcher/argument"
@@ -18,8 +17,8 @@ module ChefLicensing
     attr_reader :config, :license_keys, :arg_fetcher, :env_fetcher, :file_fetcher, :prompt_fetcher, :logger
     def initialize(opts = {})
       @config = opts
-      @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
-      @config[:output] ||= STDOUT
+      @logger = ChefLicensing::Config.logger
+      @config[:output] = ChefLicensing::Config.output
       config[:logger] = logger
       config[:dir] = opts[:dir]
 
@@ -28,8 +27,6 @@ module ChefLicensing
 
       argv = opts[:argv] || ARGV
       env = opts[:env] || ENV
-
-      @cl_config = opts[:cl_config] || ChefLicensing::Config.instance
 
       # The various things that have a say in fetching the license Key.
       @arg_fetcher = LicenseKeyFetcher::Argument.new(argv)
@@ -113,13 +110,12 @@ module ChefLicensing
     private
 
     attr_accessor :client
-    attr_reader :cl_config
 
     def fetch_from_arguments
       new_keys = arg_fetcher.fetch
       unless new_keys.empty?
         @license_keys.concat(new_keys)
-        file_fetcher.validate_and_persist(new_keys.first, cl_config: cl_config)
+        file_fetcher.validate_and_persist(new_keys.first)
       end
       @license_keys
     end
@@ -128,7 +124,7 @@ module ChefLicensing
       new_keys = env_fetcher.fetch
       unless new_keys.empty?
         @license_keys.concat(new_keys)
-        file_fetcher.validate_and_persist(new_keys.first, cl_config: cl_config)
+        file_fetcher.validate_and_persist(new_keys.first)
       end
       @license_keys
     end
@@ -143,7 +139,7 @@ module ChefLicensing
     end
 
     def licenses_active?
-      self.client = ChefLicensing.client(license_keys: @license_keys, cl_config: cl_config)
+      self.client = ChefLicensing.client(license_keys: @license_keys)
       if expired? || have_grace?
         config[:start_interaction] = :prompt_license_expired
         prompt_fetcher.config = config

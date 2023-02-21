@@ -2,18 +2,26 @@ require "chef_licensing/tui_engine/tui_engine"
 require "chef_licensing/config"
 require "spec_helper"
 require "stringio"
+require "chef_licensing"
 
 RSpec.describe ChefLicensing::TUIEngine do
   let(:fixture_dir) { "spec/fixtures/tui_interactions" }
+  let(:output) { StringIO.new }
+  let(:logger) { Logger.new(output) }
+
+  before do
+    ChefLicensing.configure do |conf|
+      conf.logger = logger
+      conf.output = output
+    end
+  end
 
   describe "when a tui_engine object is instantiated with a valid yaml file" do
 
     context "when the yaml file has only single path at each interaction" do
       let(:config) {
         {
-          output: StringIO.new,
           input: StringIO.new,
-          logger: Logger.new(StringIO.new),
           interaction_file: File.join(fixture_dir, "basic_flow_with_one_path.yaml"),
         }
       }
@@ -51,9 +59,7 @@ RSpec.describe ChefLicensing::TUIEngine do
 
       let(:config) {
         {
-          output: StringIO.new,
           input: user_input,
-          logger: Logger.new(StringIO.new),
           interaction_file: File.join(fixture_dir, "flow_with_multiple_path_select.yaml"),
         }
       }
@@ -83,9 +89,7 @@ RSpec.describe ChefLicensing::TUIEngine do
 
       let(:config) {
         {
-          output: StringIO.new,
           input: user_input,
-          logger: Logger.new(StringIO.new),
           interaction_file: File.join(fixture_dir, "flow_with_multiple_path_select.yaml"),
         }
       }
@@ -107,9 +111,7 @@ RSpec.describe ChefLicensing::TUIEngine do
 
       let(:config) {
         {
-          output: StringIO.new,
           input: user_input,
-          logger: Logger.new(StringIO.new),
           interaction_file: File.join(fixture_dir, "flow_with_multiple_path_with_yes.yaml"),
         }
       }
@@ -139,9 +141,7 @@ RSpec.describe ChefLicensing::TUIEngine do
 
       let(:config) {
         {
-          output: StringIO.new,
           input: user_input,
-          logger: Logger.new(StringIO.new),
           interaction_file: File.join(fixture_dir, "flow_with_multiple_path_with_yes.yaml"),
         }
       }
@@ -181,9 +181,7 @@ RSpec.describe ChefLicensing::TUIEngine do
     context "when the yaml file has no interaction" do
       let(:config) {
         {
-          output: StringIO.new,
           input: StringIO.new,
-          logger: Logger.new(StringIO.new),
           interaction_file: File.join(fixture_dir, "flow_with_no_interaction.yaml"),
         }
       }
@@ -194,11 +192,8 @@ RSpec.describe ChefLicensing::TUIEngine do
     end
 
     context "when the interaction file has timeout_yes prompt" do
-      let(:tui_output) { StringIO.new }
-
       let(:config) {
         {
-          output: tui_output,
           # input: StringIO.new, # This is not required as we are not sending any input
           logger: Logger.new(StringIO.new),
           interaction_file: File.join(fixture_dir, "flow_with_timeout_yes.yaml"),
@@ -209,18 +204,15 @@ RSpec.describe ChefLicensing::TUIEngine do
 
       it "should timeout and exit in 1 second" do
         expect { tui_engine.run_interaction }.to raise_error(SystemExit)
-        expect(tui_output.string).to include("Timed out!")
-        expect(tui_output.string).to include("Oops! Reflex too slow.")
+        expect(output.string).to include("Timed out!")
+        expect(output.string).to include("Oops! Reflex too slow.")
       end
     end
 
     context "when the interaction file has timeout_select prompt" do
-      let(:tui_output) { StringIO.new }
 
       let(:config) {
         {
-          output: tui_output,
-          logger: Logger.new(StringIO.new),
           interaction_file: File.join(fixture_dir, "flow_with_timeout_select.yaml"),
         }
       }
@@ -229,8 +221,8 @@ RSpec.describe ChefLicensing::TUIEngine do
 
       it "should timeout and exit in 1 second" do
         expect { tui_engine.run_interaction }.to raise_error(SystemExit)
-        expect(tui_output.string).to include("Timed out!")
-        expect(tui_output.string).to include("Oops! Your reflex is too slow.")
+        expect(output.string).to include("Timed out!")
+        expect(output.string).to include("Oops! Your reflex is too slow.")
       end
     end
 
@@ -244,25 +236,25 @@ RSpec.describe ChefLicensing::TUIEngine do
 
       let(:config) {
         {
-          output: StringIO.new,
           input: user_input,
-          logger: Logger.new(StringIO.new),
           interaction_file: File.join(fixture_dir, "flow_with_erb_messages.yaml"),
         }
       }
 
       let(:tui_engine) { described_class.new(config) }
 
+      before do
+        tui_engine.append_info_to_input({ extra_info: "Welcome!" })
+      end
+
       it "should render the erb" do
-        expect(tui_engine.run_interaction).to eq({ start: nil, ask_user_name: "Chef User!", welcome_user_in_english: ["Hello, Chef User!"], welcome_user_in_hindi: ["Namaste, Chef User!"], exit: nil })
+        expect(tui_engine.run_interaction).to eq({ start: nil, ask_user_name: "Chef User!", welcome_user_in_english: ["Hello, Chef User! Welcome!"], welcome_user_in_hindi: ["Namaste, Chef User!"], exit: nil, extra_info: "Welcome!" })
       end
     end
     context "when the yaml file has an interaction without messages or action key" do
       let(:config) {
         {
-          output: StringIO.new,
           input: StringIO.new,
-          logger: Logger.new(StringIO.new),
           interaction_file: File.join(fixture_dir, "flow_without_messages_or_action.yaml"),
         }
       }
@@ -315,9 +307,7 @@ RSpec.describe ChefLicensing::TUIEngine do
     context "when interactions key is missing in yaml file" do
       let(:config) {
         {
-          output: StringIO.new,
           input: StringIO.new,
-          logger: Logger.new(StringIO.new),
           interaction_file: File.join(fixture_dir, "flow_with_missing_interactions_key.yaml"),
         }
       }
@@ -329,9 +319,7 @@ RSpec.describe ChefLicensing::TUIEngine do
     context "when interactions have some invalid key" do
       let(:config) {
         {
-          output: StringIO.new,
           input: StringIO.new,
-          logger: Logger.new(StringIO.new),
           interaction_file: File.join(fixture_dir, "flow_with_broken_keys.yaml"),
         }
       }
@@ -357,9 +345,7 @@ RSpec.describe ChefLicensing::TUIEngine do
     context "when invalid value for prompt_type is given" do
       let(:config) {
         {
-          output: StringIO.new,
           input: StringIO.new,
-          logger: Logger.new(StringIO.new),
           interaction_file: File.join(fixture_dir, "flow_with_invalid_prompt_type.yaml"),
         }
       }
@@ -372,9 +358,7 @@ RSpec.describe ChefLicensing::TUIEngine do
     context "when the yaml file is empty" do
       let(:config) {
         {
-          output: StringIO.new,
           input: StringIO.new,
-          logger: Logger.new(StringIO.new),
           interaction_file: File.join(fixture_dir, "empty_interaction_file.yaml"),
         }
       }
@@ -387,9 +371,7 @@ RSpec.describe ChefLicensing::TUIEngine do
     context "when the yaml file has no file_format_version" do
       let(:config) {
         {
-          output: StringIO.new,
           input: StringIO.new,
-          logger: Logger.new(StringIO.new),
           interaction_file: File.join(fixture_dir, "flow_with_no_file_format_version.yaml"),
         }
       }
@@ -402,9 +384,7 @@ RSpec.describe ChefLicensing::TUIEngine do
     context "when the yaml file has invalid file_format_version" do
       let(:config) {
         {
-          output: StringIO.new,
           input: StringIO.new,
-          logger: Logger.new(StringIO.new),
           interaction_file: File.join(fixture_dir, "flow_with_invalid_file_format_version.yaml"),
         }
       }
@@ -419,9 +399,7 @@ RSpec.describe ChefLicensing::TUIEngine do
     context "when the yaml file does not exists" do
       let(:config) {
         {
-          output: StringIO.new,
           input: StringIO.new,
-          logger: Logger.new(StringIO.new),
           interaction_file: File.join(fixture_dir, "unexisting_file.yaml"),
         }
       }
@@ -434,9 +412,7 @@ RSpec.describe ChefLicensing::TUIEngine do
     context "when interaction file is not provided." do
       let(:config) {
         {
-          output: StringIO.new,
           input: StringIO.new,
-          logger: Logger.new(StringIO.new),
         }
       }
 

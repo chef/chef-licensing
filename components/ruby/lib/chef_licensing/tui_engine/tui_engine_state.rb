@@ -1,7 +1,7 @@
-require "logger"
 require_relative "tui_prompt"
 require_relative "tui_actions"
 require "erb" unless defined?(Erb)
+require_relative "../config"
 
 module ChefLicensing
   class TUIEngine
@@ -10,7 +10,7 @@ module ChefLicensing
 
       def initialize(opts = {})
         @input = {}
-        @logger = opts[:logger] || Logger.new(opts.key?(:output) ? opts[:output] : STDERR)
+        @logger = ChefLicensing::Config.logger
         @prompt = ChefLicensing::TUIEngine::TUIPrompt.new(opts)
         @tui_actions = ChefLicensing::TUIEngine::TUIActions.new
       end
@@ -38,6 +38,10 @@ module ChefLicensing
         else
           @next_interaction_id = nil
         end
+      end
+
+      def append_info_to_input(extra_info_hash)
+        @input.merge!(extra_info_hash)
       end
 
       private
