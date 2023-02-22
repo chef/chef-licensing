@@ -1,28 +1,40 @@
 # Chef Licensing
 
-Ruby support for fetching, storing, validating, checking entitlement, and interacting with the User about Progress Chef License Keys.
-
-Functionality is divided into several areas:
-
-* Storing License Keys Locally
-* Interacting with the User (Text UI Engine)
-* Interacting with the Licensing API
-* Checking for an Air Gap
-* Reading a setting for the License Server URL (TODO)
-
-## Quick Start
-
-TODO
-
-## Major Components
-
-## Storing License Keys Locally
-
-TODO
+Chef Licensing is a Ruby library for managing the licensing of Chef products. It provides the support to generate and validate license keys, as well as track entitlements associated with the licenses. 
 
 
-## Configurations of Chef Licensing
-`ChefLicensing::Config` maintains the values for the configuration parameters to be used in Chef Licensing project. Below is the list of parameters and it's associated flag and environment variable which can be used to set the values.
+## Table of Contents
+1. [System Prerequisites](#system-pre-requisites)
+2. [Installation](#installation)
+3. [Usage Prerequisites](#usage-pre-requisites)
+4. [Usage](#usage)
+5. [Other Details](#other-details)
+
+
+## System Prerequisites
+Usage of this library assumes the system to meet the following requirements:
+- **Ruby**: This library requires Ruby version 2.7 or higher. If you do not have Ruby installed, you can download it from the official Ruby website or use a package manager for the same.
+- **Bundler**: This project uses Bundler to manage dependencies. If you do not have Bundler installed, you can install it by running the following command in your terminal:
+  ```
+  gem install bundler
+  ```
+If you have any issues with the installation or configuration of these prerequisites, please refer to the documentation of each respective tool or library.
+
+## Installation
+You can use Chef Licensing Library by adding it to your Gemfile:
+<!-- I am assuming the gem name here; we could change it later -->
+```ruby
+gem 'chef-licensing'
+```
+Then, run `bundle install` to install the library and its dependencies.
+
+
+## Usage Prerequisites
+To use the Chef licensing library, certain configuration values such as the server URL, server API key, etc. must be set to generate, validate, and check for entitlements. These values can be set via the environment or the library, or passed as arguments while executing your application.
+
+### Configurations of Chef Licensing Library
+
+The `ChefLicensing::Config` class maintains the values for the configuration parameters to be used in Chef Licensing project. Below is the list of parameters and it's associated flag and environment variable which can be used to set the values.
 
 | Configuration Parameters | Argument Flag | Environment Variable |
 |----------|----------|----------|
@@ -31,6 +43,8 @@ TODO
 | chef_product_name | `--chef-product-name` | `CHEF_PRODUCT_NAME` |
 | chef_entitlement_id | `--chef-entitlement-id` | `CHEF_ENTITLEMENT_ID` |
 | logger | - | - |
+
+<!-- Add the airgap flag and environment too! And specify the ones which are optional -->
 
 Additionally, it helps to check the air gap condition with the help of the `air_gap_detected` method.
 
@@ -49,6 +63,35 @@ ChefLicensing.configure do |config|
 end
 
 ```
+
+## Usage
+
+### Generate License Key
+
+### Validate License Key
+
+### Check Entitlements of License Key
+
+
+----------------------------
+<!-- This is a simple border line to divide the wip above -->
+
+Functionality is divided into several areas:
+
+* Storing License Keys Locally
+* Interacting with the User (Text UI Engine)
+* Interacting with the Licensing API
+* Checking for an Air Gap
+* Reading a setting for the License Server URL (TODO)
+
+## Major Components
+
+## Storing License Keys Locally
+
+TODO
+
+
+
 
 ## Air Gap Detection
 
