@@ -56,6 +56,22 @@ The `ChefLicensing::Config` class manages the configuration parameters used in t
 | chef_entitlement_id | `--chef-entitlement-id` | `CHEF_ENTITLEMENT_ID` | String |
 | air_gap_detected? | `--airgap`  | `CHEF_AIR_GAP` | Boolean |
 | logger | - | - | - |
+| output | - | - | - |
+
+where:
+
+- `license_server_url`: the URL of the licensing server
+- `license_server_api_key`:
+- `chef_product_name`:
+- `chef_entitlement_id`:
+- `air_gap_detected?`: helps detect an air gap condition, which is necessary for the licensing system to determine when to function in an offline mode. An air gap environment is determined to be present if any of the following conditions are met: 
+  - the environment variable is set, 
+  - the argument flag is provided, 
+  - or there is an inability to ping the licensing server URL.
+
+  The return value is a boolean, and is cached for the life of the process - airgap detection happens only once.
+- `logger`: sets the logger functionality for the Chef Licensing library. It defaults to `Logger.new(STDERR)` and the logger level as `INFO`
+- `output`:
 
 #### Configure the Parameters directly in your Application
 
@@ -348,3 +364,393 @@ However, if an error occurs during the process, the `ChefLicensing::DescribeErro
 ## Implementation Details
 
 This section includes some implementation details of the Chef Licensing library.
+
+### License Data Model
+
+The license data model is a blueprint class that serves as a representation of the license object, comprising the following attributes:
+
+- `id`: license key value.
+- `license_type`: type of license (Trial, Free, Commercial).
+- `status`: status of license (`Active`, `Expired` or `Grace`).
+- `expiration_date`: expiration date of license
+- `expiration_status`: status of the license post expiration. It could be with `Expired` or `Grace`.
+- `feature_entitlements`: list of features which are entitled to the license. It contains attributes `id`, `name`, `entitled` and `status`.
+- `software_entitlements`: list of softwares which are entitled to the license. It contains attributes `id`, `name`, `entitled` and `status`.
+- `asset_entitlements`: list of assets which are entitled to the license. It contains attributes `id`, `name`, `entitled` and `status`.
+- `limits`: list of information around license usage, measure, limits and used info for different softwares. It contains attributes `usage_status`, `usage_limit`, `usage_measure`, `used` and `software`.
+
+The object is instantiated using the data received from various formats through the /client and /describe APIs.
+
+#### Usage: Creation Syntax
+
+```ruby
+require "chef_licensing/license"
+
+ChefLicensing::License.new(
+  data: CLIENT_API_RESPONSE,
+  api_parser: ChefLicensing::Api::Parser::Client
+)
+```
+
+OR
+
+```ruby
+require "chef_licensing/license"
+
+ChefLicensing::License.new(
+  data: DESCRIBE_API_RESPONSE_FOR_EACH_LICENSE,
+  api_parser: ChefLicensing::Api::Parser::Describe
+)
+```
+
+where:
+
+- **CLIENT_API_RESPONSE** should contain `Client`, `Features`, `Entitlement` & `Assets` keys for proper object creation.
+- **DESCRIBE_API_RESPONSE_FOR_EACH_LICENSE** should contain `license`, `features` `software` & `assets` keys for proper object creation.
+- The `/describe` API is the metadata of all licenses and it is a list. Therefore, license data model should be called by iterating over the list of licenses. And data of each license should be passed with a mandatory `license` key.
+
+### TUI Engine
+
+The TUI Engine assists in the creation of a text-based user interface by treating each step of the interface as an individual interaction. The TUI Engine is utilized in this library to generate the implemented text user interfaces.
+
+#### Usage
+
+```ruby
+require "tui_engine"
+tui_engine = ChefLicensing::TUIEngine.new(config)
+```
+
+where:
+
+- `config` is a hash which must contain the values `interaction_file` which is the path of yaml file containing the interactions.
+
+Moreover, the message to be presented in the TUI can be dynamic in nature. It can either be received from the user during an interaction or can be directly supplied to the engine for display at a particular prompt using the ERB templating messages. See [examples](#examples) for details.
+
+To supply the dynamic messages to the engine, send a hash as below:
+
+```ruby
+tui_engine.append_info_to_input({ extra_info: "Welcome!" })
+```
+Now extra_info key could be used to display as part of text user interace in the erb template.
+
+Examle: `messages: "This is a dynamic message, <% input[:extra_info] $>`
+
+#### Syntax of an Interaction
+
+A basic interaction is described as below:
+
+```YAML
+interactions:
+  start:
+    messages: "The message to be displayed in this interaction"
+    prompt_type: "say"
+    paths: [exit]
+    description: "Some description about this interaction"
+
+  exit:
+    messages: "Thank you"
+```
+
+
+where the different keys in an interaction file are:
+
+1. `interactions`: `interactions` key is the parent key in an interaction file. Every interaction must be defined under this key.
+
+2. `<interaction_id>`: `<interaction_id>` key is the identifier of any interaction, which defines a particular interaction.
+
+   Every interaction file must have an `exit` interaction.
+   The flow of interaction can run from any defined start interaction and always ends on `exit` interaction.
+
+3. `messages`:  `messages` key contains the texts to be displayed to the user at each interaction. `messages` can receive texts as an array or a string.
+
+   For general purpose display, texts can be provided as string. 
+
+   - Example: `messages: "This is the text to be displayed"`
+
+   Or it could be even provided as an array, and only the message at zeroth index would be picked.
+
+   - Example: `messages: ["This is the text to be displayed"]`
+
+   However, we need to provided the texts as an array or arrays when the provided text is to be displayed as menu. The format to be followed is as: `[header, [choices]]`
+
+   - Example: `messages: ["The header of the menu", ["Option 1", "Option 2"]]`
+   
+4. `prompt_type`: `prompt_type` key defines the type of prompt for an interaction. The supported prompt types are:
+
+   - `say`: displays the message, returns nil
+   - `yes`: displays the message, asks for input from user. Returns true when input is given as `yes` or `y`, and false on input of `no` or `n`.
+   - `ok`: displays the message in green color, returns the message.
+   - `warn` displays the message in yellow/orange color, returns the message.
+   - `error`: displayes the message in red color, returns the message.
+   - `select`: displays the menu header and choices, returns the selected choice.
+   - `enum_select`: displays the menu header and choices, returns the selected choice.
+   - `ask`: displays the message, returns the input value.
+   - `timeout_yes`: wraps the `yes` prompt with timeout feature. Default timeout duration is 60 seconds. However, the timeout duration and timeout message can be changed by providing the custom value in `prompt_attributes` key.
+   - `timeout_select`: wraps the `select` prompt with timeout feature. Default timeout duration is 60 seconds. However, the timeout duration and timeout message can be changed by providing the custom value in `prompt_attributes` key.
+
+   This key is an optional and defaults to prompt_type of `say`.
+
+5. `paths`: `paths` key accepts an array of interaction id to which an interaction could be follow, after the current responsibility of the interaction is complete. Every interaction must have a path except for the `exit` interaction.
+
+6. `action`: `action` key accepts a method name to be executed for an interaction. The methods are to be defined in `TUIActions` class.
+
+7. `response_path_map`: `response_path_map` key contains a mapping of `<response>: <interaction id>` which helps an interaction in decision making for next interaction.
+
+   The response could be from either prompt display or from action, but not both.
+
+8. `description`: `description` is an optional field of an interaction which is used to describe interaction for readability of the interaction file.
+
+9. `prompt_attributes`: `prompt_attributes` helps to provide additional properties required by any prompt_type. Currently, supported attributes are:
+   1.  `timeout_duration`: This attribute is supported by the `timeout_yes` prompt and can receive decimal values.
+   2.  `timeout_message`: This attribute is supported by the `timeout_yes` prompt and can receive string values.
+
+10. `:file_format_version`: it defines the version of the interaction file's format. This key is a mandatory key in an interaction file. Currently supported version of interaction file is `1.x.x`
+
+#### Ways to define an interaction
+
+The different ways how we can define an interaction is shown below.
+
+1. A simple interaction which displays message and exits with exit message.
+   ```YAML
+   interactions:
+      start:
+        messages: "The message to be displayed in this interaction"
+        prompt_type: "say"
+        paths: [exit]
+        description: "Some description about this interaction"
+
+       exit:
+         messages: "Thank you"
+         prompt_type: "say"
+         paths: []
+         description: "This is the exit interaction"
+   ```
+   Here, `start` and `exit` are the interaction id.
+
+   Since, prompt_type defaults to say for any interaction, description is an optional field and paths is empty for `exit` interaction. The above interactions interaction could also be defined as:
+   ```YAML
+   interactions:
+      start:
+        messages: "The message to be displayed in this interaction"
+        paths: [exit]
+
+       exit:
+         messages: "Thank you"
+   ```
+
+2. An interaction which displays message and has a single path
+   ```YAML
+   ask_number:
+     messages: "Please enter two numbers"
+     prompt_type: "ask"
+     paths: [validate_number]
+     description: "Some description about this interaction"
+   ```
+   Here, validate_number is the interaction id of next interaction.
+
+3. An interaction which has an action item and has a single path
+   ```YAML
+   validate_number:
+     action: is_number_valid?
+     paths: [add_inputs]
+     description: "Some description about this interaction"
+   ```
+   Here, add_inputs is the interaction id of next interaction.
+
+4. An interaction which displays a list of choices and has multiple paths
+   ```YAML
+   menu_prompt:
+    messages: ["Header of message", ["Option 1", "Option 2"]]
+    prompt_type: "select"
+    paths: [prompt_1_id, prompt_2_id]
+    response_path_map:
+      "Option 1": prompt_1_id
+      "Option 2": prompt_2_id
+   ```
+   Here, a menu is displayed with two options to select from. prompt_1_id and prompt_2_id are the two interaction id of next possible interactions. Here, `response_path_map` is required since different response from the user can lead to different interaction.
+
+
+5. An interaction which has an action item and has multiple paths
+   ```YAML
+   validate_number:
+     action: is_number_valid?
+     paths: [add_inputs, ask_number]
+     response_path_map:
+       "true": add_inputs
+       "false": ask_number
+      description: "is_number_valid? is a method and should be defined by the user in TUI Actions"
+   ```
+   Here, after the action is performed, based on the response of the action it could lead to different paths with the mapped interaction id.
+
+6. An interaction with a different starting interaction id other than `start`.
+   ```YAML
+   interactions:
+      greeting:
+        messages: "The greeting message to be displayed in this interaction"
+        paths: [exit]
+
+       exit:
+         messages: "Thank you"
+   ```
+   It is not mandatory to name starting interaction id with `start`.
+
+7. An interaction can have multiple starting points.
+  ```YAML
+   interactions:
+      greeting:
+        messages: "The greeting message to be displayed in this interaction"
+        paths: [exit]
+
+      good_bye:
+        messages: "The good bye message to be displayed in this interaction"
+        paths: [exit]
+
+       exit:
+         messages: "Thank you"
+   ```
+   In case of multiple starting interaction ids, interaction is run by passing selected starting interaction id.
+
+#### Troubleshooting
+- Do not have response_path_map based on the response from prompts and action together in a single interaction, this could lead to ambiguity. So, atomize the interaction to either: 
+  - display message,
+  - take inputs from user, or
+  - to perform an action item
+- Prompt_type field defaults to say when not provided. So, mentioning correct prompt_type for menu, choices or taking input is necessary.
+- It is recommended to key the keys in response_path_map as strings when key is space separated to maintain the consistency between different type of response.
+- Any additional keys provided in the interaction file is ignored.
+- Paths is mandatory for all interactions except for `exit` interaction.
+
+#### Examples
+
+1. basic interaction file
+
+```YAML
+:file_format_version: 1.0.0
+
+interactions:
+  start:
+    messages: ["This is a start message"]
+    prompt_type: "say"
+    paths: [prompt_2]
+    description: This is an optional field. WYOD (Write your own description)
+
+  prompt_2:
+    messages: ["Do you agree?"]
+    prompt_type: "yes"
+    paths: [prompt_3, prompt_4]
+    response_path_map:
+      "true": prompt_3
+      "false": prompt_4
+
+  prompt_3:
+    messages: ["This is message for prompt 3 - Reached when user says yes"]
+    prompt_type: "ok"
+    paths: [prompt_6]
+
+  prompt_4:
+    messages: ["This is message for prompt 4 - Reached when user says no"]
+    prompt_type: "warn"
+    paths: [prompt_5]
+
+  prompt_5:
+    messages: ["This is message for prompt 5"]
+    prompt_type: "error"
+    paths: [exit]
+
+  prompt_6:
+    messages: ["This is message for prompt 6"]
+    prompt_type: "ask"
+    paths: [exit]
+
+  exit:
+    messages: ["This is the exist prompt"]
+    prompt_type: "say"
+```
+
+2. with timeout_yes prompt
+
+```YAML
+:file_format_version: 1.0.0
+
+interactions:
+  start:
+    messages: ["Shall we begin the game?"]
+    prompt_type: "timeout_yes"
+    prompt_attributes:
+      timeout_duration: 10
+      timeout_message: "Oops! Reflex too slow."
+    paths: [play, rest]
+    response_path_map:
+      "true": play
+      "false": rest
+  play:
+    messages: ["Playing..."]
+    prompt_type: "ok"
+    paths: [exit]
+  rest:
+    messages: ["Resting..."]
+    prompt_type: "ok"
+    paths: [exit]
+  exit:
+    messages: ["Game over!"]
+    prompt_type: "say"
+```
+
+3. with erb message
+
+```YAML
+:file_format_version: 1.0.0
+
+interactions:
+  start:
+    messages: ["TUI GREET!"]
+    prompt_type: "say"
+    paths: [ask_user_name]
+    description: This is an optional field. WYOD (Write your own description)
+  ask_user_name:
+    messages: ["What is your name?"]
+    prompt_type: "ask"
+    paths: [welcome_user_in_english]
+    description: This is an optional field. WYOD (Write your own description)
+  welcome_user_in_english:
+    # You can provide variables/Constants of TUIEngineState
+    messages: ["Hello, <%=  input[:ask_user_name] %>"]
+    prompt_type: "ok"
+    paths: [exit]
+  exit:
+    messages: ["This is the exit prompt"]
+    prompt_type: "say"
+```
+
+4. with timeout_select prompt
+
+```YAML
+interactions:
+  start:
+    messages: ["Shall we begin the game?", ["Yes", "No", "Exit"]]
+    prompt_type: "timeout_select"
+    prompt_attributes:
+      timeout_duration: 10
+      timeout_message: "Oops! Your reflex is too slow."
+    paths: [play, rest, exit]
+    response_path_map:
+      "Yes": play
+      "No": rest
+      "Exit": exit
+
+  play:
+    messages: ["Playing..."]
+    prompt_type: "ok"
+    paths: [exit]
+    description: WYOD.
+
+  rest:
+    messages: ["Resting..."]
+    prompt_type: "ok"
+    paths: [exit]
+    description: WYOD.
+
+  exit:
+    messages: ["Game over!"]
+    prompt_type: "say"
+```
