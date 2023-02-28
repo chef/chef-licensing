@@ -1,40 +1,79 @@
 # Chef Licensing
 
-Ruby support for fetching, storing, validating, checking entitlement, and interacting with the User about Progress Chef License Keys.
-
-Functionality is divided into several areas:
-
-* Storing License Keys Locally
-* Interacting with the User (Text UI Engine)
-* Interacting with the Licensing API
-* Checking for an Air Gap
-* Reading a setting for the License Server URL (TODO)
-
-## Quick Start
-
-TODO
-
-## Major Components
-
-## Storing License Keys Locally
-
-TODO
+Chef Licensing is a Ruby library for managing the licensing of Chef products. It provides the support to generate and validate license keys, as well as track entitlements associated with the licenses. 
 
 
-## Configurations of Chef Licensing
-`ChefLicensing::Config` maintains the values for the configuration parameters to be used in Chef Licensing project. Below is the list of parameters and it's associated flag and environment variable which can be used to set the values.
+## Table of Contents
 
-| Configuration Parameters | Argument Flag | Environment Variable |
-|----------|----------|----------|
-| license_server_url | `--chef-license-server` | `CHEF_LICENSE_SERVER` |
-| license_server_api_key | `--chef-license-server-api-key`| `CHEF_LICENSE_SERVER_API_KEY` |
-| chef_product_name | `--chef-product-name` | `CHEF_PRODUCT_NAME` |
-| chef_entitlement_id | `--chef-entitlement-id` | `CHEF_ENTITLEMENT_ID` |
-| logger | - | - |
+1. [System Prerequisites](#system-prerequisites)
+2. [Installation](#installation)
+3. [Usage Prerequisites](#usage-prerequisites)
+4. [Usage](#usage)
+5. [APIs](#apis)
+6. [Implementation Details](#implementation-details)
 
-Additionally, it helps to check the air gap condition with the help of the `air_gap_detected` method.
 
-### Configure the Parameters from a ruby library
+## System Prerequisites
+
+Usage of this library assumes the system to meet the following requirements:
+- **Ruby**: This library requires Ruby version >= 3.1. If you do not have Ruby installed, you can download it from the official Ruby website or use a package manager for the same.
+- **Bundler**: This project uses Bundler to manage dependencies. If you do not have Bundler installed, you can install it by running the following command in your terminal:
+  ```
+  gem install bundler
+  ```
+If you have any issues with the installation or configuration of these prerequisites, please refer to the documentation of each respective tool or library.
+
+## Installation
+
+You can use Chef Licensing Library by adding it to your Gemfile:
+
+<!-- I am assuming the gem name here; we could change it later -->
+```ruby
+gem 'chef-licensing'
+```
+
+Then, run `bundle install` to install the library and its dependencies.
+
+
+<!-- Usage Prerequisites contains the configuration to be done before using the library in the client's application -->
+## Usage Prerequisites
+
+To use the Chef licensing library, certain configuration values such as the server URL, server API key, etc. must be set to generate, validate, and check for entitlements. These values can be set via the environment or the library, or passed as arguments while executing your application.
+
+### Configurations of Chef Licensing Library
+
+The `ChefLicensing::Config` class manages the configuration parameters used in the Chef Licensing library.
+
+<!-- Discuss with team to find which are the optional other than air_gap and logger -->
+
+#### Configure the Parameters using argument flag or environment variable
+
+| Configuration Parameters | Argument Flag | Environment Variable | Type |
+|----------|----------|----------|----------|
+| license_server_url | `--chef-license-server` | `CHEF_LICENSE_SERVER` | String |
+| license_server_api_key | `--chef-license-server-api-key`| `CHEF_LICENSE_SERVER_API_KEY` | String |
+| chef_product_name | `--chef-product-name` | `CHEF_PRODUCT_NAME` | String |
+| chef_entitlement_id | `--chef-entitlement-id` | `CHEF_ENTITLEMENT_ID` | String |
+| air_gap_detected? | `--airgap`  | `CHEF_AIR_GAP` | Boolean |
+| logger | - | - | - |
+| output | - | - | - |
+
+where:
+
+- `license_server_url`: the URL of the licensing server
+- `license_server_api_key`: the API token/key of the licensing server
+- `chef_product_name`: the name of the chef software using this library
+- `chef_entitlement_id`: the unique entitlement id of the chef's software
+- `air_gap_detected?`: helps detect an air gap condition, which is necessary for the licensing system to determine when to function in an offline mode. An air gap environment is determined to be present if any of the following conditions are met: 
+  - the environment variable is set, 
+  - the argument flag is provided, 
+  - or there is an inability to ping the licensing server URL.
+
+  The return value is a boolean, and is cached for the life of the process - airgap detection happens only once.
+- `logger`: sets the logger functionality for the Chef Licensing library. It defaults to `Logger.new(STDERR)` and the logger level as `INFO`
+- `output`: sets the output stream for the chef-licensing library. It defaults to `STDOUT` but could be directed the output stream to a file if required.
+
+#### Configure the Parameters directly in your Application
 
 ```ruby
 require "chef_licensing"
@@ -50,186 +89,55 @@ end
 
 ```
 
-## Air Gap Detection
+<!-- Usage section contains all the methods that the client would invoke while using the Chef Licensing Library -->
+## Usage
 
-Detecting an air gap condition is needed so that the licensing system can detect when to operate in an offline mode.
+<!-- Need to create a method for fetch_and_persist maybe? So that all the methods to be used by the client of this library is in one place -->
+<!-- Document about the fetch_and_persist after the wrapper is introduced in the chef_licensing file. -->
 
-Air gap detection may be specified by CLI argument, ENV variable, or by attempting to reach the licensing server through HTTP.
+### Software Entitlement Check
 
-### ChefLicensing::Config.air_gap_detected?
-
-The main entry point to air gap detection is this function. Simply call it, and it will check for (in order) whether the CHEF_AIR_GAP env variable has been set, whether `--airgap` is present in ARGV, and finally whether the Licensing Server URL (its /v1/version endpoint) can be reached by HTTPS. The return value is a boolean, and is cached for the life of the process - airgap detection happens only once.
-
-## Licensing Server API
-
-### Pre-requisites
-
-Please define 
-- the `CHEF_LICENSE_SERVER` env variable to the URL of the Progress Chef License Service you are targeting.
-- the `CHEF_LICENSE_SERVER_API_KEY` env variable of the API key of the Chef License Service.
-
-## Storage
-
-## License Generation
-
-### Summary:
-
-LicenseKey generation abstracts a RESTful action from the License Server. It raises Exceptions when license generation fails
-
-### License Key Genereation Usage:
-
-
-```ruby
-require 'chef_licensing/license_key_generator'
-
-ChefLicensing::LicenseKeyGenerator.generate!(
-  first_name: "FIRSTNAME",
-  last_name: "LASTNAME",
-  email_id: "EMAILID",
-  product: "PRODUCT",
-  company: "COMPANY",
-  phone: "PHONE"
-)
-```
-
-### License Key Genereation Response:
-
-On success, it responds with a valid LICENSE KEY and on failure it raises an Error
-
-### License Key Genereation Errors:
-
-On errors, message from the license gen server is directly return as exception message
-
-```ruby
-ChefLicensing::LicenseGenerationFailed
-```
-
-## License Validation
-
-### License Validation Usage
-
-```ruby
-require 'chef_licensing/license_feature_entitlement'
-ChefLicensing::LicenseKeyValidator.validate!("LICENSE_KEY")
-```
-
-### License Validation Response
-
-On success, it returns `true` and on failure it raises an Error
-
-### License Validation Exceptions
-
-```ruby
-  ChefLicensing::InvalidLicense
-```
-
-## Entitlement
-
-## Software Entitlement
-
-Software entitlement check validates the software entitlement against given licenses.
-
-### ChefLicensing.check_software_entitlement
+Software entitlement check validates a user's entitlement to use a specific software product by verifying their licenses.
 
 ```ruby
 require "chef_licensing"
 ChefLicensing.check_software_entitlement!
 ```
+#### Response
 
-* Returns `true` if software is entitled to the license else raises `ChefLicensing::SoftwareNotEntitled` exception.
+If the software is entitled to the license, it returns true; else, it raises an `ChefLicensing::SoftwareNotEntitled` exception.
 
-where:
-- ENV["CHEF_ENTITLEMENT_ID"] needs to be set to fetch value from `ChefLicensing::Config.instance.chef_entitlement_id` or needs to be passed through argument using `--chef-entitlement-id` in CLI.
-- This check internally uses `/client` API call.
+### Feature Entitlement Check
 
-### Software Entitlement API service class usage:
-
-* Check with software entitlement name
-
- ```ruby
-require 'chef_licensing/license_software_entitlement'
-ChefLicensing::LicenseSoftwareEntitlement.check!(license_keys: license_keys, software_entitlement_name: software_entitlement_name)
-```
-
-* Check with software entitlement name
-
- ```ruby
-require 'chef_licensing/license_software_entitlement'
-ChefLicensing::LicenseSoftwareEntitlement.check!(license_keys: license_keys, software_entitlement_id: software_entitlement_id)
-```
-
-* Returns `true` if software is entitled to the license else raises `ChefLicensing::SoftwareNotEntitled` exception.
-
-## Features Entitlement
-
-Feature entitlement check allows validating the premium features entitlement against the license.
-
-### ChefLicensing.check_feature_entitlement
-
-Accepts the feature name as the argument
-
-#### check_feature_entitlment usage
+Feature entitlement check validates a premium feature access by verifying it against the user's licenses.
 
 ```ruby
 require "chef_licensing"
-ChefLicensing.check_feature_entitlement!('FEATURE_NAME')
+ChefLicensing.check_feature_entitlement!('FEATURE_NAME OR FEATURE_ID')
 ```
 
-### Usage of Service class
+#### Response
 
-* License Feature Validator can accept either of Feature Name or Feature ID.
-* Also it can accept multiple License IDs at the same time.
-* the entitlement check would be successful if the feature is entitled by at least one of the given licenses
+If the feature is entitled to one of the provided licenses, it returns true; else, it raises one of the below two exceptions:
 
-#### Validate with Single License and Feature ID
+- `ChefLicensing::InvalidLicense`: in case of invalid license
+- `ChefLicensing::FeatureNotEntitled`: in case of invalid entitlements
 
-```ruby
-require 'chef_licensing/license_feature_entitlement'
-ChefLicensing::LicenseFeatureEntitlement.check_entitlement!("LICENSE", feature_id: "FEATURE_ID")
-```
+### List Licenses Information
 
-#### Validate with Multiple license and Feature ID
-
-```ruby
-require 'chef_licensing/license_feature_entitlement'
-ChefLicensing::LicenseFeatureEntitlement.check_entitlement!(["LICENSES"], feature_id: "FEATURE_ID")
-```
-
-#### Validate with Feature Name
-
-```ruby
-require 'chef_licensing/license_feature_entitlement'
-ChefLicensing::LicenseFeatureEntitlement.check_entitlement!(["LICENSES"], feature_name: "FEATURE_NAME")
-```
-
-### Response
-
-On success, it returns `true` meaning the feature is entitled to one of the given licenses and
-on failure it raises an Error
-
-### Errors
-
-* in case of invalid license it would raise invalid license exception
-
-```ruby
-ChefLicensing::InvalidLicense
-```
-
-* in case of invalid entitlements it would raise an invalid entitlement exception
-
-```ruby
-ChefLicensing::FeatureNotEntitled
-```
-
-## List Licenses
-Obtain the information about the licenses and its associated values.
+List licenses information retrieves detailed information about licenses stored on the system or passed as an argument. It can be used to verify information such as the license type, expiration date, owner, and features associated with each license.
 
 ```ruby
 require "chef_licensing"
 ChefLicensing.list_license_keys_info
 ```
 
-A simple output on calling `list_license_keys_info`
+#### Response
+
+If the retrieval is successful, it displays the information of all the license; else it raises an `ChefLicensing::DescribeError` exception with the error message.
+
+**Sample output:**
+
 ```
 +---------- License Keys Information ----------+
 Total License Keys found: 1
@@ -266,52 +174,66 @@ Software      :
 +----------------------------------------------+
 ```
 
-## Usage
+## APIs
 
-Docs TODO
+The following APIs provide an abstraction layer for the RESTful actions that are available through the licensing server. These APIs enable various operations such as validation, generation, and others to be performed.
+### Generate License Key
 
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-## Client API
-
-Client API contains details of a license and it's entitlement to several features, softwares and assets. It also contains information on expiration date , the status of license after expiration and the license usage details.
-
-### Usage
+It helps to generate a license.
 
 ```ruby
-require "chef_licensing"
-ChefLicensing.client(license_keys: [LIST_OF_LICENSE_KEYS])
-```
+require 'chef_licensing/license_key_generator'
 
-or
+ChefLicensing::LicenseKeyGenerator.generate!(
+  first_name: "John",
+  last_name: "Doe",
+  email_id: "johndoe@progress.com",
+  product: "inspec",
+  company: "Progress",
+  phone: "000-000-0000"
+)
+```
+<!-- Give examples for the possible value for product in this example, maybe? -->
+
+#### Response
+
+If successful, the license key generation process responds with a valid license key.
+<!-- Add about the location maybe? -->
+
+However, in case of errors, the `ChefLicensing::LicenseGenerationFailed` class returns the message directly from the license generation server as the exception message.
+
+### Validate License Key
+
+It helps to validate array of licenses.
+
+```ruby
+require 'chef_licensing/license_feature_entitlement'
+ChefLicensing::LicenseKeyValidator.validate!("LICENSE_KEY")
+```
+#### Response
+
+If the license validation process is successful, it returns true or false to indicate the validity of the license. 
+
+However, if an error occurs during the validation process, the `ChefLicensing::InvalidLicense` class raises an exception message.
+
+### Client
+
+It helps to retrieve information about licenses, its entitlements to various features, software, and assets, as well as details about its expiration date and post-expiry status, and usage information for the license.
+
 ```ruby
 require "chef_licensing/api/client"
 ChefLicensing::Api::Client.info(options_hash)
 ```
+- values to be sent in `options_hash` are `license_keys` and `restful_client`. Default value of restful_client is `ChefLicensing::RestfulClient::V1`.
 
-where:
-- values possible of options_hash are `license_keys` and `restful_client`. Default value of restful_client is `ChefLicensing::RestfulClient::V1`.
-- The value for chef entitlement id needs to be set in either of the following ways:
-  - Set the value in the environment variable `ENV["CHEF_ENTITLEMENT_ID"]`
-  - Pass the value through the cli argument `--chef-entitlement-id`
-  - Set the value in the library where chef-licensing is consumed using the following block
-    ```
-    require "chef_licensing"
+#### Response
 
-    ChefLicensing.configure do |config|
-      config.chef_entitlement_id = "chef123"
-    end
-    ```
-    The value is fetched using `ChefLicensing::Config.chef_entitlement_id`
+If the retrieval is successful, it returns a license data model object that utilizes the JSON data retrieved from the Licensing Server API.
 
+However, if an error occurs during the process, the `ChefLicensing::ClientError` raises an exception.
 
-### Response
+**Sample response from the Licensing Server which is converted into license data model object**
 
-Returns an object of license data model which uses JSON data returned from the API.
-
-API JSON response:
 ```json
 {
   "cache": {
@@ -345,46 +267,24 @@ API JSON response:
 }
 ```
 
-### Errors
+### Describe
 
-* in case of error in client API it would raise license client error.
-
-```ruby
-ChefLicensing::ClientError
-```
-
-
-## Describe API for licenses metadata
-
-Describe API contains details of list of licenses and their entitlements to several features, softwares, assets and the usage limits for each license.
-
-### Usage
+It helps to retrieve information about a list of licenses, including their entitlements to various features, software, and assets, as well as usage limits for each license.
 
 ```ruby
 require "chef_licensing/api/describe"
 ChefLicensing::Api::Describe.list(options_hash)
 ```
 
-where:
+- values to be sent in `options_hash` are `license_keys` and `restful_client`. Default value of `restful_client` is `ChefLicensing::RestfulClient::V1`.
 
-- values possible of options_hash are `license_keys` and `restful_client`. Default value of restful_client is `ChefLicensing::RestfulClient::V1`.
-- The value for chef entitlement id needs to be set in either of the following ways:
-  - Set the value in the environment variable `ENV["CHEF_ENTITLEMENT_ID"]`
-  - Pass the value through the cli argument `--chef-entitlement-id`
-  - Set the value in the library where chef-licensing is consumed using the following block
-    ```
-    require "chef_licensing"
+#### Response
 
-    ChefLicensing.configure do |config|
-      config.chef_entitlement_id = "chef123"
-    end
-    ```
+If the retrieval is successful, it returns a license data model object that utilizes the JSON data retrieved from the Licensing Server API.
 
-### Response
+However, if an error occurs during the process, the `ChefLicensing::DescribeError` raises an exception.
 
-Returns a list of objects of license data model which uses JSON data returned from the API.
-
-API JSON response:
+**Sample response from the Licensing Server which is converted into license data model object**
 
 ```json
 {
@@ -462,35 +362,84 @@ API JSON response:
 }
 ```
 
-### Errors
+## Implementation Details
 
-* in case of error in describe API it would raise license describe error.
+This section includes some implementation details of the Chef Licensing library.
+
+### License Data Model
+
+The license data model is a blueprint class that serves as a representation of the license object, comprising the following attributes:
+
+- `id`: license key value.
+- `license_type`: type of license (Trial, Free, Commercial).
+- `status`: status of license (`Active`, `Expired` or `Grace`).
+- `expiration_date`: expiration date of license
+- `expiration_status`: status of the license post expiration. It could be with `Expired` or `Grace`.
+- `feature_entitlements`: list of features which are entitled to the license. It contains attributes `id`, `name`, `entitled` and `status`.
+- `software_entitlements`: list of softwares which are entitled to the license. It contains attributes `id`, `name`, `entitled` and `status`.
+- `asset_entitlements`: list of assets which are entitled to the license. It contains attributes `id`, `name`, `entitled` and `status`.
+- `limits`: list of information around license usage, measure, limits and used info for different softwares. It contains attributes `usage_status`, `usage_limit`, `usage_measure`, `used` and `software`.
+
+The object is instantiated using the data received from various formats through the /client and /describe APIs.
+
+#### Usage: Creation Syntax
 
 ```ruby
-ChefLicensing::DescribeError
+require "chef_licensing/license"
+
+ChefLicensing::License.new(
+  data: CLIENT_API_RESPONSE,
+  api_parser: ChefLicensing::Api::Parser::Client
+)
 ```
 
-# TUI Engine
+OR
 
-TUI Engine helps to build a text user interface considering each step involved in the text user interface as interaction.
+```ruby
+require "chef_licensing/license"
 
-## Usage
+ChefLicensing::License.new(
+  data: DESCRIBE_API_RESPONSE_FOR_EACH_LICENSE,
+  api_parser: ChefLicensing::Api::Parser::Describe
+)
+```
+
+where:
+
+- **CLIENT_API_RESPONSE** should contain `Client`, `Features`, `Entitlement` & `Assets` keys for proper object creation.
+- **DESCRIBE_API_RESPONSE_FOR_EACH_LICENSE** should contain `license`, `features` `software` & `assets` keys for proper object creation.
+- The `/describe` API is the metadata of all licenses and it is a list. Therefore, license data model should be called by iterating over the list of licenses. And data of each license should be passed with a mandatory `license` key.
+
+### TUI Engine
+
+The TUI Engine assists in the creation of a text-based user interface by treating each step of the interface as an individual interaction. The TUI Engine is utilized in this library to generate the implemented text user interfaces.
+
+#### Usage
 
 ```ruby
 require "tui_engine"
 tui_engine = ChefLicensing::TUIEngine.new(config)
-# config is a hash containing key values like interaction_file_path
-
-# to append additional information to input for dynamic message display
-tui_engine.append_info_to_input({ extra_info: "Welcome!" })
-
-# Now extra_info could be used to display as part of text user interace in the erb template
-# Examle: messages: "This is a dynamic message, <% input[:extra_info] $>
 ```
 
-## Syntax
+where:
+
+- `config` is a hash which must contain the values `interaction_file` which is the path of yaml file containing the interactions.
+
+Moreover, the message to be presented in the TUI can be dynamic in nature. It can either be received from the user during an interaction or can be directly supplied to the engine for display at a particular prompt using the ERB templating messages. See [examples](#examples) for details.
+
+To supply the dynamic messages to the engine, send a hash as below:
+
+```ruby
+tui_engine.append_info_to_input({ extra_info: "Welcome!" })
+```
+Now extra_info key could be used to display as part of text user interace in the erb template.
+
+Examle: `messages: "This is a dynamic message, <% input[:extra_info] $>`
+
+#### Syntax of an Interaction
 
 A basic interaction is described as below:
+
 ```YAML
 interactions:
   start:
@@ -503,8 +452,8 @@ interactions:
     messages: "Thank you"
 ```
 
-### Keys in an Interaction File
-The different keys in an interaction file are:
+
+where the different keys in an interaction file are:
 
 1. `interactions`: `interactions` key is the parent key in an interaction file. Every interaction must be defined under this key.
 
@@ -558,7 +507,7 @@ The different keys in an interaction file are:
 
 10. `:file_format_version`: it defines the version of the interaction file's format. This key is a mandatory key in an interaction file. Currently supported version of interaction file is `1.x.x`
 
-### Ways to define an interaction
+#### Ways to define an interaction
 
 The different ways how we can define an interaction is shown below.
 
@@ -662,7 +611,7 @@ The different ways how we can define an interaction is shown below.
    ```
    In case of multiple starting interaction ids, interaction is run by passing selected starting interaction id.
 
-## Troubleshooting
+#### Troubleshooting
 - Do not have response_path_map based on the response from prompts and action together in a single interaction, this could lead to ambiguity. So, atomize the interaction to either: 
   - display message,
   - take inputs from user, or
@@ -672,7 +621,10 @@ The different ways how we can define an interaction is shown below.
 - Any additional keys provided in the interaction file is ignored.
 - Paths is mandatory for all interactions except for `exit` interaction.
 
-## Example of a basic interaction file
+#### Examples
+
+1. basic interaction file
+
 ```YAML
 :file_format_version: 1.0.0
 
@@ -716,7 +668,8 @@ interactions:
     prompt_type: "say"
 ```
 
-## Example with timeout_yes prompt
+2. with timeout_yes prompt
+
 ```YAML
 :file_format_version: 1.0.0
 
@@ -744,7 +697,8 @@ interactions:
     prompt_type: "say"
 ```
 
-## Example with erb message
+3. with erb message
+
 ```YAML
 :file_format_version: 1.0.0
 
@@ -769,7 +723,8 @@ interactions:
     prompt_type: "say"
 ```
 
-## Example with timeout_select prompt
+4. with timeout_select prompt
+
 ```YAML
 interactions:
   start:
@@ -800,63 +755,3 @@ interactions:
     messages: ["Game over!"]
     prompt_type: "say"
 ```
-
-# License Data Model
-
-## Summary:
-
-License data model is a license object created from the license data received in different formats from `/client` and `/describe` API.
-
-## License Data Model Creation Syntax:
-
-```ruby
-require "chef_licensing/license"
-
-ChefLicensing::License.new(
-  data: CLIENT_API_RESPONSE,
-  api_parser: ChefLicensing::Api::Parser::Client
-)
-```
-
-OR
-
-```ruby
-require "chef_licensing/license"
-
-ChefLicensing::License.new(
-  data: DESCRIBE_API_RESPONSE_FOR_EACH_LICENSE,
-  api_parser: ChefLicensing::Api::Parser::Describe
-)
-```
-
-where:
-
-- **CLIENT_API_RESPONSE** should contain `Client`, `Features`, `Entitlement` & `Assets` keys for proper object creation.
-- **DESCRIBE_API_RESPONSE_FOR_EACH_LICENSE** should contain `license`, `features` `software` & `assets` keys for proper object creation.
-- The value for chef product name needs to be set in either of the following ways:
-  - Set the value in the environment variable `ENV["CHEF_PRODUCT_NAME"]`
-  - Pass the value through the cli argument `--chef-product-name`
-  - Set the value in the library where chef-licensing is consumed using the following block
-    ```
-    require "chef_licensing"
-
-    ChefLicensing.configure do |config|
-      config.chef_product_name = "inspec"
-    end
-    ```
-    The value is fetched using `ChefLicensing::Config.chef_product_name`
-- The `/describe` API is the metadata of all licenses and it is a list. Therefore, license data model should be called by iterating over the list of licenses. And data of each license should be passed with a mandatory `license` key.
-
-## License Data Model Attributes:
-
-On success, license data model contains these attributes:
-
-- `id` is license key value.
-- `license_type` is the type of license (Trial, Free, Commercial).
-- `status` can have values like `Active`, `Expired` or `Grace`.
-- `expiration_date` is the date after which license will be expired.
-- `expiration_status` is the status of the license post expiration. It could be with `Expired` or `Grace`.
-- `feature_entitlements` is the list of features which are entitled to the license. It contains attributes `id`, `name`, `entitled` and `status`.
-- `software_entitlements` is the list of softwares which are entitled to the license. It contains attributes `id`, `name`, `entitled` and `status`.
-- `asset_entitlements` is the list of assets which are entitled to the license. It contains attributes `id`, `name`, `entitled` and `status`.
-- `limits` is the list of information around license usage, measure, limits and used info for different softwares. It contains attributes `usage_status`, `usage_limit`, `usage_measure`, `used` and `software`.
