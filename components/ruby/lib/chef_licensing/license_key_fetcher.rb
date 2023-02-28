@@ -41,13 +41,10 @@ module ChefLicensing
     # Methods for obtaining consent from the user.
     #
     def fetch_and_persist
-      # TODO: handle non-persistent cases
-      # If a fetch is made by CLI arg, persist and return
       logger.debug "License Key fetcher examining CLI arg checks"
       new_keys = fetch_license_key_from_arg
       concat_validate_and_persist(new_keys)
 
-      # If a fetch is made by ENV, persist and return
       logger.debug "License Key fetcher examining ENV checks"
       new_keys = fetch_license_key_from_env
       concat_validate_and_persist(new_keys)
