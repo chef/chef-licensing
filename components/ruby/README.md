@@ -16,7 +16,7 @@ Chef Licensing is a Ruby library for managing the licensing of Chef products. It
 ## System Prerequisites
 
 Usage of this library assumes the system to meet the following requirements:
-- **Ruby**: This library requires Ruby version 2.7 or higher. If you do not have Ruby installed, you can download it from the official Ruby website or use a package manager for the same.
+- **Ruby**: This library requires Ruby version >= 3.1. If you do not have Ruby installed, you can download it from the official Ruby website or use a package manager for the same.
 - **Bundler**: This project uses Bundler to manage dependencies. If you do not have Bundler installed, you can install it by running the following command in your terminal:
   ```
   gem install bundler
@@ -61,9 +61,9 @@ The `ChefLicensing::Config` class manages the configuration parameters used in t
 where:
 
 - `license_server_url`: the URL of the licensing server
-- `license_server_api_key`:
-- `chef_product_name`:
-- `chef_entitlement_id`:
+- `license_server_api_key`: the API token/key of the licensing server
+- `chef_product_name`: the name of the chef software using this library
+- `chef_entitlement_id`: the unique entitlement id of the chef's software
 - `air_gap_detected?`: helps detect an air gap condition, which is necessary for the licensing system to determine when to function in an offline mode. An air gap environment is determined to be present if any of the following conditions are met: 
   - the environment variable is set, 
   - the argument flag is provided, 
@@ -71,7 +71,7 @@ where:
 
   The return value is a boolean, and is cached for the life of the process - airgap detection happens only once.
 - `logger`: sets the logger functionality for the Chef Licensing library. It defaults to `Logger.new(STDERR)` and the logger level as `INFO`
-- `output`:
+- `output`: sets the output stream for the chef-licensing library. It defaults to `STDOUT` but could be directed the output stream to a file if required.
 
 #### Configure the Parameters directly in your Application
 
@@ -93,6 +93,7 @@ end
 ## Usage
 
 <!-- Need to create a method for fetch_and_persist maybe? So that all the methods to be used by the client of this library is in one place -->
+<!-- Document about the fetch_and_persist after the wrapper is introduced in the chef_licensing file. -->
 
 ### Software Entitlement Check
 
