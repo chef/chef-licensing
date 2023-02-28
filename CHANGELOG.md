@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.3.28 -->
-## [0.3.28](https://github.com/chef/chef-licensing/tree/0.3.28) (2023-02-21)
+<!-- latest_release 0.3.29 -->
+## [0.3.29](https://github.com/chef/chef-licensing/tree/0.3.29) (2023-02-28)
 
 #### Merged Pull Requests
-- CFINSPEC-581: Change config class to block style in Chef Licensing [#54](https://github.com/chef/chef-licensing/pull/54) ([ahasunos](https://github.com/ahasunos))
+- CFINSPEC-476: Licensing - Argument fetcher does not take arguments without = [#59](https://github.com/chef/chef-licensing/pull/59) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CFINSPEC-476: Licensing - Argument fetcher does not take arguments without = [#59](https://github.com/chef/chef-licensing/pull/59) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.29 -->
 - CFINSPEC-581: Change config class to block style in Chef Licensing [#54](https://github.com/chef/chef-licensing/pull/54) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.28 -->
 - CFINSPEC-548 Entitlement checks with Client API call [#52](https://github.com/chef/chef-licensing/pull/52) ([Nik08](https://github.com/Nik08)) <!-- 0.3.27 -->
 - CFINSPEC-503 License Expiry Flow [#50](https://github.com/chef/chef-licensing/pull/50) ([Nik08](https://github.com/Nik08)) <!-- 0.3.26 -->
