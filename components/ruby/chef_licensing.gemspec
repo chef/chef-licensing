@@ -29,4 +29,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "chef-config", ">= 15"
   spec.add_dependency "tty-prompt", "~> 0.23"
   spec.add_dependency "faraday", ">= 1", "< 3"
+  spec.add_dependency "faraday-http-cache"
+  spec.add_dependency "activesupport", "~> 7.0", ">= 7.0.4.2"
 end
