@@ -1,6 +1,5 @@
 require "faraday" unless defined?(Faraday)
 require "faraday/http_cache"
-require "logger"
 require "active_support"
 require "tmpdir" unless defined?(Dir.mktmpdir)
 require_relative "../exceptions/restful_client_error"
@@ -124,7 +123,7 @@ module ChefLicensing
         Faraday.new(url: ChefLicensing::Config.license_server_url) do |config|
           config.request :json
           config.response :json, parser_options: { object_class: OpenStruct }
-          config.use Faraday::HttpCache, shared_cache: false, logger: Logger.new(STDOUT), store: store
+          config.use Faraday::HttpCache, shared_cache: false, logger: ChefLicensing::Config.logger, store: store
           config.adapter Faraday.default_adapter
         end
       end
