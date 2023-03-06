@@ -11,6 +11,9 @@ interactions:
 
         If you have generated a license previously, you might
         have received it in email.
+
+        If you are a commercial user, you can also find it in the
+        supportlink.chef.io portal.
       ------------------------------------------------------------
     prompt_type: "say"
     paths: [ask_if_user_has_license_id]
