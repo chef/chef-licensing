@@ -21,7 +21,7 @@ module ChefLicensing
       licenses_metadata = fetch_licenses_metadata
 
       output.puts "+------------ License Information ------------+"
-      output.puts "Total Licenses found: #{licenses_metadata.length}\n\n"
+      output.puts "Total Licenses found: #{licenses_metadata.length}\n\n" if licenses_metadata.length > 1
 
       licenses_metadata.each do |license|
         puts_bold "License Key     : #{license.id}"

@@ -158,8 +158,12 @@ interactions:
     description: "is_license_valid_on_server? is a method defined in TUIActions class"
 
   validation_success:
-    messages: "\n✓ [Success] License validated successfully"
+    messages: "\n✓ [Success] License validated successfully\n"
     prompt_type: "ok"
+    paths: [display_license_info]
+
+  display_license_info:
+    action: display_license_info
     paths: [fetch_license_id]
 
   fetch_invalid_license_msg:
