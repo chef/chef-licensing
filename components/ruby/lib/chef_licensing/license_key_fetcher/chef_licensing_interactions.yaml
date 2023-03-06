@@ -15,6 +15,17 @@ interactions:
     prompt_type: "say"
     paths: [ask_if_user_has_license_id]
 
+  add_license:
+    messages: |
+      ------------------------------------------------------------
+        To continue using Chef InSpec, a License ID is required.
+        (Free, Trial or Commercial)
+
+        Continue to add a license.
+      -------------------------
+    prompt_type: "say"
+    paths: [ask_if_user_has_license_id]
+
   prompt_license_expired:
     messages: "! [ERROR] Your license has been expired."
     prompt_type: "error"

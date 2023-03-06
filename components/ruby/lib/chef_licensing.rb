@@ -7,6 +7,7 @@ require "chef_licensing/exceptions/feature_not_entitled"
 require "chef_licensing/exceptions/software_not_entitled"
 require "chef_licensing/exceptions/client_error"
 require "chef_licensing/api/client"
+require "chef_licensing/license_key_fetcher/prompt"
 
 module ChefLicensing
   class << self
@@ -55,6 +56,12 @@ module ChefLicensing
 
     def client(opts = {})
       @license ||= ChefLicensing::Api::Client.info(opts)
+    end
+
+    def add_license
+      config = { start_interaction: :add_license }
+      prompt_fetcher = LicenseKeyFetcher::Prompt.new(config)
+      prompt_fetcher.fetch
     end
   end
 end
