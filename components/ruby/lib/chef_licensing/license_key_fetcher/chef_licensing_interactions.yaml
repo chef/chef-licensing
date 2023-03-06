@@ -27,7 +27,7 @@ interactions:
     paths: [ask_if_user_has_license_id]
 
   prompt_license_expired:
-    messages: "! [ERROR] Your <%= input[:license_type] %> license has been expired."
+    messages: "✗ [ERROR] Your <%= input[:license_type] %> license has been expired."
     prompt_type: "error"
     paths: [ask_if_user_has_renewed_license_id]
 
@@ -155,8 +155,7 @@ interactions:
     description: "is_license_valid_on_server? is a method defined in TUIActions class"
 
   validation_success:
-    # TODO: Change + to tick later
-    messages: "\n+ [Success] License validated successfully"
+    messages: "\n✓ [Success] License validated successfully"
     prompt_type: "ok"
     paths: [fetch_license_id]
 
@@ -165,8 +164,7 @@ interactions:
     paths: [validation_failure]
 
   validation_failure:
-    # TODO: Change - to cross later
-    messages: "\n- [Error] License validation failed: <%= input[:fetch_invalid_license_msg] %>"
+    messages: "\n✗ [Error] License validation failed: <%= input[:fetch_invalid_license_msg] %>"
     prompt_type: "error"
     paths: [retry_message]
 
