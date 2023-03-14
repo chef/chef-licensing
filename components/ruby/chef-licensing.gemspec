@@ -31,4 +31,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency "faraday", ">= 1", "< 3"
   spec.add_dependency "faraday-http-cache"
   spec.add_dependency "activesupport", "~> 7.0", ">= 7.0.4.2"
+  spec.add_dependency "tty-spinner", "~> 0.9.3"
 end
