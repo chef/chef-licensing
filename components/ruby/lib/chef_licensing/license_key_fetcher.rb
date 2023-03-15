@@ -61,8 +61,8 @@ module ChefLicensing
 
       # Lowest priority is to interactively prompt if we have a TTY
       if config[:output].isatty
-        logger.debug "License Key fetcher - detected TTY, prompting..."
         append_extra_info_to_tui_engine # will add extra dynamic values in tui flows
+        logger.debug "License Key fetcher - detected TTY, prompting..."
         new_keys = prompt_fetcher.fetch
 
         # Scenario: When a user is prompted for license expiry beforehand expiration and license is not yet renewed
@@ -98,6 +98,7 @@ module ChefLicensing
     def append_extra_info_to_tui_engine
       extra_info = {}
       extra_info[:chef_product_name] = ChefLicensing::Config.chef_product_name&.capitalize
+      extra_info[:license_type] = client.license_type unless @license_keys.empty? && !client
       prompt_fetcher.append_info_to_tui_engine(extra_info) unless extra_info.empty?
     end
 
