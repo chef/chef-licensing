@@ -18,7 +18,7 @@ interactions:
   add_license:
     messages: |
       ------------------------------------------------------------
-        To continue using Chef InSpec, a License ID is required.
+        To continue using Chef <%= input[:chef_product_name] %>, a License ID is required.
         (Free, Trial or Commercial)
 
         Continue to add a license.
