@@ -96,7 +96,9 @@ module ChefLicensing
     end
 
     def append_extra_info_to_tui_engine
-      prompt_fetcher.append_info_to_tui_engine({ chef_product_name: "InSpec" })
+      extra_info = {}
+      extra_info[:chef_product_name] = ChefLicensing::Config.chef_product_name&.capitalize
+      prompt_fetcher.append_info_to_tui_engine(extra_info) unless extra_info.empty?
     end
 
     # Note: Fetching from arg and env as well, to be able to fetch license when disk is non-writable
