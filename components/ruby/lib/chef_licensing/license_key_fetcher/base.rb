@@ -10,6 +10,16 @@ module ChefLicensing
       SERIAL_KEY_REGEX = "([A-Z0-9]{25})".freeze
       SERIAL_KEY_PATTERN_DESC = "25 character alphanumeric string".freeze
       QUIT_KEY_REGEX = "(q|Q)".freeze
+
+      def self.verify_license_pattern(license_key)
+        if license_key && (match = license_key.match(/^#{LICENSE_KEY_REGEX}$/) || license_key.match(/^#{SERIAL_KEY_REGEX}$/))
+          match[1]
+        else
+          raise InvalidLicenseKeyFormat, "Malformed License Key passed on command line - should be #{LICENSE_KEY_PATTERN_DESC} or #{SERIAL_KEY_PATTERN_DESC}"
+        end
+      end
+
+      class InvalidLicenseKeyFormat < StandardError; end
     end
   end
 end

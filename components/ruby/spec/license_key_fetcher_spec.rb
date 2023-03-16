@@ -245,7 +245,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       let(:license_key_fetcher) { ChefLicensing::LicenseKeyFetcher.new(opts) }
 
       it "raises an error with the message" do
-        expect { license_key_fetcher.fetch }.to raise_error(ChefLicensing::LicenseKeyFetcher::LicenseKeyNotFetchedError, /Malformed License Key passed on command line - should be/)
+        expect { license_key_fetcher.fetch }.to raise_error(ChefLicensing::LicenseKeyFetcher::Base::InvalidLicenseKeyFormat, /Malformed License Key passed on command line - should be/)
       end
     end
 
@@ -266,7 +266,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       let(:license_key_fetcher) { ChefLicensing::LicenseKeyFetcher.new(opts) }
 
       it "raises an error with the message" do
-        expect { license_key_fetcher.fetch }.to raise_error(ChefLicensing::LicenseKeyFetcher::LicenseKeyNotFetchedError, /Malformed License Key passed on command line - should be/)
+        expect { license_key_fetcher.fetch }.to raise_error(ChefLicensing::LicenseKeyFetcher::Base::InvalidLicenseKeyFormat, /Malformed License Key passed on command line - should be/)
       end
     end
 
@@ -287,7 +287,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       let(:license_key_fetcher) { ChefLicensing::LicenseKeyFetcher.new(opts) }
 
       it "raises an error with the message" do
-        expect { license_key_fetcher.fetch }.to raise_error(ChefLicensing::LicenseKeyFetcher::LicenseKeyNotFetchedError, /Malformed License Key passed on command line - should be/)
+        expect { license_key_fetcher.fetch }.to raise_error(ChefLicensing::LicenseKeyFetcher::Base::InvalidLicenseKeyFormat, /Malformed License Key passed on command line - should be/)
       end
     end
 

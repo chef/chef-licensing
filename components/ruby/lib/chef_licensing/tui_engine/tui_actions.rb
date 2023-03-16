@@ -17,13 +17,12 @@ module ChefLicensing
 
       def is_license_with_valid_pattern?(input)
         license_id = input[:ask_for_license_id]
-        if !license_id.nil? && (match = license_id.match(/^#{ChefLicensing::LicenseKeyFetcher::Base::LICENSE_KEY_REGEX}$/) || license_id.match(/^#{ChefLicensing::LicenseKeyFetcher::Base::SERIAL_KEY_REGEX}$/))
-          input[:ask_for_license_id] = match[1]
-          true
-        else
-          output.puts "License pattern should be #{ChefLicensing::LicenseKeyFetcher::Base::LICENSE_KEY_PATTERN_DESC} or #{ChefLicensing::LicenseKeyFetcher::Base::SERIAL_KEY_PATTERN_DESC}"
-          false
-        end
+        input[:ask_for_license_id] = ChefLicensing::LicenseKeyFetcher::Base.verify_license_pattern(license_id)
+        true
+      rescue ChefLicensing::LicenseKeyFetcher::Base::InvalidLicenseKeyFormat => e
+        output.puts e.message
+        logger.debug e.message
+        false
       end
 
       def is_license_valid_on_server?(input)

@@ -169,10 +169,7 @@ module ChefLicensing
     def validate_license_key_format(license_key)
       return [] if license_key.nil?
 
-      unless license_key.match(/^#{ChefLicensing::LicenseKeyFetcher::Base::LICENSE_KEY_REGEX}$/) || license_key.match(/^#{ChefLicensing::LicenseKeyFetcher::Base::SERIAL_KEY_REGEX}$/)
-        raise LicenseKeyNotFetchedError.new("Malformed License Key passed on command line - should be #{ChefLicensing::LicenseKeyFetcher::Base::LICENSE_KEY_PATTERN_DESC} or #{ChefLicensing::LicenseKeyFetcher::Base::SERIAL_KEY_PATTERN_DESC}")
-      end
-
+      ChefLicensing::LicenseKeyFetcher::Base.verify_license_pattern(license_key)
       [license_key]
     end
   end
