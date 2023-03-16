@@ -22,7 +22,6 @@ Gem::Specification.new do |spec|
   Dir.glob("{{lib,etc}/**/*,LICENSE,chef-licensing.gemspec}")
     .reject { |f| File.directory?(f) }
 
-
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
