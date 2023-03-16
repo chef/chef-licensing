@@ -17,7 +17,7 @@ module ChefLicensing
 
       def is_license_with_valid_pattern?(input)
         license_id = input[:ask_for_license_id]
-        input[:ask_for_license_id] = ChefLicensing::LicenseKeyFetcher::Base.verify_license_pattern(license_id)
+        input[:ask_for_license_id] = ChefLicensing::LicenseKeyFetcher::Base.verify_and_extract_license(license_id)
         true
       rescue ChefLicensing::LicenseKeyFetcher::Base::InvalidLicenseKeyFormat => e
         output.puts e.message
