@@ -225,4 +225,112 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       end
     end
   end
+
+  describe "verify license keys format" do
+
+    context "when the license key is not in the correct format of uuid" do
+      let(:argv)  { ["--chef-license-key=tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-"] }
+      let(:env) { {} }
+
+      let(:opts) {
+        {
+          logger: logger,
+          argv: argv,
+          env: env,
+          output: output,
+          dir: nil,
+        }
+      }
+
+      let(:license_key_fetcher) { ChefLicensing::LicenseKeyFetcher.new(opts) }
+
+      it "raises an error with the message" do
+        expect { license_key_fetcher.fetch }.to raise_error(ChefLicensing::LicenseKeyFetcher::LicenseKeyNotFetchedError, /Malformed License Key passed on command line - should be/)
+      end
+    end
+
+    context "when the license key is not in the correct format of Serial number" do
+      let(:argv)  { ["--chef-license-key=A8BC-1XS2-4F6F-BWG8-E0N45"] }
+      let(:env) { {} }
+
+      let(:opts) {
+        {
+          logger: logger,
+          argv: argv,
+          env: env,
+          output: output,
+          dir: nil,
+        }
+      }
+
+      let(:license_key_fetcher) { ChefLicensing::LicenseKeyFetcher.new(opts) }
+
+      it "raises an error with the message" do
+        expect { license_key_fetcher.fetch }.to raise_error(ChefLicensing::LicenseKeyFetcher::LicenseKeyNotFetchedError, /Malformed License Key passed on command line - should be/)
+      end
+    end
+
+    context "when the license key is in correct format of serial number but less than 25 characters" do
+      let(:argv)  { ["--chef-license-key=A8BCD1XS2B4F6FYBWG8TE0N4"] }
+      let(:env) { {} }
+
+      let(:opts) {
+        {
+          logger: logger,
+          argv: argv,
+          env: env,
+          output: output,
+          dir: nil,
+        }
+      }
+
+      let(:license_key_fetcher) { ChefLicensing::LicenseKeyFetcher.new(opts) }
+
+      it "raises an error with the message" do
+        expect { license_key_fetcher.fetch }.to raise_error(ChefLicensing::LicenseKeyFetcher::LicenseKeyNotFetchedError, /Malformed License Key passed on command line - should be/)
+      end
+    end
+
+    context "when the license key is in the correct format of uuid" do
+      let(:argv)  { ["--chef-license-key=tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"] }
+      let(:env) { {} }
+
+      let(:opts) {
+        {
+          logger: logger,
+          argv: argv,
+          env: env,
+          output: output,
+          dir: nil,
+        }
+      }
+
+      let(:license_key_fetcher) { ChefLicensing::LicenseKeyFetcher.new(opts) }
+
+      it "returns the license key" do
+        expect(license_key_fetcher.fetch).to eq(["tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"])
+      end
+    end
+
+    context "when the license key is in the correct format of serial number" do
+      let(:argv)  { ["--chef-license-key=A8BCD1XS2B4F6FYBWG8TE0N49"] }
+      let(:env) { {} }
+
+      let(:opts) {
+        {
+          logger: logger,
+          argv: argv,
+          env: env,
+          output: output,
+          dir: nil,
+        }
+      }
+
+      let(:license_key_fetcher) { ChefLicensing::LicenseKeyFetcher.new(opts) }
+
+      it "returns the license key" do
+        expect(license_key_fetcher.fetch).to eq(["A8BCD1XS2B4F6FYBWG8TE0N49"])
+      end
+    end
+  end
 end
