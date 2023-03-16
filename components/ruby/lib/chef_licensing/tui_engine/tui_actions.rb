@@ -165,7 +165,8 @@ module ChefLicensing
       end
 
       def display_license_info(inputs)
-        ChefLicensing::ListLicenseKeys.display({ license_keys: [license_id] })
+        # ChefLicensing::ListLicenseKeys.display({ license_keys: [license_id] })
+        ChefLicensing::ListLicenseKeys.display_overview({ license_keys: [license_id] })
       end
     end
   end
