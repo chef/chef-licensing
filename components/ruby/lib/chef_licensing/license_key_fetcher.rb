@@ -169,7 +169,7 @@ module ChefLicensing
     def validate_license_key_format(license_key)
       return [] if license_key.nil?
 
-      ChefLicensing::LicenseKeyFetcher::Base.verify_and_extract_license(license_key)
+      license_key = ChefLicensing::LicenseKeyFetcher::Base.verify_and_extract_license(license_key)
       [license_key]
     end
   end
