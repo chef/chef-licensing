@@ -7,7 +7,7 @@ require_relative "config_fetcher/env_fetcher"
 require_relative "license_key_fetcher/base"
 require_relative "license_key_fetcher/file"
 require_relative "license_key_fetcher/prompt"
-require "chef_licensing"
+require_relative "../chef_licensing"
 
 # LicenseKeyFetcher allows us to inspect obtain the license Key from the user in a variety of ways.
 module ChefLicensing
@@ -169,8 +169,8 @@ module ChefLicensing
     def validate_license_key_format(license_key)
       return [] if license_key.nil?
 
-      unless license_key.match(/^#{ChefLicensing::LicenseKeyFetcher::Base::LICENSE_KEY_REGEX}$/)
-        raise LicenseKeyNotFetchedError.new("Malformed License Key passed on command line - should be #{ChefLicensing::LicenseKeyFetcher::Base::LICENSE_KEY_PATTERN_DESC}")
+      unless license_key.match(/^#{ChefLicensing::LicenseKeyFetcher::Base::LICENSE_KEY_REGEX}$/) || license_key.match(/^#{ChefLicensing::LicenseKeyFetcher::Base::SERIAL_KEY_REGEX}$/)
+        raise LicenseKeyNotFetchedError.new("Malformed License Key passed on command line - should be #{ChefLicensing::LicenseKeyFetcher::Base::LICENSE_KEY_PATTERN_DESC} or #{ChefLicensing::LicenseKeyFetcher::Base::SERIAL_KEY_PATTERN_DESC}")
       end
 
       [license_key]
