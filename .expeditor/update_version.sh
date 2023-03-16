@@ -9,7 +9,7 @@ set -evx
 sed -i -r "s/^(\s*)VERSION = \".+\"/\1VERSION = \"$(cat VERSION)\"/" components/ruby/lib/chef_licensing/version.rb
 cd components/ruby
 bundle install
-bundle update chef_licensing
+bundle update chef-licensing
 cd ../..
 #sed -i -r "s/^pkg_version=.+\$/\pkg_version=$(cat VERSION)/" components/golang/habitat/plan.sh
 
