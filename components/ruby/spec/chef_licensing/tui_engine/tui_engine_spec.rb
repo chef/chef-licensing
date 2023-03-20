@@ -116,6 +116,18 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect(tui_engine.run_interaction(:start_point_3)).to eq({ start_point_3: nil, prompt_2: nil, prompt_3: nil, exit: nil })
       end
     end
+
+    context "when the yaml file has an interaction without messages or action key" do
+      let(:config) {
+        {
+          interaction_file: File.join(fixture_dir, "flow_without_messages_or_action.yaml"),
+        }
+      }
+
+      it "should raise error while instantiating the class" do
+        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::BadInteractionFile, /No action or messages found for interaction/)
+      end
+    end
   end
 
   describe "when a tui_engine object is instantiated with a valid yaml file - part 2" do
@@ -299,18 +311,6 @@ RSpec.describe ChefLicensing::TUIEngine do
 
       it "should render the erb" do
         expect(tui_engine.run_interaction).to eq({ start: nil, ask_user_name: "Chef User!", welcome_user_in_english: ["Hello, Chef User! Welcome!"], welcome_user_in_hindi: ["Namaste, Chef User!"], exit: nil, extra_info: "Welcome!" })
-      end
-    end
-    context "when the yaml file has an interaction without messages or action key" do
-      let(:config) {
-        {
-          input: StringIO.new,
-          interaction_file: File.join(fixture_dir, "flow_without_messages_or_action.yaml"),
-        }
-      }
-
-      it "should raise error while instantiating the class" do
-        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::BadInteractionFile, /No action or messages found for interaction/)
       end
     end
   end
