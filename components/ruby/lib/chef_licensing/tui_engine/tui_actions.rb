@@ -8,10 +8,7 @@ require_relative "../config"
 
 module ChefLicensing
   class TUIEngine
-    # TODO: Is there a better way to use the base class?
-    # Base class is required for constants like LICENSE_KEY_REGEX
-    class TUIActions < LicenseKeyFetcher::Base
-
+    class TUIActions
       attr_accessor :logger, :output, :license_id, :error_msg, :rejection_msg, :invalid_license_msg
       def initialize(opts = {})
         @logger = ChefLicensing::Config.logger
@@ -20,13 +17,12 @@ module ChefLicensing
 
       def is_license_with_valid_pattern?(input)
         license_id = input[:ask_for_license_id]
-        if !license_id.nil? && (match = license_id.match(/^#{LICENSE_KEY_REGEX}$/))
-          input[:ask_for_license_id] = match[1]
-          true
-        else
-          output.puts "License pattern should be #{LICENSE_KEY_PATTERN_DESC}"
-          false
-        end
+        input[:ask_for_license_id] = ChefLicensing::LicenseKeyFetcher::Base.verify_and_extract_license(license_id)
+        true
+      rescue ChefLicensing::LicenseKeyFetcher::Base::InvalidLicenseKeyFormat => e
+        output.puts e.message
+        logger.debug e.message
+        false
       end
 
       def is_license_valid_on_server?(input)
