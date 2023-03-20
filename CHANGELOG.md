@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.3.34 -->
-## [0.3.34](https://github.com/chef/chef-licensing/tree/0.3.34) (2023-03-20)
+<!-- latest_release 0.3.35 -->
+## [0.3.35](https://github.com/chef/chef-licensing/tree/0.3.35) (2023-03-20)
 
 #### Merged Pull Requests
-- CHEF-54: Accept Serial Number license format as well as GUID [#65](https://github.com/chef/chef-licensing/pull/65) ([ahasunos](https://github.com/ahasunos))
+- Extra info of license type in expiry flow [#63](https://github.com/chef/chef-licensing/pull/63) ([Nik08](https://github.com/Nik08))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Extra info of license type in expiry flow [#63](https://github.com/chef/chef-licensing/pull/63) ([Nik08](https://github.com/Nik08)) <!-- 0.3.35 -->
 - CHEF-54: Accept Serial Number license format as well as GUID [#65](https://github.com/chef/chef-licensing/pull/65) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.34 -->
 - CHEF-56 License add TUI endpoint introduced [#62](https://github.com/chef/chef-licensing/pull/62) ([Nik08](https://github.com/Nik08)) <!-- 0.3.33 -->
 - Fix filespec in gemspec and rename gem to have dashes [#66](https://github.com/chef/chef-licensing/pull/66) ([clintoncwolfe](https://github.com/clintoncwolfe)) <!-- 0.3.32 -->
