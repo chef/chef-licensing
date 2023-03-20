@@ -174,6 +174,16 @@ Software      :
 +----------------------------------------------+
 ```
 
+### Add new license
+
+This endpoint enables adding new license to the system by generating a license based on the type of license (trial, free or commercial) selected by the user.
+
+#### Response
+
+If successful, the license key is generated.
+
+However, in case of errors, the `ChefLicensing::LicenseGenerationFailed` class returns the message directly from the license generation server as the exception message.
+
 ## APIs
 
 The following APIs provide an abstraction layer for the RESTful actions that are available through the licensing server. These APIs enable various operations such as validation, generation, and others to be performed.

@@ -62,6 +62,7 @@ module ChefLicensing
       # Lowest priority is to interactively prompt if we have a TTY
       if config[:output].isatty
         logger.debug "License Key fetcher - detected TTY, prompting..."
+        append_extra_info_to_tui_engine # will add extra dynamic values in tui flows
         new_keys = prompt_fetcher.fetch
 
         # Scenario: When a user is prompted for license expiry beforehand expiration and license is not yet renewed
@@ -92,6 +93,12 @@ module ChefLicensing
       # Otherwise nothing was able to fetch a license. Throw an exception.
       logger.debug "License Key fetcher - no license Key able to be fetched."
       raise LicenseKeyNotFetchedError.new("Unable to obtain a License Key.")
+    end
+
+    def append_extra_info_to_tui_engine
+      extra_info = {}
+      extra_info[:chef_product_name] = ChefLicensing::Config.chef_product_name&.capitalize
+      prompt_fetcher.append_info_to_tui_engine(extra_info) unless extra_info.empty?
     end
 
     # Note: Fetching from arg and env as well, to be able to fetch license when disk is non-writable

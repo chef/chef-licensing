@@ -6,12 +6,23 @@ interactions:
       ------------------------------------------------------------
         License ID Validation
 
-        To continue using Chef InSpec, a License ID is required.
+        To continue using Chef <%= input[:chef_product_name] %>, a License ID is required.
         (Free, Trial or Commercial)
 
         If you have generated a license previously, you might
         have received it in email.
       ------------------------------------------------------------
+    prompt_type: "say"
+    paths: [ask_if_user_has_license_id]
+
+  add_license:
+    messages: |
+      ------------------------------------------------------------
+        To continue using Chef <%= input[:chef_product_name] %>, a License ID is required.
+        (Free, Trial or Commercial)
+
+        Continue to add a license.
+      -------------------------
     prompt_type: "say"
     paths: [ask_if_user_has_license_id]
 
@@ -53,7 +64,7 @@ interactions:
 
   info_of_license_types_on_renewal:
     messages: |
-        Thank you for taking interest in InSpec.
+        Thank you for taking interest in <%= input[:chef_product_name] %>.
 
         We have the following types of licenses.
         Please choose one that suits your requirements:
@@ -168,14 +179,14 @@ interactions:
     messages: |
       License generation skipped!
 
-      A license is required to in order to use InSpec.
+      A license is required to in order to use <%= input[:chef_product_name] %>.
 
       Visit <link> to learn more about the licenses.
     paths: [exit]
 
   info_of_license_types:
     messages: |
-      Thank you for taking interest in InSpec.
+      Thank you for taking interest in <%= input[:chef_product_name] %>.
 
       We have the following types of licenses.
       Please choose one that suits your requirements:
@@ -408,7 +419,7 @@ interactions:
 
       You can also look up it in the SaleForce portal under the name of <%= input[:gather_user_first_name_for_license_generation] + " " + input[:gather_user_last_name_for_license_generation] %>.
       If you do not know your license key, you can log into your Progress Chef customer portal to obtain your product serial number.
-    paths: [fetch_license_id]
+    paths: [ask_for_license_id]
 
   trial_license_generation_success:
     messages: |
@@ -416,7 +427,7 @@ interactions:
 
       A copy has also been sent to <%= input[:gather_user_email_for_license_generation] %>.
       You can also look up it in the SaleForce portal under the name of <%= input[:gather_user_first_name_for_license_generation] + " " + input[:gather_user_last_name_for_license_generation] %>.
-    paths: [fetch_license_id]
+    paths: [ask_for_license_id]
 
   commercial_license_generation_success:
     messages: "Our Sales team will get in touch with you with further steps."
