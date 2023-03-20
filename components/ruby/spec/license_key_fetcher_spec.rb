@@ -1,5 +1,5 @@
 require "spec_helper"
-require_relative "../lib/chef_licensing"
+require_relative "../lib/chef-licensing"
 require "tmpdir"
 
 RSpec.describe ChefLicensing::LicenseKeyFetcher do

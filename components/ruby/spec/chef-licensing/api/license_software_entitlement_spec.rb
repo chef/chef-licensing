@@ -1,8 +1,8 @@
 require "spec_helper"
-require "chef_licensing/api/license_software_entitlement"
-require "chef_licensing/config"
-require "chef_licensing"
-require "chef_licensing/exceptions/software_not_entitled"
+require "chef-licensing/api/license_software_entitlement"
+require "chef-licensing/config"
+require "chef-licensing"
+require "chef-licensing/exceptions/software_not_entitled"
 
 RSpec.describe ChefLicensing::Api::LicenseSoftwareEntitlement do
   let(:software_entitlement_name) {

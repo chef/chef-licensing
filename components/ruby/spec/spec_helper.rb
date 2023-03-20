@@ -1,5 +1,5 @@
 require "bundler/setup"
-require "chef_licensing"
+require "chef-licensing"
 require "webmock/rspec"
 
 RSpec.configure do |config|

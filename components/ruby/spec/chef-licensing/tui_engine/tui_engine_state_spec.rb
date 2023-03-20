@@ -1,8 +1,8 @@
-require "chef_licensing/tui_engine/tui_prompt"
-require "chef_licensing/tui_engine/tui_actions"
-require "chef_licensing/tui_engine/tui_engine_state"
+require "chef-licensing/tui_engine/tui_prompt"
+require "chef-licensing/tui_engine/tui_actions"
+require "chef-licensing/tui_engine/tui_engine_state"
 require "spec_helper"
-require "chef_licensing"
+require "chef-licensing"
 
 RSpec.describe ChefLicensing::TUIEngine::TUIEngineState do
 

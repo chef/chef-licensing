@@ -7,8 +7,7 @@ require_relative "config_fetcher/env_fetcher"
 require_relative "license_key_fetcher/base"
 require_relative "license_key_fetcher/file"
 require_relative "license_key_fetcher/prompt"
-require_relative "../chef_licensing"
-
+require_relative "../chef-licensing"
 # LicenseKeyFetcher allows us to inspect obtain the license Key from the user in a variety of ways.
 module ChefLicensing
   class LicenseKeyFetcher

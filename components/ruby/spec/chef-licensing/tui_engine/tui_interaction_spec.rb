@@ -1,4 +1,4 @@
-require "chef_licensing/tui_engine/tui_interaction"
+require "chef-licensing/tui_engine/tui_interaction"
 require "spec_helper"
 
 RSpec.describe ChefLicensing::TUIEngine::TUIInteraction do

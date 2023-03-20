@@ -1,8 +1,8 @@
-require "chef_licensing/tui_engine/tui_engine"
-require "chef_licensing/config"
+require "chef-licensing/tui_engine/tui_engine"
+require "chef-licensing/config"
 require "spec_helper"
 require "stringio"
-require "chef_licensing"
+require "chef-licensing"
 
 RSpec.describe ChefLicensing::TUIEngine do
   let(:fixture_dir) { "spec/fixtures/tui_interactions" }

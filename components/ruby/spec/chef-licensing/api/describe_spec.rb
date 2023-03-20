@@ -1,6 +1,6 @@
 require "spec_helper"
-require "chef_licensing/api/describe"
-require "chef_licensing/config"
+require "chef-licensing/api/describe"
+require "chef-licensing/config"
 
 RSpec.describe ChefLicensing::Api::Describe do
 

@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 
 require "bundler/setup"
-require "chef_licensing"
-require "chef_licensing/license_key_fetcher"
-require "chef_licensing/air_gap_detection"
+require "chef-licensing"
+require "chef-licensing/license_key_fetcher"
+require "chef-licensing/air_gap_detection"
 require "logger"
 require "byebug"
 

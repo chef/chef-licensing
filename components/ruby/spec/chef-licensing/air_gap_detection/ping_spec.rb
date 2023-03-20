@@ -1,4 +1,4 @@
-require "chef_licensing/air_gap_detection/ping"
+require "chef-licensing/air_gap_detection/ping"
 require_relative "../../spec_helper"
 
 RSpec.describe ChefLicensing::AirGapDetection::Ping do

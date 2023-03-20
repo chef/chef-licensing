@@ -1,4 +1,4 @@
-require "chef_licensing/config_fetcher/env_fetcher"
+require "chef-licensing/config_fetcher/env_fetcher"
 
 RSpec.describe ChefLicensing::EnvFetcher do
 

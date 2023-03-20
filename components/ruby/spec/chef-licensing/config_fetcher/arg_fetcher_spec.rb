@@ -1,4 +1,4 @@
-require "chef_licensing/config_fetcher/arg_fetcher"
+require "chef-licensing/config_fetcher/arg_fetcher"
 
 RSpec.describe ChefLicensing::ArgFetcher do
 

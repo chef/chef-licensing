@@ -1,5 +1,5 @@
-require "chef_licensing/license"
-require "chef_licensing"
+require "chef-licensing/license"
+require "chef-licensing"
 require "spec_helper"
 require "ostruct"
 require "json"
