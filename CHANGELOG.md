@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.3.32 -->
-## [0.3.32](https://github.com/chef/chef-licensing/tree/0.3.32) (2023-03-16)
+<!-- latest_release 0.3.33 -->
+## [0.3.33](https://github.com/chef/chef-licensing/tree/0.3.33) (2023-03-20)
 
 #### Merged Pull Requests
-- Fix filespec in gemspec and rename gem to have dashes [#66](https://github.com/chef/chef-licensing/pull/66) ([clintoncwolfe](https://github.com/clintoncwolfe))
+- CHEF-56 License add TUI endpoint introduced [#62](https://github.com/chef/chef-licensing/pull/62) ([Nik08](https://github.com/Nik08))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-56 License add TUI endpoint introduced [#62](https://github.com/chef/chef-licensing/pull/62) ([Nik08](https://github.com/Nik08)) <!-- 0.3.33 -->
 - Fix filespec in gemspec and rename gem to have dashes [#66](https://github.com/chef/chef-licensing/pull/66) ([clintoncwolfe](https://github.com/clintoncwolfe)) <!-- 0.3.32 -->
 - CFINSPEC-599 API Caching Integration [#58](https://github.com/chef/chef-licensing/pull/58) ([Nik08](https://github.com/Nik08)) <!-- 0.3.31 -->
 - CFINSPEC-602: Update Chef Licensing Documentation - README [#60](https://github.com/chef/chef-licensing/pull/60) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.30 -->
