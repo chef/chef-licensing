@@ -5,6 +5,8 @@ require_relative "../exceptions/license_generation_failed"
 require_relative "../exceptions/license_generation_rejected"
 require_relative "../license_key_fetcher/base"
 require_relative "../config"
+require_relative "../list_license_keys"
+require "tty-spinner"
 
 module ChefLicensing
   class TUIEngine
@@ -27,11 +29,14 @@ module ChefLicensing
 
       def is_license_valid_on_server?(input)
         license_id = input[:ask_for_license_id]
-        output.puts "License validation in progress..."
+        spinner = TTY::Spinner.new(":spinner [Running] License validation in progress...", format: :dots, clear: true)
+        spinner.auto_spin # Start the spinner
         is_valid = ChefLicensing::LicenseKeyValidator.validate!(license_id)
+        spinner.success # Stop the spinner
         self.license_id = license_id
         is_valid
       rescue ChefLicensing::InvalidLicense => e
+        spinner.error # Stop the spinner
         self.invalid_license_msg = e.message || "Something went wrong while validating the license"
         false
       end
@@ -157,6 +162,10 @@ module ChefLicensing
 
       def fetch_invalid_license_msg(input)
         invalid_license_msg
+      end
+
+      def display_license_info(inputs)
+        ChefLicensing::ListLicenseKeys.display_overview({ license_keys: [license_id] })
       end
     end
   end

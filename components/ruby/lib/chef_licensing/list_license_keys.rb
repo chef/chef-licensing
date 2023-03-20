@@ -10,16 +10,19 @@ module ChefLicensing
       new(opts).display
     end
 
+    def self.display_overview(opts = {})
+      new(opts).display_overview
+    end
+
     def initialize(opts = {})
       @logger = ChefLicensing::Config.logger
       @output = ChefLicensing::Config.output
       @pastel = Pastel.new
       @license_keys = fetch_license_keys(opts)
+      @licenses_metadata = fetch_licenses_metadata
     end
 
     def display
-      licenses_metadata = fetch_licenses_metadata
-
       output.puts "+------------ License Information ------------+"
       output.puts "Total Licenses found: #{licenses_metadata.length}\n\n"
 
@@ -50,9 +53,36 @@ module ChefLicensing
       end
     end
 
+    def display_overview
+      licenses_metadata.each do |license|
+        puts "------------------------------------------------------------"
+
+        # find the number of days left for the license to expire
+        validity = (Date.parse(license.expiration_date) - Date.today).to_i
+
+        output.puts <<~LICENSE
+            #{pastel.bold("License Details")}
+              License ID       : #{license.id}
+              Type             : #{license.license_type}
+              Status           : #{license.status}
+              Validity         : #{validity > 0 ? validity : 0} days
+        LICENSE
+
+        # Displaying `No. of targets` makes the information specific in context of InSpec node limits.
+        # The decision to display this information is a joint effort between POs and UXs.
+        # TODO: Consider making this information more generic in the future.
+        license.limits.each do |limit|
+          output.puts <<~LIMIT
+            No. of targets   : #{limit.usage_limit}
+          ------------------------------------------------------------
+          LIMIT
+        end
+      end
+    end
+
     private
 
-    attr_reader :pastel, :output, :logger, :license_keys
+    attr_reader :pastel, :output, :logger, :license_keys, :licenses_metadata
 
     def display_info(component)
       output.puts <<~INFO

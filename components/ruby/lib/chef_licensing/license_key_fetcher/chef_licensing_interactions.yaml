@@ -11,6 +11,9 @@ interactions:
 
         If you have generated a license previously, you might
         have received it in email.
+
+        If you are a commercial user, you can also find it in the
+        supportlink.chef.io portal.
       ------------------------------------------------------------
     prompt_type: "say"
     paths: [ask_if_user_has_license_id]
@@ -27,7 +30,7 @@ interactions:
     paths: [ask_if_user_has_license_id]
 
   prompt_license_expired:
-    messages: "! [ERROR] Your <%= input[:license_type] %> license has been expired."
+    messages: "✖ [ERROR] Your <%= input[:license_type] %> license has been expired."
     prompt_type: "error"
     paths: [ask_if_user_has_renewed_license_id]
 
@@ -155,9 +158,12 @@ interactions:
     description: "is_license_valid_on_server? is a method defined in TUIActions class"
 
   validation_success:
-    # TODO: Change + to tick later
-    messages: "\n+ [Success] License validated successfully"
+    messages: "✔ [Success] License validated successfully"
     prompt_type: "ok"
+    paths: [display_license_info]
+
+  display_license_info:
+    action: display_license_info
     paths: [fetch_license_id]
 
   fetch_invalid_license_msg:
@@ -165,8 +171,7 @@ interactions:
     paths: [validation_failure]
 
   validation_failure:
-    # TODO: Change - to cross later
-    messages: "\n- [Error] License validation failed: <%= input[:fetch_invalid_license_msg] %>"
+    messages: "✖ [Error] License validation failed: <%= input[:fetch_invalid_license_msg] %>"
     prompt_type: "error"
     paths: [retry_message]
 
