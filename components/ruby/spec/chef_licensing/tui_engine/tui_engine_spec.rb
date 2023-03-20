@@ -16,7 +16,7 @@ RSpec.describe ChefLicensing::TUIEngine do
     end
   end
 
-  describe "when a tui_engine object is instantiated with a valid yaml file" do
+  describe "when a tui_engine object is instantiated with a valid yaml file - part 1" do
 
     context "when the yaml file has only single path at each interaction" do
       let(:config) {
@@ -187,6 +187,130 @@ RSpec.describe ChefLicensing::TUIEngine do
 
       it "should contain only start_point_3 as a starting interaction id" do
         expect(tui_engine.run_interaction(:start_point_3)).to eq({ start_point_3: nil, prompt_2: nil, prompt_3: nil, exit: nil })
+      end
+    end
+  end
+
+  describe "when a tui_engine object is instantiated with a valid yaml file - part 2" do
+    # this tests are skipped on windows due to timeout issues
+    # Skip all context in this describe block on windows
+    # TODO: Fix the timeout issues on windows and remove this skip block
+
+    before(:all) do
+      if Gem.win_platform?
+        skip "Skipping test on windows due to timeout issues"
+      end
+    end
+
+    context "when the yaml file has multiple paths at each interaction and user selects Option 1" do
+      # Here user presses enter to select Option 1
+      let(:user_input) { StringIO.new }
+      before do
+        user_input.write("\n")
+        user_input.rewind
+      end
+
+      let(:config) {
+        {
+          input: user_input,
+          interaction_file: File.join(fixture_dir, "flow_with_multiple_path_select.yaml"),
+        }
+      }
+
+      let(:tui_engine) { described_class.new(config) }
+
+      it "should have a tui_interactions object with 5 interactions" do
+        expect(tui_engine.tui_interactions.size).to eq(5)
+      end
+
+      it "should have a tui_interactions object with 5 interactions with the correct ids" do
+        expect(tui_engine.tui_interactions.keys).to eq(%i{start prompt_2 prompt_3 prompt_4 exit})
+      end
+
+      it "should return input as the interaction_id: value hash but not prompt 4" do
+        expect(tui_engine.run_interaction).to eq({ start: nil, prompt_2: "Option 1", prompt_3: nil, exit: nil })
+      end
+    end
+
+    context "when the yaml file has multiple paths at each interaction and user selects Option 2" do
+      # Here, user presses arrow down key to select Option 2 and then presses enter key to select it
+      let(:user_input) { StringIO.new }
+      before do
+        user_input.write("\e[B\n")
+        user_input.rewind
+      end
+
+      let(:config) {
+        {
+          input: user_input,
+          interaction_file: File.join(fixture_dir, "flow_with_multiple_path_select.yaml"),
+        }
+      }
+
+      let(:tui_engine) { described_class.new(config) }
+
+      it "should return input as the interaction_id: value hash but not prompt 3" do
+        expect(tui_engine.run_interaction).to eq({ start: nil, prompt_2: "Option 2", prompt_4: nil, exit: nil })
+      end
+    end
+
+    context "when the yaml file has multiple paths at each interaction and user says yes" do
+      # Here, user presses y key to select yes
+      let(:user_input) { StringIO.new }
+      before do
+        user_input.write("y\nSome Input for ask prompt in prompt_6")
+        user_input.rewind
+      end
+
+      let(:config) {
+        {
+          input: user_input,
+          interaction_file: File.join(fixture_dir, "flow_with_multiple_path_with_yes.yaml"),
+        }
+      }
+
+      let(:tui_engine) { described_class.new(config) }
+
+      it "should return input as the interaction_id: value hash" do
+        expect(tui_engine.run_interaction).to eq(
+          {
+            start: nil,
+            prompt_2: true,
+            prompt_3: ["This is message for prompt 3 - Reached when user says yes"],
+            prompt_6: "Some Input for ask prompt in prompt_6",
+            exit: nil,
+          }
+        )
+      end
+    end
+
+    context "when the yaml file has multiple paths at each interaction and user says no" do
+      # Here, user presses y key to select yes
+      let(:user_input) { StringIO.new }
+      before do
+        user_input.write("n\n")
+        user_input.rewind
+      end
+
+      let(:config) {
+        {
+          input: user_input,
+          interaction_file: File.join(fixture_dir, "flow_with_multiple_path_with_yes.yaml"),
+        }
+      }
+
+      let(:tui_engine) { described_class.new(config) }
+
+      it "should return input as the interaction_id: value hash" do
+        expect(tui_engine.run_interaction).to eq(
+          {
+            start: nil,
+            prompt_2: false,
+            prompt_4: ["This is message for prompt 4 - Reached when user says no"],
+            prompt_5: ["This is message for prompt 5"],
+            exit: nil,
+          }
+        )
       end
     end
   end
