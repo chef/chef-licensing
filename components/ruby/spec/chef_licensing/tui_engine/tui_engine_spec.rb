@@ -128,6 +128,22 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::BadInteractionFile, /No action or messages found for interaction/)
       end
     end
+
+    context "when the interaction file has timeout_yes prompt" do
+      let(:config) {
+        {
+          interaction_file: File.join(fixture_dir, "flow_with_timeout_yes.yaml"),
+        }
+      }
+
+      let(:tui_engine) { described_class.new(config) }
+
+      it "should timeout and exit in 1 second" do
+        expect { tui_engine.run_interaction }.to raise_error(SystemExit)
+        expect(output.string).to include("Timed out!")
+        expect(output.string).to include("Oops! Reflex too slow.")
+      end
+    end
   end
 
   describe "when a tui_engine object is instantiated with a valid yaml file - part 2" do
@@ -250,24 +266,6 @@ RSpec.describe ChefLicensing::TUIEngine do
             exit: nil,
           }
         )
-      end
-    end
-
-    context "when the interaction file has timeout_yes prompt" do
-      let(:config) {
-        {
-          # input: StringIO.new, # This is not required as we are not sending any input
-          logger: Logger.new(StringIO.new),
-          interaction_file: File.join(fixture_dir, "flow_with_timeout_yes.yaml"),
-        }
-      }
-
-      let(:tui_engine) { described_class.new(config) }
-
-      it "should timeout and exit in 1 second" do
-        expect { tui_engine.run_interaction }.to raise_error(SystemExit)
-        expect(output.string).to include("Timed out!")
-        expect(output.string).to include("Oops! Reflex too slow.")
       end
     end
 
