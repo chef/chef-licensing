@@ -148,6 +148,57 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect(tui_engine.run_interaction).to eq({ start: nil, welcome_user_in_english: ["Welcome!"], welcome_user_in_hindi: ["Namaste!"], exit: nil, extra_info: "Welcome!" })
       end
     end
+
+    context "when the yaml file has multiple paths at each interaction and user says yes" do
+      # Here, user presses y key to select yes
+      let(:user_input) { StringIO.new("y\nSome Input for ask prompt in prompt_6") }
+
+      let(:config) {
+        {
+          input: user_input,
+          interaction_file: File.join(fixture_dir, "flow_with_multiple_path_with_yes.yaml"),
+        }
+      }
+
+      let(:tui_engine) { described_class.new(config) }
+
+      it "should return input as the interaction_id: value hash" do
+        expect(tui_engine.run_interaction).to eq(
+          {
+            start: nil,
+            prompt_2: true,
+            prompt_3: ["This is message for prompt 3 - Reached when user says yes"],
+            prompt_6: "Some Input for ask prompt in prompt_6",
+            exit: nil,
+          }
+        )
+      end
+    end
+
+    context "when the yaml file has multiple paths at each interaction and user says no" do
+      let(:user_input) { StringIO.new("n\n") }
+
+      let(:config) {
+        {
+          input: user_input,
+          interaction_file: File.join(fixture_dir, "flow_with_multiple_path_with_yes.yaml"),
+        }
+      }
+
+      let(:tui_engine) { described_class.new(config) }
+
+      it "should return input as the interaction_id: value hash" do
+        expect(tui_engine.run_interaction).to eq(
+          {
+            start: nil,
+            prompt_2: false,
+            prompt_4: ["This is message for prompt 4 - Reached when user says no"],
+            prompt_5: ["This is message for prompt 5"],
+            exit: nil,
+          }
+        )
+      end
+    end
   end
 
   describe "when a tui_engine object is instantiated with a valid yaml file - part 2" do
@@ -213,66 +264,6 @@ RSpec.describe ChefLicensing::TUIEngine do
       end
     end
 
-    context "when the yaml file has multiple paths at each interaction and user says yes" do
-      # Here, user presses y key to select yes
-      let(:user_input) { StringIO.new }
-      before do
-        user_input.write("y\nSome Input for ask prompt in prompt_6")
-        user_input.rewind
-      end
-
-      let(:config) {
-        {
-          input: user_input,
-          interaction_file: File.join(fixture_dir, "flow_with_multiple_path_with_yes.yaml"),
-        }
-      }
-
-      let(:tui_engine) { described_class.new(config) }
-
-      it "should return input as the interaction_id: value hash" do
-        expect(tui_engine.run_interaction).to eq(
-          {
-            start: nil,
-            prompt_2: true,
-            prompt_3: ["This is message for prompt 3 - Reached when user says yes"],
-            prompt_6: "Some Input for ask prompt in prompt_6",
-            exit: nil,
-          }
-        )
-      end
-    end
-
-    context "when the yaml file has multiple paths at each interaction and user says no" do
-      # Here, user presses y key to select yes
-      let(:user_input) { StringIO.new }
-      before do
-        user_input.write("n\n")
-        user_input.rewind
-      end
-
-      let(:config) {
-        {
-          input: user_input,
-          interaction_file: File.join(fixture_dir, "flow_with_multiple_path_with_yes.yaml"),
-        }
-      }
-
-      let(:tui_engine) { described_class.new(config) }
-
-      it "should return input as the interaction_id: value hash" do
-        expect(tui_engine.run_interaction).to eq(
-          {
-            start: nil,
-            prompt_2: false,
-            prompt_4: ["This is message for prompt 4 - Reached when user says no"],
-            prompt_5: ["This is message for prompt 5"],
-            exit: nil,
-          }
-        )
-      end
-    end
-
     context "when the interaction file has timeout_yes prompt" do
       let(:config) {
         {
@@ -283,6 +274,8 @@ RSpec.describe ChefLicensing::TUIEngine do
       let(:tui_engine) { described_class.new(config) }
 
       it "should timeout and exit in 1 second" do
+        # expect(obj).to receive(:my_method).twice.and_raise(MyException)
+
         expect { tui_engine.run_interaction }.to raise_error(SystemExit)
         expect(output.string).to include("Timed out!")
         expect(output.string).to include("Oops! Reflex too slow.")
