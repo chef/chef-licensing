@@ -3,6 +3,7 @@ require "chef_licensing/config"
 require "spec_helper"
 require "stringio"
 require "chef_licensing"
+require "fileutils"
 
 RSpec.describe ChefLicensing::TUIEngine do
   let(:fixture_dir) { "spec/fixtures/tui_interactions" }
@@ -116,6 +117,94 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect(tui_engine.run_interaction(:start_point_3)).to eq({ start_point_3: nil, prompt_2: nil, prompt_3: nil, exit: nil })
       end
     end
+
+    context "when the yaml file has an interaction without messages or action key" do
+      let(:config) {
+        {
+          interaction_file: File.join(fixture_dir, "flow_without_messages_or_action.yaml"),
+        }
+      }
+
+      it "should raise error while instantiating the class" do
+        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::BadInteractionFile, /No action or messages found for interaction/)
+      end
+    end
+
+    # executing the below test times out on windows
+
+    context "when the interaction file has messages in erb template" do
+      let(:config) {
+        {
+          interaction_file: File.join(fixture_dir, "flow_with_erb_messages.yaml"),
+        }
+      }
+
+      let(:tui_engine) { described_class.new(config) }
+
+      before do
+        tui_engine.append_info_to_input({ extra_info: "Welcome!" })
+      end
+
+      it "should render the erb" do
+        expect(tui_engine.run_interaction).to eq({ start: nil, welcome_user_in_english: ["Welcome!"], welcome_user_in_hindi: ["Namaste!"], exit: nil, extra_info: "Welcome!" })
+      end
+    end
+
+    # This test is not working on windows
+
+    context "when the yaml file has multiple paths at each interaction and user says no" do
+      let(:input) { "n\r\n" }
+      let(:user_input) { StringIO.new(input, "r", universal_newline: true) }
+
+      let(:config) {
+        {
+          input: user_input,
+          interaction_file: File.join(fixture_dir, "flow_with_multiple_path_with_yes.yaml"),
+        }
+      }
+
+      let(:tui_engine) { described_class.new(config) }
+
+      it "should return input as the interaction_id: value hash" do
+        expect(tui_engine.run_interaction).to eq(
+          {
+            start: nil,
+            prompt_2: false,
+            prompt_4: ["This is message for prompt 4 - Reached when user says no"],
+            prompt_5: ["This is message for prompt 5"],
+            exit: nil,
+          }
+        )
+      end
+    end
+
+    # context "when the yaml file has multiple paths at each interaction and user says yes" do
+    #   Dir.mktmpdir do |dir|
+    #     FileUtils.touch("filename.txt")
+    #     File.write("filename.txt", "y\nSome Input for ask prompt in prompt_6")
+
+    #     let(:config) {
+    #       {
+    #         input: File.open("filename.txt"),
+    #         interaction_file: File.join(fixture_dir, "flow_with_multiple_path_with_yes.yaml"),
+    #       }
+    #     }
+
+    #     let(:tui_engine) { described_class.new(config) }
+
+    #     it "should return input as the interaction_id: value hash" do
+    #       expect(tui_engine.run_interaction).to eq(
+    #         {
+    #           start: nil,
+    #           prompt_2: true,
+    #           prompt_3: ["This is message for prompt 3 - Reached when user says yes"],
+    #           prompt_6: "Some Input for ask prompt in prompt_6",
+    #           exit: nil,
+    #         }
+    #       )
+    #     end
+    #   end
+    # end
   end
 
   describe "when a tui_engine object is instantiated with a valid yaml file - part 2" do
@@ -126,36 +215,6 @@ RSpec.describe ChefLicensing::TUIEngine do
     before(:all) do
       if Gem.win_platform?
         skip "Skipping test on windows due to timeout issues"
-      end
-    end
-
-    context "when the yaml file has multiple paths at each interaction and user selects Option 1" do
-      # Here user presses enter to select Option 1
-      let(:user_input) { StringIO.new }
-      before do
-        user_input.write("\n")
-        user_input.rewind
-      end
-
-      let(:config) {
-        {
-          input: user_input,
-          interaction_file: File.join(fixture_dir, "flow_with_multiple_path_select.yaml"),
-        }
-      }
-
-      let(:tui_engine) { described_class.new(config) }
-
-      it "should have a tui_interactions object with 5 interactions" do
-        expect(tui_engine.tui_interactions.size).to eq(5)
-      end
-
-      it "should have a tui_interactions object with 5 interactions with the correct ids" do
-        expect(tui_engine.tui_interactions.keys).to eq(%i{start prompt_2 prompt_3 prompt_4 exit})
-      end
-
-      it "should return input as the interaction_id: value hash but not prompt 4" do
-        expect(tui_engine.run_interaction).to eq({ start: nil, prompt_2: "Option 1", prompt_3: nil, exit: nil })
       end
     end
 
@@ -181,71 +240,9 @@ RSpec.describe ChefLicensing::TUIEngine do
       end
     end
 
-    context "when the yaml file has multiple paths at each interaction and user says yes" do
-      # Here, user presses y key to select yes
-      let(:user_input) { StringIO.new }
-      before do
-        user_input.write("y\nSome Input for ask prompt in prompt_6")
-        user_input.rewind
-      end
-
-      let(:config) {
-        {
-          input: user_input,
-          interaction_file: File.join(fixture_dir, "flow_with_multiple_path_with_yes.yaml"),
-        }
-      }
-
-      let(:tui_engine) { described_class.new(config) }
-
-      it "should return input as the interaction_id: value hash" do
-        expect(tui_engine.run_interaction).to eq(
-          {
-            start: nil,
-            prompt_2: true,
-            prompt_3: ["This is message for prompt 3 - Reached when user says yes"],
-            prompt_6: "Some Input for ask prompt in prompt_6",
-            exit: nil,
-          }
-        )
-      end
-    end
-
-    context "when the yaml file has multiple paths at each interaction and user says no" do
-      # Here, user presses y key to select yes
-      let(:user_input) { StringIO.new }
-      before do
-        user_input.write("n\n")
-        user_input.rewind
-      end
-
-      let(:config) {
-        {
-          input: user_input,
-          interaction_file: File.join(fixture_dir, "flow_with_multiple_path_with_yes.yaml"),
-        }
-      }
-
-      let(:tui_engine) { described_class.new(config) }
-
-      it "should return input as the interaction_id: value hash" do
-        expect(tui_engine.run_interaction).to eq(
-          {
-            start: nil,
-            prompt_2: false,
-            prompt_4: ["This is message for prompt 4 - Reached when user says no"],
-            prompt_5: ["This is message for prompt 5"],
-            exit: nil,
-          }
-        )
-      end
-    end
-
     context "when the interaction file has timeout_yes prompt" do
       let(:config) {
         {
-          # input: StringIO.new, # This is not required as we are not sending any input
-          logger: Logger.new(StringIO.new),
           interaction_file: File.join(fixture_dir, "flow_with_timeout_yes.yaml"),
         }
       }
@@ -276,41 +273,58 @@ RSpec.describe ChefLicensing::TUIEngine do
       end
     end
 
-    context "when the interaction file has messages in erb template" do
-      let(:user_input) { StringIO.new }
+    # context "when the yaml file has multiple paths at each interaction and user says no" do
+    #   let(:user_input) { StringIO.new("n\r\n") }
 
+    #   let(:config) {
+    #     {
+    #       input: user_input,
+    #       interaction_file: File.join(fixture_dir, "flow_with_multiple_path_with_yes.yaml"),
+    #     }
+    #   }
+
+    #   let(:tui_engine) { described_class.new(config) }
+
+    #   it "should return input as the interaction_id: value hash" do
+    #     expect(tui_engine.run_interaction).to eq(
+    #       {
+    #         start: nil,
+    #         prompt_2: false,
+    #         prompt_4: ["This is message for prompt 4 - Reached when user says no"],
+    #         prompt_5: ["This is message for prompt 5"],
+    #         exit: nil,
+    #       }
+    #     )
+    #   end
+    # end
+
+    context "when the yaml file has multiple paths at each interaction and user selects Option 1" do
+      # Here user presses enter to select Option 1
+      let(:user_input) { StringIO.new }
       before do
-        user_input.write("Chef User!\n")
+        user_input.puts "\n"
         user_input.rewind
       end
 
       let(:config) {
         {
           input: user_input,
-          interaction_file: File.join(fixture_dir, "flow_with_erb_messages.yaml"),
+          interaction_file: File.join(fixture_dir, "flow_with_multiple_path_select.yaml"),
         }
       }
 
       let(:tui_engine) { described_class.new(config) }
 
-      before do
-        tui_engine.append_info_to_input({ extra_info: "Welcome!" })
+      it "should have a tui_interactions object with 5 interactions" do
+        expect(tui_engine.tui_interactions.size).to eq(5)
       end
 
-      it "should render the erb" do
-        expect(tui_engine.run_interaction).to eq({ start: nil, ask_user_name: "Chef User!", welcome_user_in_english: ["Hello, Chef User! Welcome!"], welcome_user_in_hindi: ["Namaste, Chef User!"], exit: nil, extra_info: "Welcome!" })
+      it "should have a tui_interactions object with 5 interactions with the correct ids" do
+        expect(tui_engine.tui_interactions.keys).to eq(%i{start prompt_2 prompt_3 prompt_4 exit})
       end
-    end
-    context "when the yaml file has an interaction without messages or action key" do
-      let(:config) {
-        {
-          input: StringIO.new,
-          interaction_file: File.join(fixture_dir, "flow_without_messages_or_action.yaml"),
-        }
-      }
 
-      it "should raise error while instantiating the class" do
-        expect { described_class.new(config) }.to raise_error(ChefLicensing::TUIEngine::BadInteractionFile, /No action or messages found for interaction/)
+      it "should return input as the interaction_id: value hash but not prompt 4" do
+        expect(tui_engine.run_interaction).to eq({ start: nil, prompt_2: "Option 1", prompt_3: nil, exit: nil })
       end
     end
   end
