@@ -150,58 +150,58 @@ RSpec.describe ChefLicensing::TUIEngine do
       end
     end
 
-    # context "when the yaml file has multiple paths at each interaction and user says yes" do
-    #   Dir.mktmpdir do |dir|
-    #     FileUtils.touch("filename.txt")
-    #     File.write("filename.txt", "y\nSome Input for ask prompt in prompt_6")
+    context "when the yaml file has multiple paths at each interaction and user says yes" do
+      Dir.mktmpdir do |dir|
+        FileUtils.touch("filename.txt")
+        File.write("filename.txt", "y\nSome Input for ask prompt in prompt_6")
 
-    #     let(:config) {
-    #       {
-    #         input: File.open("filename.txt"),
-    #         interaction_file: File.join(fixture_dir, "flow_with_multiple_path_with_yes.yaml"),
-    #       }
-    #     }
-
-    #     let(:tui_engine) { described_class.new(config) }
-
-    #     it "should return input as the interaction_id: value hash" do
-    #       expect(tui_engine.run_interaction).to eq(
-    #         {
-    #           start: nil,
-    #           prompt_2: true,
-    #           prompt_3: ["This is message for prompt 3 - Reached when user says yes"],
-    #           prompt_6: "Some Input for ask prompt in prompt_6",
-    #           exit: nil,
-    #         }
-    #       )
-    #     end
-    #   end
-    # end
-
-    context "when the yaml file has multiple paths at each interaction and user says no" do
-      let(:user_input) { StringIO.new("n\r\n") }
-
-      let(:config) {
-        {
-          input: user_input,
-          interaction_file: File.join(fixture_dir, "flow_with_multiple_path_with_yes.yaml"),
-        }
-      }
-
-      let(:tui_engine) { described_class.new(config) }
-
-      it "should return input as the interaction_id: value hash" do
-        expect(tui_engine.run_interaction).to eq(
+        let(:config) {
           {
-            start: nil,
-            prompt_2: false,
-            prompt_4: ["This is message for prompt 4 - Reached when user says no"],
-            prompt_5: ["This is message for prompt 5"],
-            exit: nil,
+            input: File.open("filename.txt"),
+            interaction_file: File.join(fixture_dir, "flow_with_multiple_path_with_yes.yaml"),
           }
-        )
+        }
+
+        let(:tui_engine) { described_class.new(config) }
+
+        it "should return input as the interaction_id: value hash" do
+          expect(tui_engine.run_interaction).to eq(
+            {
+              start: nil,
+              prompt_2: true,
+              prompt_3: ["This is message for prompt 3 - Reached when user says yes"],
+              prompt_6: "Some Input for ask prompt in prompt_6",
+              exit: nil,
+            }
+          )
+        end
       end
     end
+
+    # context "when the yaml file has multiple paths at each interaction and user says no" do
+    #   let(:user_input) { StringIO.new("n\r\n") }
+
+    #   let(:config) {
+    #     {
+    #       input: user_input,
+    #       interaction_file: File.join(fixture_dir, "flow_with_multiple_path_with_yes.yaml"),
+    #     }
+    #   }
+
+    #   let(:tui_engine) { described_class.new(config) }
+
+    #   it "should return input as the interaction_id: value hash" do
+    #     expect(tui_engine.run_interaction).to eq(
+    #       {
+    #         start: nil,
+    #         prompt_2: false,
+    #         prompt_4: ["This is message for prompt 4 - Reached when user says no"],
+    #         prompt_5: ["This is message for prompt 5"],
+    #         exit: nil,
+    #       }
+    #     )
+    #   end
+    # end
   end
 
   describe "when a tui_engine object is instantiated with a valid yaml file - part 2" do
