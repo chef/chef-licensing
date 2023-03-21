@@ -5,6 +5,7 @@ require "stringio"
 require "chef-licensing"
 require "tty-prompt"
 require "tty/prompt/test"
+require "chef-licensing/tui_engine/tui_exceptions"
 
 RSpec.describe ChefLicensing::TUIEngine do
   let(:fixture_dir) { "spec/fixtures/tui_interactions" }
@@ -192,38 +193,41 @@ RSpec.describe ChefLicensing::TUIEngine do
       end
     end
 
-    # context "when the interaction file has timeout_yes prompt" do
-    #   let(:config) {
-    #     {
-    #       interaction_file: File.join(fixture_dir, "flow_with_timeout_yes.yaml"),
-    #     }
-    #   }
+    context "when the interaction file has timeout_yes prompt" do
+      subject(:prompt) { TTY::Prompt::Test.new }
+      let(:config) {
+        {
+          prompt: prompt,
+          interaction_file: File.join(fixture_dir, "flow_with_timeout_yes.yaml"),
+        }
+      }
 
-    #   let(:tui_engine) { described_class.new(config) }
+      let(:tui_engine) { described_class.new(config) }
 
-    #   it "should timeout and exit in 1 second" do
-    #     expect { tui_engine.run_interaction }.to raise_error(SystemExit)
-    #     expect(output.string).to include("Timed out!")
-    #     expect(output.string).to include("Oops! Reflex too slow.")
-    #   end
-    # end
+      it "should timeout and exit in 1 second" do
+        allow(prompt).to receive(:yes?).and_raise(ChefLicensing::TUIEngine::PromptTimeout)
+        expect { tui_engine.run_interaction }.to raise_error(SystemExit)
+        expect(prompt.output.string).to include("Oops! Reflex too slow.")
+      end
+    end
 
-    # context "when the interaction file has timeout_select prompt" do
+    context "when the interaction file has timeout_select prompt" do
+      subject(:prompt) { TTY::Prompt::Test.new }
+      let(:config) {
+        {
+          prompt: prompt,
+          interaction_file: File.join(fixture_dir, "flow_with_timeout_select.yaml"),
+        }
+      }
 
-    #   let(:config) {
-    #     {
-    #       interaction_file: File.join(fixture_dir, "flow_with_timeout_select.yaml"),
-    #     }
-    #   }
+      let(:tui_engine) { described_class.new(config) }
 
-    #   let(:tui_engine) { described_class.new(config) }
-
-    #   it "should timeout and exit in 1 second" do
-    #     expect { tui_engine.run_interaction }.to raise_error(SystemExit)
-    #     expect(output.string).to include("Timed out!")
-    #     expect(output.string).to include("Oops! Your reflex is too slow.")
-    #   end
-    # end
+      it "should timeout and exit in 1 second" do
+        allow(prompt).to receive(:yes?).and_raise(ChefLicensing::TUIEngine::PromptTimeout)
+        expect { tui_engine.run_interaction }.to raise_error(SystemExit)
+        expect(prompt.output.string).to include("Oops! Your reflex is too slow.")
+      end
+    end
 
     context "when the interaction file has messages in erb template" do
       subject(:prompt) { TTY::Prompt::Test.new }
