@@ -129,19 +129,23 @@ RSpec.describe ChefLicensing::TUIEngine do
       end
     end
 
-    context "when the interaction file has timeout_yes prompt" do
+    # executing the below test times out on windows
+
+    context "when the interaction file has messages in erb template" do
       let(:config) {
         {
-          interaction_file: File.join(fixture_dir, "flow_with_timeout_yes.yaml"),
+          interaction_file: File.join(fixture_dir, "flow_with_erb_messages.yaml"),
         }
       }
 
       let(:tui_engine) { described_class.new(config) }
 
-      it "should timeout and exit in 1 second" do
-        expect { tui_engine.run_interaction }.to raise_error(SystemExit)
-        expect(output.string).to include("Timed out!")
-        expect(output.string).to include("Oops! Reflex too slow.")
+      before do
+        tui_engine.append_info_to_input({ extra_info: "Welcome!" })
+      end
+
+      it "should render the erb" do
+        expect(tui_engine.run_interaction).to eq({ start: nil, welcome_user_in_english: ["Welcome!"], welcome_user_in_hindi: ["Namaste!"], exit: nil, extra_info: "Welcome!" })
       end
     end
   end
@@ -269,6 +273,22 @@ RSpec.describe ChefLicensing::TUIEngine do
       end
     end
 
+    context "when the interaction file has timeout_yes prompt" do
+      let(:config) {
+        {
+          interaction_file: File.join(fixture_dir, "flow_with_timeout_yes.yaml"),
+        }
+      }
+
+      let(:tui_engine) { described_class.new(config) }
+
+      it "should timeout and exit in 1 second" do
+        expect { tui_engine.run_interaction }.to raise_error(SystemExit)
+        expect(output.string).to include("Timed out!")
+        expect(output.string).to include("Oops! Reflex too slow.")
+      end
+    end
+
     context "when the interaction file has timeout_select prompt" do
 
       let(:config) {
@@ -283,32 +303,6 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect { tui_engine.run_interaction }.to raise_error(SystemExit)
         expect(output.string).to include("Timed out!")
         expect(output.string).to include("Oops! Your reflex is too slow.")
-      end
-    end
-
-    context "when the interaction file has messages in erb template" do
-      let(:user_input) { StringIO.new }
-
-      before do
-        user_input.write("Chef User!\n")
-        user_input.rewind
-      end
-
-      let(:config) {
-        {
-          input: user_input,
-          interaction_file: File.join(fixture_dir, "flow_with_erb_messages.yaml"),
-        }
-      }
-
-      let(:tui_engine) { described_class.new(config) }
-
-      before do
-        tui_engine.append_info_to_input({ extra_info: "Welcome!" })
-      end
-
-      it "should render the erb" do
-        expect(tui_engine.run_interaction).to eq({ start: nil, ask_user_name: "Chef User!", welcome_user_in_english: ["Hello, Chef User! Welcome!"], welcome_user_in_hindi: ["Namaste, Chef User!"], exit: nil, extra_info: "Welcome!" })
       end
     end
   end
