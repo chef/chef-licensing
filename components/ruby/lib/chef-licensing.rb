@@ -1,13 +1,13 @@
-require "chef_licensing/version"
-require "chef_licensing/license_key_fetcher"
-require "chef_licensing/config"
-require "chef_licensing/api/describe"
-require "chef_licensing/list_license_keys"
-require "chef_licensing/exceptions/feature_not_entitled"
-require "chef_licensing/exceptions/software_not_entitled"
-require "chef_licensing/exceptions/client_error"
-require "chef_licensing/api/client"
-require "chef_licensing/license_key_fetcher/prompt"
+require "chef-licensing/version"
+require "chef-licensing/license_key_fetcher"
+require "chef-licensing/config"
+require "chef-licensing/api/describe"
+require "chef-licensing/list_license_keys"
+require "chef-licensing/exceptions/feature_not_entitled"
+require "chef-licensing/exceptions/software_not_entitled"
+require "chef-licensing/exceptions/client_error"
+require "chef-licensing/api/client"
+require "chef-licensing/license_key_fetcher/prompt"
 
 module ChefLicensing
   class << self

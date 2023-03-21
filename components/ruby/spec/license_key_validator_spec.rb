@@ -1,6 +1,6 @@
 require "spec_helper"
-require_relative "../lib/chef_licensing/license_key_validator"
-require_relative "../lib/chef_licensing"
+require_relative "../lib/chef-licensing/license_key_validator"
+require_relative "../lib/chef-licensing"
 
 RSpec.describe ChefLicensing::LicenseKeyValidator do
 

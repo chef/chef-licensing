@@ -1,4 +1,4 @@
-require "chef_licensing/tui_engine/tui_actions"
+require "chef-licensing/tui_engine/tui_actions"
 require_relative "../../spec_helper"
 
 RSpec.describe ChefLicensing::TUIEngine::TUIActions do

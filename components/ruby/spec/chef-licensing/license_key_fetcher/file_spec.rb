@@ -1,8 +1,8 @@
 require "spec_helper"
 require "tmpdir"
-require "chef_licensing/license_key_fetcher/file"
+require "chef-licensing/license_key_fetcher/file"
 require "logger"
-require "chef_licensing"
+require "chef-licensing"
 
 RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
   let(:fixture_dir) { "spec/fixtures" }

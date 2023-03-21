@@ -1,8 +1,8 @@
 require "spec_helper"
-require_relative "../lib/chef_licensing"
-require_relative "../lib/chef_licensing/api/license_feature_entitlement"
-require_relative "../lib/chef_licensing/api/license_software_entitlement"
-require_relative "../lib/chef_licensing/exceptions/client_error"
+require_relative "../lib/chef-licensing"
+require_relative "../lib/chef-licensing/api/license_feature_entitlement"
+require_relative "../lib/chef-licensing/api/license_software_entitlement"
+require_relative "../lib/chef-licensing/exceptions/client_error"
 
 RSpec.describe ChefLicensing do
 

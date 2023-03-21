@@ -1,6 +1,6 @@
-require "chef_licensing/tui_engine/tui_prompt"
+require "chef-licensing/tui_engine/tui_prompt"
 require "spec_helper"
-require "chef_licensing"
+require "chef-licensing"
 
 RSpec.describe ChefLicensing::TUIEngine::TUIPrompt do
 

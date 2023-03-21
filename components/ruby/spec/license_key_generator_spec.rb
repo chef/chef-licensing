@@ -1,6 +1,6 @@
 require "spec_helper"
-require_relative "../lib/chef_licensing/license_key_generator"
-require_relative "../lib/chef_licensing"
+require_relative "../lib/chef-licensing/license_key_generator"
+require_relative "../lib/chef-licensing"
 
 RSpec.describe ChefLicensing::LicenseKeyGenerator do
 

@@ -1,5 +1,5 @@
-require "chef_licensing/list_license_keys"
-require "chef_licensing/config"
+require "chef-licensing/list_license_keys"
+require "chef-licensing/config"
 require "spec_helper"
 require "logger"
 

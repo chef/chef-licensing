@@ -76,7 +76,7 @@ where:
 #### Configure the Parameters directly in your Application
 
 ```ruby
-require "chef_licensing"
+require "chef-licensing"
 
 ChefLicensing.configure do |config|
   config.license_server_url = "https://license.chef.io"
@@ -93,14 +93,14 @@ end
 ## Usage
 
 <!-- Need to create a method for fetch_and_persist maybe? So that all the methods to be used by the client of this library is in one place -->
-<!-- Document about the fetch_and_persist after the wrapper is introduced in the chef_licensing file. -->
+<!-- Document about the fetch_and_persist after the wrapper is introduced in the chef-licensing file. -->
 
 ### Software Entitlement Check
 
 Software entitlement check validates a user's entitlement to use a specific software product by verifying their licenses.
 
 ```ruby
-require "chef_licensing"
+require "chef-licensing"
 ChefLicensing.check_software_entitlement!
 ```
 #### Response
@@ -112,7 +112,7 @@ If the software is entitled to the license, it returns true; else, it raises an 
 Feature entitlement check validates a premium feature access by verifying it against the user's licenses.
 
 ```ruby
-require "chef_licensing"
+require "chef-licensing"
 ChefLicensing.check_feature_entitlement!('FEATURE_NAME OR FEATURE_ID')
 ```
 
@@ -128,7 +128,7 @@ If the feature is entitled to one of the provided licenses, it returns true; els
 List licenses information retrieves detailed information about licenses stored on the system or passed as an argument. It can be used to verify information such as the license type, expiration date, owner, and features associated with each license.
 
 ```ruby
-require "chef_licensing"
+require "chef-licensing"
 ChefLicensing.list_license_keys_info
 ```
 
@@ -192,7 +192,7 @@ The following APIs provide an abstraction layer for the RESTful actions that are
 It helps to generate a license.
 
 ```ruby
-require 'chef_licensing/license_key_generator'
+require 'chef-licensing/license_key_generator'
 
 ChefLicensing::LicenseKeyGenerator.generate!(
   first_name: "John",
@@ -217,7 +217,7 @@ However, in case of errors, the `ChefLicensing::LicenseGenerationFailed` class r
 It helps to validate array of licenses.
 
 ```ruby
-require 'chef_licensing/license_feature_entitlement'
+require 'chef-licensing/license_feature_entitlement'
 ChefLicensing::LicenseKeyValidator.validate!("LICENSE_KEY")
 ```
 #### Response
@@ -231,7 +231,7 @@ However, if an error occurs during the validation process, the `ChefLicensing::I
 It helps to retrieve information about licenses, its entitlements to various features, software, and assets, as well as details about its expiration date and post-expiry status, and usage information for the license.
 
 ```ruby
-require "chef_licensing/api/client"
+require "chef-licensing/api/client"
 ChefLicensing::Api::Client.info(options_hash)
 ```
 - values to be sent in `options_hash` are `license_keys` and `restful_client`. Default value of restful_client is `ChefLicensing::RestfulClient::V1`.
@@ -282,7 +282,7 @@ However, if an error occurs during the process, the `ChefLicensing::ClientError`
 It helps to retrieve information about a list of licenses, including their entitlements to various features, software, and assets, as well as usage limits for each license.
 
 ```ruby
-require "chef_licensing/api/describe"
+require "chef-licensing/api/describe"
 ChefLicensing::Api::Describe.list(options_hash)
 ```
 
@@ -395,7 +395,7 @@ The object is instantiated using the data received from various formats through 
 #### Usage: Creation Syntax
 
 ```ruby
-require "chef_licensing/license"
+require "chef-licensing/license"
 
 ChefLicensing::License.new(
   data: CLIENT_API_RESPONSE,
@@ -406,7 +406,7 @@ ChefLicensing::License.new(
 OR
 
 ```ruby
-require "chef_licensing/license"
+require "chef-licensing/license"
 
 ChefLicensing::License.new(
   data: DESCRIBE_API_RESPONSE_FOR_EACH_LICENSE,
