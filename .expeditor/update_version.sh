@@ -6,7 +6,7 @@
 
 set -evx
 
-sed -i -r "s/^(\s*)VERSION = \".+\"/\1VERSION = \"$(cat VERSION)\"/" components/ruby/lib/chef_licensing/version.rb
+sed -i -r "s/^(\s*)VERSION = \".+\"/\1VERSION = \"$(cat VERSION)\"/" components/ruby/lib/chef-licensing/version.rb
 cd components/ruby
 bundle install
 bundle update chef-licensing
