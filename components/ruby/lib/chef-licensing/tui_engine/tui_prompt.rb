@@ -13,7 +13,7 @@ module ChefLicensing
         @output = ChefLicensing::Config.output
         @input = opts[:input] || STDIN
         @logger = ChefLicensing::Config.logger
-        @tty_prompt = TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit, output: output, input: input)
+        @tty_prompt = opts[:prompt] || TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit, output: output, input: input)
       end
 
       # yes prompts the user with a yes/no question and returns true if the user
@@ -90,7 +90,6 @@ module ChefLicensing
       def timeout_helper(messages, prompt_method, prompt_attributes)
         prompt_attributes.transform_keys!(&:to_sym)
         timeout_duration = prompt_attributes[:timeout_duration] || 60
-
         Timeout.timeout(timeout_duration, PromptTimeout) do
           prompt_method.call(messages, prompt_attributes)
         rescue PromptTimeout

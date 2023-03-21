@@ -55,7 +55,7 @@ module ChefLicensing
 
     def display_overview
       licenses_metadata.each do |license|
-        puts "------------------------------------------------------------"
+        output.puts "------------------------------------------------------------"
 
         # find the number of days left for the license to expire
         validity = (Date.parse(license.expiration_date) - Date.today).to_i
