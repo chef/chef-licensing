@@ -24,7 +24,6 @@ RSpec.describe ChefLicensing::TUIEngine do
     context "when the yaml file has only single path at each interaction" do
       let(:config) {
         {
-          input: StringIO.new,
           interaction_file: File.join(fixture_dir, "basic_flow_with_one_path.yaml"),
         }
       }
@@ -270,9 +269,6 @@ RSpec.describe ChefLicensing::TUIEngine do
     context "when the yaml file has a different start point other than `start`" do
       let(:config) {
         {
-          output: StringIO.new,
-          input: StringIO.new,
-          logger: Logger.new(StringIO.new),
           interaction_file: File.join(fixture_dir, "basic_flow_with_different_start_point.yaml"),
         }
       }
@@ -287,9 +283,6 @@ RSpec.describe ChefLicensing::TUIEngine do
     context "when the interaction is run with different start point" do
       let(:config) {
         {
-          output: StringIO.new,
-          input: StringIO.new,
-          logger: Logger.new(StringIO.new),
           interaction_file: File.join(fixture_dir, "basic_flow_with_different_start_point.yaml"),
         }
       }
@@ -310,7 +303,6 @@ RSpec.describe ChefLicensing::TUIEngine do
     context "when interactions key is missing in yaml file" do
       let(:config) {
         {
-          input: StringIO.new,
           interaction_file: File.join(fixture_dir, "flow_with_missing_interactions_key.yaml"),
         }
       }
@@ -322,7 +314,6 @@ RSpec.describe ChefLicensing::TUIEngine do
     context "when interactions have some invalid key" do
       let(:config) {
         {
-          input: StringIO.new,
           interaction_file: File.join(fixture_dir, "flow_with_broken_keys.yaml"),
         }
       }
@@ -348,7 +339,6 @@ RSpec.describe ChefLicensing::TUIEngine do
     context "when invalid value for prompt_type is given" do
       let(:config) {
         {
-          input: StringIO.new,
           interaction_file: File.join(fixture_dir, "flow_with_invalid_prompt_type.yaml"),
         }
       }
@@ -361,7 +351,6 @@ RSpec.describe ChefLicensing::TUIEngine do
     context "when the yaml file is empty" do
       let(:config) {
         {
-          input: StringIO.new,
           interaction_file: File.join(fixture_dir, "empty_interaction_file.yaml"),
         }
       }
@@ -374,7 +363,6 @@ RSpec.describe ChefLicensing::TUIEngine do
     context "when the yaml file has no file_format_version" do
       let(:config) {
         {
-          input: StringIO.new,
           interaction_file: File.join(fixture_dir, "flow_with_no_file_format_version.yaml"),
         }
       }
@@ -387,7 +375,6 @@ RSpec.describe ChefLicensing::TUIEngine do
     context "when the yaml file has invalid file_format_version" do
       let(:config) {
         {
-          input: StringIO.new,
           interaction_file: File.join(fixture_dir, "flow_with_invalid_file_format_version.yaml"),
         }
       }
@@ -402,7 +389,6 @@ RSpec.describe ChefLicensing::TUIEngine do
     context "when the yaml file does not exists" do
       let(:config) {
         {
-          input: StringIO.new,
           interaction_file: File.join(fixture_dir, "unexisting_file.yaml"),
         }
       }
@@ -413,14 +399,9 @@ RSpec.describe ChefLicensing::TUIEngine do
     end
 
     context "when interaction file is not provided." do
-      let(:config) {
-        {
-          input: StringIO.new,
-        }
-      }
 
       it "should raise error while instantiating the class" do
-        expect { described_class.new(config) }.to raise_error(
+        expect { described_class.new }.to raise_error(
           ChefLicensing::TUIEngine::MissingInteractionFile, /No interaction file found. Please provide a valid file path to continue/
         )
       end
