@@ -93,36 +93,36 @@ module ChefLicensing
 
       @interaction_data["interactions"].each do |i_id, opts|
         opts.transform_keys!(&:to_sym)
-
-        # An interaction must be either action or a prompt to display messages.
-        unless opts[:action] || opts[:messages]
-          raise ChefLicensing::TUIEngine::BadInteractionFile, "No action or messages found for interaction #{i_id}.\nAdd either action or messages to the interaction."
-        end
-
-        # Supporting both could lead ambiguous flow in response_path_map
-        if opts[:action] && opts[:messages]
-          warn "Both `action` and `messages` keys found in yaml file for interaction #{i_id}."
-          warn "`response_path_map` keys would be considered response from messages and not action."
-        end
-
+        verify_interaction_purpose(i_id, opts)
         opts.each do |k, val|
-          # check for invalid keys in an interaction
-          unless is_valid_interaction_attribute?(k)
-            warn "Invalid key `#{k}` found in yaml file for interaction #{i_id}."
-            warn "Valid keys are #{@interaction_attributes.join(", ")}."
-            warn "#{k} will be ignored.\nYour yaml file may not work as expected."
-          end
-
-          # check if tui_engine supports the prompt_type
-          if k == :prompt_type && !is_valid_prompt_method?(val)
-            raise ChefLicensing::TUIEngine::BadInteractionFile, "Invalid value `#{val}` for `prompt_type` key in yaml file for interaction #{i_id}."
-          end
-
-          # check if tui_engine supports the action
-          if k == :action && !is_valid_action_method?(val)
-            raise ChefLicensing::TUIEngine::BadInteractionFile, "Invalid value `#{val}` for `action` key in yaml file for interaction #{i_id}."
-          end
+          validate_interaction_attribute(i_id, k, val)
         end
+      end
+    end
+
+    def verify_interaction_purpose(i_id, opts)
+      # An interaction must be either action or a prompt to display messages.
+      unless opts[:action] || opts[:messages]
+        raise ChefLicensing::TUIEngine::BadInteractionFile, "No action or messages found for interaction #{i_id}.\nAdd either action or messages to the interaction."
+      end
+
+      # Supporting both could lead ambiguous flow in response_path_map
+      if opts[:action] && opts[:messages]
+        warning_message = "Both `action` and `messages` keys found in yaml file for interaction #{i_id}.\n`response_path_map` keys would be considered response from messages and not action.\nYour yaml file may not work as expected."
+        warn warning_message
+      end
+    end
+
+    def validate_interaction_attribute(i_id, k, val)
+      if is_valid_interaction_attribute?(k)
+        if k == :prompt_type && !is_valid_prompt_method?(val)
+          raise ChefLicensing::TUIEngine::BadInteractionFile, "Invalid value `#{val}` for `prompt_type` key in yaml file for interaction #{i_id}."
+        elsif k == :action && !is_valid_action_method?(val)
+          raise ChefLicensing::TUIEngine::BadInteractionFile, "Invalid value `#{val}` for `action` key in yaml file for interaction #{i_id}."
+        end
+      else
+        warning_message = "Invalid key `#{k}` found in yaml file for interaction #{i_id}.\nValid keys are #{@interaction_attributes.join(", ")}.\n#{k} will be ignored.\nYour yaml file may not work as expected."
+        warn warning_message
       end
     end
 
