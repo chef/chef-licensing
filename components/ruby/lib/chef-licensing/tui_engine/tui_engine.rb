@@ -67,9 +67,7 @@ module ChefLicensing
     end
 
     def store_interaction_objects
-      if major_version(@interaction_data[:file_format_version]) == major_version(INTERACTION_FILE_FORMAT_VERSION)
-        @contents
-      else
+      unless major_version(@interaction_data[:file_format_version]) == major_version(INTERACTION_FILE_FORMAT_VERSION)
         raise ChefLicensing::TUIEngine::UnsupportedInteractionFileFormat, "Unsupported interaction file format version.\nExpected #{INTERACTION_FILE_FORMAT_VERSION} but found #{@interaction_data[:file_format_version]}."
       end
 
