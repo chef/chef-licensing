@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.3.38 -->
-## [0.3.38](https://github.com/chef/chef-licensing/tree/0.3.38) (2023-03-23)
+<!-- latest_release 0.3.39 -->
+## [0.3.39](https://github.com/chef/chef-licensing/tree/0.3.39) (2023-03-23)
 
 #### Merged Pull Requests
-- CHEF-62 No hard expiry for licenses only nagging [#64](https://github.com/chef/chef-licensing/pull/64) ([Nik08](https://github.com/Nik08))
+- CHEF-1496: Fix Windows chef-licensing verify CI test timeout [#71](https://github.com/chef/chef-licensing/pull/71) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-1496: Fix Windows chef-licensing verify CI test timeout [#71](https://github.com/chef/chef-licensing/pull/71) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.39 -->
 - CHEF-62 No hard expiry for licenses only nagging [#64](https://github.com/chef/chef-licensing/pull/64) ([Nik08](https://github.com/Nik08)) <!-- 0.3.38 -->
 - Update path to version file in chef-licensing [#70](https://github.com/chef/chef-licensing/pull/70) ([Nik08](https://github.com/Nik08)) <!-- 0.3.37 -->
 - CHEF-59: Verify license entry TUI matches Feb 2023 UX diagrams [#61](https://github.com/chef/chef-licensing/pull/61) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.36 -->
