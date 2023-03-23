@@ -132,40 +132,35 @@ module ChefLicensing
     end
 
     def is_valid_prompt_method?(val)
-      return @prompt_methods.include?(val.to_sym) if @prompt_methods
+      @prompt_methods ||= begin
+        # Find the getter methods of TUIPrompt class
+        prompt_getter = ChefLicensing::TUIEngine::TUIPrompt.new.instance_variables.map { |var| var.to_s.delete("@").to_sym }
 
-      # Find the getter methods of TUIPrompt class
-      prompt_getter = ChefLicensing::TUIEngine::TUIPrompt.new.instance_variables.map { |var| var.to_s.delete("@").to_sym }
+        #  Find the setter methods of TUIPrompt class
+        prompt_setter = prompt_getter.map { |attr| "#{attr}=".to_sym }
 
-      #  Find the setter methods of TUIPrompt class
-      prompt_setter = prompt_getter.map { |attr| "#{attr}=".to_sym }
-
-      # Subtract the getter and setter of TUIPrompt class from the instance methods of TUIPrompt class
-      @prompt_methods = ChefLicensing::TUIEngine::TUIPrompt.instance_methods(false) - prompt_getter - prompt_setter
-
+        # Subtract the getter and setter of TUIPrompt class from the instance methods of TUIPrompt class
+        ChefLicensing::TUIEngine::TUIPrompt.instance_methods(false) - prompt_getter - prompt_setter
+      end
       @prompt_methods.include?(val.to_sym)
     end
 
     def is_valid_action_method?(val)
-      return @action_methods.include?(val.to_sym) if @action_methods
+      @action_methods ||= begin
+        # Find the getter methods of TUIActions class
+        action_getter = ChefLicensing::TUIEngine::TUIActions.new.instance_variables.map { |var| var.to_s.delete("@").to_sym }
 
-      # Find the getter methods of TUIActions class
-      action_getter = ChefLicensing::TUIEngine::TUIActions.new.instance_variables.map { |var| var.to_s.delete("@").to_sym }
+        #  Find the setter methods of TUIActions class
+        action_setter = action_getter.map { |attr| "#{attr}=".to_sym }
 
-      #  Find the setter methods of TUIActions class
-      action_setter = action_getter.map { |attr| "#{attr}=".to_sym }
-
-      # Subtract the getter and setter of TUIActions class from the instance methods of TUIActions class
-      @action_methods = ChefLicensing::TUIEngine::TUIActions.instance_methods(false) - action_getter - action_setter
-
+        # Subtract the getter and setter of TUIActions class from the instance methods of TUIActions class
+        ChefLicensing::TUIEngine::TUIActions.instance_methods(false) - action_getter - action_setter
+      end
       @action_methods.include?(val.to_sym)
     end
 
     def is_valid_interaction_attribute?(val)
-      return @interaction_attributes.include?(val.to_sym) if @interaction_attributes
-
-      @interaction_attributes = ChefLicensing::TUIEngine::TUIInteraction.new.instance_variables.map { |var| var.to_s.delete("@").to_sym }
-
+      @interaction_attributes ||= ChefLicensing::TUIEngine::TUIInteraction.new.instance_variables.map { |var| var.to_s.delete("@").to_sym }
       @interaction_attributes.include?(val.to_sym)
     end
 
