@@ -11,5 +11,7 @@ module ChefLicensing
     class UnsupportedInteractionFileFormat < StandardError; end
 
     class MissingInteractionFile < StandardError; end
+
+    class BadPromptInput < StandardError; end
   end
 end

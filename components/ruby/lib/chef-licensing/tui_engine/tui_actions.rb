@@ -59,18 +59,16 @@ module ChefLicensing
         true
       end
 
-      # TODO to add product name dynamically
       def generate_trial_license(input)
         output.puts "License generation in progress..."
-        license_id = ChefLicensing::LicenseKeyGenerator.generate!(
+        self.license_id = ChefLicensing::LicenseKeyGenerator.generate!(
           first_name: input[:gather_user_first_name_for_license_generation],
           last_name: input[:gather_user_last_name_for_license_generation],
           email_id: input[:gather_user_email_for_license_generation],
-          product: "inspec",
+          product: ChefLicensing::Config.chef_product_name&.capitalize,
           company: input[:gather_user_company_for_license_generation],
           phone: input[:gather_user_phone_no_for_license_generation]
         )
-        self.license_id = license_id
         true
       rescue ChefLicensing::LicenseGenerationFailed => e
         self.error_msg = e.message
@@ -82,15 +80,14 @@ module ChefLicensing
 
       def generate_free_license(input)
         puts "License generation in progress..."
-        license_id = ChefLicensing::LicenseKeyGenerator.generate_free_license!(
+        self.license_id = ChefLicensing::LicenseKeyGenerator.generate_free_license!(
           first_name: input[:gather_user_first_name_for_license_generation],
           last_name: input[:gather_user_last_name_for_license_generation],
           email_id: input[:gather_user_email_for_license_generation],
-          product: "inspec",
+          product: ChefLicensing::Config.chef_product_name&.capitalize,
           company: input[:gather_user_company_for_license_generation],
           phone: input[:gather_user_phone_no_for_license_generation]
         )
-        self.license_id = license_id
         true
       rescue ChefLicensing::LicenseGenerationFailed => e
         self.error_msg = e.message
@@ -137,10 +134,9 @@ module ChefLicensing
       end
 
       def select_license_generation_based_on_type(inputs)
-        interaction_ids = inputs.keys
-        if interaction_ids.include? :free_license_selection
+        if inputs.key? :free_license_selection
           "free"
-        elsif interaction_ids.include? :trial_license_selection
+        elsif inputs.key? :trial_license_selection
           "trial"
         else
           "commercial"
