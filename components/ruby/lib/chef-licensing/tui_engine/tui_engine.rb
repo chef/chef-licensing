@@ -100,7 +100,7 @@ module ChefLicensing
         opts.transform_keys!(&:to_sym)
 
         # An interaction must be either action or a prompt to display messages.
-        if opts[:action].nil? && opts[:messages].nil?
+        unless opts[:action] || opts[:messages]
           raise ChefLicensing::TUIEngine::BadInteractionFile, "No action or messages found for interaction #{i_id}.\nAdd either action or messages to the interaction."
         end
 
