@@ -20,7 +20,7 @@ module ChefLicensing
       # answers yes and false if the user answers no.
       # prompt_attributes is added to extend the prompt in future.
       def yes(messages, prompt_attributes)
-        message = messages.is_a?(Array) ? messages[0] : messages
+        message = Array(messages).first
 
         @tty_prompt.yes?(message)
       end
@@ -29,28 +29,28 @@ module ChefLicensing
       # default prompt_type of an interaction is say.
       # prompt_attributes is added to extend the prompt in future.
       def say(messages, prompt_attributes)
-        message = messages.is_a?(Array) ? messages[0] : messages
+        message = Array(messages).first
         @tty_prompt.say(message)
       end
 
       # ok prints the given message to the output stream in green color.
       # prompt_attributes is added to extend the prompt in future.
       def ok(messages, prompt_attributes)
-        message = messages.is_a?(Array) ? messages[0] : messages
+        message = Array(messages).first
         @tty_prompt.ok(message)
       end
 
       # warn prints the given message to the output stream in yellow color.
       # prompt_attributes is added to extend the prompt in future.
       def warn(messages, prompt_attributes)
-        message = messages.is_a?(Array) ? messages[0] : messages
+        message = Array(messages).first
         @tty_prompt.warn(message)
       end
 
       # error prints the given message to the output stream in red color.
       # prompt_attributes is added to extend the prompt in future.
       def error(messages, prompt_attributes)
-        message = messages.is_a?(Array) ? messages[0] : messages
+        message = Array(messages).first
         @tty_prompt.error(message)
       end
 
@@ -71,7 +71,7 @@ module ChefLicensing
       # ask prompts the user to enter a value.
       # prompt_attributes is added to extend the prompt in future.
       def ask(messages, prompt_attributes)
-        message = messages.is_a?(Array) ? messages[0] : messages
+        message = Array(messages).first
         @tty_prompt.ask(message)
       end
 
