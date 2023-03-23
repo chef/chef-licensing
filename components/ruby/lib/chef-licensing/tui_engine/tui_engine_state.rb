@@ -16,28 +16,23 @@ module ChefLicensing
       end
 
       def default_action(interaction)
-        # Style is pending.
-
         logger.debug "Default action called for interaction id: #{interaction.id}"
 
-        if interaction.messages
-          messages = render_messages(interaction.messages)
-          response = @prompt.send(interaction.prompt_type, messages, interaction.prompt_attributes)
-        elsif interaction.action
-          response = @tui_actions.send(interaction.action, @input)
-        end
+        response = if interaction.messages
+                     messages = render_messages(interaction.messages)
+                     @prompt.send(interaction.prompt_type, messages, interaction.prompt_attributes)
+                   elsif interaction.action
+                     @tui_actions.send(interaction.action, @input)
+                   end
 
         @input.store(interaction.id, response)
-
         logger.debug "Response for interaction #{interaction.id} is #{@input[interaction.id]}"
 
-        if interaction.paths.size > 1
-          @next_interaction_id = interaction.response_path_map[response.to_s]
-        elsif interaction.paths.size == 1
-          @next_interaction_id = interaction.paths.keys.first
-        else
-          @next_interaction_id = nil
-        end
+        @next_interaction_id = if interaction.paths.size > 1
+                                 interaction.response_path_map[response.to_s]
+                               elsif interaction.paths.size == 1
+                                 interaction.paths.keys.first
+                               end
       end
 
       def append_info_to_input(extra_info_hash)
