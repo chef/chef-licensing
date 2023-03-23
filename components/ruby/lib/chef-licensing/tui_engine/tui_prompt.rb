@@ -21,7 +21,6 @@ module ChefLicensing
       # prompt_attributes is added to extend the prompt in future.
       def yes(messages, prompt_attributes)
         message = Array(messages).first
-
         @tty_prompt.yes?(message)
       end
 
@@ -57,15 +56,15 @@ module ChefLicensing
       # select prompts the user to select an option from a list of options.
       # prompt_attributes is added to extend the prompt in future.
       def select(messages, prompt_attributes)
-        header = messages[0]
-        choices_list = messages[1]
+        header, choices_list = fetch_header_and_choices(messages, :select)
         @tty_prompt.select(header, choices_list)
       end
 
       # enum_select prompts the user to select an option from a list of options.
       # prompt_attributes is added to extend the prompt in future.
       def enum_select(messages, prompt_attributes)
-        @tty_prompt.enum_select(messages[0], messages[1])
+        header, choices_list = fetch_header_and_choices(messages, :enum_select)
+        @tty_prompt.enum_select(header, choices_list)
       end
 
       # ask prompts the user to enter a value.
@@ -86,6 +85,15 @@ module ChefLicensing
       end
 
       private
+
+      def fetch_header_and_choices(messages, prompt_type)
+        unless messages.is_a?(Array) && messages.size > 1
+          raise ChefLicensing::TUIEngine::BadPromptInput, "messages for #{prompt_type} must be an array of size greater than 1"
+        end
+
+        header, *choices_list = messages
+        [header, choices_list]
+      end
 
       def timeout_helper(messages, prompt_method, prompt_attributes)
         prompt_attributes.transform_keys!(&:to_sym)

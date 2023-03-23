@@ -1,6 +1,7 @@
 require "chef-licensing/tui_engine/tui_prompt"
 require "spec_helper"
 require "chef-licensing"
+require "chef-licensing/tui_engine/tui_exceptions"
 
 RSpec.describe ChefLicensing::TUIEngine::TUIPrompt do
 
@@ -61,6 +62,18 @@ RSpec.describe ChefLicensing::TUIEngine::TUIPrompt do
 
     it "should respond to enum_select method" do
       expect(tui_prompt).to respond_to(:enum_select)
+    end
+  end
+
+  describe "when enum_select method is called with wrong arguments" do
+    it "should raise an error" do
+      expect { tui_prompt.enum_select("Single Message", {}) }.to raise_error(ChefLicensing::TUIEngine::BadPromptInput, /messages for enum_select must be an array of size greater than 1/)
+    end
+  end
+
+  describe "when select method is called with wrong arguments" do
+    it "should raise an error" do
+      expect { tui_prompt.select("Single Message", {}) }.to raise_error(ChefLicensing::TUIEngine::BadPromptInput, /messages for select must be an array of size greater than 1/)
     end
   end
 end
