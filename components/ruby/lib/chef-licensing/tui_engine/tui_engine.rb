@@ -20,22 +20,17 @@ module ChefLicensing
       @state = ChefLicensing::TUIEngine::TUIEngineState.new(@opts)
     end
 
-    def run_interaction(start_interaction = nil)
-      start_interaction_id = start_interaction || @tui_interactions.keys.first
+    def run_interaction(start_interaction_id = nil)
+      start_interaction_id ||= @tui_interactions.keys.first
       current_interaction = @tui_interactions[start_interaction_id]
 
       until current_interaction.nil? || current_interaction.id == :exit
         state.default_action(current_interaction)
-
-        if state.next_interaction_id.nil?
-          current_interaction = nil
-        else
-          current_interaction = current_interaction.paths[state.next_interaction_id.to_sym]
-        end
+        current_interaction = state.next_interaction_id.nil? ? nil : current_interaction.paths[state.next_interaction_id.to_sym]
       end
 
       # If the last interaction is not the exit interaction. Something went wrong in the flow.
-      raise ChefLicensing::TUIEngine::IncompleteFlowException, "Something went wrong in the flow." if current_interaction.nil? || current_interaction.id != :exit
+      raise ChefLicensing::TUIEngine::IncompleteFlowException, "Something went wrong in the flow." unless current_interaction&.id == :exit
 
       state.default_action(current_interaction)
       state.input
