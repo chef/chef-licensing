@@ -1,3 +1,3 @@
 module ChefLicensing
-  VERSION = "0.3.37".freeze
+  VERSION = "0.3.38".freeze
 end

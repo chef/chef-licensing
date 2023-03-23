@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.3.37 -->
-## [0.3.37](https://github.com/chef/chef-licensing/tree/0.3.37) (2023-03-21)
+<!-- latest_release 0.3.38 -->
+## [0.3.38](https://github.com/chef/chef-licensing/tree/0.3.38) (2023-03-23)
 
 #### Merged Pull Requests
-- Update path to version file in chef-licensing [#70](https://github.com/chef/chef-licensing/pull/70) ([Nik08](https://github.com/Nik08))
+- CHEF-62 No hard expiry for licenses only nagging [#64](https://github.com/chef/chef-licensing/pull/64) ([Nik08](https://github.com/Nik08))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-62 No hard expiry for licenses only nagging [#64](https://github.com/chef/chef-licensing/pull/64) ([Nik08](https://github.com/Nik08)) <!-- 0.3.38 -->
 - Update path to version file in chef-licensing [#70](https://github.com/chef/chef-licensing/pull/70) ([Nik08](https://github.com/Nik08)) <!-- 0.3.37 -->
 - CHEF-59: Verify license entry TUI matches Feb 2023 UX diagrams [#61](https://github.com/chef/chef-licensing/pull/61) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.36 -->
 - Extra info of license type in expiry flow [#63](https://github.com/chef/chef-licensing/pull/63) ([Nik08](https://github.com/Nik08)) <!-- 0.3.35 -->
