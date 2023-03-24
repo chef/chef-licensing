@@ -7,8 +7,8 @@ module ChefLicensing
 
     class << self
       # @param [Hash] KWARGS keys accepted are [first_name, last_name, email_id, product, company, phone]
-      def generate!(kwargs)
-        new(kwargs).generate!
+      def generate_trial_license!(kwargs)
+        new(kwargs).generate_trial_license!
       end
 
       def generate_free_license!(kwargs)
@@ -22,8 +22,8 @@ module ChefLicensing
       @restful_client = restful_client.new
     end
 
-    def generate!
-      response = @restful_client.generate_license(payload)
+    def generate_trial_license!
+      response = @restful_client.generate_trial_license(payload)
       # need some logic around delivery
       # how the delivery is decided?
       response.licenseId

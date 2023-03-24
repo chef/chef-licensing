@@ -6,7 +6,7 @@ module ChefLicensing
     class V1 < Base
       END_POINTS = END_POINTS.merge({
         VALIDATE: "v1/validate",
-        GENERATE_LICENSE: "v1/triallicense",
+        GENERATE_TRIAL_LICENSE: "v1/triallicense",
         GENERATE_FREE_LICENSE: "v1/freetierlicense",
       }).freeze
     end
