@@ -25,6 +25,13 @@ module ChefLicensing
 
       CURRENT_ENDPOINT_VERSION = 2
 
+      def initialize
+        raise "Missing credential in config: Set in block chef_license_server or use environment variable CHEF_LICENSER_SERVER or pass through argument --chef-license-server" if ChefLicensing::Config.license_server_url.nil?
+
+        # License server API key is only used for License generation API
+        raise "Missing credential in config: Set in block chef_license_server_api_key or use environment variable CHEF_LICENSE_SERVER_API_KEY or pass through argument --chef-license-server-api-key" if ChefLicensing::Config.license_server_api_key.nil?
+      end
+
       def validate(license)
         invoke_get_api(self.class::END_POINTS[:VALIDATE], { licenseId: license, version: CURRENT_ENDPOINT_VERSION })
       end
