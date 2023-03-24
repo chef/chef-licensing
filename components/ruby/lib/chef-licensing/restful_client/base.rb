@@ -14,6 +14,7 @@ module ChefLicensing
       END_POINTS = {
         VALIDATE: "validate",
         GENERATE_LICENSE: "triallicense",
+        GENERATE_FREE_LICENSE: "freetierlicense",
         FEATURE_BY_NAME: "license-service/featurebyname",
         FEATURE_BY_ID: "license-service/featurebyid",
         ENTITLEMENT_BY_NAME: "license-service/entitlementbyname",
@@ -35,6 +36,19 @@ module ChefLicensing
       def generate_license(payload)
         handle_post_connection do |connection|
           response = connection.post(self.class::END_POINTS[:GENERATE_LICENSE]) do |request|
+            request.body = payload.to_json
+            request.headers = { 'x-api-key': ChefLicensing::Config.license_server_api_key }
+          end
+          raise RestfulClientError, format_error_from(response) unless response.success?
+
+          response.body
+        end
+      end
+
+      def generate_free_license(payload)
+        require 'byebug'; byebug
+        handle_post_connection do |connection|
+          response = connection.post(self.class::END_POINTS[:GENERATE_FREE_LICENSE]) do |request|
             request.body = payload.to_json
             request.headers = { 'x-api-key': ChefLicensing::Config.license_server_api_key }
           end

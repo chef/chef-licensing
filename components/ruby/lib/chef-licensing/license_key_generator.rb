@@ -32,8 +32,7 @@ module ChefLicensing
     end
 
     def generate_free_license!
-      # TODO integration with free license generation api
-      raise ChefLicensing::LicenseGenerationFailed, "Free license generation is not yet implemented!"
+      response = @restful_client.generate_free_license(payload)
     rescue RestfulClientError => e
       raise ChefLicensing::LicenseGenerationFailed, e.message
     end
