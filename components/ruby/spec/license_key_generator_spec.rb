@@ -15,11 +15,25 @@ RSpec.describe ChefLicensing::LicenseKeyGenerator do
     "tmns-90564f0a-ad22-482f-b57d-569f3fb1c11e-6620"
   }
 
+  let(:expected_free_license_key) {
+    "free-763haha4-31b7-48ee-a9b6-c00d5666f3c4-0000"
+  }
+
   let(:expected_response) {
     {
       "delivery": "RealTime",
       "licenseId": expected_license_key,
       "message": "Success",
+      "status_code": 200,
+    }.to_json
+  }
+
+  let(:expected_free_license_response) {
+    {
+      "delivery": "RealTime",
+      "licenseId": expected_free_license_key,
+      "message": "Success",
+      "response_code": 1,
       "status_code": 200,
     }.to_json
   }
@@ -122,12 +136,12 @@ RSpec.describe ChefLicensing::LicenseKeyGenerator do
       before do
         stub_request(:post, "#{ChefLicensing::Config.license_server_url}/v1/freetierlicense")
           .with(body: payload.to_json, headers: headers)
-          .to_return(body: expected_response,
+          .to_return(body: expected_free_license_response,
                      headers: { content_type: "application/json" })
       end
 
       it "should return the license key" do
-        expect(described_class.generate_free_license!(params)).to eq(expected_license_key)
+        expect(described_class.generate_free_license!(params)).to eq(expected_free_license_key)
       end
     end
 
