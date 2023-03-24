@@ -33,6 +33,7 @@ module ChefLicensing
 
     def generate_free_license!
       response = @restful_client.generate_free_license(payload)
+      response.licenseId
     rescue RestfulClientError => e
       raise ChefLicensing::LicenseGenerationFailed, e.message
     end
