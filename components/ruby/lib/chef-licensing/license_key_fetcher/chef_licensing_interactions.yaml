@@ -35,7 +35,7 @@ interactions:
     paths: [ask_if_user_has_renewed_license_id]
 
   prompt_license_about_to_expire:
-    messages: "! [WARNING] Your <%= input[:license_type] %> license is going to expire tomorrow."
+    messages: "! [WARNING] Your <%= input[:license_type] %> license is going to expire in <%= input[:number_of_days_in_expiration] %> day/s"
     prompt_type: "warn"
     paths: [ask_if_user_has_renewed_license_id]
 
