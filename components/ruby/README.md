@@ -789,3 +789,39 @@ interactions:
     messages: ["Game over!"]
     prompt_type: "say"
 ```
+
+4. with styled texts
+The messages can be styled with all the APIs provided by the `pastel` gem. Below are few examples:
+
+```YAML
+:file_format_version: 1.0.0
+
+interactions:
+  start:
+    messages: ['<%= input[:pastel].bold.underline.green("Welcome, this text is bold, underlined and colored in green")%>.']
+    prompt_type: "say"
+    paths: [prompt_2]
+    description: This is an optional field. WYOD (Write your own description)
+
+  prompt_2:
+    messages: ["Do you agree?"]
+    prompt_type: "yes"
+    paths: [prompt_3, prompt_4]
+    response_path_map:
+      "true": prompt_3
+      "false": prompt_4
+
+  prompt_3:
+    messages: ['You have selected <%= input[:pastel].green("yes") %>']
+    prompt_type: "ok"
+    paths: [exit]
+
+  prompt_4:
+    messages: ['You have selected <%= input[:pastel].red("no") %>']
+    prompt_type: "error"
+    paths: [exit]
+
+  exit:
+    messages: ["This is the exit prompt"]
+    prompt_type: "say"
+```
