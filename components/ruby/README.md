@@ -2,7 +2,6 @@
 
 Chef Licensing is a Ruby library for managing the licensing of Chef products. It provides the support to generate and validate license keys, as well as track entitlements associated with the licenses. 
 
-
 ## Table of Contents
 
 1. [System Prerequisites](#system-prerequisites)
