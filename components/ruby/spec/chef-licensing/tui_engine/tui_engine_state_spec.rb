@@ -26,7 +26,7 @@ RSpec.describe ChefLicensing::TUIEngine::TUIEngineState do
 
   describe "when a tui_engine_state object is instantiated" do
     it "should have input field" do
-      expect(tui_engine_state.input).to eq({:pastel => Pastel.new})
+      expect(tui_engine_state.input).to eq({ pastel: Pastel.new })
     end
 
     it "should have logger field" do
