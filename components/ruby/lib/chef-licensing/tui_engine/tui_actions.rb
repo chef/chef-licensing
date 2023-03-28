@@ -61,7 +61,7 @@ module ChefLicensing
 
       def generate_trial_license(input)
         output.puts "License generation in progress..."
-        self.license_id = ChefLicensing::LicenseKeyGenerator.generate!(
+        self.license_id = ChefLicensing::LicenseKeyGenerator.generate_trial_license!(
           first_name: input[:gather_user_first_name_for_license_generation],
           last_name: input[:gather_user_last_name_for_license_generation],
           email_id: input[:gather_user_email_for_license_generation],

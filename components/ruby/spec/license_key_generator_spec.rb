@@ -91,7 +91,7 @@ RSpec.describe ChefLicensing::LicenseKeyGenerator do
     { "message": "Forbidden" }.to_json
   }
 
-  describe ".generate!" do
+  describe ".generate_trial_license!" do
     context "when params are valid" do
       before do
         stub_request(:post, "#{ChefLicensing::Config.license_server_url}/v1/triallicense")
@@ -101,7 +101,7 @@ RSpec.describe ChefLicensing::LicenseKeyGenerator do
       end
 
       it "should return the license key" do
-        expect(described_class.generate!(params)).to eq(expected_license_key)
+        expect(described_class.generate_trial_license!(params)).to eq(expected_license_key)
       end
     end
 
@@ -113,7 +113,7 @@ RSpec.describe ChefLicensing::LicenseKeyGenerator do
       end
 
       it "should raise an error" do
-        expect { described_class.generate!(bad_params) }.to raise_error(ChefLicensing::LicenseGenerationFailed)
+        expect { described_class.generate_trial_license!(bad_params) }.to raise_error(ChefLicensing::LicenseGenerationFailed)
       end
     end
 
@@ -127,7 +127,7 @@ RSpec.describe ChefLicensing::LicenseKeyGenerator do
           .with(body: payload.to_json, headers: headers)
           .to_return(body: invalid_api_key_response, headers: { content_type: "application/json" }, status: 403)
       end
-      it { expect { described_class.generate!(params) }.to raise_error(ChefLicensing::LicenseGenerationFailed) }
+      it { expect { described_class.generate_trial_license!(params) }.to raise_error(ChefLicensing::LicenseGenerationFailed) }
     end
   end
 

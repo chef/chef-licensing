@@ -13,7 +13,7 @@ module ChefLicensing
 
       END_POINTS = {
         VALIDATE: "validate",
-        GENERATE_LICENSE: "triallicense",
+        GENERATE_TRIAL_LICENSE: "triallicense",
         GENERATE_FREE_LICENSE: "freetierlicense",
         FEATURE_BY_NAME: "license-service/featurebyname",
         FEATURE_BY_ID: "license-service/featurebyid",
@@ -29,9 +29,9 @@ module ChefLicensing
         invoke_get_api(self.class::END_POINTS[:VALIDATE], { licenseId: license, version: CURRENT_ENDPOINT_VERSION })
       end
 
-      def generate_license(payload)
+      def generate_trial_license(payload)
         headers = { 'x-api-key': ChefLicensing::Config.license_server_api_key }
-        invoke_post_api(self.class::END_POINTS[:GENERATE_LICENSE], payload, headers)
+        invoke_post_api(self.class::END_POINTS[:GENERATE_TRIAL_LICENSE], payload, headers)
       end
 
       def generate_free_license(payload)

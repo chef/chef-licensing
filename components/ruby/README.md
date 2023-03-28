@@ -2,7 +2,6 @@
 
 Chef Licensing is a Ruby library for managing the licensing of Chef products. It provides the support to generate and validate license keys, as well as track entitlements associated with the licenses. 
 
-
 ## Table of Contents
 
 1. [System Prerequisites](#system-prerequisites)
@@ -191,10 +190,12 @@ The following APIs provide an abstraction layer for the RESTful actions that are
 
 It helps to generate a license.
 
+#### Trial license generation
+
 ```ruby
 require 'chef-licensing/license_key_generator'
 
-ChefLicensing::LicenseKeyGenerator.generate!(
+ChefLicensing::LicenseKeyGenerator.generate_trial_license!(
   first_name: "John",
   last_name: "Doe",
   email_id: "johndoe@progress.com",
@@ -207,7 +208,7 @@ ChefLicensing::LicenseKeyGenerator.generate!(
 
 #### Response
 
-If successful, the license key generation process responds with a valid license key.
+If successful, the license key generation process responds with a valid trial license key.
 <!-- Add about the location maybe? -->
 
 However, in case of errors, the `ChefLicensing::LicenseGenerationFailed` class returns the message directly from the license generation server as the exception message.
