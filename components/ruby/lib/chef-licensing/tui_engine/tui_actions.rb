@@ -143,15 +143,6 @@ module ChefLicensing
         end
       end
 
-      def check_license_renewal(inputs)
-        interaction_ids = inputs.keys
-        if (interaction_ids & %i{ prompt_license_about_to_expire prompt_license_expired }).empty?
-          "new"
-        else
-          "renew"
-        end
-      end
-
       def license_generation_rejected?(inputs)
         !!rejection_msg
       end

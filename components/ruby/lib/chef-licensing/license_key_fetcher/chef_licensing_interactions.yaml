@@ -30,69 +30,20 @@ interactions:
     paths: [ask_if_user_has_license_id]
 
   prompt_license_expired:
-    messages: "✖ [ERROR] Your <%= input[:license_type] %> license has been expired."
-    prompt_type: "error"
-    paths: [ask_if_user_has_renewed_license_id]
+    messages: |
+      ! [WARNING] License Expired.
+      To receive bug fixes, new features and updates, Kindly get a commercial license.
+      To get a new license, run "inspec license add" command.
+    prompt_type: "warn"
+    paths: [exit]
 
   prompt_license_about_to_expire:
-    messages: "! [WARNING] Your <%= input[:license_type] %> license is going to expire in <%= input[:number_of_days_in_expiration] %> day/s"
-    prompt_type: "warn"
-    paths: [ask_if_user_has_renewed_license_id]
-
-  ask_if_user_has_renewed_license_id:
-    messages: ["\nPlease choose one of the options below",["I already have renewed license ID", "I don't have a renewed license ID and would like to generate a new license ID", "Skip"]]
-    prompt_type: "timeout_select"
-    prompt_attributes:
-      timeout_duration: 60
-      timeout_message: "\nPrompt timed out. Use non-interactive flags or enter an answer within 60 seconds."
-    paths: [ask_for_license_id, info_of_license_types_on_renewal, skip_message_on_renewal]
-    response_path_map:
-      "I already have renewed license ID": ask_for_license_id
-      "I don't have a renewed license ID and would like to generate a new license ID": info_of_license_types_on_renewal
-      "Skip": skip_message_on_renewal
-
-  skip_message_on_renewal:
-    messages: ["\n! [WARNING] License is required to continue using the product. Please renew your license."]
-    prompt_type: warn
-    paths: [skip_licensing_on_renewal]
-
-  skip_licensing_on_renewal:
-    messages: ["\nAre you sure to skip this step?",["Skip", "Generate a new license ID", "I already have a license ID"]]
-    prompt_type: "select"
-    paths: [ask_for_license_id, info_of_license_types_on_renewal, skipped]
-    response_path_map:
-      "I already have a license ID": ask_for_license_id
-      "Generate a new license ID": info_of_license_types_on_renewal
-      "Skip": skipped
-
-  info_of_license_types_on_renewal:
     messages: |
-        Thank you for taking interest in <%= input[:chef_product_name] %>.
-
-        We have the following types of licenses.
-        Please choose one that suits your requirements:
-
-        +----------------------------+------------------------------+
-        | 1. Free License            | 2. Commercial License        |
-        |     Validity: Unlimited    |     Validity: Custom         |
-        |     Entitlement:           |     Entitlement:             |
-        |      Nodes: 10             |      Nodes: Custom           |
-        |      Basic Features: Yes   |      Basic Features : Yes    |
-        |      Premium Features: No  |      Premium Features : Yes  |
-        +----------------------------+------------------------------+
-
-        To know more about license types, their respective entitlement and premium features, visit
-        <link>
-    prompt_type: "say"
-    paths: [ask_for_license_type_on_renewal]
-
-  ask_for_license_type_on_renewal:
-    prompt_type: "select"
-    messages: ["\nSelect the type of license below and then enter user details" , ["1.Free license", "2.Commercial license"]]
-    paths: [free_license_selection, commercial_license_selection]
-    response_path_map:
-      "1.Free license": free_license_selection
-      "2.Commercial license": commercial_license_selection
+      ! [WARNING] Your license is about to expire in <%= input[:number_of_days_in_expiration] %> days.
+      To avoid service disruptions, please get a commercial license before <%= input[:license_expiration_date] %>
+      To get a new license, run "inspec license add" command.
+    prompt_type: "warn"
+    paths: [exit]
 
   ask_if_user_has_license_id:
     messages: ["\nPlease choose one of the options below",["I already have a license ID", "I don't have a license ID and would like to generate a new license ID", "Skip"]]
@@ -362,22 +313,7 @@ interactions:
         Phone number: <%= input[:gather_user_phone_no_for_license_generation] %>
       ----------------------------------------------------
     prompt_type: "say"
-    paths: [check_license_renewal]
-
-  check_license_renewal:
-    action: check_license_renewal
-    paths: [ask_for_review_confirmation, ask_for_review_confirmation_on_renewal]
-    response_path_map:
-      "new": ask_for_review_confirmation
-      "renew": ask_for_review_confirmation_on_renewal
-
-  ask_for_review_confirmation_on_renewal:
-    prompt_type: "select"
-    messages: ["Please select", ["Confirm the details and proceed", "Choose again"]]
-    paths: [pre_license_generation, info_of_license_types_on_renewal]
-    response_path_map:
-      "Confirm the details and proceed": pre_license_generation
-      "Choose again": info_of_license_types_on_renewal
+    paths: [ask_for_review_confirmation]
 
   ask_for_review_confirmation:
     prompt_type: "select"
@@ -460,25 +396,18 @@ interactions:
   license_generation_rejected:
     messages: ["Your request for a license was denied for the following reason <%= input[:fetch_license_failure_rejection_msg] %>. Please select an Option", ["Try again", "Skip"]]
     prompt_type: "select"
-    paths: [pre_license_generation, check_license_renewal_before_skip_message]
+    paths: [pre_license_generation, skip_message]
     response_path_map:
       "Try again": pre_license_generation
-      "Skip": check_license_renewal_before_skip_message
+      "Skip": skip_message
 
   license_generation_with_errors:
     messages: ["\nAn error occurred while generating your license.\nError message: <%= input[:fetch_license_failure_error_msg] %>\n", ["Try again", "Skip"]]
     prompt_type: "select"
-    paths: [pre_license_generation, check_license_renewal_before_skip_message]
+    paths: [pre_license_generation, skip_message]
     response_path_map:
       "Try again": pre_license_generation
-      "Skip": check_license_renewal_before_skip_message
-
-  check_license_renewal_before_skip_message:
-    action: check_license_renewal
-    paths: [skip_message, skip_message_on_renewal]
-    response_path_map:
-      "new": skip_message
-      "renew": skip_message_on_renewal
+      "Skip": skip_message
 
   exit:
     messages: "Thank you."

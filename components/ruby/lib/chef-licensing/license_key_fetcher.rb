@@ -15,7 +15,7 @@ module ChefLicensing
     end
 
     attr_reader :config, :license_keys, :arg_fetcher, :env_fetcher, :file_fetcher, :prompt_fetcher, :logger
-    attr_accessor :number_of_days_in_expiration
+    attr_accessor :number_of_days_in_expiration, :license_expiration_date
     def initialize(opts = {})
       @config = opts
       @logger = ChefLicensing::Config.logger
@@ -65,7 +65,7 @@ module ChefLicensing
         logger.debug "License Key fetcher - detected TTY, prompting..."
         new_keys = prompt_fetcher.fetch
 
-        # Scenario: When a user is prompted for license expiry beforehand expiration and license is not yet renewed
+        # Scenario: When a user is prompted for license expiry and license is not yet renewed
         if new_keys.empty? && %i{prompt_license_about_to_expire prompt_license_expired}.include?(config[:start_interaction])
           # Not blocking any license type in case of expiry
           return @license_keys
@@ -73,15 +73,6 @@ module ChefLicensing
           @license_keys.concat(new_keys)
           new_keys.each { |key| file_fetcher.persist(key) }
           return license_keys
-        end
-      else
-        if config[:start_interaction] == :prompt_license_about_to_expire
-          logger.warn "Your #{client.license_type} license is going to expire in #{number_of_days_in_expiration} day/s."
-          return @license_keys
-        elsif config[:start_interaction] == :prompt_license_expired
-          # Not blocking any license type in case of expiry
-          logger.error "Your #{client.license_type} license has been expired."
-          return @license_keys
         end
       end
 
@@ -96,6 +87,7 @@ module ChefLicensing
       unless @license_keys.empty? && !client
         extra_info[:license_type] = client.license_type
         extra_info[:number_of_days_in_expiration] = number_of_days_in_expiration
+        extra_info[:license_expiration_date] = license_expiration_date
       end
       prompt_fetcher.append_info_to_tui_engine(extra_info) unless extra_info.empty?
     end
@@ -152,6 +144,7 @@ module ChefLicensing
     def about_to_expire?
       require "Date" unless defined?(Date)
       self.number_of_days_in_expiration = (Date.parse(client.expiration_date) - Date.today).to_i
+      self.license_expiration_date = Date.parse(client.expiration_date).strftime("%a, %d %b %Y")
       # starts to nag before a week when about to expire
       client.status.eql?("Active") && client.expiration_status.eql?("Expired") && ((1..7).include? number_of_days_in_expiration)
     end
