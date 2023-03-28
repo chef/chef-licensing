@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.3.40 -->
-## [0.3.40](https://github.com/chef/chef-licensing/tree/0.3.40) (2023-03-23)
+<!-- latest_release 0.3.41 -->
+## [0.3.41](https://github.com/chef/chef-licensing/tree/0.3.41) (2023-03-28)
 
 #### Merged Pull Requests
-- Minor refactoring and code style changes [#72](https://github.com/chef/chef-licensing/pull/72) ([ahasunos](https://github.com/ahasunos))
+- CHEF-57: Create Free Generate License API EndPoint Support [#74](https://github.com/chef/chef-licensing/pull/74) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-57: Create Free Generate License API EndPoint Support [#74](https://github.com/chef/chef-licensing/pull/74) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.41 -->
 - Minor refactoring and code style changes [#72](https://github.com/chef/chef-licensing/pull/72) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.40 -->
 - CHEF-1496: Fix Windows chef-licensing verify CI test timeout [#71](https://github.com/chef/chef-licensing/pull/71) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.39 -->
 - CHEF-62 No hard expiry for licenses only nagging [#64](https://github.com/chef/chef-licensing/pull/64) ([Nik08](https://github.com/Nik08)) <!-- 0.3.38 -->
