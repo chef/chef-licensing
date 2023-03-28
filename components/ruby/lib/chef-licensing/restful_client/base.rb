@@ -102,7 +102,7 @@ module ChefLicensing
       end
 
       def get_connection
-        store = ::ActiveSupport::Cache.lookup_store(:file_store, [Dir.tmpdir])
+        store = ::ActiveSupport::Cache.lookup_store(:file_store, Dir.tmpdir)
         Faraday.new(url: ChefLicensing::Config.license_server_url) do |config|
           config.request :json
           config.response :json, parser_options: { object_class: OpenStruct }
