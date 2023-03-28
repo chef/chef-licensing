@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    chef-licensing (0.3.41)
+    chef-licensing (0.3.42)
       activesupport (~> 7.0, >= 7.0.4.2)
       chef-config (>= 15)
       faraday (>= 1, < 3)
