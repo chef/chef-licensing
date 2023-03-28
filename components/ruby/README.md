@@ -760,6 +760,7 @@ interactions:
 4. with timeout_select prompt
 
 ```YAML
+:file_format_version: 1.0.0
 interactions:
   start:
     messages: ["Shall we begin the game?", ["Yes", "No", "Exit"]]
@@ -790,7 +791,7 @@ interactions:
     prompt_type: "say"
 ```
 
-4. with styled texts
+5. with styled texts
 The messages can be styled with all the APIs provided by the `pastel` gem. Below are few examples:
 
 ```YAML
