@@ -3,6 +3,7 @@ require "faraday/http_cache"
 require "active_support"
 require "tmpdir" unless defined?(Dir.mktmpdir)
 require_relative "../exceptions/restful_client_error"
+require_relative "../exceptions/missing_api_credentials_error"
 require_relative "../config"
 
 module ChefLicensing
@@ -24,6 +25,13 @@ module ChefLicensing
       }.freeze
 
       CURRENT_ENDPOINT_VERSION = 2
+
+      def initialize
+        raise MissingAPICredentialsError, "Missing credential in config: Set in block chef_license_server or use environment variable CHEF_LICENSER_SERVER or pass through argument --chef-license-server" if ChefLicensing::Config.license_server_url.nil?
+
+        # License server API key is only used for License generation API
+        raise MissingAPICredentialsError, "Missing credential in config: Set in block chef_license_server_api_key or use environment variable CHEF_LICENSE_SERVER_API_KEY or pass through argument --chef-license-server-api-key" if ChefLicensing::Config.license_server_api_key.nil?
+      end
 
       def validate(license)
         invoke_get_api(self.class::END_POINTS[:VALIDATE], { licenseId: license, version: CURRENT_ENDPOINT_VERSION })
