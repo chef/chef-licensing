@@ -4,7 +4,6 @@ require "yaml"
 require "date"
 require "fileutils" unless defined?(FileUtils)
 require_relative "../license_key_fetcher"
-require_relative "../exceptions/invalid_license"
 require_relative "../config"
 
 module ChefLicensing
@@ -36,15 +35,6 @@ module ChefLicensing
 
       def fetch_license_keys(licenses)
         licenses.collect { |x| x[:license_key] }
-      end
-
-      def validate_and_persist(license_key, license_type = nil)
-        is_valid = validate_license_key(license_key)
-        persist(license_key, license_type) if is_valid
-      end
-
-      def validate_license_key(license_key)
-        ChefLicensing::LicenseKeyValidator.validate!(license_key)
       end
 
       # Writes a license_id file to disk in the location specified,

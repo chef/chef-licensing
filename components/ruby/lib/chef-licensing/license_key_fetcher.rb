@@ -9,6 +9,8 @@ require_relative "license_key_fetcher/file"
 require_relative "license_key_fetcher/prompt"
 require_relative "../chef-licensing"
 require "tty-spinner"
+require_relative "exceptions/invalid_license"
+
 # LicenseKeyFetcher allows us to inspect obtain the license Key from the user in a variety of ways.
 module ChefLicensing
   class LicenseKeyFetcher
@@ -43,11 +45,11 @@ module ChefLicensing
     def fetch_and_persist
       logger.debug "License Key fetcher examining CLI arg checks"
       new_keys = fetch_license_key_from_arg
-      concat_validate_and_persist(new_keys)
+      validate_and_persist_license_info(new_keys)
 
       logger.debug "License Key fetcher examining ENV checks"
       new_keys = fetch_license_key_from_env
-      concat_validate_and_persist(new_keys)
+      validate_and_persist_license_info(new_keys)
 
       # If it has previously been fetched and persisted, read from disk and set runtime decision
       logger.debug "License Key fetcher examining file checks"
@@ -66,7 +68,7 @@ module ChefLicensing
         new_keys = prompt_fetcher.fetch
 
         unless new_keys.empty?
-          @license_keys.concat(new_keys)
+          concat_new_keys(new_keys)
           new_keys.each { |key| file_fetcher.persist(key) }
           return license_keys
         end
@@ -135,7 +137,8 @@ module ChefLicensing
       spinner = TTY::Spinner.new(":spinner [Running] License validation in progress...", format: :dots, clear: true)
       spinner.auto_spin # Start the spinner
       # This call returns a license based on client logic
-      self.license = ChefLicensing.client(license_keys: @license_keys)
+      # This API call is only made when multiple license keys are present or if client call was never done
+      self.license = ChefLicensing.client(license_keys: @license_keys) if !license || @license_keys.count > 1
       spinner.success # Stop the spinner
       if license.expired? || license.have_grace?
         config[:start_interaction] = :prompt_license_expired
@@ -150,12 +153,19 @@ module ChefLicensing
       end
     end
 
-    def concat_validate_and_persist(new_keys)
+    def validate_and_persist_license_info(new_keys)
       unless new_keys.empty?
-        @license_keys.concat(new_keys)
-        file_fetcher.validate_and_persist(new_keys.first)
+        is_valid = validate_license_key(new_keys.first)
+        if is_valid
+          license_type = get_license_type(new_keys.first)
+          file_fetcher.persist(new_keys.first, license_type)
+        end
+        concat_new_keys(new_keys)
       end
-      @license_keys
+    end
+
+    def concat_new_keys(new_keys)
+      @license_keys.concat(new_keys)
     end
 
     def fetch_license_key_from_arg
@@ -173,6 +183,19 @@ module ChefLicensing
 
       license_key = ChefLicensing::LicenseKeyFetcher::Base.verify_and_extract_license(license_key)
       [license_key]
+    end
+
+    def validate_license_key(license_key)
+      ChefLicensing::LicenseKeyValidator.validate!(license_key)
+    end
+
+    def get_license_type(license_key, mode = "api")
+      if mode == "api"
+        self.client = ChefLicensing.client(license_keys: [license_key])
+        client.license_type.downcase
+      else
+        # fetching from TUI interaction
+      end
     end
   end
 end
