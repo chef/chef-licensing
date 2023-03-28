@@ -8,6 +8,7 @@ require_relative "license_key_fetcher/base"
 require_relative "license_key_fetcher/file"
 require_relative "license_key_fetcher/prompt"
 require_relative "../chef-licensing"
+require "tty-spinner"
 # LicenseKeyFetcher allows us to inspect obtain the license Key from the user in a variety of ways.
 module ChefLicensing
   class LicenseKeyFetcher
@@ -119,7 +120,10 @@ module ChefLicensing
     end
 
     def licenses_active?
+      spinner = TTY::Spinner.new(":spinner [Running] License validation in progress...", format: :dots, clear: true)
+      spinner.auto_spin # Start the spinner
       self.client = ChefLicensing.client(license_keys: @license_keys)
+      spinner.success # Stop the spinner
       if expired? || have_grace?
         config[:start_interaction] = :prompt_license_expired
         prompt_fetcher.config = config
