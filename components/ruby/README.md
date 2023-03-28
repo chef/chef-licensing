@@ -212,6 +212,29 @@ If successful, the license key generation process responds with a valid license 
 
 However, in case of errors, the `ChefLicensing::LicenseGenerationFailed` class returns the message directly from the license generation server as the exception message.
 
+#### Free license generation
+
+```ruby
+require 'chef-licensing/license_key_generator'
+
+ChefLicensing::LicenseKeyGenerator.generate_free_license!(
+  first_name: "John",
+  last_name: "Doe",
+  email_id: "johndoe@progress.com",
+  product: "inspec",
+  company: "Progress",
+  phone: "000-000-0000"
+)
+```
+<!-- Give examples for the possible value for product in this example, maybe? -->
+
+#### Response
+
+If successful, the license key generation process responds with a valid free license key.
+<!-- Add about the location maybe? -->
+
+However, in case of errors, the `ChefLicensing::LicenseGenerationFailed` class returns the message directly from the license generation server as the exception message.
+
 ### Validate License Key
 
 It helps to validate array of licenses.

@@ -14,6 +14,7 @@ module ChefLicensing
       END_POINTS = {
         VALIDATE: "validate",
         GENERATE_LICENSE: "triallicense",
+        GENERATE_FREE_LICENSE: "freetierlicense",
         FEATURE_BY_NAME: "license-service/featurebyname",
         FEATURE_BY_ID: "license-service/featurebyid",
         ENTITLEMENT_BY_NAME: "license-service/entitlementbyname",
@@ -24,79 +25,63 @@ module ChefLicensing
 
       CURRENT_ENDPOINT_VERSION = 2
 
-      def initialize; end
-
       def validate(license)
-        handle_get_connection do |connection|
-          connection.get(self.class::END_POINTS[:VALIDATE], { licenseId: license, version: CURRENT_ENDPOINT_VERSION }).body
-        end
+        invoke_get_api(self.class::END_POINTS[:VALIDATE], { licenseId: license, version: CURRENT_ENDPOINT_VERSION })
       end
 
       def generate_license(payload)
-        handle_post_connection do |connection|
-          response = connection.post(self.class::END_POINTS[:GENERATE_LICENSE]) do |request|
-            request.body = payload.to_json
-            request.headers = { 'x-api-key': ChefLicensing::Config.license_server_api_key }
-          end
-          raise RestfulClientError, format_error_from(response) unless response.success?
+        headers = { 'x-api-key': ChefLicensing::Config.license_server_api_key }
+        invoke_post_api(self.class::END_POINTS[:GENERATE_LICENSE], payload, headers)
+      end
 
-          response.body
-        end
+      def generate_free_license(payload)
+        headers = { 'x-api-key': ChefLicensing::Config.license_server_api_key }
+        invoke_post_api(self.class::END_POINTS[:GENERATE_FREE_LICENSE], payload, headers)
       end
 
       def feature_by_name(payload)
-        handle_post_connection do |connection|
-          response = connection.post(self.class::END_POINTS[:FEATURE_BY_NAME]) do |request|
-            request.body = payload.to_json
-          end
-          raise RestfulClientError, format_error_from(response) unless response.success?
-
-          response.body
-        end
+        invoke_post_api(self.class::END_POINTS[:FEATURE_BY_NAME], payload)
       end
 
       def feature_by_id(payload)
-        handle_post_connection do |connection|
-          response = connection.post(self.class::END_POINTS[:FEATURE_BY_ID]) do |request|
-            request.body = payload.to_json
-          end
-          raise RestfulClientError, format_error_from(response) unless response.success?
-
-          response.body
-        end
+        invoke_post_api(self.class::END_POINTS[:FEATURE_BY_ID], payload)
       end
 
       def entitlement_by_name(payload)
-        handle_post_connection do |connection|
-          response = connection.post(self.class::END_POINTS[:ENTITLEMENT_BY_NAME]) do |request|
-            request.body = payload.to_json
-          end
-          raise RestfulClientError, format_error_from(response) unless response.success?
-
-          response.body
-        end
+        invoke_post_api(self.class::END_POINTS[:ENTITLEMENT_BY_NAME], payload)
       end
 
       def entitlement_by_id(payload)
+        invoke_post_api(self.class::END_POINTS[:ENTITLEMENT_BY_ID], payload)
+      end
+
+      def client(params = {})
+        invoke_get_api(self.class::END_POINTS[:CLIENT], { licenseId: params[:license_keys], entitlementId: params[:entitlement_id] })
+      end
+
+      def describe(params = {})
+        invoke_get_api(self.class::END_POINTS[:DESCRIBE], { licenseId: params[:license_keys], entitlementId: params[:entitlement_id] })
+      end
+
+      private
+
+      # a common method to handle the get API calls
+      def invoke_get_api(endpoint, params = {})
+        handle_get_connection do |connection|
+          connection.get(endpoint, params).body
+        end
+      end
+
+      # a common method to handle the post API calls
+      def invoke_post_api(endpoint, payload, headers = {})
         handle_post_connection do |connection|
-          response = connection.post(self.class::END_POINTS[:ENTITLEMENT_BY_ID]) do |request|
+          response = connection.post(endpoint) do |request|
             request.body = payload.to_json
+            request.headers = headers
           end
           raise RestfulClientError, format_error_from(response) unless response.success?
 
           response.body
-        end
-      end
-
-      def client(params = {})
-        handle_get_connection do |connection|
-          connection.get(self.class::END_POINTS[:CLIENT], { licenseId: params[:license_keys], entitlementId: params[:entitlement_id] }).body
-        end
-      end
-
-      def describe(params = {})
-        handle_get_connection do |connection|
-          connection.get(self.class::END_POINTS[:DESCRIBE], { licenseId: params[:license_keys], entitlementId: params[:entitlement_id] }).body
         end
       end
 
@@ -115,8 +100,6 @@ module ChefLicensing
         # log errors
         raise RestfulClientError, e.message
       end
-
-      private
 
       def get_connection
         store = ::ActiveSupport::Cache.lookup_store(:file_store, [Dir.tmpdir])
