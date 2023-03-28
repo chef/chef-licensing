@@ -13,7 +13,7 @@ module ChefLicensing
     # Represents a fethced license ID recorded on disk
     class File
       LICENSE_KEY_FILE = "licenses.yaml".freeze
-      LICENSE_FILE_FORMAT_VERSION = "2.0.0".freeze
+      LICENSE_FILE_FORMAT_VERSION = "3.0.0".freeze
 
       attr_reader :logger, :contents, :location
       attr_accessor :local_dir # Optional local path to use to seek
@@ -38,9 +38,9 @@ module ChefLicensing
         licenses.collect { |x| x[:license_key] }
       end
 
-      def validate_and_persist(license_key)
+      def validate_and_persist(license_key, license_type = nil)
         is_valid = validate_license_key(license_key)
-        persist(license_key) if is_valid
+        persist(license_key, license_type) if is_valid
       end
 
       def validate_license_key(license_key)
@@ -50,9 +50,10 @@ module ChefLicensing
       # Writes a license_id file to disk in the location specified,
       # with the content given.
       # @return Array of Errors
-      def persist(license_key)
+      def persist(license_key, license_type = nil)
         license_data = {
           license_key: license_key,
+          license_type: license_type,
           update_time: DateTime.now.to_s,
         }
 
