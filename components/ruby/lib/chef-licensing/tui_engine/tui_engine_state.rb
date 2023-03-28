@@ -2,6 +2,7 @@ require_relative "tui_prompt"
 require_relative "tui_actions"
 require "erb" unless defined?(Erb)
 require_relative "../config"
+require "pastel" unless defined?(Pastel)
 
 module ChefLicensing
   class TUIEngine
@@ -10,6 +11,8 @@ module ChefLicensing
 
       def initialize(opts = {})
         @input = {}
+        # store the pastel key for enabling styled messages in the yaml file
+        @input[:pastel] = Pastel.new
         @logger = ChefLicensing::Config.logger
         @prompt = ChefLicensing::TUIEngine::TUIPrompt.new(opts)
         @tui_actions = ChefLicensing::TUIEngine::TUIActions.new

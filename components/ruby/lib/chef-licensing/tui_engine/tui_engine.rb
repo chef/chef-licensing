@@ -33,6 +33,8 @@ module ChefLicensing
       raise ChefLicensing::TUIEngine::IncompleteFlowException, "Something went wrong in the flow." unless current_interaction&.id == :exit
 
       state.default_action(current_interaction)
+      # remove the pastel key we used in tui engine state for styling and return the remaining parsed input
+      state.input.delete(:pastel)
       state.input
     end
 
