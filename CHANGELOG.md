@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.3.43 -->
-## [0.3.43](https://github.com/chef/chef-licensing/tree/0.3.43) (2023-03-28)
+<!-- latest_release 0.3.44 -->
+## [0.3.44](https://github.com/chef/chef-licensing/tree/0.3.44) (2023-03-28)
 
 #### Merged Pull Requests
-- Rename existing license generation methods and APIs to specify trial licenses [#75](https://github.com/chef/chef-licensing/pull/75) ([ahasunos](https://github.com/ahasunos))
+- Added missing credentials error for required API credentials [#73](https://github.com/chef/chef-licensing/pull/73) ([Nik08](https://github.com/Nik08))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Added missing credentials error for required API credentials [#73](https://github.com/chef/chef-licensing/pull/73) ([Nik08](https://github.com/Nik08)) <!-- 0.3.44 -->
 - Rename existing license generation methods and APIs to specify trial licenses [#75](https://github.com/chef/chef-licensing/pull/75) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.43 -->
 - Fix for  Invalid argument @ dir_s_mkdir on Windows [#77](https://github.com/chef/chef-licensing/pull/77) ([Vasu1105](https://github.com/Vasu1105)) <!-- 0.3.42 -->
 - CHEF-57: Create Free Generate License API EndPoint Support [#74](https://github.com/chef/chef-licensing/pull/74) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.41 -->
