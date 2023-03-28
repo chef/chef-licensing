@@ -3,7 +3,7 @@ require_relative "../tui_engine"
 module ChefLicensing
   class LicenseKeyFetcher
     class Prompt
-      attr_accessor :config, :tui_engine
+      attr_accessor :config, :tui_engine, :license_type
 
       def initialize(config = {})
         @config = config

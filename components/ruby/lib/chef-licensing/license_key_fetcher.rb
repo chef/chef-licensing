@@ -45,11 +45,11 @@ module ChefLicensing
     def fetch_and_persist
       logger.debug "License Key fetcher examining CLI arg checks"
       new_keys = fetch_license_key_from_arg
-      validate_and_persist_license_info(new_keys)
+      validate_and_fetch_license_type(new_keys)
 
       logger.debug "License Key fetcher examining ENV checks"
       new_keys = fetch_license_key_from_env
-      validate_and_persist_license_info(new_keys)
+      validate_and_fetch_license_type(new_keys)
 
       # If it has previously been fetched and persisted, read from disk and set runtime decision
       logger.debug "License Key fetcher examining file checks"
@@ -68,8 +68,8 @@ module ChefLicensing
         new_keys = prompt_fetcher.fetch
 
         unless new_keys.empty?
-          concat_new_keys(new_keys)
-          new_keys.each { |key| file_fetcher.persist(key) }
+          prompt_fetcher.license_type ||= get_license_type(new_keys.first)
+          persist_and_concat(new_keys, prompt_fetcher.license_type)
           return license_keys
         end
       end
@@ -153,15 +153,20 @@ module ChefLicensing
       end
     end
 
-    def validate_and_persist_license_info(new_keys)
+
+    def validate_and_fetch_license_type(new_keys)
       unless new_keys.empty?
         is_valid = validate_license_key(new_keys.first)
         if is_valid
           license_type = get_license_type(new_keys.first)
-          file_fetcher.persist(new_keys.first, license_type)
+          persist_and_concat(new_keys, license_type)
         end
-        concat_new_keys(new_keys)
       end
+    end
+
+    def persist_and_concat(new_keys, license_type)
+      file_fetcher.persist(new_keys.first, license_type)
+      concat_new_keys(new_keys)
     end
 
     def concat_new_keys(new_keys)
@@ -189,13 +194,9 @@ module ChefLicensing
       ChefLicensing::LicenseKeyValidator.validate!(license_key)
     end
 
-    def get_license_type(license_key, mode = "api")
-      if mode == "api"
-        self.client = ChefLicensing.client(license_keys: [license_key])
-        client.license_type.downcase
-      else
-        # fetching from TUI interaction
-      end
+    def get_license_type(license_key)
+      self.client = ChefLicensing.client(license_keys: [license_key])
+      client.license_type.downcase
     end
   end
 end
