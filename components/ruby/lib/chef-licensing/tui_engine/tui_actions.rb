@@ -43,7 +43,7 @@ module ChefLicensing
 
       def is_user_name_valid?(input)
         user_name = input[:gather_user_last_name_for_license_generation] || input[:gather_user_first_name_for_license_generation]
-        (user_name =~ /\A[a-z_A-Z\-\`]{3,16}\Z/) == 0
+        (user_name =~ /\A[a-z_A-Z\-\`]{2,16}\Z/) == 0
       end
 
       def is_email_valid?(input)
