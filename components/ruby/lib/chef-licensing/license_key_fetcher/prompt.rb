@@ -19,6 +19,7 @@ module ChefLicensing
         if info[:fetch_license_id].nil?
           []
         else
+          license_type = info[:license_type]
           [info[:fetch_license_id]]
         end
       end
