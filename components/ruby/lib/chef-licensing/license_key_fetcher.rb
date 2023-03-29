@@ -45,11 +45,13 @@ module ChefLicensing
     def fetch_and_persist
       logger.debug "License Key fetcher examining CLI arg checks"
       new_keys = fetch_license_key_from_arg
-      validate_and_fetch_license_type(new_keys)
+      license_type = validate_and_fetch_license_type(new_keys)
+      persist_and_concat(new_keys, license_type) if license_type
 
       logger.debug "License Key fetcher examining ENV checks"
       new_keys = fetch_license_key_from_env
-      validate_and_fetch_license_type(new_keys)
+      license_type = validate_and_fetch_license_type(new_keys)
+      persist_and_concat(new_keys, license_type) if license_type
 
       # If it has previously been fetched and persisted, read from disk and set runtime decision
       logger.debug "License Key fetcher examining file checks"
@@ -157,10 +159,7 @@ module ChefLicensing
     def validate_and_fetch_license_type(new_keys)
       unless new_keys.empty?
         is_valid = validate_license_key(new_keys.first)
-        if is_valid
-          license_type = get_license_type(new_keys.first)
-          persist_and_concat(new_keys, license_type)
-        end
+        return get_license_type(new_keys.first) if is_valid
       end
     end
 
