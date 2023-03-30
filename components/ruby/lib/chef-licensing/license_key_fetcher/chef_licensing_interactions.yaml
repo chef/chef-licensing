@@ -89,9 +89,9 @@ interactions:
   ask_for_license_type_on_renewal:
     prompt_type: "select"
     messages: ["\nSelect the type of license below and then enter user details" , ["1.Free license", "2.Commercial license"]]
-    paths: [free_license_selection, commercial_license_selection]
+    paths: [check_if_user_has_active_trial_license, commercial_license_selection]
     response_path_map:
-      "1.Free license": free_license_selection
+      "1.Free license": check_if_user_has_active_trial_license
       "2.Commercial license": commercial_license_selection
 
   ask_if_user_has_license_id:
@@ -213,14 +213,30 @@ interactions:
   ask_for_license_type:
     prompt_type: "select"
     messages: ["\nSelect the type of license below and then enter user details" , [ "1.Free license", "2.Trial license", "3.Commercial license"]]
-    paths: [free_license_selection, commercial_license_selection, trial_license_selection]
+    paths: [check_if_user_has_active_trial_license, commercial_license_selection, trial_license_selection]
     response_path_map:
-      "1.Free license": free_license_selection
+      "1.Free license": check_if_user_has_active_trial_license
       "2.Trial license": trial_license_selection
       "3.Commercial license": commercial_license_selection
 
+  check_if_user_has_active_trial_license:
+    action: check_user_has_active_trial_license
+    paths: [free_license_generation_not_allowed, free_license_selection]
+    response_path_map:
+      "true": free_license_generation_not_allowed
+      "false": free_license_selection
+
+  free_license_generation_not_allowed:
+    messages: "! [WARNING] You already have an active trial license."
+    prompt_type: "warn"
+    paths: [exit]
+
   free_license_selection:
+    # TODO: Change messages "Free license is subject to..." to proper message after discussing
+    # Change the color if required.
     messages: |
+
+      Free license is subject to personal and non-commercial use only.
 
       You have selected:
         Free License

@@ -7,6 +7,7 @@ require_relative "../license_key_fetcher/base"
 require_relative "../config"
 require_relative "../list_license_keys"
 require "tty-spinner"
+require_relative "../license_key_fetcher"
 
 module ChefLicensing
   class TUIEngine
@@ -162,6 +163,27 @@ module ChefLicensing
 
       def display_license_info(inputs)
         ChefLicensing::ListLicenseKeys.display_overview({ license_keys: [license_id] })
+      end
+
+      def check_user_has_active_trial_license(inputs)
+        # TODO:
+        # fetch the licenses on the system
+        # check if any of the licenses are trial licenses and active
+        # if yes, then return true
+        # else return false
+
+        license_keys = ChefLicensing::LicenseKeyFetcher.fetch
+
+        return false if license_keys.empty?
+
+        license_keys.each do |license_key|
+          # TODO: uncomment the below code once the PR #79 is merged
+          # license_type = ChefLicensing::LicenseKeyValidator.validate_and_fetch_license_type([license_key])
+          # if license_type == "trial"
+          #   return true
+          # end
+        end
+        false
       end
     end
   end
