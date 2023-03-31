@@ -760,6 +760,7 @@ interactions:
 4. with timeout_select prompt
 
 ```YAML
+:file_format_version: 1.0.0
 interactions:
   start:
     messages: ["Shall we begin the game?", ["Yes", "No", "Exit"]]
@@ -787,5 +788,43 @@ interactions:
 
   exit:
     messages: ["Game over!"]
+    prompt_type: "say"
+```
+
+5. with styled texts
+The messages can be styled with all the APIs provided by the `pastel` gem. The popular method/APIs of pastel library are `red`, `green`, `blue` etc. to change the text color or `bold`, `underline` to format the text. To know more about the different options available, refer to the [Pastel Readme](https://github.com/piotrmurach/pastel)
+
+Below are few examples of the usage of Pastel methods:
+
+```YAML
+:file_format_version: 1.0.0
+
+interactions:
+  start:
+    messages: ['<%= input[:pastel].bold.underline.green("Welcome, this text is bold, underlined and colored in green")%>.']
+    prompt_type: "say"
+    paths: [prompt_2]
+    description: This is an optional field. WYOD (Write your own description)
+
+  prompt_2:
+    messages: ["Do you agree?"]
+    prompt_type: "yes"
+    paths: [prompt_3, prompt_4]
+    response_path_map:
+      "true": prompt_3
+      "false": prompt_4
+
+  prompt_3:
+    messages: ['You have selected <%= input[:pastel].green("yes") %>']
+    prompt_type: "ok"
+    paths: [exit]
+
+  prompt_4:
+    messages: ['You have selected <%= input[:pastel].red("no") %>']
+    prompt_type: "error"
+    paths: [exit]
+
+  exit:
+    messages: ["This is the exit prompt"]
     prompt_type: "say"
 ```
