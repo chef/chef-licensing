@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.3.44 -->
-## [0.3.44](https://github.com/chef/chef-licensing/tree/0.3.44) (2023-03-28)
+<!-- latest_release 0.3.45 -->
+## [0.3.45](https://github.com/chef/chef-licensing/tree/0.3.45) (2023-03-31)
 
 #### Merged Pull Requests
-- Added missing credentials error for required API credentials [#73](https://github.com/chef/chef-licensing/pull/73) ([Nik08](https://github.com/Nik08))
+- CHEF-1763: Extend TUI Engine to display formatted messages [#78](https://github.com/chef/chef-licensing/pull/78) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-1763: Extend TUI Engine to display formatted messages [#78](https://github.com/chef/chef-licensing/pull/78) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.45 -->
 - Added missing credentials error for required API credentials [#73](https://github.com/chef/chef-licensing/pull/73) ([Nik08](https://github.com/Nik08)) <!-- 0.3.44 -->
 - Rename existing license generation methods and APIs to specify trial licenses [#75](https://github.com/chef/chef-licensing/pull/75) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.43 -->
 - Fix for  Invalid argument @ dir_s_mkdir on Windows [#77](https://github.com/chef/chef-licensing/pull/77) ([Vasu1105](https://github.com/Vasu1105)) <!-- 0.3.42 -->
