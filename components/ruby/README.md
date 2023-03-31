@@ -792,7 +792,9 @@ interactions:
 ```
 
 5. with styled texts
-The messages can be styled with all the APIs provided by the `pastel` gem. Below are few examples:
+The messages can be styled with all the APIs provided by the `pastel` gem. The popular method/APIs of pastel library are `red`, `green`, `blue` etc. to change the text color or `bold`, `underline` to format the text. To know more about the different options available, refer to the [Pastel Readme](https://github.com/piotrmurach/pastel)
+
+Below are few examples of the usage of Pastel methods:
 
 ```YAML
 :file_format_version: 1.0.0
