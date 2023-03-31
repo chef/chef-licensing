@@ -31,18 +31,22 @@ interactions:
 
   prompt_license_expired:
     messages: |
-      ! [WARNING] License Expired.
-      To receive bug fixes, new features and updates, Kindly get a commercial license.
-      To get a new license, run "inspec license add" command.
-    prompt_type: "warn"
+
+      <%= input[:pastel].yellow("! [WARNING]")%> <%= input[:license_type] %> License Expired
+
+      Get a Commercial license to receive bug fixes, updates and new features.
+      Get a Free license to scan limited targets.
+
+      To get a new license, run <%= input[:pastel].bold("inspec license add")%> command and select a license type.
+    prompt_type: "say"
     paths: [exit]
 
   prompt_license_about_to_expire:
     messages: |
-      ! [WARNING] Your license is about to expire in <%= input[:number_of_days_in_expiration] %> days.
+
+      <%= input[:pastel].yellow("! [WARNING]")%> Your license is about to expire in <%= input[:pastel].bold(input[:number_of_days_in_expiration]) %> <%= input[:pastel].bold("days.") %>
       To avoid service disruptions, please get a commercial license before <%= input[:license_expiration_date] %>
-      To get a new license, run "inspec license add" command.
-    prompt_type: "warn"
+    prompt_type: "say"
     paths: [exit]
 
   ask_if_user_has_license_id:

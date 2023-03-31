@@ -86,7 +86,7 @@ module ChefLicensing
       extra_info = {}
       extra_info[:chef_product_name] = ChefLicensing::Config.chef_product_name&.capitalize
       unless @license_keys.empty? && !client
-        extra_info[:license_type] = client.license_type
+        extra_info[:license_type] = client.license_type.capitalize
         extra_info[:number_of_days_in_expiration] = number_of_days_in_expiration
         extra_info[:license_expiration_date] = license_expiration_date
       end
