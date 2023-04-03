@@ -60,7 +60,11 @@ module ChefLicensing
       end
 
       def generate_trial_license(input)
-        output.puts "License generation in progress..."
+        # Note: PO has suggested to remove the phone number from the TUI
+        # However, the API requires the phone number to be passed
+        input[:gather_user_phone_no_for_license_generation] = "0000000000"
+        spinner = TTY::Spinner.new(":spinner [Running] License generation in progress...", format: :dots, clear: true)
+        spinner.auto_spin # Start the spinner
         self.license_id = ChefLicensing::LicenseKeyGenerator.generate_trial_license!(
           first_name: input[:gather_user_first_name_for_license_generation],
           last_name: input[:gather_user_last_name_for_license_generation],
@@ -69,17 +73,24 @@ module ChefLicensing
           company: input[:gather_user_company_for_license_generation],
           phone: input[:gather_user_phone_no_for_license_generation]
         )
+        spinner.success # Stop the spinner
         true
       rescue ChefLicensing::LicenseGenerationFailed => e
+        spinner.error # Stop the spinner
         self.error_msg = e.message
         false
       rescue ChefLicensing::LicenseGenerationRejected => e
+        spinner.error # Stop the spinner
         self.rejection_msg = e.message
         false
       end
 
       def generate_free_license(input)
-        puts "License generation in progress..."
+        # Note: PO has suggested to remove the phone number from the TUI
+        # However, the API requires the phone number to be passed
+        input[:gather_user_phone_no_for_license_generation] = "0000000000"
+        spinner = TTY::Spinner.new(":spinner [Running] License generation in progress...", format: :dots, clear: true)
+        spinner.auto_spin # Start the spinner
         self.license_id = ChefLicensing::LicenseKeyGenerator.generate_free_license!(
           first_name: input[:gather_user_first_name_for_license_generation],
           last_name: input[:gather_user_last_name_for_license_generation],
@@ -90,9 +101,11 @@ module ChefLicensing
         )
         true
       rescue ChefLicensing::LicenseGenerationFailed => e
+        spinner.error # Stop the spinner
         self.error_msg = e.message
         false
       rescue ChefLicensing::LicenseGenerationRejected => e
+        spinner.error # Stop the spinner
         self.rejection_msg = e.message
         false
       end
