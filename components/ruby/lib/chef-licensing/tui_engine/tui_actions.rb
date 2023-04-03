@@ -7,6 +7,7 @@ require_relative "../license_key_fetcher/base"
 require_relative "../config"
 require_relative "../list_license_keys"
 require "tty-spinner"
+require_relative "../license_key_fetcher"
 
 module ChefLicensing
   class TUIEngine
@@ -169,6 +170,19 @@ module ChefLicensing
       rescue ChefLicensing::LicenseGenerationRejected => e
         spinner.error # Stop the spinner
         self.rejection_msg = e.message
+        false
+      end
+
+      def check_if_user_has_active_trial_license(inputs)
+        license_keys = ChefLicensing::LicenseKeyFetcher.fetch
+
+        return false if license_keys.empty?
+
+        license_keys.each do |license_key|
+          # TODO: uncomment the below code once the PR #79 is merged
+          # license_type = ChefLicensing::LicenseKeyValidator.validate_and_fetch_license_type([license_key])
+          # return true if license_type == "trial"
+        end
         false
       end
     end
