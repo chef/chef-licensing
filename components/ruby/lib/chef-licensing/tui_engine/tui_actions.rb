@@ -184,9 +184,9 @@ module ChefLicensing
 
       def are_user_details_present?(inputs)
         inputs.key?(:gather_user_first_name_for_license_generation) &&
-        inputs.key?(:gather_user_last_name_for_license_generation) &&
-        inputs.key?(:gather_user_email_for_license_generation) &&
-        inputs.key?(:gather_user_company_for_license_generation)
+          inputs.key?(:gather_user_last_name_for_license_generation) &&
+          inputs.key?(:gather_user_email_for_license_generation) &&
+          inputs.key?(:gather_user_company_for_license_generation)
       end
     end
   end

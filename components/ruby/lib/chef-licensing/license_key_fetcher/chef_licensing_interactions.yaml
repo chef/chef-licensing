@@ -201,15 +201,15 @@ interactions:
     prompt_type: "select"
     messages: ["Select the type of license below and then enter user details\n" ,
       [
-      "1. Free license\n     Validitiy: Unlimited\n     No. of targets: 10\n",
-      "2. Trial license\n     Validitiy: 30 Days\n     No. of targets: Unlimited\n",
+      "1. Free license\n     Validity: Unlimited\n     No. of targets: 10\n",
+      "2. Trial license\n     Validity: 30 Days\n     No. of targets: Unlimited\n",
       "3. Commercial license\n     Get in touch with the Account/Sales team.\n",
       "4. Quit license generation"
       ]]
     paths: [free_license_selection, commercial_license_selection, trial_license_selection, exit]
     response_path_map:
-      "1. Free license\n     Validitiy: Unlimited\n     No. of targets: 10\n": free_license_selection
-      "2. Trial license\n     Validitiy: 30 Days\n     No. of targets: Unlimited\n": trial_license_selection
+      "1. Free license\n     Validity: Unlimited\n     No. of targets: 10\n": free_license_selection
+      "2. Trial license\n     Validity: 30 Days\n     No. of targets: Unlimited\n": trial_license_selection
       "3. Commercial license\n     Get in touch with the Account/Sales team.\n": commercial_license_selection
       "4. Quit license generation": exit
 
