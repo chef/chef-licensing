@@ -99,6 +99,7 @@ module ChefLicensing
           company: input[:gather_user_company_for_license_generation],
           phone: input[:gather_user_phone_no_for_license_generation]
         )
+        spinner.success # Stop the spinner
         true
       rescue ChefLicensing::LicenseGenerationFailed => e
         spinner.error # Stop the spinner
