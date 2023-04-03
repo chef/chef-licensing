@@ -388,19 +388,17 @@ interactions:
 
   free_license_generation_success:
     messages: |
-      The license has been generated and registered.
+      <%= input[:pastel].green("✔ [Success] License generated successfully") %>
 
-      A copy has also been sent to your email.
-
+      The license ID has been sent on <%= input[:gather_user_email_for_license_generation] %>.
       You can also look up it in the SaleForce portal under the name of <%= input[:gather_user_first_name_for_license_generation] + " " + input[:gather_user_last_name_for_license_generation] %>.
-      If you do not know your license key, you can log into your Progress Chef customer portal to obtain your product serial number.
     paths: [ask_for_license_id]
 
   trial_license_generation_success:
     messages: |
-      The license has been generated and registered.
+      <%= input[:pastel].green("✔ [Success] License generated successfully") %>
 
-      A copy has also been sent to <%= input[:gather_user_email_for_license_generation] %>.
+      The license ID has been sent on <%= input[:gather_user_email_for_license_generation] %>.
       You can also look up it in the SaleForce portal under the name of <%= input[:gather_user_first_name_for_license_generation] + " " + input[:gather_user_last_name_for_license_generation] %>.
     paths: [ask_for_license_id]
 
@@ -413,6 +411,11 @@ interactions:
     paths: [exit]
 
   license_generation_failure:
+    messages: "✖ [Error] License generation failed"
+    prompt_type: "error"
+    paths: [check_failure_reason]
+
+  check_failure_reason:
     action: license_generation_rejected?
     paths: [fetch_license_failure_error_msg, fetch_license_failure_rejection_msg]
     response_path_map:
