@@ -89,9 +89,9 @@ interactions:
   ask_for_license_type_on_renewal:
     prompt_type: "select"
     messages: ["\nSelect the type of license below and then enter user details" , ["1.Free license", "2.Commercial license"]]
-    paths: [free_license_selection, commercial_license_selection]
+    paths: [check_if_user_has_active_trial_license, commercial_license_selection]
     response_path_map:
-      "1.Free license": free_license_selection
+      "1.Free license": check_if_user_has_active_trial_license
       "2.Commercial license": commercial_license_selection
 
   ask_if_user_has_license_id:
@@ -206,12 +206,29 @@ interactions:
       "3. Commercial license\n     Get in touch with the Account/Sales team.\n",
       "4. Quit license generation"
       ]]
-    paths: [free_license_selection, commercial_license_selection, trial_license_selection, exit]
+    paths: [check_if_user_has_active_trial_license, commercial_license_selection, trial_license_selection, exit]
     response_path_map:
-      "1. Free license\n     Validity: Unlimited\n     No. of targets: 10\n": free_license_selection
+      "1. Free license\n     Validity: Unlimited\n     No. of targets: 10\n": check_if_user_has_active_trial_license
       "2. Trial license\n     Validity: 30 Days\n     No. of targets: Unlimited\n": trial_license_selection
       "3. Commercial license\n     Get in touch with the Account/Sales team.\n": commercial_license_selection
       "4. Quit license generation": exit
+
+  check_if_user_has_active_trial_license:
+      action: check_if_user_has_active_trial_license
+      paths: [free_license_generation_not_allowed, free_license_disclaimer]
+      response_path_map:
+        "true": free_license_generation_not_allowed
+        "false": free_license_disclaimer
+
+  free_license_generation_not_allowed:
+    messages: "! [WARNING] You already have an active trial license."
+    prompt_type: "warn"
+    paths: [exit]
+
+  free_license_disclaimer:
+    messages: '<%= input[:pastel].bold("Free license is subject to personal and non-commercial use only.\n")%>'
+    prompt_type: "warn"
+    paths: [free_license_selection]
 
   free_license_selection:
     messages: "Type: Free license\n  Validity: Unlimited\n  No. of targets: 10\n"
