@@ -61,8 +61,7 @@ module ChefLicensing
 
       def generate_trial_license(input)
         # Note: PO has suggested to remove the phone number from the TUI
-        # However, the API requires the phone number to be passed
-        input[:gather_user_phone_no_for_license_generation] = "0000000000"
+        # However, the API requires the phone number to be passed, hence passing a dummy value
         spinner = TTY::Spinner.new(":spinner [Running] License generation in progress...", format: :dots, clear: true)
         spinner.auto_spin # Start the spinner
         self.license_id = ChefLicensing::LicenseKeyGenerator.generate_trial_license!(
@@ -71,7 +70,7 @@ module ChefLicensing
           email_id: input[:gather_user_email_for_license_generation],
           product: ChefLicensing::Config.chef_product_name&.capitalize,
           company: input[:gather_user_company_for_license_generation],
-          phone: input[:gather_user_phone_no_for_license_generation]
+          phone: "0000000000"
         )
         spinner.success # Stop the spinner
         true
@@ -87,8 +86,7 @@ module ChefLicensing
 
       def generate_free_license(input)
         # Note: PO has suggested to remove the phone number from the TUI
-        # However, the API requires the phone number to be passed
-        input[:gather_user_phone_no_for_license_generation] = "0000000000"
+        # However, the API requires the phone number to be passed, hence passing a dummy value
         spinner = TTY::Spinner.new(":spinner [Running] License generation in progress...", format: :dots, clear: true)
         spinner.auto_spin # Start the spinner
         self.license_id = ChefLicensing::LicenseKeyGenerator.generate_free_license!(
@@ -97,7 +95,7 @@ module ChefLicensing
           email_id: input[:gather_user_email_for_license_generation],
           product: ChefLicensing::Config.chef_product_name&.capitalize,
           company: input[:gather_user_company_for_license_generation],
-          phone: input[:gather_user_phone_no_for_license_generation]
+          phone: "0000000000"
         )
         spinner.success # Stop the spinner
         true
