@@ -238,7 +238,7 @@ interactions:
   ask_for_user_details:
     messages: |
       Please enter the following details:
-      First Name, Last Name, Company, Email, Phone
+      First Name, Last Name, Email, Company, Phone
 
     paths: [gather_user_first_name_for_license_generation]
 
@@ -300,15 +300,32 @@ interactions:
 
   validate_user_company_name_for_license_generation:
     action: is_company_name_valid?
-    paths: [print_to_review_details, user_company_name_validation_failure]
+    paths: [gather_user_phone_no_for_license_generation, user_company_name_validation_failure]
     response_path_map:
-      "true": print_to_review_details
+      "true": gather_user_phone_no_for_license_generation
       "false": user_company_name_validation_failure
 
   user_company_name_validation_failure:
     messages: "Invalid company name. It should contain only A-Z/a-z alphabets and _ , . , - or ` special characters."
     prompt_type: "error"
     paths: [gather_user_company_for_license_generation]
+
+  gather_user_phone_no_for_license_generation:
+    messages: "Enter Phone Number: "
+    prompt_type: "ask"
+    paths: [validate_user_phone_no]
+
+  validate_user_phone_no:
+    action: is_phone_no_valid?
+    paths: [print_to_review_details, user_phone_no_validation_failure]
+    response_path_map:
+      "true": print_to_review_details
+      "false": user_phone_no_validation_failure
+
+  user_phone_no_validation_failure:
+    messages: "Please enter valid phone number."
+    prompt_type: "error"
+    paths: [gather_user_phone_no_for_license_generation]
 
   print_to_review_details:
     messages: |
@@ -324,6 +341,7 @@ interactions:
         Last Name: <%= input[:gather_user_last_name_for_license_generation] %>
         Email: <%= input[:gather_user_email_for_license_generation] %>
         Company: <%= input[:gather_user_company_for_license_generation] %>
+        Phone number: <%= input[:gather_user_phone_no_for_license_generation] %>
       ------------------------------------------------------------
     prompt_type: "say"
     paths: [check_license_renewal]
