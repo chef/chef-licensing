@@ -178,9 +178,7 @@ module ChefLicensing
         return false if license_keys.empty?
 
         license_key = ChefLicensing.client(license_keys: license_keys)
-        return true if license_key.license_type.downcase == "trial" && license_key.status.eql?("Active")
-
-        false
+        license_key.license_type.downcase == "trial" && license_key.status.eql?("Active")
       end
     end
   end
