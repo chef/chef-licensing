@@ -60,49 +60,11 @@ module ChefLicensing
       end
 
       def generate_trial_license(input)
-        spinner = TTY::Spinner.new(":spinner [Running] License generation in progress...", format: :dots, clear: true)
-        spinner.auto_spin # Start the spinner
-        self.license_id = ChefLicensing::LicenseKeyGenerator.generate_trial_license!(
-          first_name: input[:gather_user_first_name_for_license_generation],
-          last_name: input[:gather_user_last_name_for_license_generation],
-          email_id: input[:gather_user_email_for_license_generation],
-          product: ChefLicensing::Config.chef_product_name&.capitalize,
-          company: input[:gather_user_company_for_license_generation],
-          phone: input[:gather_user_phone_no_for_license_generation]
-        )
-        spinner.success # Stop the spinner
-        true
-      rescue ChefLicensing::LicenseGenerationFailed => e
-        spinner.error # Stop the spinner
-        self.error_msg = e.message
-        false
-      rescue ChefLicensing::LicenseGenerationRejected => e
-        spinner.error # Stop the spinner
-        self.rejection_msg = e.message
-        false
+        generate_license(input, :trial)
       end
 
       def generate_free_license(input)
-        spinner = TTY::Spinner.new(":spinner [Running] License generation in progress...", format: :dots, clear: true)
-        spinner.auto_spin # Start the spinner
-        self.license_id = ChefLicensing::LicenseKeyGenerator.generate_free_license!(
-          first_name: input[:gather_user_first_name_for_license_generation],
-          last_name: input[:gather_user_last_name_for_license_generation],
-          email_id: input[:gather_user_email_for_license_generation],
-          product: ChefLicensing::Config.chef_product_name&.capitalize,
-          company: input[:gather_user_company_for_license_generation],
-          phone: input[:gather_user_phone_no_for_license_generation]
-        )
-        spinner.success # Stop the spinner
-        true
-      rescue ChefLicensing::LicenseGenerationFailed => e
-        spinner.error # Stop the spinner
-        self.error_msg = e.message
-        false
-      rescue ChefLicensing::LicenseGenerationRejected => e
-        spinner.error # Stop the spinner
-        self.rejection_msg = e.message
-        false
+        generate_license(input, :free)
       end
 
       def generate_commercial_license_lead(input)
@@ -184,6 +146,30 @@ module ChefLicensing
           inputs.key?(:gather_user_email_for_license_generation) &&
           inputs.key?(:gather_user_company_for_license_generation) &&
           inputs.key?(:gather_user_phone_no_for_license_generation)
+      end
+
+      private
+
+      def generate_license(inputs, license_type)
+        spinner = TTY::Spinner.new(":spinner [Running] License generation in progress...", format: :dots, clear: true)
+        spinner.auto_spin # Start the spinner
+        self.license_id = ChefLicensing::LicenseKeyGenerator.send("generate_#{license_type}_license!",
+          first_name: inputs[:gather_user_first_name_for_license_generation],
+          last_name: inputs[:gather_user_last_name_for_license_generation],
+          email_id: inputs[:gather_user_email_for_license_generation],
+          product: ChefLicensing::Config.chef_product_name&.capitalize,
+          company: inputs[:gather_user_company_for_license_generation],
+          phone: inputs[:gather_user_phone_no_for_license_generation])
+        spinner.success # Stop the spinner
+        true
+      rescue ChefLicensing::LicenseGenerationFailed => e
+        spinner.error # Stop the spinner
+        self.error_msg = e.message
+        false
+      rescue ChefLicensing::LicenseGenerationRejected => e
+        spinner.error # Stop the spinner
+        self.rejection_msg = e.message
+        false
       end
     end
   end
