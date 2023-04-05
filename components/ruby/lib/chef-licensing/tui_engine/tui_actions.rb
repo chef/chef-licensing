@@ -149,6 +149,14 @@ module ChefLicensing
           inputs.key?(:gather_user_phone_no_for_license_generation)
       end
 
+      def check_if_user_has_active_trial_license(inputs)
+        license_keys = ChefLicensing::LicenseKeyFetcher.fetch
+        return false if license_keys.empty?
+
+        license_key = ChefLicensing.client(license_keys: license_keys)
+        license_key.license_type.downcase == "trial" && license_key.status.eql?("Active")
+      end
+
       private
 
       def generate_license(inputs, license_type)
@@ -171,14 +179,6 @@ module ChefLicensing
         spinner.error # Stop the spinner
         self.rejection_msg = e.message
         false
-      end
-
-      def check_if_user_has_active_trial_license(inputs)
-        license_keys = ChefLicensing::LicenseKeyFetcher.fetch
-        return false if license_keys.empty?
-
-        license_key = ChefLicensing.client(license_keys: license_keys)
-        license_key.license_type.downcase == "trial" && license_key.status.eql?("Active")
       end
     end
   end
