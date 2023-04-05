@@ -66,15 +66,17 @@ module ChefLicensing
         logger.debug "License Key fetcher - detected TTY, prompting..."
         new_keys = prompt_fetcher.fetch
 
-        # Scenario: When a user is prompted for license expiry and license is not yet renewed
-        if new_keys.empty? && %i{prompt_license_about_to_expire prompt_license_expired}.include?(config[:start_interaction])
-          # Not blocking any license type in case of expiry
-          return @license_keys
-        elsif !new_keys.empty?
+        unless new_keys.empty?
           @license_keys.concat(new_keys)
           new_keys.each { |key| file_fetcher.persist(key) }
           return license_keys
         end
+      end
+
+      # Scenario: When a user is prompted for license expiry and license is not yet renewed
+      if new_keys.empty? && %i{prompt_license_about_to_expire prompt_license_expired}.include?(config[:start_interaction])
+        # Not blocking any license type in case of expiry
+        return @license_keys
       end
 
       # Otherwise nothing was able to fetch a license. Throw an exception.

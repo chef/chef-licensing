@@ -55,7 +55,7 @@ module ChefLicensing
     end
 
     def client(opts = {})
-      @license ||= ChefLicensing::Api::Client.info(opts)
+      ChefLicensing::Api::Client.info(opts)
     end
 
     def add_license
