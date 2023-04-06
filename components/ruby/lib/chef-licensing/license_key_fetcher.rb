@@ -89,6 +89,13 @@ module ChefLicensing
       raise LicenseKeyNotFetchedError.new("Unable to obtain a License Key.")
     end
 
+    def add_license
+      config[:start_interaction] = :add_license
+      prompt_fetcher.config = config
+      prompt_fetcher.append_info_to_tui_engine({ chef_product_name: ChefLicensing::Config.chef_product_name&.capitalize })
+      prompt_fetcher.fetch
+    end
+
     def append_extra_info_to_tui_engine
       extra_info = {}
       extra_info[:chef_product_name] = ChefLicensing::Config.chef_product_name&.capitalize
