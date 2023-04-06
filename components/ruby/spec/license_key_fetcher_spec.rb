@@ -270,7 +270,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       end
     end
 
-    context "when the license key is in correct format of serial number but less than 25 characters" do
+    context "when the license key is in correct format of serial number but less than 26 characters" do
       let(:argv)  { ["--chef-license-key=A8BCD1XS2B4F6FYBWG8TE0N4"] }
       let(:env) { {} }
 
@@ -313,7 +313,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
     end
 
     context "when the license key is in the correct format of serial number" do
-      let(:argv)  { ["--chef-license-key=A8BCD1XS2B4F6FYBWG8TE0N49"] }
+      let(:argv)  { ["--chef-license-key=A8BCD1XS2B4F6FYBWG8TE0N490"] }
       let(:env) { {} }
 
       let(:opts) {
@@ -329,7 +329,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       let(:license_key_fetcher) { ChefLicensing::LicenseKeyFetcher.new(opts) }
 
       it "returns the license key" do
-        expect(license_key_fetcher.fetch).to eq(["A8BCD1XS2B4F6FYBWG8TE0N49"])
+        expect(license_key_fetcher.fetch).to eq(["A8BCD1XS2B4F6FYBWG8TE0N490"])
       end
     end
   end
