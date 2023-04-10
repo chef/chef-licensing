@@ -123,5 +123,22 @@ module ChefLicensing
         @status = entitlement_data["status"]
       end
     end
+
+    def have_grace?
+      status.eql?("Grace")
+    end
+
+    def expired?
+      status.eql?("Expired")
+    end
+
+    def active?
+      status.eql?("Active")
+    end
+
+    def about_to_expire?
+      require "Date" unless defined?(Date)
+      status.eql?("Active") && expiration_status.eql?("Expired") && (Date.parse(expiration_date) - Date.today).to_i.eql?(1)
+    end
   end
 end
