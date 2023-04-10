@@ -21,21 +21,17 @@ module ChefLicensing
       end
 
       def list
-        response = restful_client.describe(license_keys: license_keys.join(","), entitlement_id: ChefLicensing::Config.chef_entitlement_id)
-
-        raise(ChefLicensing::DescribeError, response.message) unless response.data
-
-        raise(ChefLicensing::DescribeError, "No license details found for the given license keys") unless response.data.license
+        response_data = get_describe_api_response_data
 
         list_of_licenses = []
 
-        response.data&.license&.each do |license|
+        response_data.license.each do |license|
           # license object created to be fed to parser
           license_object = OpenStruct.new({
             "license" => license,
-            "assets" => response.data.Assets,
-            "features" => response.data.Features,
-            "software" => response.data.Software,
+            "assets" => response_data.Assets,
+            "features" => response_data.Features,
+            "software" => response_data.Software,
           })
 
           list_of_licenses << ChefLicensing::License.new(
@@ -51,6 +47,18 @@ module ChefLicensing
       private
 
       attr_reader :restful_client
+
+      def get_describe_api_response_data
+        response = restful_client.describe(license_keys: license_keys.join(","), entitlement_id: ChefLicensing::Config.chef_entitlement_id)
+
+        raise(ChefLicensing::DescribeError, response.message) unless response.data
+
+        raise(ChefLicensing::DescribeError, "License is not found in the response") unless response.data.license
+
+        raise(ChefLicensing::DescribeError, "No license details found for the given license keys") unless response.data.license.is_a?(Array)
+
+        response.data
+      end
     end
   end
 end
