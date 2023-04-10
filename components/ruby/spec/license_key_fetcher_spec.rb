@@ -332,5 +332,47 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
         expect(license_key_fetcher.fetch).to eq(["A8BCD1XS2B4F6FYBWG8TE0N490"])
       end
     end
+
+    context "when the license key is in the correct format of commercial license" do
+      let(:argv)  { ["--chef-license-key=e0b8f317-7abd-1800-181b-ef2d5fc023d2"] }
+      let(:env) { {} }
+
+      let(:opts) {
+        {
+          logger: logger,
+          argv: argv,
+          env: env,
+          output: output,
+          dir: nil,
+        }
+      }
+
+      let(:license_key_fetcher) { ChefLicensing::LicenseKeyFetcher.new(opts) }
+
+      it "returns the license key" do
+        expect(license_key_fetcher.fetch).to eq(["e0b8f317-7abd-1800-181b-ef2d5fc023d2"])
+      end
+    end
+
+    context "when the license key is in  incorrect format of commercial license" do
+      let(:argv)  { ["--chef-license-key=hello-7abd-1800-181b-ef2d5fc023d2"] }
+      let(:env) { {} }
+
+      let(:opts) {
+        {
+          logger: logger,
+          argv: argv,
+          env: env,
+          output: output,
+          dir: nil,
+        }
+      }
+
+      let(:license_key_fetcher) { ChefLicensing::LicenseKeyFetcher.new(opts) }
+
+      it "raises an error with the message" do
+        expect { license_key_fetcher.fetch }.to raise_error(ChefLicensing::LicenseKeyFetcher::Base::InvalidLicenseKeyFormat, /Malformed License Key passed on command line - should be/)
+      end
+    end
   end
 end
