@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.3.49 -->
-## [0.3.49](https://github.com/chef/chef-licensing/tree/0.3.49) (2023-04-10)
+<!-- latest_release 0.3.50 -->
+## [0.3.50](https://github.com/chef/chef-licensing/tree/0.3.50) (2023-04-10)
 
 #### Merged Pull Requests
-- CHEF-61: Verify commercial license entry works [#88](https://github.com/chef/chef-licensing/pull/88) ([ahasunos](https://github.com/ahasunos))
+- CHEF-1974: Improve error handling for describe API [#86](https://github.com/chef/chef-licensing/pull/86) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-1974: Improve error handling for describe API [#86](https://github.com/chef/chef-licensing/pull/86) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.50 -->
 - CHEF-61: Verify commercial license entry works [#88](https://github.com/chef/chef-licensing/pull/88) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.49 -->
 - CHEF-54: Update serial number regex and test associated with the change [#85](https://github.com/chef/chef-licensing/pull/85) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.48 -->
 - CHEF-1497: Implement Feedback from Verification of Trial License Generation [#82](https://github.com/chef/chef-licensing/pull/82) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.47 -->
