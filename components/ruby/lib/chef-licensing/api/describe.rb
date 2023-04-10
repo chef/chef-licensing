@@ -53,9 +53,7 @@ module ChefLicensing
 
         raise(ChefLicensing::DescribeError, response.message) unless response.data
 
-        raise(ChefLicensing::DescribeError, "License is not found in the response") unless response.data.license
-
-        raise(ChefLicensing::DescribeError, "No license details found for the given license keys") unless response.data.license.is_a?(Array)
+        raise(ChefLicensing::DescribeError, "No license details found for the given license keys") unless response.data&.license.is_a?(Array)
 
         response.data
       end
