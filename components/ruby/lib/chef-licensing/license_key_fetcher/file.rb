@@ -44,6 +44,15 @@ module ChefLicensing
         licenses.collect { |x| x[:license_key] }
       end
 
+      def fetch_license_types
+        read_license_key_file
+        if contents.nil?
+          []
+        else
+          contents[:licenses].collect { |x| x[:license_type] }
+        end
+      end
+
       # Writes a license_id file to disk in the location specified,
       # with the content given.
       # @return Array of Errors
