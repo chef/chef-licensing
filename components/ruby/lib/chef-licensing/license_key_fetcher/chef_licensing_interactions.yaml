@@ -194,77 +194,54 @@ interactions:
       Thank you for taking interest in <%= input[:chef_product_name] %>.
 
       We have the following types of licenses.
-      Please choose one that suits your requirements:
-
-      +----------------------------+------------------------------+------------------------------+
-      | 1. Free License            | 2. Trial License             | 3. Commercial License        |
-      |     Validity: Unlimited    |     Validity: 30 Days        |     Validity: Custom         |
-      |     Entitlement:           |     Entitlement:             |     Entitlement:             |
-      |      Nodes: 10             |      Nodes: Unlimited        |      Nodes: Custom           |
-      |      Basic Features: Yes   |      Basic Features : Yes    |      Basic Features: Yes     |
-      |      Premium Features: No  |      Premium Features : Yes  |      Premium Features : Yes  |
-      +----------------------------+------------------------------+------------------------------+
-
-      To know more about license types, their respective entitlement and premium features, visit
-      <link>
     prompt_type: "say"
     paths: [ask_for_license_type]
 
   ask_for_license_type:
     prompt_type: "select"
-    messages: ["\nSelect the type of license below and then enter user details" , [ "1.Free license", "2.Trial license", "3.Commercial license"]]
-    paths: [free_license_selection, commercial_license_selection, trial_license_selection]
+    messages: ["Select the type of license below and then enter user details\n" ,
+      [
+      "1. Free license\n     Validity: Unlimited\n     No. of targets: 10\n",
+      "2. Trial license\n     Validity: 30 Days\n     No. of targets: Unlimited\n",
+      "3. Commercial license\n     Get in touch with the Account/Sales team.\n",
+      "4. Quit license generation"
+      ]]
+    paths: [free_license_selection, commercial_license_selection, trial_license_selection, exit]
     response_path_map:
-      "1.Free license": free_license_selection
-      "2.Trial license": trial_license_selection
-      "3.Commercial license": commercial_license_selection
+      "1. Free license\n     Validity: Unlimited\n     No. of targets: 10\n": free_license_selection
+      "2. Trial license\n     Validity: 30 Days\n     No. of targets: Unlimited\n": trial_license_selection
+      "3. Commercial license\n     Get in touch with the Account/Sales team.\n": commercial_license_selection
+      "4. Quit license generation": exit
 
   free_license_selection:
-    messages: |
-
-      You have selected:
-        Free License
-          Validity: Unlimited
-          Entitlement:
-            Nodes: 10
-            Basic Features: Yes
-            Premium Features: No
-    prompt_type: "say"
-    paths: [ask_for_user_details]
+    messages: "Type: Free license\n  Validity: Unlimited\n  No. of targets: 10\n"
+    prompt_type: "silent"
+    paths: [check_if_user_details_are_present]
 
   trial_license_selection:
-    messages: |
-
-      You have selected:
-        Trial License
-          Validity: 30 Days
-          Entitlement:
-            Nodes: Unlimited
-            Free features: Yes
-            Premium features: Yes
-    prompt_type: "say"
-    paths: [ask_for_user_details]
+    messages: "Type: Trial license\n  Validity: 30 days\n  No. of targets: Unlimited\n"
+    prompt_type: "silent"
+    paths: [check_if_user_details_are_present]
 
   commercial_license_selection:
-    messages: |
+    messages: "Type: Commercial license\n  Validity: Custom\n  No. of targets: Custom\n"
+    prompt_type: "silent"
+    paths: [check_if_user_details_are_present]
 
-      You have selected:
-        Commercial License
-          Validity : Custom
-          Entitlement :
-            No. of nodes : Custom
-            Free features : Yes
-            Premium features : Yes
-    prompt_type: "say"
-    paths: [ask_for_user_details]
+  check_if_user_details_are_present:
+    action: are_user_details_present?
+    paths: [ask_for_user_details, print_to_review_details]
+    response_path_map:
+      "true": "print_to_review_details"
+      "false": "ask_for_user_details"
 
   ask_for_user_details:
     messages: |
-
       Please enter the following details:
-      First Name, Last Name, Company, Email, Phone
+      First Name, Last Name, Email, Company, Phone
 
     paths: [gather_user_first_name_for_license_generation]
+
   gather_user_first_name_for_license_generation:
     messages: "Enter First Name: "
     prompt_type: "ask"
@@ -352,15 +329,20 @@ interactions:
 
   print_to_review_details:
     messages: |
-      ----------------------------------------------------
-        User Details
+      ------------------------------------------------------------
+      Please review the details below and confirm to proceed
+      ------------------------------------------------------------
+      License Details
+
+        <%= input[:free_license_selection] || input[:trial_license_selection] || input[:commercial_license_selection] %>
+      User Details
 
         First Name: <%= input[:gather_user_first_name_for_license_generation] %>
         Last Name: <%= input[:gather_user_last_name_for_license_generation] %>
         Email: <%= input[:gather_user_email_for_license_generation] %>
         Company: <%= input[:gather_user_company_for_license_generation] %>
         Phone number: <%= input[:gather_user_phone_no_for_license_generation] %>
-      ----------------------------------------------------
+      ------------------------------------------------------------
     prompt_type: "say"
     paths: [check_license_renewal]
 
@@ -381,11 +363,17 @@ interactions:
 
   ask_for_review_confirmation:
     prompt_type: "select"
-    messages: ["Please select", ["Confirm the details and proceed", "Choose again"]]
-    paths: [pre_license_generation, info_of_license_types]
+    messages: ["Please select", ["Confirm the details and proceed", "Reselect the license type", "Edit user details", "Quit the license generation process"]]
+    paths: [pre_license_generation, clear_current_license_type_selection, ask_for_user_details, exit]
     response_path_map:
       "Confirm the details and proceed": pre_license_generation
-      "Choose again": info_of_license_types
+      "Reselect the license type": clear_current_license_type_selection
+      "Edit user details": "ask_for_user_details"
+      "Quit the license generation process": "exit"
+
+  clear_current_license_type_selection:
+    action: clear_license_type_selection
+    paths: [info_of_license_types]
 
   pre_license_generation:
     action: select_license_generation_based_on_type
@@ -418,19 +406,17 @@ interactions:
 
   free_license_generation_success:
     messages: |
-      The license has been generated and registered.
+      <%= input[:pastel].green("✔ [Success] License generated successfully") %>
 
-      A copy has also been sent to your email.
-
+      The license ID has been sent on <%= input[:gather_user_email_for_license_generation] %>.
       You can also look up it in the SaleForce portal under the name of <%= input[:gather_user_first_name_for_license_generation] + " " + input[:gather_user_last_name_for_license_generation] %>.
-      If you do not know your license key, you can log into your Progress Chef customer portal to obtain your product serial number.
     paths: [ask_for_license_id]
 
   trial_license_generation_success:
     messages: |
-      The license has been generated and registered.
+      <%= input[:pastel].green("✔ [Success] License generated successfully") %>
 
-      A copy has also been sent to <%= input[:gather_user_email_for_license_generation] %>.
+      The license ID has been sent on <%= input[:gather_user_email_for_license_generation] %>.
       You can also look up it in the SaleForce portal under the name of <%= input[:gather_user_first_name_for_license_generation] + " " + input[:gather_user_last_name_for_license_generation] %>.
     paths: [ask_for_license_id]
 
@@ -443,6 +429,11 @@ interactions:
     paths: [exit]
 
   license_generation_failure:
+    messages: "✖ [Error] License generation failed"
+    prompt_type: "error"
+    paths: [check_failure_reason]
+
+  check_failure_reason:
     action: license_generation_rejected?
     paths: [fetch_license_failure_error_msg, fetch_license_failure_rejection_msg]
     response_path_map:
