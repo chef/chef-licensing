@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.3.46 -->
-## [0.3.46](https://github.com/chef/chef-licensing/tree/0.3.46) (2023-04-10)
+<!-- latest_release 0.3.47 -->
+## [0.3.47](https://github.com/chef/chef-licensing/tree/0.3.47) (2023-04-10)
 
 #### Merged Pull Requests
-- Refactored License key fetcher library to enable reusability [#84](https://github.com/chef/chef-licensing/pull/84) ([Nik08](https://github.com/Nik08))
+- CHEF-1497: Implement Feedback from Verification of Trial License Generation [#82](https://github.com/chef/chef-licensing/pull/82) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-1497: Implement Feedback from Verification of Trial License Generation [#82](https://github.com/chef/chef-licensing/pull/82) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.47 -->
 - Refactored License key fetcher library to enable reusability [#84](https://github.com/chef/chef-licensing/pull/84) ([Nik08](https://github.com/Nik08)) <!-- 0.3.46 -->
 - CHEF-1763: Extend TUI Engine to display formatted messages [#78](https://github.com/chef/chef-licensing/pull/78) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.45 -->
 - Added missing credentials error for required API credentials [#73](https://github.com/chef/chef-licensing/pull/73) ([Nik08](https://github.com/Nik08)) <!-- 0.3.44 -->
