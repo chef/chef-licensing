@@ -49,12 +49,20 @@ module ChefLicensing
       logger.debug "License Key fetcher examining CLI arg checks"
       new_keys = fetch_license_key_from_arg
       license_type = validate_and_fetch_license_type(new_keys)
-      persist_and_concat(new_keys, license_type) if license_type
+      if license_type
+        check_license_restriction(new_keys, license_type)
+        # break the flow if there is a restriction in adding license
+        return new_keys unless add_license_if_not_restricted(new_keys, license_type)
+      end
 
       logger.debug "License Key fetcher examining ENV checks"
       new_keys = fetch_license_key_from_env
       license_type = validate_and_fetch_license_type(new_keys)
-      persist_and_concat(new_keys, license_type) if license_type
+      if license_type
+        check_license_restriction(new_keys, license_type)
+        # break the flow if there is a restriction in adding license
+        return new_keys unless add_license_if_not_restricted(new_keys, license_type)
+      end
 
       # If it has previously been fetched and persisted, read from disk and set runtime decision
       logger.debug "License Key fetcher examining file checks"
@@ -94,27 +102,15 @@ module ChefLicensing
       config = {}
 
       # License add restrictions for multiple trial license
-      license_type_options = license_type_generation_options
-      if license_type_options.count == 3
-        config[:start_interaction] = :add_license_all
-      elsif !license_type_options.include? "trial"
+      if license_restricted?("trial")
         config[:start_interaction] = :add_license_except_trial
+      else
+        config[:start_interaction] = :add_license_all
       end
 
       prompt_fetcher.config = config
       append_extra_info_to_tui_engine
       prompt_fetcher.fetch
-    end
-
-    def append_extra_info_to_tui_engine
-      extra_info = {}
-      extra_info[:chef_product_name] = ChefLicensing::Config.chef_product_name&.capitalize
-      unless @license_keys.empty? && !license
-        extra_info[:license_type] = license.license_type.capitalize
-        extra_info[:number_of_days_in_expiration] = license.number_of_days_in_expiration
-        extra_info[:license_expiration_date] = Date.parse(license.expiration_date).strftime("%a, %d %b %Y")
-      end
-      prompt_fetcher.append_info_to_tui_engine(extra_info) unless extra_info.empty?
     end
 
     # Note: Fetching from arg and env as well, to be able to fetch license when disk is non-writable
@@ -137,6 +133,21 @@ module ChefLicensing
     private
 
     attr_accessor :license
+
+    def append_extra_info_to_tui_engine(info = {})
+      extra_info = {}
+
+      # default values
+      extra_info[:chef_product_name] = ChefLicensing::Config.chef_product_name&.capitalize
+      extra_info[:license_type] = client.license_type unless @license_keys.empty? && !client
+
+      unless info.empty? # ability to add info hash through arguments
+        info.each do |key, value|
+          extra_info[key] = value
+        end
+      end
+      prompt_fetcher.append_info_to_tui_engine(extra_info) unless extra_info.empty?
+    end
 
     def fetch_from_file
       if file_fetcher.persisted?
@@ -212,6 +223,28 @@ module ChefLicensing
     def get_license_type(license_key)
       self.license = ChefLicensing.client(license_keys: [license_key])
       license.license_type.downcase
+    end
+
+    def license_restricted?(license_type)
+      license_type_options = license_type_generation_options
+      !(license_type_options.include? license_type)
+    end
+
+    def prompt_license_addition_restricted(new_keys, license_type)
+      config[:start_interaction] = :prompt_license_addition_restriction
+      prompt_fetcher.config = config
+      append_extra_info_to_tui_engine({license_id: new_keys.first, license_type: license_type})
+      prompt_fetcher.fetch
+    end
+
+    # used for env and argument fetched licenses before persisting
+    def add_license_if_not_restricted(new_keys, license_type)
+      license_restricted?(license_type) ? false : persist_and_concat(new_keys, license_type)
+    end
+
+    def check_license_restriction(new_keys, license_type)
+      # prompted after argument and env fetcher to check for license restriction
+      prompt_license_addition_restricted(new_keys, license_type) if license_restricted?(license_type)
     end
   end
 end

@@ -11,7 +11,7 @@ require "tty-spinner"
 module ChefLicensing
   class TUIEngine
     class TUIActions
-      attr_accessor :logger, :output, :license_id, :error_msg, :rejection_msg, :invalid_license_msg
+      attr_accessor :logger, :output, :license_id, :error_msg, :rejection_msg, :invalid_license_msg, :license_type
       def initialize(opts = {})
         @logger = ChefLicensing::Config.logger
         @output = ChefLicensing::Config.output
@@ -173,6 +173,15 @@ module ChefLicensing
         spinner.error # Stop the spinner
         self.rejection_msg = e.message
         false
+      end
+
+      def set_license_info(input)
+        self.license_id = input[:license_id]
+        self.license_type = input[:license_type]
+      end
+
+      def fetch_license_type(input)
+        license_type
       end
     end
   end

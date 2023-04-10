@@ -40,6 +40,42 @@ interactions:
     prompt_type: "say"
     paths: [ask_if_user_has_license_id_except_trial]
 
+  prompt_license_addition_restriction:
+    action: set_license_info
+    paths: [prompt_error_license_addition_restricted]
+
+  prompt_error_license_addition_restricted:
+    messages: "✖ [Error] License validation failed.\n"
+    prompt_type: "error"
+    paths: [license_addition_restricted_message]
+
+  license_addition_restricted_message:
+    action: fetch_license_type
+    paths: [trial_already_exist_message]
+    response_path_map:
+      "trial": trial_already_exist_message
+
+  trial_already_exist_message:
+    messages: "A trial license already exists with following details \n"
+    prompt_type: "say"
+    paths: [add_license_info]
+
+  add_license_info:
+    action: display_license_info
+    paths: [fetch_license_type]
+
+  fetch_license_type:
+    action: fetch_license_type
+    paths: [trial_restriction_message]
+    response_path_map:
+      "trial": trial_restriction_message
+
+  trial_restriction_message:
+    prompt_type: "say"
+    messages:
+      Kindly generate a free or commercial license by using command <%= input[:pastel].bold("inspec license add")%>
+    paths: [exit]
+
   prompt_license_expired:
     messages: |
 
