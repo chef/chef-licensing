@@ -92,7 +92,7 @@ module ChefLicensing
     def add_license
       config[:start_interaction] = :add_license
       prompt_fetcher.config = config
-      prompt_fetcher.append_info_to_tui_engine({ chef_product_name: ChefLicensing::Config.chef_product_name&.capitalize })
+      append_extra_info_to_tui_engine
       prompt_fetcher.fetch
     end
 
