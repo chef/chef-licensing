@@ -116,6 +116,15 @@ module ChefLicensing
         end
       end
 
+      def check_license_generation_flow_option(inputs)
+        interaction_ids = inputs.keys
+        if (interaction_ids & %i{ prompt_license_about_to_expire prompt_license_expired add_license_except_trial}).empty?
+          "new"
+        else
+          "restrict_trial"
+        end
+      end
+
       def license_generation_rejected?(inputs)
         !!rejection_msg
       end

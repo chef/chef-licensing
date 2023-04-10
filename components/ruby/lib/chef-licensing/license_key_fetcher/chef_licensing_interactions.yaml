@@ -18,7 +18,7 @@ interactions:
     prompt_type: "say"
     paths: [ask_if_user_has_license_id]
 
-  add_license:
+  add_license_all:
     messages: |
       ------------------------------------------------------------
         To continue using Chef <%= input[:chef_product_name] %>, a License ID is required.
@@ -28,6 +28,17 @@ interactions:
       -------------------------
     prompt_type: "say"
     paths: [ask_if_user_has_license_id]
+
+  add_license_except_trial:
+    messages: |
+      ------------------------------------------------------------
+        To continue using Chef <%= input[:chef_product_name] %>, a License ID is required.
+        (Free, Trial or Commercial)
+
+        Continue to add a license.
+      -------------------------
+    prompt_type: "say"
+    paths: [ask_if_user_has_license_id_except_trial]
 
   prompt_license_expired:
     messages: |
@@ -59,6 +70,18 @@ interactions:
     response_path_map:
       "I already have a license ID": ask_for_license_id
       "I don't have a license ID and would like to generate a new license ID": info_of_license_types
+      "Skip": skip_message
+
+  ask_if_user_has_license_id_except_trial:
+    messages: ["\nPlease choose one of the options below",["I already have a license ID", "I don't have a license ID and would like to generate a new license ID", "Skip"]]
+    prompt_type: "timeout_select"
+    prompt_attributes:
+      timeout_duration: 60
+      timeout_message: "\nPrompt timed out. Use non-interactive flags or enter an answer within 60 seconds."
+    paths: [ask_for_license_id, info_of_license_types_except_trial, skip_message]
+    response_path_map:
+      "I already have a license ID": ask_for_license_id
+      "I don't have a license ID and would like to generate a new license ID": info_of_license_types_except_trial
       "Skip": skip_message
 
   skip_message:
@@ -152,6 +175,27 @@ interactions:
     prompt_type: "say"
     paths: [ask_for_license_type]
 
+  info_of_license_types_except_trial:
+    messages: |
+      Thank you for taking interest in <%= input[:chef_product_name] %>.
+
+      We have the following types of licenses.
+      Please choose one that suits your requirements:
+
+      +----------------------------+------------------------------+
+      | 1. Free License            | 2. Commercial License        |
+      |     Validity: Unlimited    |    Validity: Custom          |
+      |     Entitlement:           |    Entitlement:              |
+      |      Nodes: 10             |      Nodes: Custom           |
+      |      Basic Features: Yes   |      Basic Features: Yes     |
+      |      Premium Features: No  |      Premium Features : Yes  |
+      +----------------------------+------------------------------+
+
+      To know more about license types, their respective entitlement and premium features, visit
+      <link>
+    prompt_type: "say"
+    paths: [ask_for_license_type_except_trial]
+
   ask_for_license_type:
     prompt_type: "select"
     messages: ["Select the type of license below and then enter user details\n" ,
@@ -167,6 +211,14 @@ interactions:
       "2. Trial license\n     Validity: 30 Days\n     No. of targets: Unlimited\n": trial_license_selection
       "3. Commercial license\n     Get in touch with the Account/Sales team.\n": commercial_license_selection
       "4. Quit license generation": exit
+
+  ask_for_license_type_except_trial:
+    prompt_type: "select"
+    messages: ["\nSelect the type of license below and then enter user details" , [ "1.Free license", "2.Commercial license"]]
+    paths: [free_license_selection, commercial_license_selection]
+    response_path_map:
+      "1.Free license": free_license_selection
+      "2.Commercial license": commercial_license_selection
 
   free_license_selection:
     messages: "Type: Free license\n  Validity: Unlimited\n  No. of targets: 10\n"
@@ -299,7 +351,22 @@ interactions:
         Phone number: <%= input[:gather_user_phone_no_for_license_generation] %>
       ------------------------------------------------------------
     prompt_type: "say"
-    paths: [ask_for_review_confirmation]
+    paths: [check_license_generation_flow_option]
+
+  check_license_generation_flow_option:
+    action: check_license_generation_flow_option
+    paths: [ask_for_review_confirmation, ask_for_review_confirmation_on_trial_restrictions]
+    response_path_map:
+      "new": ask_for_review_confirmation
+      "restrict_trial": ask_for_review_confirmation_on_trial_restrictions
+
+  ask_for_review_confirmation_on_trial_restrictions:
+    prompt_type: "select"
+    messages: ["Please select", ["Confirm the details and proceed", "Choose again"]]
+    paths: [pre_license_generation, info_of_license_types_except_trial]
+    response_path_map:
+      "Confirm the details and proceed": pre_license_generation
+      "Choose again": info_of_license_types_except_trial
 
   ask_for_review_confirmation:
     prompt_type: "select"
