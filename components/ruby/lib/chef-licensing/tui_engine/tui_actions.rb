@@ -151,6 +151,15 @@ module ChefLicensing
           inputs.key?(:gather_user_phone_no_for_license_generation)
       end
 
+      def set_license_info(input)
+        self.license_id = input[:license_id]
+        self.license_type = input[:license_type]
+      end
+
+      def fetch_license_type(input)
+        license_type
+      end
+
       private
 
       def generate_license(inputs, license_type)
@@ -173,15 +182,6 @@ module ChefLicensing
         spinner.error # Stop the spinner
         self.rejection_msg = e.message
         false
-      end
-
-      def set_license_info(input)
-        self.license_id = input[:license_id]
-        self.license_type = input[:license_type]
-      end
-
-      def fetch_license_type(input)
-        license_type
       end
     end
   end

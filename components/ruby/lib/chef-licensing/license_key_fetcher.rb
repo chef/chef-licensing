@@ -139,7 +139,7 @@ module ChefLicensing
 
       # default values
       extra_info[:chef_product_name] = ChefLicensing::Config.chef_product_name&.capitalize
-      extra_info[:license_type] = client.license_type unless @license_keys.empty? && !client
+      extra_info[:license_type] = license.license_type unless @license_keys.empty? && !license
 
       unless info.empty? # ability to add info hash through arguments
         info.each do |key, value|
@@ -233,7 +233,7 @@ module ChefLicensing
     def prompt_license_addition_restricted(new_keys, license_type)
       config[:start_interaction] = :prompt_license_addition_restriction
       prompt_fetcher.config = config
-      append_extra_info_to_tui_engine({license_id: new_keys.first, license_type: license_type})
+      append_extra_info_to_tui_engine({ license_id: new_keys.first, license_type: license_type })
       prompt_fetcher.fetch
     end
 
