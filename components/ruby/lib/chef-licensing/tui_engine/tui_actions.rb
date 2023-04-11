@@ -6,6 +6,8 @@ require_relative "../exceptions/license_generation_rejected"
 require_relative "../license_key_fetcher/base"
 require_relative "../config"
 require_relative "../list_license_keys"
+require_relative "../license_key_fetcher"
+require_relative "../../chef-licensing"
 require "tty-spinner"
 
 module ChefLicensing
@@ -139,6 +141,20 @@ module ChefLicensing
           inputs.key?(:gather_user_phone_no_for_license_generation)
       end
 
+      def filter_license_type_options(inputs)
+        if user_has_active_trial_license
+          logger.debug "User has an active trial license, free and trial license options will be removed"
+          "ask_for_commercial_only"
+        else
+          # TODO:
+          # Similarly check when to show:
+          # 1. free and commercial (return ask_for_free_and_commercial in this case)
+          # 2. trial and commercial (return ask_for_trial_and_commercial in this case)
+          # else we will show all the options
+          "ask_for_all_license_type"
+        end
+      end
+
       private
 
       def generate_license(inputs, license_type)
@@ -161,6 +177,14 @@ module ChefLicensing
         spinner.error # Stop the spinner
         self.rejection_msg = e.message
         false
+      end
+
+      def user_has_active_trial_license
+        license_keys = ChefLicensing::LicenseKeyFetcher.fetch
+        return false if license_keys.empty?
+
+        license_key = ChefLicensing.client(license_keys: license_keys)
+        license_key.license_type.downcase == "trial" && license_key.status.eql?("Active")
       end
     end
   end
