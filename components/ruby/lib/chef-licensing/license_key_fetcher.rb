@@ -17,6 +17,9 @@ module ChefLicensing
     class LicenseKeyNotFetchedError < RuntimeError
     end
 
+    class LicenseKeyNotPersistedError < RuntimeError
+    end
+
     attr_reader :config, :license_keys, :arg_fetcher, :env_fetcher, :file_fetcher, :prompt_fetcher, :logger
     def initialize(opts = {})
       @config = opts
@@ -164,10 +167,6 @@ module ChefLicensing
 
     def persist_and_concat(new_keys, license_type)
       file_fetcher.persist(new_keys.first, license_type)
-      concat_new_keys(new_keys)
-    end
-
-    def concat_new_keys(new_keys)
       @license_keys.concat(new_keys)
     end
 

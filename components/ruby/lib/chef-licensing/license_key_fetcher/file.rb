@@ -14,6 +14,13 @@ module ChefLicensing
       LICENSE_KEY_FILE = "licenses.yaml".freeze
       LICENSE_FILE_FORMAT_VERSION = "3.0.0".freeze
 
+      # License types list
+      LICENSE_TYPES = {
+        free: :free,
+        trial: :trial,
+        commercial: :commercial,
+      }.freeze
+
       attr_reader :logger, :contents, :location
       attr_accessor :local_dir # Optional local path to use to seek
 
@@ -41,9 +48,11 @@ module ChefLicensing
       # with the content given.
       # @return Array of Errors
       def persist(license_key, license_type = nil)
+        raise LicenseKeyNotPersistedError.new("License type #{license_type} is not a valid license type.") unless LICENSE_TYPES[license_type.to_sym]
+
         license_data = {
           license_key: license_key,
-          license_type: license_type,
+          license_type: LICENSE_TYPES[license_type.to_sym],
           update_time: DateTime.now.to_s,
         }
 
