@@ -34,7 +34,16 @@ module ChefLicensing
         is_valid = ChefLicensing::LicenseKeyValidator.validate!(license_id)
         spinner.success # Stop the spinner
         self.license_id = license_id
-        is_valid
+        self.license_type = get_license_type(license_id)
+
+        if license_restricted?(license_type)
+          # Existing license keys needs to be fetcher to show details of existing license of license type which is restricted.
+          license_keys_in_file = license_keys_based_on_type(license_type)
+          self.license_id = license_keys_in_file.first
+          "restrict_license"
+        else
+          is_valid
+        end
       rescue ChefLicensing::InvalidLicense => e
         spinner.error # Stop the spinner
         self.invalid_license_msg = e.message || "Something went wrong while validating the license"
@@ -116,15 +125,6 @@ module ChefLicensing
         end
       end
 
-      def check_license_generation_flow_option(inputs)
-        interaction_ids = inputs.keys
-        if (interaction_ids & %i{ prompt_license_about_to_expire prompt_license_expired add_license_except_trial}).empty?
-          "new"
-        else
-          "restrict_trial"
-        end
-      end
-
       def license_generation_rejected?(inputs)
         !!rejection_msg
       end
@@ -160,6 +160,14 @@ module ChefLicensing
         license_type
       end
 
+      def filter_license_type_options(inputs)
+        if license_restricted?(:trial)
+          "ask_for_license_except_trial"
+        else
+          "ask_for_all_license_type"
+        end
+      end
+
       private
 
       def generate_license(inputs, license_type)
@@ -183,6 +191,23 @@ module ChefLicensing
         self.rejection_msg = e.message
         false
       end
+
+      def get_license_type(license_key)
+        license = ChefLicensing.client(license_keys: [license_key])
+        license.license_type.downcase.to_sym
+      end
+
+      def license_restricted?(license_type)
+        file_fetcher = LicenseKeyFetcher::File.new({})
+        license_type_options = file_fetcher.license_type_generation_options_based_on_file
+        !(license_type_options.include? license_type)
+      end
+
+      def license_keys_based_on_type(license_type)
+        file_fetcher = LicenseKeyFetcher::File.new({})
+        file_fetcher.filter_license_keys_based_on_type(license_type)
+      end
+
     end
   end
 end

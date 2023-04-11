@@ -100,14 +100,7 @@ module ChefLicensing
 
     def add_license
       config = {}
-
-      # License add restrictions for multiple trial license
-      if license_restricted?(:trial)
-        config[:start_interaction] = :add_license_except_trial
-      else
-        config[:start_interaction] = :add_license_all
-      end
-
+      config[:start_interaction] = :add_license_all
       prompt_fetcher.config = config
       append_extra_info_to_tui_engine
       new_keys = prompt_fetcher.fetch
@@ -190,15 +183,6 @@ module ChefLicensing
       end
     end
 
-    def license_type_generation_options
-      # TODO free license restrictions
-      license_types = %i{free trial commercial}
-      existing_license_types = file_fetcher.fetch_license_types
-
-      license_types -= [:trial] if existing_license_types.include? :trial
-      license_types.uniq
-    end
-
     def persist_and_concat(new_keys, license_type)
       file_fetcher.persist(new_keys.first, license_type)
       @license_keys.concat(new_keys)
@@ -231,7 +215,7 @@ module ChefLicensing
     end
 
     def license_restricted?(license_type)
-      license_type_options = license_type_generation_options
+      license_type_options = file_fetcher.license_type_generation_options_based_on_file
       !(license_type_options.include? license_type)
     end
 

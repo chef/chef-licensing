@@ -53,6 +53,15 @@ module ChefLicensing
         end
       end
 
+      def license_type_generation_options_based_on_file
+        # TODO free license restrictions
+        license_types = %i{free trial commercial}
+        existing_license_types = fetch_license_types
+
+        license_types -= [:trial] if existing_license_types.include? :trial
+        license_types.uniq
+      end
+
       def filter_license_keys_based_on_type(license_type)
         read_license_key_file
         if contents.nil?
