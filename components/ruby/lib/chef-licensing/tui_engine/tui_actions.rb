@@ -146,7 +146,6 @@ module ChefLicensing
           logger.debug "User has an active trial license, free and trial license options will be removed"
           "ask_for_commercial_only"
         else
-          # TODO:
           # Similarly check when to show:
           # 1. free and commercial (return ask_for_free_and_commercial in this case)
           # 2. trial and commercial (return ask_for_trial_and_commercial in this case)
