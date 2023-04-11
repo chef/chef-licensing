@@ -222,7 +222,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
           .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: client_data, status_code: 200 }.to_json,
                      headers: { content_type: "application/json" })
-        
+
       end
       it "creates file, persist both license keys in the file, returns them all" do
         expect(license_key_fetcher.fetch_and_persist).to eq(%w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150 free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111})

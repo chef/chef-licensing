@@ -50,7 +50,7 @@ module ChefLicensing
       new_keys = fetch_license_key_from_arg
       license_type = validate_and_fetch_license_type(new_keys)
       if license_type
-        check_license_restriction(new_keys, license_type)
+        check_license_restriction(license_type)
         # break the flow if there is a restriction in adding license
         return new_keys unless add_license_if_not_restricted(new_keys, license_type)
       end
@@ -59,7 +59,7 @@ module ChefLicensing
       new_keys = fetch_license_key_from_env
       license_type = validate_and_fetch_license_type(new_keys)
       if license_type
-        check_license_restriction(new_keys, license_type)
+        check_license_restriction(license_type)
         # break the flow if there is a restriction in adding license
         return new_keys unless add_license_if_not_restricted(new_keys, license_type)
       end
@@ -230,10 +230,14 @@ module ChefLicensing
       !(license_type_options.include? license_type)
     end
 
-    def prompt_license_addition_restricted(new_keys, license_type)
+    def prompt_license_addition_restricted(license_type)
+      # For trial license
+      # TODO for free license
       config[:start_interaction] = :prompt_license_addition_restriction
       prompt_fetcher.config = config
-      append_extra_info_to_tui_engine({ license_id: new_keys.first, license_type: license_type })
+      # Existing license keys needs to be fetcher to show details of existing license of license type which is restricted.
+      existing_license_keys = file_fetcher.filter_license_keys_based_on_type(license_type)
+      append_extra_info_to_tui_engine({ license_id: existing_license_keys.first, license_type: license_type })
       prompt_fetcher.fetch
     end
 
@@ -242,9 +246,9 @@ module ChefLicensing
       license_restricted?(license_type) ? false : persist_and_concat(new_keys, license_type)
     end
 
-    def check_license_restriction(new_keys, license_type)
+    def check_license_restriction(license_type)
       # prompted after argument and env fetcher to check for license restriction
-      prompt_license_addition_restricted(new_keys, license_type) if license_restricted?(license_type)
+      prompt_license_addition_restricted(license_type) if license_restricted?(license_type)
     end
   end
 end

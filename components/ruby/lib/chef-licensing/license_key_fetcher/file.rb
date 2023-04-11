@@ -53,6 +53,17 @@ module ChefLicensing
         end
       end
 
+      def filter_license_keys_based_on_type(license_type)
+        read_license_key_file
+        if contents.nil?
+          []
+        else
+          contents[:licenses].collect do |x|
+            x[:license_key] if x[:license_type] == license_type
+          end
+        end
+      end
+
       # Writes a license_id file to disk in the location specified,
       # with the content given.
       # @return Array of Errors
