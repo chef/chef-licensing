@@ -102,7 +102,7 @@ module ChefLicensing
       config = {}
 
       # License add restrictions for multiple trial license
-      if license_restricted?("trial")
+      if license_restricted?(:trial)
         config[:start_interaction] = :add_license_except_trial
       else
         config[:start_interaction] = :add_license_all
@@ -192,10 +192,10 @@ module ChefLicensing
 
     def license_type_generation_options
       # TODO free license restrictions
-      license_types = %w{free trial commercial}
+      license_types = %i{free trial commercial}
       existing_license_types = file_fetcher.fetch_license_types
 
-      license_types -= ["trial"] if existing_license_types.include? "trial"
+      license_types -= [:trial] if existing_license_types.include? :trial
       license_types.uniq
     end
 
@@ -227,7 +227,7 @@ module ChefLicensing
 
     def get_license_type(license_key)
       self.license = ChefLicensing.client(license_keys: [license_key])
-      license.license_type.downcase
+      license.license_type.downcase.to_sym
     end
 
     def license_restricted?(license_type)

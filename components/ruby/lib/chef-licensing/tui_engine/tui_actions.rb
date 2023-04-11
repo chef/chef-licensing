@@ -105,13 +105,13 @@ module ChefLicensing
 
       def select_license_generation_based_on_type(inputs)
         if inputs.key? :free_license_selection
-          inputs[:license_type] = "free"
+          inputs[:license_type] = :free
           "free"
         elsif inputs.key? :trial_license_selection
-          inputs[:license_type] = "trial"
+          inputs[:license_type] = :trial
           "trial"
         else
-          inputs[:license_type] = "commercial"
+          inputs[:license_type] = :commercial
           "commercial"
         end
       end
