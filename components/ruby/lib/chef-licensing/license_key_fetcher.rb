@@ -194,8 +194,8 @@ module ChefLicensing
     end
 
     def get_license_type(license_key)
-      self.client = ChefLicensing.client(license_keys: [license_key])
-      client.license_type.downcase
+      self.license = ChefLicensing.client(license_keys: [license_key])
+      license.license_type.downcase
     end
   end
 end
