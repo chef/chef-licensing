@@ -110,7 +110,12 @@ module ChefLicensing
 
       prompt_fetcher.config = config
       append_extra_info_to_tui_engine
-      prompt_fetcher.fetch
+      new_keys = prompt_fetcher.fetch
+      unless new_keys.empty?
+        prompt_fetcher.license_type ||= get_license_type(new_keys.first)
+        persist_and_concat(new_keys, prompt_fetcher.license_type)
+        return license_keys
+      end
     end
 
     # Note: Fetching from arg and env as well, to be able to fetch license when disk is non-writable
