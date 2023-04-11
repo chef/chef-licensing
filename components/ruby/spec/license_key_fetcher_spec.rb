@@ -1,11 +1,14 @@
 require "spec_helper"
 require_relative "../lib/chef-licensing"
 require "tmpdir"
+require "Date" unless defined?(Date)
 
 RSpec.describe ChefLicensing::LicenseKeyFetcher do
 
   let(:output) { StringIO.new }
   let(:logger) { Logger.new(output) }
+
+  let(:api_version) { 2 }
 
   before do
     ChefLicensing.configure do |config|
@@ -105,10 +108,6 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
     let(:argv) { ["--chef-license-key=tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"] }
     let(:env) { { "CHEF_LICENSE_KEY" => "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-152" } }
 
-    let(:api_version) {
-      2
-    }
-
     let(:client_data) {
       {
         "cache": {
@@ -122,7 +121,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
           "status" => "Active",
           "changesTo" => "Grace",
           "changesOn" => "2024-11-01",
-          "changesIn" => "2 days",
+          "changesIn" => "2",
           "usage" => "Active",
           "used" => 2,
           "limit" => 2,
@@ -372,6 +371,312 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
 
       it "raises an error with the message" do
         expect { license_key_fetcher.fetch }.to raise_error(ChefLicensing::LicenseKeyFetcher::Base::InvalidLicenseKeyFormat, /Malformed License Key passed on command line - should be/)
+      end
+    end
+  end
+
+  describe "verify about to expire or expired licenses" do
+    let(:argv) { ["--chef-license-key=tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"] }
+    let(:env) { {} }
+
+    let(:license_keys) {
+      %w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150}
+    }
+
+    context "when the license key is about to expire in 1 day within a week" do
+
+      let(:client_data_about_to_expire_in_1_day) {
+        {
+          "client" => {
+            "license" => "Trial",
+            "status" => "Active",
+            "changesTo" => "Expired",
+            "changesOn" => "#{Date.today + 1}",
+            "changesIn" => "1",
+            "usage" => "Active",
+            "used" => 2,
+            "limit" => 2,
+            "measure" => 2,
+          },
+          "assets" => [ { "id" => "assetguid1", "name" => "Test Asset 1" }, { "id" => "assetguid2", "name" => "Test Asset 2" } ],
+          "features" => [ { "id" => "featureguid1", "name" => "Test Feature 1" }, { "id" => "featureguid2", "name" => "Test Feature 2" } ],
+          "entitlement" => {
+            "id" => "3ff52c37-e41f-4f6c-ad4d-365192205968",
+            "name" => "Inspec",
+            "start" => "2022-11-01",
+            "end" => "2024-11-01",
+            "licenses" => 2,
+            "limits" => [ { "measure" => "nodes", "amount" => 2 } ],
+            "entitled" => false,
+          },
+        }
+      }
+
+      Dir.mktmpdir do |tmpdir|
+        let(:opts) {
+          {
+            logger: logger,
+            argv: argv,
+            env: env,
+            output: output,
+            dir: tmpdir,
+          }
+        }
+
+        let(:license_key_fetcher) { described_class.new(opts) }
+        before do
+          stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+            .with(query: { licenseId: license_keys.first, version: api_version })
+            .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+                       headers: { content_type: "application/json" })
+          stub_request(:get, "#{ChefLicensing::Config.license_server_url}/client")
+            .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
+            .to_return(body: { data: client_data_about_to_expire_in_1_day, status_code: 200 }.to_json,
+                       headers: { content_type: "application/json" })
+        end
+
+        it "nags that it is about to expire" do
+          license_key_fetcher.fetch_and_persist
+          expect(license_key_fetcher.config[:start_interaction]).to eq(:prompt_license_about_to_expire)
+        end
+      end
+    end
+
+    context "when the license key is about to expire in 2 days within a week" do
+
+      let(:client_data_about_to_expire_in_2_days) {
+        {
+          "client" => {
+            "license" => "Trial",
+            "status" => "Active",
+            "changesTo" => "Expired",
+            "changesOn" => "#{Date.today + 2}",
+            "changesIn" => "2",
+            "usage" => "Active",
+            "used" => 2,
+            "limit" => 2,
+            "measure" => 2,
+          },
+          "assets" => [ { "id" => "assetguid1", "name" => "Test Asset 1" }, { "id" => "assetguid2", "name" => "Test Asset 2" } ],
+          "features" => [ { "id" => "featureguid1", "name" => "Test Feature 1" }, { "id" => "featureguid2", "name" => "Test Feature 2" } ],
+          "entitlement" => {
+            "id" => "3ff52c37-e41f-4f6c-ad4d-365192205968",
+            "name" => "Inspec",
+            "start" => "2022-11-01",
+            "end" => "2024-11-01",
+            "licenses" => 2,
+            "limits" => [ { "measure" => "nodes", "amount" => 2 } ],
+            "entitled" => false,
+          },
+        }
+      }
+
+      Dir.mktmpdir do |tmpdir|
+        let(:opts) {
+          {
+            logger: logger,
+            argv: argv,
+            env: env,
+            output: output,
+            dir: tmpdir,
+          }
+        }
+
+        let(:license_key_fetcher) { described_class.new(opts) }
+        before do
+          stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+            .with(query: { licenseId: license_keys.first, version: api_version })
+            .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+                       headers: { content_type: "application/json" })
+          stub_request(:get, "#{ChefLicensing::Config.license_server_url}/client")
+            .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
+            .to_return(body: { data: client_data_about_to_expire_in_2_days, status_code: 200 }.to_json,
+                       headers: { content_type: "application/json" })
+        end
+
+        it "nags that it is about to expire" do
+          license_key_fetcher.fetch_and_persist
+          expect(license_key_fetcher.config[:start_interaction]).to eq(:prompt_license_about_to_expire)
+        end
+      end
+    end
+
+    context "when the license key is about to expire in 7 days within a week" do
+
+      let(:client_data_about_to_expire_in_7_days) {
+        {
+          "client" => {
+            "license" => "Trial",
+            "status" => "Active",
+            "changesTo" => "Expired",
+            "changesOn" => "#{Date.today + 7}",
+            "changesIn" => "7",
+            "usage" => "Active",
+            "used" => 2,
+            "limit" => 2,
+            "measure" => 2,
+          },
+          "assets" => [ { "id" => "assetguid1", "name" => "Test Asset 1" }, { "id" => "assetguid2", "name" => "Test Asset 2" } ],
+          "features" => [ { "id" => "featureguid1", "name" => "Test Feature 1" }, { "id" => "featureguid2", "name" => "Test Feature 2" } ],
+          "entitlement" => {
+            "id" => "3ff52c37-e41f-4f6c-ad4d-365192205968",
+            "name" => "Inspec",
+            "start" => "2022-11-01",
+            "end" => "2024-11-01",
+            "licenses" => 2,
+            "limits" => [ { "measure" => "nodes", "amount" => 2 } ],
+            "entitled" => false,
+          },
+        }
+      }
+
+      Dir.mktmpdir do |tmpdir|
+        let(:opts) {
+          {
+            logger: logger,
+            argv: argv,
+            env: env,
+            output: output,
+            dir: tmpdir,
+          }
+        }
+
+        let(:license_key_fetcher) { described_class.new(opts) }
+        before do
+          stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+            .with(query: { licenseId: license_keys.first, version: api_version })
+            .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+                       headers: { content_type: "application/json" })
+          stub_request(:get, "#{ChefLicensing::Config.license_server_url}/client")
+            .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
+            .to_return(body: { data: client_data_about_to_expire_in_7_days, status_code: 200 }.to_json,
+                       headers: { content_type: "application/json" })
+        end
+
+        it "nags that it is about to expire" do
+          license_key_fetcher.fetch_and_persist
+          expect(license_key_fetcher.config[:start_interaction]).to eq(:prompt_license_about_to_expire)
+        end
+      end
+    end
+
+    context "when the license key is going to expire in 8 days, greater than a week threshold" do
+
+      let(:client_data_about_to_expire_in_8_days) {
+        {
+          "client" => {
+            "license" => "Trial",
+            "status" => "Active",
+            "changesTo" => "Expired",
+            "changesOn" => "#{Date.today + 8}",
+            "changesIn" => "8",
+            "usage" => "Active",
+            "used" => 2,
+            "limit" => 2,
+            "measure" => 2,
+          },
+          "assets" => [ { "id" => "assetguid1", "name" => "Test Asset 1" }, { "id" => "assetguid2", "name" => "Test Asset 2" } ],
+          "features" => [ { "id" => "featureguid1", "name" => "Test Feature 1" }, { "id" => "featureguid2", "name" => "Test Feature 2" } ],
+          "entitlement" => {
+            "id" => "3ff52c37-e41f-4f6c-ad4d-365192205968",
+            "name" => "Inspec",
+            "start" => "2022-11-01",
+            "end" => "2024-11-01",
+            "licenses" => 2,
+            "limits" => [ { "measure" => "nodes", "amount" => 2 } ],
+            "entitled" => false,
+          },
+        }
+      }
+
+      Dir.mktmpdir do |tmpdir|
+        let(:opts) {
+          {
+            logger: logger,
+            argv: argv,
+            env: env,
+            output: output,
+            dir: tmpdir,
+          }
+        }
+
+        let(:license_key_fetcher) { described_class.new(opts) }
+        before do
+          stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+            .with(query: { licenseId: license_keys.first, version: api_version })
+            .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+                       headers: { content_type: "application/json" })
+          stub_request(:get, "#{ChefLicensing::Config.license_server_url}/client")
+            .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
+            .to_return(body: { data: client_data_about_to_expire_in_8_days, status_code: 200 }.to_json,
+                       headers: { content_type: "application/json" })
+        end
+
+        it "does not nags that it is about to expire" do
+          license_key_fetcher.fetch_and_persist
+          expect(license_key_fetcher.config[:start_interaction]).to eq(nil)
+        end
+      end
+    end
+
+    context "when the license key is expired and no day left, lesser than a min threshold of 1 day" do
+
+      let(:client_data_expired) {
+        {
+          "client" => {
+            "license" => "Trial",
+            "status" => "Expired",
+            "changesTo" => "Expired",
+            "changesOn" => "#{Date.today}",
+            "changesIn" => "0",
+            "usage" => "Active",
+            "used" => 2,
+            "limit" => 2,
+            "measure" => 2,
+          },
+          "assets" => [ { "id" => "assetguid1", "name" => "Test Asset 1" }, { "id" => "assetguid2", "name" => "Test Asset 2" } ],
+          "features" => [ { "id" => "featureguid1", "name" => "Test Feature 1" }, { "id" => "featureguid2", "name" => "Test Feature 2" } ],
+          "entitlement" => {
+            "id" => "3ff52c37-e41f-4f6c-ad4d-365192205968",
+            "name" => "Inspec",
+            "start" => "2022-11-01",
+            "end" => "2024-11-01",
+            "licenses" => 2,
+            "limits" => [ { "measure" => "nodes", "amount" => 2 } ],
+            "entitled" => false,
+          },
+        }
+      }
+
+      Dir.mktmpdir do |tmpdir|
+        let(:opts) {
+          {
+            logger: logger,
+            argv: argv,
+            env: env,
+            output: output,
+            dir: tmpdir,
+          }
+        }
+
+        let(:license_key_fetcher) { described_class.new(opts) }
+        before do
+          stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+            .with(query: { licenseId: license_keys.first, version: api_version })
+            .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+                       headers: { content_type: "application/json" })
+          stub_request(:get, "#{ChefLicensing::Config.license_server_url}/client")
+            .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
+            .to_return(body: { data: client_data_expired, status_code: 200 }.to_json,
+                       headers: { content_type: "application/json" })
+        end
+
+        it "does not nags that it is about to expire but that it is expired" do
+          license_key_fetcher.fetch_and_persist
+          expect(license_key_fetcher.config[:start_interaction]).to_not eq(:prompt_license_about_to_expire)
+          expect(license_key_fetcher.config[:start_interaction]).to_not eq(nil)
+          expect(license_key_fetcher.config[:start_interaction]).to eq(:prompt_license_expired)
+        end
       end
     end
   end

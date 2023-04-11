@@ -8,6 +8,7 @@ require_relative "license_key_fetcher/base"
 require_relative "license_key_fetcher/file"
 require_relative "license_key_fetcher/prompt"
 require_relative "../chef-licensing"
+require "tty-spinner"
 # LicenseKeyFetcher allows us to inspect obtain the license Key from the user in a variety of ways.
 module ChefLicensing
   class LicenseKeyFetcher
@@ -64,24 +65,17 @@ module ChefLicensing
         logger.debug "License Key fetcher - detected TTY, prompting..."
         new_keys = prompt_fetcher.fetch
 
-        # Scenario: When a user is prompted for license expiry beforehand expiration and license is not yet renewed
-        if new_keys.empty? && %i{prompt_license_about_to_expire prompt_license_expired}.include?(config[:start_interaction])
-          # Not blocking any license type in case of expiry
-          return @license_keys
-        elsif !new_keys.empty?
+        unless new_keys.empty?
           @license_keys.concat(new_keys)
           new_keys.each { |key| file_fetcher.persist(key) }
           return license_keys
         end
-      else
-        if config[:start_interaction] == :prompt_license_about_to_expire
-          logger.warn "Your #{license.license_type} license is going to expire tomorrow."
-          return @license_keys
-        elsif config[:start_interaction] == :prompt_license_expired
-          # Not blocking any license type in case of expiry
-          logger.error "Your #{license.license_type} license has been expired."
-          return @license_keys
-        end
+      end
+
+      # Scenario: When a user is prompted for license expiry and license is not yet renewed
+      if new_keys.empty? && %i{prompt_license_about_to_expire prompt_license_expired}.include?(config[:start_interaction])
+        # Not blocking any license type in case of expiry
+        return @license_keys
       end
 
       # Otherwise nothing was able to fetch a license. Throw an exception.
@@ -99,7 +93,11 @@ module ChefLicensing
     def append_extra_info_to_tui_engine
       extra_info = {}
       extra_info[:chef_product_name] = ChefLicensing::Config.chef_product_name&.capitalize
-      extra_info[:license_type] = license.license_type unless @license_keys.empty? && !license
+      unless @license_keys.empty? && !license
+        extra_info[:license_type] = license.license_type.capitalize
+        extra_info[:number_of_days_in_expiration] = license.number_of_days_in_expiration
+        extra_info[:license_expiration_date] = Date.parse(license.expiration_date).strftime("%a, %d %b %Y")
+      end
       prompt_fetcher.append_info_to_tui_engine(extra_info) unless extra_info.empty?
     end
 
@@ -134,8 +132,11 @@ module ChefLicensing
     end
 
     def licenses_active?
+      spinner = TTY::Spinner.new(":spinner [Running] License validation in progress...", format: :dots, clear: true)
+      spinner.auto_spin # Start the spinner
       # This call returns a license based on client logic
       self.license = ChefLicensing.client(license_keys: @license_keys)
+      spinner.success # Stop the spinner
       if license.expired? || license.have_grace?
         config[:start_interaction] = :prompt_license_expired
         prompt_fetcher.config = config
