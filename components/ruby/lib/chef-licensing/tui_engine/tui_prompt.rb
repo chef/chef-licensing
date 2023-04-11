@@ -84,6 +84,10 @@ module ChefLicensing
         timeout_helper(messages, method(:select), prompt_attributes)
       end
 
+      def silent(messages, prompt_attributes)
+        Array(messages).first
+      end
+
       private
 
       def fetch_header_and_choices(messages, prompt_type)

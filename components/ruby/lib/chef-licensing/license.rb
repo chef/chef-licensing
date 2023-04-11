@@ -8,6 +8,7 @@ module ChefLicensing
   class License
 
     attr_reader :id, :license_type , :status, :expiration_date, :expiration_status
+    attr_accessor :number_of_days_in_expiration
 
     def initialize(opts = {})
       # API parser based on the API call
@@ -122,6 +123,25 @@ module ChefLicensing
         @entitled = entitlement_data["entitled"]
         @status = entitlement_data["status"]
       end
+    end
+
+    def have_grace?
+      status.eql?("Grace")
+    end
+
+    def expired?
+      status.eql?("Expired")
+    end
+
+    def active?
+      status.eql?("Active")
+    end
+
+    def about_to_expire?
+      require "Date" unless defined?(Date)
+      self.number_of_days_in_expiration = (Date.parse(expiration_date) - Date.today).to_i
+      # starts to nag before a week when about to expire
+      status.eql?("Active") && expiration_status.eql?("Expired") && ((1..7).include? number_of_days_in_expiration)
     end
   end
 end

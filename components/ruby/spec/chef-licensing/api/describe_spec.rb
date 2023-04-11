@@ -88,16 +88,34 @@ RSpec.describe ChefLicensing::Api::Describe do
       }
   }
 
+  let(:describe_api_invalid_response) {
+    {
+      "data": {
+          "license": nil,
+          "Assets": nil,
+          "Software": nil,
+          "Features": nil,
+          "Services": nil,
+      },
+      "message": "",
+      "status": 200,
+    }
+  }
+
   subject { described_class.list(license_keys: license_keys) }
 
   describe ".list" do
-    before do
-      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/desc")
-        .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
-        .to_return(body: { data: describe_api_data, status_code: 200 }.to_json,
-                   headers: { content_type: "application/json" })
+
+    context "when license is valid" do
+      before do
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/desc")
+          .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: describe_api_data, status_code: 200 }.to_json,
+                    headers: { content_type: "application/json" })
+      end
+
+      it { is_expected.to be_truthy }
     end
-    it { is_expected.to be_truthy }
 
     context "when license is invalid" do
       let(:error_message) { "Invalid licenses" }
@@ -105,6 +123,18 @@ RSpec.describe ChefLicensing::Api::Describe do
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/desc")
           .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: false, message: error_message, status_code: 400 }.to_json,
+                     headers: { content_type: "application/json" })
+      end
+
+      it { expect { subject }.to raise_error(ChefLicensing::DescribeError, error_message) }
+    end
+
+    context "when api response is invalid with status code of 200 - Part 1" do
+      let(:error_message) { "No license details found for the given license keys" }
+      before do
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/desc")
+          .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: describe_api_invalid_response, message: error_message, status_code: 200 }.to_json,
                      headers: { content_type: "application/json" })
       end
 

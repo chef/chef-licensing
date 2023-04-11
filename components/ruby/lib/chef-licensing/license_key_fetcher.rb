@@ -16,7 +16,6 @@ module ChefLicensing
     end
 
     attr_reader :config, :license_keys, :arg_fetcher, :env_fetcher, :file_fetcher, :prompt_fetcher, :logger
-    attr_accessor :number_of_days_in_expiration, :license_expiration_date
     def initialize(opts = {})
       @config = opts
       @logger = ChefLicensing::Config.logger
@@ -35,7 +34,7 @@ module ChefLicensing
       @env_fetcher = ChefLicensing::EnvFetcher.new(env)
       @file_fetcher = LicenseKeyFetcher::File.new(config)
       @prompt_fetcher = LicenseKeyFetcher::Prompt.new(config)
-      @client = nil
+      @license = nil
     end
 
     #
@@ -84,13 +83,20 @@ module ChefLicensing
       raise LicenseKeyNotFetchedError.new("Unable to obtain a License Key.")
     end
 
+    def add_license
+      config[:start_interaction] = :add_license
+      prompt_fetcher.config = config
+      append_extra_info_to_tui_engine
+      prompt_fetcher.fetch
+    end
+
     def append_extra_info_to_tui_engine
       extra_info = {}
       extra_info[:chef_product_name] = ChefLicensing::Config.chef_product_name&.capitalize
-      unless @license_keys.empty? && !client
-        extra_info[:license_type] = client.license_type.capitalize
-        extra_info[:number_of_days_in_expiration] = number_of_days_in_expiration
-        extra_info[:license_expiration_date] = license_expiration_date
+      unless @license_keys.empty? && !license
+        extra_info[:license_type] = license.license_type.capitalize
+        extra_info[:number_of_days_in_expiration] = license.number_of_days_in_expiration
+        extra_info[:license_expiration_date] = Date.parse(license.expiration_date).strftime("%a, %d %b %Y")
       end
       prompt_fetcher.append_info_to_tui_engine(extra_info) unless extra_info.empty?
     end
@@ -108,9 +114,13 @@ module ChefLicensing
       new(opts).fetch
     end
 
+    def self.add_license(opts = {})
+      new(opts).add_license
+    end
+
     private
 
-    attr_accessor :client
+    attr_accessor :license
 
     def fetch_from_file
       if file_fetcher.persisted?
@@ -124,35 +134,20 @@ module ChefLicensing
     def licenses_active?
       spinner = TTY::Spinner.new(":spinner [Running] License validation in progress...", format: :dots, clear: true)
       spinner.auto_spin # Start the spinner
-      self.client = ChefLicensing.client(license_keys: @license_keys)
+      # This call returns a license based on client logic
+      self.license = ChefLicensing.client(license_keys: @license_keys)
       spinner.success # Stop the spinner
-      if expired? || have_grace?
+      if license.expired? || license.have_grace?
         config[:start_interaction] = :prompt_license_expired
         prompt_fetcher.config = config
         false
-      elsif about_to_expire?
+      elsif license.about_to_expire?
         config[:start_interaction] = :prompt_license_about_to_expire
         prompt_fetcher.config = config
         false
       else
         true
       end
-    end
-
-    def have_grace?
-      client.status.eql?("Grace")
-    end
-
-    def expired?
-      client.status.eql?("Expired")
-    end
-
-    def about_to_expire?
-      require "Date" unless defined?(Date)
-      self.number_of_days_in_expiration = (Date.parse(client.expiration_date) - Date.today).to_i
-      self.license_expiration_date = Date.parse(client.expiration_date).strftime("%a, %d %b %Y")
-      # starts to nag before a week when about to expire
-      client.status.eql?("Active") && client.expiration_status.eql?("Expired") && ((1..7).include? number_of_days_in_expiration)
     end
 
     def concat_validate_and_persist(new_keys)
