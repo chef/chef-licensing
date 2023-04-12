@@ -138,7 +138,7 @@ module ChefLicensing
       # default values
       extra_info[:chef_product_name] = ChefLicensing::Config.chef_product_name&.capitalize
       unless @license_keys.empty? && !license
-        extra_info[:license_type] = license.license_type
+        extra_info[:license_type] = license.license_type.capitalize
         extra_info[:number_of_days_in_expiration] = license.number_of_days_in_expiration
         extra_info[:license_expiration_date] = Date.parse(license.expiration_date).strftime("%a, %d %b %Y")
       end

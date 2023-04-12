@@ -69,7 +69,7 @@ module ChefLicensing
         else
           contents[:licenses].collect do |x|
             x[:license_key] if x[:license_type] == license_type
-          end
+          end.compact
         end
       end
 
