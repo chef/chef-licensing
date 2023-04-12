@@ -4,7 +4,6 @@ require "yaml"
 require "date"
 require "fileutils" unless defined?(FileUtils)
 require_relative "../license_key_fetcher"
-require_relative "../exceptions/invalid_license"
 require_relative "../config"
 
 module ChefLicensing
@@ -13,7 +12,14 @@ module ChefLicensing
     # Represents a fethced license ID recorded on disk
     class File
       LICENSE_KEY_FILE = "licenses.yaml".freeze
-      LICENSE_FILE_FORMAT_VERSION = "2.0.0".freeze
+      LICENSE_FILE_FORMAT_VERSION = "3.0.0".freeze
+
+      # License types list
+      LICENSE_TYPES = {
+        free: :free,
+        trial: :trial,
+        commercial: :commercial,
+      }.freeze
 
       attr_reader :logger, :contents, :location
       attr_accessor :local_dir # Optional local path to use to seek
@@ -38,21 +44,15 @@ module ChefLicensing
         licenses.collect { |x| x[:license_key] }
       end
 
-      def validate_and_persist(license_key)
-        is_valid = validate_license_key(license_key)
-        persist(license_key) if is_valid
-      end
-
-      def validate_license_key(license_key)
-        ChefLicensing::LicenseKeyValidator.validate!(license_key)
-      end
-
       # Writes a license_id file to disk in the location specified,
       # with the content given.
       # @return Array of Errors
-      def persist(license_key)
+      def persist(license_key, license_type = nil)
+        raise LicenseKeyNotPersistedError.new("License type #{license_type} is not a valid license type.") unless LICENSE_TYPES[license_type.to_sym]
+
         license_data = {
           license_key: license_key,
+          license_type: LICENSE_TYPES[license_type.to_sym],
           update_time: DateTime.now.to_s,
         }
 
