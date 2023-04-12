@@ -34,20 +34,23 @@ module ChefLicensing
         is_valid = ChefLicensing::LicenseKeyValidator.validate!(license_id)
         spinner.success # Stop the spinner
         self.license_id = license_id
-        self.license_type = get_license_type(license_id)
-
-        if license_restricted?(license_type)
-          # Existing license keys needs to be fetcher to show details of existing license of license type which is restricted.
-          license_keys_in_file = license_keys_based_on_type(license_type)
-          self.license_id = license_keys_in_file.first
-          "restrict_license"
-        else
-          is_valid
-        end
+        is_valid
       rescue ChefLicensing::InvalidLicense => e
         spinner.error # Stop the spinner
         self.invalid_license_msg = e.message || "Something went wrong while validating the license"
         false
+      end
+
+      def is_license_allowed?(input)
+        self.license_type = get_license_type(license_id)
+        if license_restricted?(license_type)
+          # Existing license keys needs to be fetcher to show details of existing license of license type which is restricted.
+          existing_license_keys_in_file = LicenseKeyFetcher::File.fetch_license_keys_based_on_type(license_type)
+          self.license_id = existing_license_keys_in_file.last
+          false
+        else
+          true
+        end
       end
 
       def is_user_name_valid?(input)
@@ -202,12 +205,6 @@ module ChefLicensing
         license_type_options = file_fetcher.license_type_generation_options_based_on_file
         !(license_type_options.include? license_type)
       end
-
-      def license_keys_based_on_type(license_type)
-        file_fetcher = LicenseKeyFetcher::File.new({})
-        file_fetcher.filter_license_keys_based_on_type(license_type)
-      end
-
     end
   end
 end

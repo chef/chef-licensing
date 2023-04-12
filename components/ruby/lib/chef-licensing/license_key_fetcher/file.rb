@@ -62,7 +62,7 @@ module ChefLicensing
         license_types.uniq
       end
 
-      def filter_license_keys_based_on_type(license_type)
+      def fetch_license_keys_based_on_type(license_type)
         read_license_key_file
         if contents.nil?
           []
@@ -132,6 +132,10 @@ module ChefLicensing
 
       def self.default_file_location
         ChefConfig::PathHelper.home(".chef")
+      end
+
+      def self.fetch_license_keys_based_on_type(license_type, opts = {})
+        new(opts).fetch_license_keys_based_on_type(license_type)
       end
 
       private

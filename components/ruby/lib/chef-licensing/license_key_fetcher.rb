@@ -50,29 +50,28 @@ module ChefLicensing
       new_keys = fetch_license_key_from_arg
       license_type = validate_and_fetch_license_type(new_keys)
       if license_type
-        check_license_restriction(license_type)
-        # break the flow if there is a restriction in adding license
-        return new_keys unless add_license_if_not_restricted(new_keys, license_type)
+        license_restricted = license_restricted?(license_type)
+        add_license_if_not_restricted(new_keys, license_type)
+        # break the flow after the prompt if there is a restriction in adding license
+        return new_keys if license_restricted
       end
 
       logger.debug "License Key fetcher examining ENV checks"
       new_keys = fetch_license_key_from_env
       license_type = validate_and_fetch_license_type(new_keys)
       if license_type
-        check_license_restriction(license_type)
-        # break the flow if there is a restriction in adding license
-        return new_keys unless add_license_if_not_restricted(new_keys, license_type)
+        license_restricted = license_restricted?(license_type)
+        add_license_if_not_restricted(new_keys, license_type)
+        # break the flow after the prompt if there is a restriction in adding license
+        return new_keys if license_restricted
       end
 
       # If it has previously been fetched and persisted, read from disk and set runtime decision
       logger.debug "License Key fetcher examining file checks"
       fetch_from_file
 
-      @license_keys = @license_keys.uniq
       # licenses expiration check
-      unless @license_keys.empty?
-        return @license_keys if licenses_active?
-      end
+      return @license_keys if !@license_keys.empty? && licenses_active?
 
       # Lowest priority is to interactively prompt if we have a TTY
       if config[:output].isatty
@@ -81,6 +80,7 @@ module ChefLicensing
         new_keys = prompt_fetcher.fetch
 
         unless new_keys.empty?
+          # If license type is not selected using TUI, assign it using API call to fetch type.
           prompt_fetcher.license_type ||= get_license_type(new_keys.first)
           persist_and_concat(new_keys, prompt_fetcher.license_type)
           return license_keys
@@ -107,7 +107,7 @@ module ChefLicensing
       unless new_keys.empty?
         prompt_fetcher.license_type ||= get_license_type(new_keys.first)
         persist_and_concat(new_keys, prompt_fetcher.license_type)
-        return license_keys
+        license_keys
       end
     end
 
@@ -157,7 +157,7 @@ module ChefLicensing
         file_keys = file_fetcher.fetch
         @license_keys.concat(file_keys).uniq # uniq is required in case file was a writable and to avoid repeated values.
       end
-      @license_keys
+      @license_keys = @license_keys.uniq
     end
 
     def licenses_active?
@@ -229,19 +229,18 @@ module ChefLicensing
       config[:start_interaction] = :prompt_license_addition_restriction
       prompt_fetcher.config = config
       # Existing license keys needs to be fetcher to show details of existing license of license type which is restricted.
-      existing_license_keys = file_fetcher.filter_license_keys_based_on_type(license_type)
-      append_extra_info_to_tui_engine({ license_id: existing_license_keys.first, license_type: license_type })
+      existing_license_keys_in_file = file_fetcher.fetch_license_keys_based_on_type(license_type)
+      append_extra_info_to_tui_engine({ license_id: existing_license_keys_in_file.last, license_type: license_type })
       prompt_fetcher.fetch
     end
 
-    # used for env and argument fetched licenses before persisting
     def add_license_if_not_restricted(new_keys, license_type)
-      license_restricted?(license_type) ? false : persist_and_concat(new_keys, license_type)
-    end
-
-    def check_license_restriction(license_type)
-      # prompted after argument and env fetcher to check for license restriction
-      prompt_license_addition_restricted(license_type) if license_restricted?(license_type)
+      if license_restricted?(license_type)
+        # prompt the message that this addition of license is restricted.
+        prompt_license_addition_restricted(license_type)
+      else
+        persist_and_concat(new_keys, license_type)
+      end
     end
   end
 end

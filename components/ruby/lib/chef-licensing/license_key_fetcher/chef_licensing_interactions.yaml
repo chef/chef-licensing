@@ -165,12 +165,18 @@ interactions:
 
   validate_license_id_with_api:
     action: is_license_valid_on_server?
-    paths: [validation_success, fetch_invalid_license_msg, prompt_error_license_addition_restricted]
+    paths: [validate_license_restriction, fetch_invalid_license_msg]
+    response_path_map:
+      "true": validate_license_restriction
+      "false": fetch_invalid_license_msg
+    description: "is_license_valid_on_server? is a method defined in TUIActions class"
+
+  validate_license_restriction:
+    action: is_license_allowed?
+    paths: [validation_success, prompt_error_license_addition_restricted]
     response_path_map:
       "true": validation_success
-      "false": fetch_invalid_license_msg
-      "restrict_license": prompt_error_license_addition_restricted
-    description: "is_license_valid_on_server? is a method defined in TUIActions class"
+      "false": prompt_error_license_addition_restricted
 
   validation_success:
     messages: "✔ [Success] License validated successfully"
