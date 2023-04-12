@@ -40,7 +40,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
 
     it "returns multiple license keys from a license file" do
       file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: multiple_keys_license_dir })
-      expect(file_fetcher.fetch).to eq(%w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150 tmns-0f76efaf-c45c-4d92-86b2-2d144ce73dfa-150})
+      expect(file_fetcher.fetch).to eq(%w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150 free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111})
     end
   end
 

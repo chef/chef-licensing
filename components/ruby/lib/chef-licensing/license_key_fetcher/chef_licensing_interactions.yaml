@@ -18,7 +18,7 @@ interactions:
     prompt_type: "say"
     paths: [ask_if_user_has_license_id]
 
-  add_license:
+  add_license_all:
     messages: |
       ------------------------------------------------------------
         To continue using Chef <%= input[:chef_product_name] %>, a License ID is required.
@@ -28,6 +28,42 @@ interactions:
       -------------------------
     prompt_type: "say"
     paths: [ask_if_user_has_license_id]
+
+  prompt_license_addition_restriction:
+    action: set_license_info
+    paths: [prompt_error_license_addition_restricted]
+
+  prompt_error_license_addition_restricted:
+    messages: "✖ [Error] License validation failed.\n"
+    prompt_type: "error"
+    paths: [license_addition_restricted_message]
+
+  license_addition_restricted_message:
+    action: fetch_license_type
+    paths: [trial_already_exist_message]
+    response_path_map:
+      "trial": trial_already_exist_message
+
+  trial_already_exist_message:
+    messages: "A trial license already exists with following details \n"
+    prompt_type: "say"
+    paths: [add_license_info]
+
+  add_license_info:
+    action: display_license_info
+    paths: [fetch_license_type]
+
+  fetch_license_type:
+    action: fetch_license_type
+    paths: [trial_restriction_message]
+    response_path_map:
+      "trial": trial_restriction_message
+
+  trial_restriction_message:
+    prompt_type: "say"
+    messages:
+      Kindly generate a free or commercial license by using command <%= input[:pastel].bold("inspec license add")%>
+    paths: [exit]
 
   prompt_license_expired:
     messages: |
@@ -59,6 +95,18 @@ interactions:
     response_path_map:
       "I already have a license ID": ask_for_license_id
       "I don't have a license ID and would like to generate a new license ID": info_of_license_types
+      "Skip": skip_message
+
+  ask_if_user_has_license_id_except_trial:
+    messages: ["\nPlease choose one of the options below",["I already have a license ID", "I don't have a license ID and would like to generate a new license ID", "Skip"]]
+    prompt_type: "timeout_select"
+    prompt_attributes:
+      timeout_duration: 60
+      timeout_message: "\nPrompt timed out. Use non-interactive flags or enter an answer within 60 seconds."
+    paths: [ask_for_license_id, info_of_license_types_except_trial, skip_message]
+    response_path_map:
+      "I already have a license ID": ask_for_license_id
+      "I don't have a license ID and would like to generate a new license ID": info_of_license_types_except_trial
       "Skip": skip_message
 
   skip_message:
@@ -106,11 +154,18 @@ interactions:
 
   validate_license_id_with_api:
     action: is_license_valid_on_server?
-    paths: [validation_success, fetch_invalid_license_msg]
+    paths: [validate_license_restriction, fetch_invalid_license_msg]
     response_path_map:
-      "true": validation_success
+      "true": validate_license_restriction
       "false": fetch_invalid_license_msg
     description: "is_license_valid_on_server? is a method defined in TUIActions class"
+
+  validate_license_restriction:
+    action: is_license_allowed?
+    paths: [validation_success, prompt_error_license_addition_restricted]
+    response_path_map:
+      "true": validation_success
+      "false": prompt_error_license_addition_restricted
 
   validation_success:
     messages: "✔ [Success] License validated successfully"
@@ -150,9 +205,30 @@ interactions:
 
       We have the following types of licenses.
     prompt_type: "say"
-    paths: [ask_for_license_type]
+    paths: [filter_license_type_options]
 
-  ask_for_license_type:
+  filter_license_type_options:
+    action: filter_license_type_options
+    paths: [ask_for_all_license_type, ask_for_license_except_trial]
+    response_path_map:
+      "ask_for_all_license_type": ask_for_all_license_type
+      "ask_for_license_except_trial": ask_for_license_except_trial
+
+  ask_for_license_except_trial:
+    prompt_type: "select"
+    messages: ["Select the type of license below and then enter user details\n" ,
+      [
+      "1. Free license\n     Validity: Unlimited\n     No. of targets: 10\n",
+      "2. Commercial license\n     Get in touch with the Account/Sales team.\n",
+      "3. Quit license generation"
+      ]]
+    paths: [free_license_selection, commercial_license_selection, exit]
+    response_path_map:
+      "1. Free license\n     Validity: Unlimited\n     No. of targets: 10\n": free_license_selection
+      "2. Commercial license\n     Get in touch with the Account/Sales team.\n": commercial_license_selection
+      "3. Quit license generation": exit
+
+  ask_for_all_license_type:
     prompt_type: "select"
     messages: ["Select the type of license below and then enter user details\n" ,
       [
@@ -308,8 +384,8 @@ interactions:
     response_path_map:
       "Confirm the details and proceed": pre_license_generation
       "Reselect the license type": clear_current_license_type_selection
-      "Edit user details": "ask_for_user_details"
-      "Quit the license generation process": "exit"
+      "Edit user details": ask_for_user_details
+      "Quit the license generation process": exit
 
   clear_current_license_type_selection:
     action: clear_license_type_selection

@@ -49,22 +49,29 @@ module ChefLicensing
       logger.debug "License Key fetcher examining CLI arg checks"
       new_keys = fetch_license_key_from_arg
       license_type = validate_and_fetch_license_type(new_keys)
-      persist_and_concat(new_keys, license_type) if license_type
+      if license_type
+        license_restricted = license_restricted?(license_type)
+        add_license_if_not_restricted(new_keys, license_type)
+        # break the flow after the prompt if there is a restriction in adding license
+        return new_keys if license_restricted
+      end
 
       logger.debug "License Key fetcher examining ENV checks"
       new_keys = fetch_license_key_from_env
       license_type = validate_and_fetch_license_type(new_keys)
-      persist_and_concat(new_keys, license_type) if license_type
+      if license_type
+        license_restricted = license_restricted?(license_type)
+        add_license_if_not_restricted(new_keys, license_type)
+        # break the flow after the prompt if there is a restriction in adding license
+        return new_keys if license_restricted
+      end
 
       # If it has previously been fetched and persisted, read from disk and set runtime decision
       logger.debug "License Key fetcher examining file checks"
       fetch_from_file
 
-      @license_keys = @license_keys.uniq
       # licenses expiration check
-      unless @license_keys.empty?
-        return @license_keys if licenses_active?
-      end
+      return @license_keys if !@license_keys.empty? && licenses_active?
 
       # Lowest priority is to interactively prompt if we have a TTY
       if config[:output].isatty
@@ -73,6 +80,7 @@ module ChefLicensing
         new_keys = prompt_fetcher.fetch
 
         unless new_keys.empty?
+          # If license type is not selected using TUI, assign it using API call to fetch type.
           prompt_fetcher.license_type ||= get_license_type(new_keys.first)
           persist_and_concat(new_keys, prompt_fetcher.license_type)
           return license_keys
@@ -91,21 +99,16 @@ module ChefLicensing
     end
 
     def add_license
-      config[:start_interaction] = :add_license
+      config = {}
+      config[:start_interaction] = :add_license_all
       prompt_fetcher.config = config
       append_extra_info_to_tui_engine
-      prompt_fetcher.fetch
-    end
-
-    def append_extra_info_to_tui_engine
-      extra_info = {}
-      extra_info[:chef_product_name] = ChefLicensing::Config.chef_product_name&.capitalize
-      unless @license_keys.empty? && !license
-        extra_info[:license_type] = license.license_type.capitalize
-        extra_info[:number_of_days_in_expiration] = license.number_of_days_in_expiration
-        extra_info[:license_expiration_date] = Date.parse(license.expiration_date).strftime("%a, %d %b %Y")
+      new_keys = prompt_fetcher.fetch
+      unless new_keys.empty?
+        prompt_fetcher.license_type ||= get_license_type(new_keys.first)
+        persist_and_concat(new_keys, prompt_fetcher.license_type)
+        license_keys
       end
-      prompt_fetcher.append_info_to_tui_engine(extra_info) unless extra_info.empty?
     end
 
     # Note: Fetching from arg and env as well, to be able to fetch license when disk is non-writable
@@ -129,13 +132,32 @@ module ChefLicensing
 
     attr_accessor :license
 
+    def append_extra_info_to_tui_engine(info = {})
+      extra_info = {}
+
+      # default values
+      extra_info[:chef_product_name] = ChefLicensing::Config.chef_product_name&.capitalize
+      unless @license_keys.empty? && !license
+        extra_info[:license_type] = license.license_type.capitalize
+        extra_info[:number_of_days_in_expiration] = license.number_of_days_in_expiration
+        extra_info[:license_expiration_date] = Date.parse(license.expiration_date).strftime("%a, %d %b %Y")
+      end
+
+      unless info.empty? # ability to add info hash through arguments
+        info.each do |key, value|
+          extra_info[key] = value
+        end
+      end
+      prompt_fetcher.append_info_to_tui_engine(extra_info) unless extra_info.empty?
+    end
+
     def fetch_from_file
       if file_fetcher.persisted?
         # This could be useful if the file was writable in past but is not writable in current scenario and new keys are not persisted in the file
         file_keys = file_fetcher.fetch
         @license_keys.concat(file_keys).uniq # uniq is required in case file was a writable and to avoid repeated values.
       end
-      @license_keys
+      @license_keys = @license_keys.uniq
     end
 
     def licenses_active?
@@ -193,7 +215,32 @@ module ChefLicensing
 
     def get_license_type(license_key)
       self.license = ChefLicensing.client(license_keys: [license_key])
-      license.license_type.downcase
+      license.license_type.downcase.to_sym
+    end
+
+    def license_restricted?(license_type)
+      license_type_options = file_fetcher.license_type_generation_options_based_on_file
+      !(license_type_options.include? license_type)
+    end
+
+    def prompt_license_addition_restricted(license_type)
+      # For trial license
+      # TODO for free license
+      config[:start_interaction] = :prompt_license_addition_restriction
+      prompt_fetcher.config = config
+      # Existing license keys needs to be fetcher to show details of existing license of license type which is restricted.
+      existing_license_keys_in_file = file_fetcher.fetch_license_keys_based_on_type(license_type)
+      append_extra_info_to_tui_engine({ license_id: existing_license_keys_in_file.last, license_type: license_type })
+      prompt_fetcher.fetch
+    end
+
+    def add_license_if_not_restricted(new_keys, license_type)
+      if license_restricted?(license_type)
+        # prompt the message that this addition of license is restricted.
+        prompt_license_addition_restricted(license_type)
+      else
+        persist_and_concat(new_keys, license_type)
+      end
     end
   end
 end

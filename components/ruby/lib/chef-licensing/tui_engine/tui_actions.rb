@@ -11,7 +11,7 @@ require "tty-spinner"
 module ChefLicensing
   class TUIEngine
     class TUIActions
-      attr_accessor :logger, :output, :license_id, :error_msg, :rejection_msg, :invalid_license_msg
+      attr_accessor :logger, :output, :license_id, :error_msg, :rejection_msg, :invalid_license_msg, :license_type
       def initialize(opts = {})
         @logger = ChefLicensing::Config.logger
         @output = ChefLicensing::Config.output
@@ -39,6 +39,18 @@ module ChefLicensing
         spinner.error # Stop the spinner
         self.invalid_license_msg = e.message || "Something went wrong while validating the license"
         false
+      end
+
+      def is_license_allowed?(input)
+        self.license_type = get_license_type(license_id)
+        if license_restricted?(license_type)
+          # Existing license keys needs to be fetcher to show details of existing license of license type which is restricted.
+          existing_license_keys_in_file = LicenseKeyFetcher::File.fetch_license_keys_based_on_type(license_type)
+          self.license_id = existing_license_keys_in_file.last
+          false
+        else
+          true
+        end
       end
 
       def is_user_name_valid?(input)
@@ -105,13 +117,13 @@ module ChefLicensing
 
       def select_license_generation_based_on_type(inputs)
         if inputs.key? :free_license_selection
-          inputs[:license_type] = "free"
+          inputs[:license_type] = :free
           "free"
         elsif inputs.key? :trial_license_selection
-          inputs[:license_type] = "trial"
+          inputs[:license_type] = :trial
           "trial"
         else
-          inputs[:license_type] = "commercial"
+          inputs[:license_type] = :commercial
           "commercial"
         end
       end
@@ -142,6 +154,23 @@ module ChefLicensing
           inputs.key?(:gather_user_phone_no_for_license_generation)
       end
 
+      def set_license_info(input)
+        self.license_id = input[:license_id]
+        self.license_type = input[:license_type]
+      end
+
+      def fetch_license_type(input)
+        license_type
+      end
+
+      def filter_license_type_options(inputs)
+        if license_restricted?(:trial)
+          "ask_for_license_except_trial"
+        else
+          "ask_for_all_license_type"
+        end
+      end
+
       private
 
       def generate_license(inputs, license_type)
@@ -164,6 +193,17 @@ module ChefLicensing
         spinner.error # Stop the spinner
         self.rejection_msg = e.message
         false
+      end
+
+      def get_license_type(license_key)
+        license = ChefLicensing.client(license_keys: [license_key])
+        license.license_type.downcase.to_sym
+      end
+
+      def license_restricted?(license_type)
+        file_fetcher = LicenseKeyFetcher::File.new({})
+        license_type_options = file_fetcher.license_type_generation_options_based_on_file
+        !(license_type_options.include? license_type)
       end
     end
   end

@@ -44,6 +44,35 @@ module ChefLicensing
         licenses.collect { |x| x[:license_key] }
       end
 
+      def fetch_license_types
+        read_license_key_file
+        if contents.nil?
+          []
+        else
+          contents[:licenses].collect { |x| x[:license_type] }
+        end
+      end
+
+      def license_type_generation_options_based_on_file
+        # TODO free license restrictions
+        license_types = %i{free trial commercial}
+        existing_license_types = fetch_license_types
+
+        license_types -= [:trial] if existing_license_types.include? :trial
+        license_types.uniq
+      end
+
+      def fetch_license_keys_based_on_type(license_type)
+        read_license_key_file
+        if contents.nil?
+          []
+        else
+          contents[:licenses].collect do |x|
+            x[:license_key] if x[:license_type] == license_type
+          end.compact
+        end
+      end
+
       # Writes a license_id file to disk in the location specified,
       # with the content given.
       # @return Array of Errors
@@ -103,6 +132,10 @@ module ChefLicensing
 
       def self.default_file_location
         ChefConfig::PathHelper.home(".chef")
+      end
+
+      def self.fetch_license_keys_based_on_type(license_type, opts = {})
+        new(opts).fetch_license_keys_based_on_type(license_type)
       end
 
       private
