@@ -97,18 +97,6 @@ interactions:
       "I don't have a license ID and would like to generate a new license ID": info_of_license_types
       "Skip": skip_message
 
-  ask_if_user_has_license_id_except_trial:
-    messages: ["\nPlease choose one of the options below",["I already have a license ID", "I don't have a license ID and would like to generate a new license ID", "Skip"]]
-    prompt_type: "timeout_select"
-    prompt_attributes:
-      timeout_duration: 60
-      timeout_message: "\nPrompt timed out. Use non-interactive flags or enter an answer within 60 seconds."
-    paths: [ask_for_license_id, info_of_license_types_except_trial, skip_message]
-    response_path_map:
-      "I already have a license ID": ask_for_license_id
-      "I don't have a license ID and would like to generate a new license ID": info_of_license_types_except_trial
-      "Skip": skip_message
-
   skip_message:
     messages: ["\n! [WARNING] License is required to continue using the product"]
     prompt_type: warn
@@ -209,10 +197,23 @@ interactions:
 
   filter_license_type_options:
     action: filter_license_type_options
-    paths: [ask_for_all_license_type, ask_for_license_except_trial]
+    paths: [ask_for_all_license_type, ask_for_license_except_trial, ask_for_commercial_only]
     response_path_map:
       "ask_for_all_license_type": ask_for_all_license_type
       "ask_for_license_except_trial": ask_for_license_except_trial
+      "ask_for_commercial_only": ask_for_commercial_only
+
+  ask_for_commercial_only:
+    prompt_type: "select"
+    messages: ["Select the type of license below and then enter user details\n" ,
+      [
+      "1. Commercial license\n     Get in touch with the Account/Sales team.\n",
+      "2. Quit license generation"
+      ]]
+    paths: [commercial_license_selection, exit]
+    response_path_map:
+      "1. Commercial license\n     Get in touch with the Account/Sales team.\n": commercial_license_selection
+      "2. Quit license generation": exit
 
   ask_for_license_except_trial:
     prompt_type: "select"
@@ -222,9 +223,9 @@ interactions:
       "2. Commercial license\n     Get in touch with the Account/Sales team.\n",
       "3. Quit license generation"
       ]]
-    paths: [free_license_selection, commercial_license_selection, exit]
+    paths: [free_license_disclaimer, commercial_license_selection, exit]
     response_path_map:
-      "1. Free license\n     Validity: Unlimited\n     No. of targets: 10\n": free_license_selection
+      "1. Free license\n     Validity: Unlimited\n     No. of targets: 10\n": free_license_disclaimer
       "2. Commercial license\n     Get in touch with the Account/Sales team.\n": commercial_license_selection
       "3. Quit license generation": exit
 
@@ -237,12 +238,17 @@ interactions:
       "3. Commercial license\n     Get in touch with the Account/Sales team.\n",
       "4. Quit license generation"
       ]]
-    paths: [free_license_selection, commercial_license_selection, trial_license_selection, exit]
+    paths: [free_license_disclaimer, commercial_license_selection, trial_license_selection, exit]
     response_path_map:
-      "1. Free license\n     Validity: Unlimited\n     No. of targets: 10\n": free_license_selection
+      "1. Free license\n     Validity: Unlimited\n     No. of targets: 10\n": free_license_disclaimer
       "2. Trial license\n     Validity: 30 Days\n     No. of targets: Unlimited\n": trial_license_selection
       "3. Commercial license\n     Get in touch with the Account/Sales team.\n": commercial_license_selection
       "4. Quit license generation": exit
+
+  free_license_disclaimer:
+    messages: '<%= input[:pastel].bold("Free license usage is subject to personal and non-commercial use only.\n")%>'
+    prompt_type: "warn"
+    paths: [free_license_selection]
 
   free_license_selection:
     messages: "Type: Free license\n  Validity: Unlimited\n  No. of targets: 10\n"

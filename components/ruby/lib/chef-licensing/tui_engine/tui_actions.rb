@@ -164,7 +164,10 @@ module ChefLicensing
       end
 
       def filter_license_type_options(inputs)
-        if license_restricted?(:trial)
+        if user_has_active_trial_license?
+          logger.debug "User has an active trial license, free and trial license options will be removed"
+          "ask_for_commercial_only"
+        elsif license_restricted?(:trial)
           "ask_for_license_except_trial"
         else
           "ask_for_all_license_type"
@@ -193,6 +196,14 @@ module ChefLicensing
         spinner.error # Stop the spinner
         self.rejection_msg = e.message
         false
+      end
+
+      def user_has_active_trial_license?
+        license_keys = ChefLicensing::LicenseKeyFetcher.fetch
+        return false if license_keys.empty?
+
+        license = ChefLicensing.client(license_keys: license_keys)
+        license.license_type.downcase == "trial" && license.active?
       end
 
       def get_license_type(license_key)
