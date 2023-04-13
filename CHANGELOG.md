@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.3.53 -->
-## [0.3.53](https://github.com/chef/chef-licensing/tree/0.3.53) (2023-04-12)
+<!-- latest_release 0.3.54 -->
+## [0.3.54](https://github.com/chef/chef-licensing/tree/0.3.54) (2023-04-13)
 
 #### Merged Pull Requests
-- CHEF-76 CHEF-1748 Trial License restrictions [#87](https://github.com/chef/chef-licensing/pull/87) ([Nik08](https://github.com/Nik08))
+- CHEF-58: Create Free License Text User Interface in Client Library (Hide Options) [#92](https://github.com/chef/chef-licensing/pull/92) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-58: Create Free License Text User Interface in Client Library (Hide Options) [#92](https://github.com/chef/chef-licensing/pull/92) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.54 -->
 - CHEF-76 CHEF-1748 Trial License restrictions [#87](https://github.com/chef/chef-licensing/pull/87) ([Nik08](https://github.com/Nik08)) <!-- 0.3.53 -->
 - CHEF-76 CHEF-1747 Store license type information in license file [#79](https://github.com/chef/chef-licensing/pull/79) ([Nik08](https://github.com/Nik08)) <!-- 0.3.52 -->
 - CHEF-1499 Verify trial expiration flow [#76](https://github.com/chef/chef-licensing/pull/76) ([Nik08](https://github.com/Nik08)) <!-- 0.3.51 -->
