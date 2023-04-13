@@ -97,18 +97,6 @@ interactions:
       "I don't have a license ID and would like to generate a new license ID": info_of_license_types
       "Skip": skip_message
 
-  ask_if_user_has_license_id_except_trial:
-    messages: ["\nPlease choose one of the options below",["I already have a license ID", "I don't have a license ID and would like to generate a new license ID", "Skip"]]
-    prompt_type: "timeout_select"
-    prompt_attributes:
-      timeout_duration: 60
-      timeout_message: "\nPrompt timed out. Use non-interactive flags or enter an answer within 60 seconds."
-    paths: [ask_for_license_id, info_of_license_types_except_trial, skip_message]
-    response_path_map:
-      "I already have a license ID": ask_for_license_id
-      "I don't have a license ID and would like to generate a new license ID": info_of_license_types_except_trial
-      "Skip": skip_message
-
   skip_message:
     messages: ["\n! [WARNING] License is required to continue using the product"]
     prompt_type: warn
