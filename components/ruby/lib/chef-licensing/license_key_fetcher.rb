@@ -223,21 +223,25 @@ module ChefLicensing
       !(license_type_options.include? license_type)
     end
 
-    def prompt_license_addition_restricted(license_type)
+    def prompt_license_addition_restricted(license_type, existing_license_keys_in_file)
       # For trial license
       # TODO for free license
       config[:start_interaction] = :prompt_license_addition_restriction
       prompt_fetcher.config = config
-      # Existing license keys needs to be fetcher to show details of existing license of license type which is restricted.
-      existing_license_keys_in_file = file_fetcher.fetch_license_keys_based_on_type(license_type)
+      # Existing license keys are needed to show details of existing license of license type which is restricted.
       append_extra_info_to_tui_engine({ license_id: existing_license_keys_in_file.last, license_type: license_type })
       prompt_fetcher.fetch
     end
 
     def add_license_if_not_restricted(new_keys, license_type)
       if license_restricted?(license_type)
-        # prompt the message that this addition of license is restricted.
-        prompt_license_addition_restricted(license_type)
+        # Existing license keys are fetched to compare if old license key or a new one is added.
+        existing_license_keys_in_file = file_fetcher.fetch_license_keys_based_on_type(license_type)
+        # Only prompt when a new trial license is added
+        unless existing_license_keys_in_file.last == new_keys.first
+          # prompt the message that this addition of license is restricted.
+          prompt_license_addition_restricted(license_type, existing_license_keys_in_file)
+        end
       else
         persist_and_concat(new_keys, license_type)
       end
