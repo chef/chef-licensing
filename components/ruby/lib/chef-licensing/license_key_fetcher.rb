@@ -49,21 +49,17 @@ module ChefLicensing
       logger.debug "License Key fetcher examining CLI arg checks"
       new_keys = fetch_license_key_from_arg
       license_type = validate_and_fetch_license_type(new_keys)
-      if license_type
-        license_restricted = license_restricted?(license_type)
-        add_license_if_not_restricted(new_keys, license_type)
+      if license_type && !check_license_restriction_and_add_license(new_keys, license_type)
         # break the flow after the prompt if there is a restriction in adding license
-        return new_keys if license_restricted
+        return new_keys
       end
 
       logger.debug "License Key fetcher examining ENV checks"
       new_keys = fetch_license_key_from_env
       license_type = validate_and_fetch_license_type(new_keys)
-      if license_type
-        license_restricted = license_restricted?(license_type)
-        add_license_if_not_restricted(new_keys, license_type)
+      if license_type && !check_license_restriction_and_add_license(new_keys, license_type)
         # break the flow after the prompt if there is a restriction in adding license
-        return new_keys if license_restricted
+        return new_keys
       end
 
       # If it has previously been fetched and persisted, read from disk and set runtime decision
@@ -233,7 +229,7 @@ module ChefLicensing
       prompt_fetcher.fetch
     end
 
-    def add_license_if_not_restricted(new_keys, license_type)
+    def check_license_restriction_and_add_license(new_keys, license_type)
       if license_restricted?(license_type)
         # Existing license keys are fetched to compare if old license key or a new one is added.
         existing_license_keys_in_file = file_fetcher.fetch_license_keys_based_on_type(license_type)
@@ -241,9 +237,12 @@ module ChefLicensing
         unless existing_license_keys_in_file.last == new_keys.first
           # prompt the message that this addition of license is restricted.
           prompt_license_addition_restricted(license_type, existing_license_keys_in_file)
+          return false
         end
+        true # license type is restricted but not the key since it is the same key hence returning true
       else
         persist_and_concat(new_keys, license_type)
+        true
       end
     end
   end
