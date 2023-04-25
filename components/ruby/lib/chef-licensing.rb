@@ -47,6 +47,11 @@ module ChefLicensing
 
     # @note no in-memory caching of the licenses so that it fetches updated licenses always
     def license_keys
+      ChefLicensing::LicenseKeyFetcher.fetch
+    end
+
+    # @note fetch_and_persist is invoked by chef-products to fetch and persist the license keys
+    def fetch_and_persist
       ChefLicensing::LicenseKeyFetcher.fetch_and_persist
     end
 
