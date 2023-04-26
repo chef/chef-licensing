@@ -49,7 +49,7 @@ module ChefLicensing
       logger.debug "License Key fetcher examining CLI arg checks"
       new_keys = fetch_license_key_from_arg
       license_type = validate_and_fetch_license_type(new_keys)
-      if license_type && !check_license_restriction_and_add_license(new_keys, license_type)
+      if license_type && !unrestricted_license_added?(new_keys, license_type)
         # break the flow after the prompt if there is a restriction in adding license
         return new_keys
       end
@@ -57,7 +57,7 @@ module ChefLicensing
       logger.debug "License Key fetcher examining ENV checks"
       new_keys = fetch_license_key_from_env
       license_type = validate_and_fetch_license_type(new_keys)
-      if license_type && !check_license_restriction_and_add_license(new_keys, license_type)
+      if license_type && !unrestricted_license_added?(new_keys, license_type)
         # break the flow after the prompt if there is a restriction in adding license
         return new_keys
       end
@@ -229,7 +229,7 @@ module ChefLicensing
       prompt_fetcher.fetch
     end
 
-    def check_license_restriction_and_add_license(new_keys, license_type)
+    def unrestricted_license_added?(new_keys, license_type)
       if license_restricted?(license_type)
         # Existing license keys are fetched to compare if old license key or a new one is added.
         existing_license_keys_in_file = file_fetcher.fetch_license_keys_based_on_type(license_type)
