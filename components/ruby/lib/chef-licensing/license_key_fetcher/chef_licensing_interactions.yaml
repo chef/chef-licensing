@@ -36,9 +36,9 @@ interactions:
   prompt_error_license_addition_restricted:
     messages: "✖ [Error] License validation failed.\n"
     prompt_type: "error"
-    paths: [license_addition_restricted_message]
+    paths: [license_restriction_header_text]
 
-  license_addition_restricted_message:
+  license_restriction_header_text:
     action: fetch_license_type
     paths: [trial_already_exist_message, free_license_already_exist_message]
     response_path_map:
@@ -57,14 +57,15 @@ interactions:
 
   add_license_info:
     action: display_license_info
-    paths: [fetch_license_type]
+    paths: [license_restriction_foot_text]
 
-  fetch_license_type:
-    action: fetch_license_type
-    paths: [trial_restriction_message, free_restriction_message]
+  license_restriction_foot_text:
+    action: fetch_license_type_restricted
+    paths: [trial_restriction_message, free_restriction_message, only_commercial_allowed_message]
     response_path_map:
       "trial": trial_restriction_message
       "free": free_restriction_message
+      "trial_and_free": only_commercial_allowed_message
 
   trial_restriction_message:
     prompt_type: "say"
@@ -73,6 +74,12 @@ interactions:
     paths: [exit]
 
   free_restriction_message:
+    prompt_type: "say"
+    messages:
+      Kindly generate a trial or commercial license by using command <%= input[:pastel].bold("inspec license add")%>
+    paths: [exit]
+
+  only_commercial_allowed_message:
     prompt_type: "say"
     messages:
       Kindly generate a commercial license by using command <%= input[:pastel].bold("inspec license add")%>
