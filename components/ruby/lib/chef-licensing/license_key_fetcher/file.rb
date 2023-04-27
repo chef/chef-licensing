@@ -59,6 +59,7 @@ module ChefLicensing
         existing_license_types = fetch_license_types
 
         license_types -= [:trial] if existing_license_types.include? :trial
+        license_types -= [:free] if existing_license_types.include? :free
         license_types.uniq
       end
 
