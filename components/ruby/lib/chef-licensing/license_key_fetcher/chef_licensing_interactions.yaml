@@ -197,11 +197,12 @@ interactions:
 
   filter_license_type_options:
     action: filter_license_type_options
-    paths: [ask_for_all_license_type, ask_for_license_except_trial, ask_for_commercial_only]
+    paths: [ask_for_all_license_type, ask_for_license_except_trial, ask_for_commercial_only, ask_for_license_except_free]
     response_path_map:
       "ask_for_all_license_type": ask_for_all_license_type
       "ask_for_license_except_trial": ask_for_license_except_trial
       "ask_for_commercial_only": ask_for_commercial_only
+      "ask_for_license_except_free": ask_for_license_except_free
 
   ask_for_commercial_only:
     prompt_type: "select"
@@ -226,6 +227,20 @@ interactions:
     paths: [free_license_disclaimer, commercial_license_selection, exit]
     response_path_map:
       "1. Free license\n     Validity: Unlimited\n     No. of targets: 10\n": free_license_disclaimer
+      "2. Commercial license\n     Get in touch with the Account/Sales team.\n": commercial_license_selection
+      "3. Quit license generation": exit
+
+  ask_for_license_except_free:
+    prompt_type: "select"
+    messages: ["Select the type of license below and then enter user details\n" ,
+      [
+      "1. Trial license\n     Validity: 30 Days\n     No. of targets: Unlimited\n",
+      "2. Commercial license\n     Get in touch with the Account/Sales team.\n",
+      "3. Quit license generation"
+      ]]
+    paths: [trial_license_selection, commercial_license_selection, exit]
+    response_path_map:
+      "1. Trial license\n     Validity: 30 Days\n     No. of targets: Unlimited\n": trial_license_selection
       "2. Commercial license\n     Get in touch with the Account/Sales team.\n": commercial_license_selection
       "3. Quit license generation": exit
 
