@@ -163,6 +163,16 @@ module ChefLicensing
         license_type
       end
 
+      def fetch_license_type_restricted(inputs)
+        if license_restricted?(:trial) && license_restricted?(:free)
+          "trial_and_free"
+        elsif license_restricted?(:trial)
+          "trial"
+        elsif license_restricted?(:free)
+          "free"
+        end
+      end
+
       def filter_license_type_options(inputs)
         if user_has_active_trial_license? || (license_restricted?(:trial) && license_restricted?(:free))
           logger.debug "User has an active trial license, free and trial license options will be removed"
