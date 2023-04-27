@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.4.1 -->
-## [0.4.1](https://github.com/chef/chef-licensing/tree/0.4.1) (2023-04-26)
+<!-- latest_release 0.4.2 -->
+## [0.4.2](https://github.com/chef/chef-licensing/tree/0.4.2) (2023-04-27)
 
 #### Merged Pull Requests
-- CHEF-2314 No prompt for same license id addition using env and argument [#93](https://github.com/chef/chef-licensing/pull/93) ([Nik08](https://github.com/Nik08))
+- DOCS: Update docs for the chef-licensing endpoints [#94](https://github.com/chef/chef-licensing/pull/94) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- DOCS: Update docs for the chef-licensing endpoints [#94](https://github.com/chef/chef-licensing/pull/94) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.2 -->
 - CHEF-2314 No prompt for same license id addition using env and argument [#93](https://github.com/chef/chef-licensing/pull/93) ([Nik08](https://github.com/Nik08)) <!-- 0.4.1 -->
 - CHEF-1957: Update method-name and responsibilities [#91](https://github.com/chef/chef-licensing/pull/91) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.0 -->
 - CHEF-58: Create Free License Text User Interface in Client Library (Hide Options) [#92](https://github.com/chef/chef-licensing/pull/92) ([ahasunos](https://github.com/ahasunos)) <!-- 0.3.54 -->
