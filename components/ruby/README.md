@@ -91,36 +91,32 @@ end
 <!-- Usage section contains all the methods that the client would invoke while using the Chef Licensing Library -->
 ## Usage
 
-<!-- Need to create a method for fetch_and_persist maybe? So that all the methods to be used by the client of this library is in one place -->
-<!-- Document about the fetch_and_persist after the wrapper is introduced in the chef-licensing file. -->
+### Fetch and persist licenses
 
-### Software Entitlement Check
-
-Software entitlement check validates a user's entitlement to use a specific software product by verifying their licenses.
+This endpoint enables to fetch licenses from the system or from user via interactive prompts and store the licenses in the `licenses.yaml` file under the configured directory. In general, this is the endpoint invoked at the initial execution of your application.
 
 ```ruby
 require "chef-licensing"
-ChefLicensing.check_software_entitlement!
+ChefLicensing.fetch_and_persist
 ```
 #### Response
 
-If the software is entitled to the license, it returns true; else, it raises an `ChefLicensing::SoftwareNotEntitled` exception.
+If sucessful, the licenses is stored on the system. Incase of errors, `ChefLicensing::LicenseKeyNotFetchedError` class raises the exception.
 
-### Feature Entitlement Check
+### Add new license
 
-Feature entitlement check validates a premium feature access by verifying it against the user's licenses.
+This endpoint enables adding new license to system either by generating a new license or by providing a license key that is already available to the user.
 
 ```ruby
 require "chef-licensing"
-ChefLicensing.check_feature_entitlement!('FEATURE_NAME OR FEATURE_ID')
+ChefLicensing.add_license
 ```
 
 #### Response
 
-If the feature is entitled to one of the provided licenses, it returns true; else, it raises one of the below two exceptions:
+If successful, the license key is added to system.
 
-- `ChefLicensing::InvalidLicense`: in case of invalid license
-- `ChefLicensing::FeatureNotEntitled`: in case of invalid entitlements
+However, in case of errors, the `ChefLicensing::LicenseGenerationFailed` class for generation or `ChefLicensing::InvalidLicense` class for validation returns the message directly from the licensing server as the exception message.
 
 ### List Licenses Information
 
@@ -173,15 +169,61 @@ Software      :
 +----------------------------------------------+
 ```
 
-### Add new license
+### Software Entitlement Check
 
-This endpoint enables adding new license to the system by generating a license based on the type of license (trial, free or commercial) selected by the user.
+Software entitlement check validates a user's entitlement to use a specific software product by verifying their licenses.
+
+```ruby
+require "chef-licensing"
+ChefLicensing.check_software_entitlement!
+```
+#### Response
+
+If the software is entitled to the license, it returns true; else, it raises an `ChefLicensing::SoftwareNotEntitled` exception.
+
+### Feature Entitlement Check
+
+Feature entitlement check validates a premium feature access by verifying it against the user's licenses.
+
+```ruby
+require "chef-licensing"
+ChefLicensing.check_feature_entitlement!('FEATURE_NAME OR FEATURE_ID')
+```
 
 #### Response
 
-If successful, the license key is generated.
+If the feature is entitled to one of the provided licenses, it returns true; else, it raises one of the below two exceptions:
 
-However, in case of errors, the `ChefLicensing::LicenseGenerationFailed` class returns the message directly from the license generation server as the exception message.
+- `ChefLicensing::InvalidLicense`: in case of invalid license
+- `ChefLicensing::FeatureNotEntitled`: in case of invalid entitlements
+
+### Fetch licenses
+
+This endpoint is internally used by feature entitlement check and software entitlement check to fetch all the licenses in the system. The response from this endpoint is passed to the `client` call.
+
+```ruby
+require "chef-licensing"
+ChefLicensing.license_keys
+```
+
+#### Response
+
+If successful, it returns all the licenses stored on the system.
+
+### Client
+
+This endpoint is internally used by feature entitlement check and software entitlement check. It enables to retrieve information about licenses, its entitlements to various features, software, and assets, as well as details about its expiration date and post-expiry status, and usage information for the license.
+
+```ruby
+require "chef-licensing"
+ChefLicensing.client
+```
+
+#### Response
+
+If the retrieval is successful, it returns a license data model object that utilizes the JSON data retrieved from the Licensing Server API.
+
+However, if an error occurs during the process, the `ChefLicensing::ClientError` raises an exception.
 
 ## APIs
 
