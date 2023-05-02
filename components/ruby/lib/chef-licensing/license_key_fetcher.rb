@@ -238,7 +238,7 @@ module ChefLicensing
 
     def unrestricted_license_added?(new_keys, license_type)
       active_trial_license = file_fetcher.fetch_active_trial_license
-      if active_trial_license && active_trial_license != new_keys.first
+      if active_trial_license && active_trial_license != new_keys.first && license_type != :commercial
         prompt_active_trial_license_info(active_trial_license) if config[:output].isatty
         logger.debug "Active trial license is present in the file, addition of new trial or free license is restricted"
         false
