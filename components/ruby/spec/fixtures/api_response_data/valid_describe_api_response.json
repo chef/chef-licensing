@@ -1,0 +1,74 @@
+{
+  "license": [
+    {
+      "licenseKey": "guid",
+      "serialNumber": "testing",
+      "name": "testing",
+      "status": "active",
+      "start": "2022-12-02",
+      "end": "2023-12-02",
+      "limits": [
+        {
+          "testing": "software",
+          "id": "guid",
+          "amount": 2,
+          "measure": 2,
+          "used": 2,
+          "status": "Active"
+        }
+      ]
+    }
+  ],
+  "Assets": [
+    {
+      "id": "guid",
+      "name": "testing",
+      "entitled": true,
+      "from": [
+        {
+          "license": "guid",
+          "status": "expired"
+        }
+      ]
+    }
+  ],
+  "Software": [
+    {
+      "id": "guid",
+      "name": "testing",
+      "entitled": true,
+      "from": [
+        {
+          "license": "guid",
+          "status": "expired"
+        }
+      ]
+    }
+  ],
+  "Features": [
+    {
+      "id": "guid",
+      "name": "testing",
+      "entitled": true,
+      "from": [
+        {
+          "license": "guid",
+          "status": "expired"
+        }
+      ]
+    }
+  ],
+  "Services": [
+    {
+      "id": "guid",
+      "name": "testing",
+      "entitled": true,
+      "from": [
+        {
+          "license": "guid",
+          "status": "expired"
+        }
+      ]
+    }
+  ]
+}
