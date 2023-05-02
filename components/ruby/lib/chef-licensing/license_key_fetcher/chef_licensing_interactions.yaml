@@ -50,6 +50,15 @@ interactions:
     prompt_type: "say"
     paths: [add_license_info]
 
+  prompt_active_trial_license_restriction:
+    action: set_license_info
+    paths: [active_trial_already_exist_message]
+
+  active_trial_already_exist_message:
+    messages: "An active trial license already exists with following details \n"
+    prompt_type: "say"
+    paths: [add_license_info]
+
   free_license_already_exist_message:
     messages: "A free license already exists with following details \n"
     prompt_type: "say"
