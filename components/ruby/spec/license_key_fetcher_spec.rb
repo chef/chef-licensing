@@ -153,7 +153,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
           "license" => "Free",
           "status" => "Active",
           "changesTo" => "",
-          "changesOn" => "",
+          "changesOn" => "2024-11-01",
           "changesIn" => "",
           "usage" => "Active",
           "used" => 2,
@@ -270,6 +270,121 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
         let(:license_key_fetcher) { described_class.new(opts) }
         it "returns all the license keys" do
           expect(license_key_fetcher.fetch_and_persist).to eq(%w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150 free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111})
+        end
+      end
+    end
+
+    context "multiple free licenses are restricted and can only add one free license in file" do
+      let(:argv) { ["--chef-license-key=free-c0832d2d-1111-1ec1-b1e5-011d182dc341-112"] }
+
+      let(:describe_api_data) {
+        {
+          "license" => [{
+            "licenseKey" => "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111",
+            "serialNumber" => "testing",
+            "name" => "testing",
+            "status" => "active",
+            "start" => "2022-12-02",
+            "end" => "2023-12-02",
+            "limits" => [
+               {
+                "testing" => "software",
+                 "id" => "guid",
+                 "amount" => 2,
+                 "measure" => 2,
+                 "used" => 2,
+                 "status" => "Active",
+               },
+            ],
+          }],
+          "Assets" => [
+            {
+              "id" => "guid",
+              "name" => "testing",
+              "entitled" => true,
+              "from" => [
+                {
+                    "license" => "guid",
+                    "status" => "expired",
+                },
+              ],
+            }],
+          "Software" => [
+            {
+              "id" => "guid",
+              "name" => "testing",
+              "entitled" => true,
+              "from" => [
+                {
+                    "license" => "guid",
+                    "status" => "expired",
+                },
+              ],
+            }],
+          "Features" => [
+            {
+              "id" => "guid",
+              "name" => "testing",
+              "entitled" => true,
+              "from" => [
+                {
+                    "license" => "guid",
+                    "status" => "expired",
+                },
+              ],
+            }],
+          "Services" => [
+            {
+              "id" => "guid",
+              "name" => "testing",
+              "entitled" => true,
+              "from" => [
+                {
+                    "license" => "guid",
+                    "status" => "expired",
+                },
+              ],
+            }],
+          }
+      }
+
+      before do
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+          .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111", version: api_version })
+          .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+                  headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+          .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-112", version: api_version })
+          .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+                headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/client")
+          .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: client_data_for_free_license, status_code: 200 }.to_json,
+                  headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/client")
+          .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-112", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: client_data_for_free_license, status_code: 200 }.to_json,
+                headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/desc")
+          .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-112", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: describe_api_data, status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+      end
+
+      Dir.mktmpdir do |tmpdir|
+        let(:opts) {
+          {
+            logger: logger,
+            argv: argv,
+            env: env,
+            output: output,
+            dir: tmpdir,
+          }
+        }
+
+        let(:license_key_fetcher) { described_class.new(opts) }
+        it "only adds one free license and returns it" do
+          expect(license_key_fetcher.fetch_and_persist).to eq(%w{free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111})
         end
       end
     end

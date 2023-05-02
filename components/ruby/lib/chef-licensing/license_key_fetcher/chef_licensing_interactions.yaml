@@ -48,14 +48,14 @@ interactions:
   trial_already_exist_message:
     messages: "A trial license already exists with following details \n"
     prompt_type: "say"
-    paths: [add_license_info]
+    paths: [add_license_info_in_restriction_flow]
 
   free_license_already_exist_message:
     messages: "A free license already exists with following details \n"
     prompt_type: "say"
-    paths: [add_license_info]
+    paths: [add_license_info_in_restriction_flow]
 
-  add_license_info:
+  add_license_info_in_restriction_flow:
     action: display_license_info
     paths: [license_restriction_foot_text]
 

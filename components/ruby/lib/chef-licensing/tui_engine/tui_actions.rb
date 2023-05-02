@@ -168,7 +168,7 @@ module ChefLicensing
           "trial_and_free"
         elsif license_restricted?(:trial)
           "trial"
-        elsif license_restricted?(:free)
+        else
           "free"
         end
       end
