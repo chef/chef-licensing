@@ -10,12 +10,13 @@ module ChefLicensing
 
     INTERACTION_FILE_FORMAT_VERSION = "1.0.0".freeze
 
-    attr_accessor :interaction_data, :tui_interactions, :opts, :logger, :prompt_methods, :action_methods, :interaction_attributes
+    attr_accessor :interaction_data, :tui_interactions, :opts, :logger, :prompt_methods, :action_methods, :interaction_attributes, :traversed_interaction
 
     def initialize(opts = {})
       @opts = opts
       @logger = ChefLicensing::Config.logger
       @tui_interactions = {}
+      @traversed_interaction = []
       initialization_of_engine(opts[:interaction_file])
       @state = ChefLicensing::TUIEngine::TUIEngineState.new(@opts)
     end
@@ -25,6 +26,7 @@ module ChefLicensing
       current_interaction = @tui_interactions[start_interaction_id]
 
       until current_interaction.nil? || current_interaction.id == :exit
+        @traversed_interaction << current_interaction.id
         state.default_action(current_interaction)
         current_interaction = state.next_interaction_id.nil? ? nil : current_interaction.paths[state.next_interaction_id.to_sym]
       end
