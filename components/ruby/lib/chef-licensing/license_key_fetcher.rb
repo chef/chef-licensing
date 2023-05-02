@@ -229,8 +229,20 @@ module ChefLicensing
       prompt_fetcher.fetch
     end
 
+    def prompt_active_trial_license_info(active_trial_license)
+      config[:start_interaction] = :prompt_active_trial_license_restriction
+      prompt_fetcher.config = config
+      append_extra_info_to_tui_engine({ license_id: active_trial_license, license_type: "trial", user_has_active_trial_license: true })
+      prompt_fetcher.fetch
+    end
+
     def unrestricted_license_added?(new_keys, license_type)
-      if license_restricted?(license_type)
+      active_trial_license = file_fetcher.fetch_active_trial_license
+      if active_trial_license && active_trial_license != new_keys.first
+        prompt_active_trial_license_info(active_trial_license) if config[:output].isatty
+        logger.debug "Active trial license is present in the file, addition of new trial or free license is restricted"
+        false
+      elsif license_restricted?(license_type)
         # Existing license keys are fetched to compare if old license key or a new one is added.
         existing_license_keys_in_file = file_fetcher.fetch_license_keys_based_on_type(license_type)
         # Only prompt when a new trial license is added
