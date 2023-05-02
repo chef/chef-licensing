@@ -131,6 +131,21 @@ module ChefLicensing
         !!seek
       end
 
+      def fetch_active_trial_license
+        return @active_trial_license unless @active_trial_license.nil?
+
+        read_license_key_file
+        unless contents.nil?
+          contents[:licenses].each do |license|
+            if license[:license_type] == :trial && ChefLicensing.client(license_keys: [license[:license_key]]).active?
+              @active_trial_license = license[:license_key]
+              break
+            end
+          end
+        end
+        @active_trial_license
+      end
+
       def self.default_file_location
         ChefConfig::PathHelper.home(".chef")
       end
