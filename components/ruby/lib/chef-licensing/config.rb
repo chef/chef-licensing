@@ -9,7 +9,7 @@ require_relative "air_gap_detection/ping"
 module ChefLicensing
   class Config
     class << self
-      attr_writer :license_server_url, :license_server_api_key, :air_gap_status, :chef_product_name, :chef_entitlement_id, :logger, :output
+      attr_writer :license_server_url, :license_server_api_key, :air_gap_status, :chef_product_name, :chef_entitlement_id, :logger, :output, :chef_executable_name
 
       def license_server_url
         @license_server_url ||= ChefLicensing::ArgFetcher.fetch_value("--chef-license-server", :string) || ChefLicensing::EnvFetcher.fetch_value("CHEF_LICENSE_SERVER", :string)
@@ -36,6 +36,10 @@ module ChefLicensing
 
       def chef_product_name
         @chef_product_name ||= ChefLicensing::ArgFetcher.fetch_value("--chef-product-name", :string) || ChefLicensing::EnvFetcher.fetch_value("CHEF_PRODUCT_NAME", :string)
+      end
+
+      def chef_executable_name
+        @chef_executable_name ||= ChefLicensing::ArgFetcher.fetch_value("--chef-executable-name", :string) || ChefLicensing::EnvFetcher.fetch_value("CHEF_EXECUTABLE_NAME", :string)
       end
 
       def logger
