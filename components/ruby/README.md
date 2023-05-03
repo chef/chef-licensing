@@ -52,6 +52,7 @@ The `ChefLicensing::Config` class manages the configuration parameters used in t
 | license_server_url | `--chef-license-server` | `CHEF_LICENSE_SERVER` | String |
 | license_server_api_key | `--chef-license-server-api-key`| `CHEF_LICENSE_SERVER_API_KEY` | String |
 | chef_product_name | `--chef-product-name` | `CHEF_PRODUCT_NAME` | String |
+| chef_executable_name | `--chef-executable-name` | `CHEF_EXECUTABLE_NAME` | String |
 | chef_entitlement_id | `--chef-entitlement-id` | `CHEF_ENTITLEMENT_ID` | String |
 | air_gap_detected? | `--airgap`  | `CHEF_AIR_GAP` | Boolean |
 | logger | - | - | - |
@@ -62,6 +63,7 @@ where:
 - `license_server_url`: the URL of the licensing server
 - `license_server_api_key`: the API token/key of the licensing server
 - `chef_product_name`: the name of the chef software using this library
+- `chef_executable_name`: the name of the chef software's executable using this library
 - `chef_entitlement_id`: the unique entitlement id of the chef's software
 - `air_gap_detected?`: helps detect an air gap condition, which is necessary for the licensing system to determine when to function in an offline mode. An air gap environment is determined to be present if any of the following conditions are met: 
   - the environment variable is set, 
@@ -82,6 +84,7 @@ ChefLicensing.configure do |config|
   config.license_server_api_key = "1234567890"
   config.air_gap_status = false
   config.chef_product_name = "chef"
+  config.chef_executable_name = "inspec"
   config.chef_entitlement_id = "chef123"
   config.logger = Logger.new($stdout)
 end
