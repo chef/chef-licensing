@@ -54,29 +54,24 @@ module ChefLicensing
     end
 
     def display_overview
+      output.puts "------------------------------------------------------------"
       licenses_metadata.each do |license|
-        output.puts "------------------------------------------------------------"
-
         # find the number of days left for the license to expire
         validity = (Date.parse(license.expiration_date) - Date.today).to_i
+        # TODO: The -1 limit would be changed to Unlimited in a separate PR
+        num_of_units = license.limits&.first&.usage_limit || 0
+        unit_measure = license.limits&.first&.usage_measure || "unit"
 
         output.puts <<~LICENSE
             #{pastel.bold("License Details")}
+              Asset Name       : #{license.limits.first.software}
               License ID       : #{license.id}
-              Type             : #{license.license_type}
-              Status           : #{license.status}
-              Validity         : #{validity > 0 ? validity : 0} days
+              Type             : #{license.license_type.capitalize}
+              Status           : #{license.status.capitalize}
+              Validity         : #{validity > 0 ? validity : 0} #{"Day".pluralize(validity)}
+              No. Of Units     : #{num_of_units} #{unit_measure.capitalize.pluralize(num_of_units)}
+            ------------------------------------------------------------
         LICENSE
-
-        # Displaying `No. of targets` makes the information specific in context of InSpec node limits.
-        # The decision to display this information is a joint effort between POs and UXs.
-        # TODO: Consider making this information more generic in the future.
-        license.limits.each do |limit|
-          output.puts <<~LIMIT
-            No. of targets   : #{limit.usage_limit}
-          ------------------------------------------------------------
-          LIMIT
-        end
       end
     end
 
