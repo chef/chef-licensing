@@ -60,12 +60,13 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
           "status" => "active",
           "start" => "2022-12-02",
           "end" => "2023-12-02",
+          "licenseType" => "trial",
           "limits" => [
              {
               "testing" => "software",
                "id" => "guid",
                "amount" => 2,
-               "measure" => 2,
+               "measure" => "nodes",
                "used" => 2,
                "status" => "Active",
              },
@@ -198,12 +199,13 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
           "status" => "active",
           "start" => "2022-12-02",
           "end" => "2023-12-02",
+          "licenseType" => "trial",
           "limits" => [
              {
               "testing" => "software",
                "id" => "guid",
                "amount" => 2,
-               "measure" => 2,
+               "measure" => "nodes",
                "used" => 2,
                "status" => "Active",
              },
@@ -271,7 +273,7 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
       expect { described_class.new(opts_for_llk).display_overview }.to_not raise_error
       expect(output_stream.string).to include("License Details")
       expect(output_stream.string).to include("Validity         :")
-      expect(output_stream.string).to include("No. of targets   :")
+      expect(output_stream.string).to include("No. Of Units     :")
     end
   end
 end
