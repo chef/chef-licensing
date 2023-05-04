@@ -6,6 +6,8 @@ require_relative "config_fetcher/env_fetcher"
 # TODO: Find a better way to do ping check
 require_relative "air_gap_detection/ping"
 
+# Config class handles all configuration related to chef-licensing
+# Values can be set via block, environment variable or command line argument
 module ChefLicensing
   class Config
     class << self
