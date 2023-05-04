@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.4.3 -->
-## [0.4.3](https://github.com/chef/chef-licensing/tree/0.4.3) (2023-05-03)
+<!-- latest_release 0.4.4 -->
+## [0.4.4](https://github.com/chef/chef-licensing/tree/0.4.4) (2023-05-04)
 
 #### Merged Pull Requests
-- CHEF-2505: Determine how to write unit test for UX components [#96](https://github.com/chef/chef-licensing/pull/96) ([ahasunos](https://github.com/ahasunos))
+- CHEF-2743: Remove inspec-specific references in chef-licensing [#99](https://github.com/chef/chef-licensing/pull/99) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-2743: Remove inspec-specific references in chef-licensing [#99](https://github.com/chef/chef-licensing/pull/99) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.4 -->
 - CHEF-2505: Determine how to write unit test for UX components [#96](https://github.com/chef/chef-licensing/pull/96) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.3 -->
 - DOCS: Update docs for the chef-licensing endpoints [#94](https://github.com/chef/chef-licensing/pull/94) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.2 -->
 - CHEF-2314 No prompt for same license id addition using env and argument [#93](https://github.com/chef/chef-licensing/pull/93) ([Nik08](https://github.com/Nik08)) <!-- 0.4.1 -->
