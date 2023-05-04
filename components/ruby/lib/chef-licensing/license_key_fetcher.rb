@@ -226,7 +226,7 @@ module ChefLicensing
       prompt_fetcher.config = config
       # Existing license keys are needed to show details of existing license of license type which is restricted.
       append_extra_info_to_tui_engine({ license_id: existing_license_keys_in_file.last, license_type: license_type })
-      prompt_fetcher.fetch
+      prompt_fetcher.fetch if config[:output].isatty
     end
 
     def unrestricted_license_added?(new_keys, license_type)

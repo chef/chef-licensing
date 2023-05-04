@@ -54,12 +54,9 @@ module ChefLicensing
       end
 
       def user_has_active_trial_license?
-        return @active_trial_status if defined?(@active_trial_status)
-
+        @active_trial_status = false
         read_license_key_file
-        if contents.nil?
-          @active_trial_status = false
-        else
+        unless contents.nil?
           @active_trial_status = contents[:licenses].any? { |license| license[:license_type] == :trial && ChefLicensing.client(license_keys: [license[:license_key]]).active? }
         end
         @active_trial_status
@@ -149,6 +146,10 @@ module ChefLicensing
 
       def self.fetch_license_keys_based_on_type(license_type, opts = {})
         new(opts).fetch_license_keys_based_on_type(license_type)
+      end
+
+      def self.user_has_active_trial_license?(opts = {})
+        new(opts).user_has_active_trial_license?
       end
 
       private

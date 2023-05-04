@@ -46,7 +46,7 @@ module ChefLicensing
         if license_restricted?(license_type)
           # Existing license keys needs to be fetcher to show details of existing license of license type which is restricted.
           # However, if user is trying to add free license, and user has active trial license, we fetch the trial license key
-          if license_type == :free && user_has_active_trial_license?
+          if license_type == :free && LicenseKeyFetcher::File.user_has_active_trial_license?
             existing_license_keys_in_file = LicenseKeyFetcher::File.fetch_license_keys_based_on_type(:trial)
           else
             existing_license_keys_in_file = LicenseKeyFetcher::File.fetch_license_keys_based_on_type(license_type)
@@ -165,7 +165,7 @@ module ChefLicensing
       end
 
       def determine_restriction_type(input)
-        if license_type == :free && user_has_active_trial_license?
+        if license_type == :free && LicenseKeyFetcher::File.user_has_active_trial_license?
           "active_trial_restriction"
         else
           "#{license_type}_restriction"
@@ -183,7 +183,7 @@ module ChefLicensing
       end
 
       def filter_license_type_options(inputs)
-        if user_has_active_trial_license? || (license_restricted?(:trial) && license_restricted?(:free))
+        if (license_restricted?(:trial) && license_restricted?(:free)) || LicenseKeyFetcher::File.user_has_active_trial_license?
           logger.debug "User has an active trial license, free and trial license options will be removed"
           "ask_for_commercial_only"
         elsif license_restricted?(:trial)
@@ -217,25 +217,6 @@ module ChefLicensing
         spinner.error # Stop the spinner
         self.rejection_msg = e.message
         false
-      end
-
-      def user_has_active_trial_license?
-        return @active_trial_status if defined?(@active_trial_status)
-
-        # Fetch all license keys available on the system
-        license_keys = ChefLicensing::LicenseKeyFetcher.fetch
-        @active_trial_status = false
-        unless license_keys.empty?
-          license_keys.each do |license_key|
-            license = ChefLicensing.client(license_keys: [license_key])
-            @active_trial_status = license.active? && license.license_type.downcase == "trial"
-            if @active_trial_status
-              self.license_id = license_key
-              break
-            end
-          end
-        end
-        @active_trial_status
       end
 
       def get_license_type(license_key)
