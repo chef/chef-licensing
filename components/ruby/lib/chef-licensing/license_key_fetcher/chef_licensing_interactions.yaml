@@ -62,7 +62,7 @@ interactions:
   trial_restriction_message:
     prompt_type: "say"
     messages:
-      Kindly generate a free or commercial license by using command <%= input[:pastel].bold("inspec license add")%>
+      Kindly generate a free or commercial license by using command <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%>
     paths: [exit]
 
   prompt_license_expired:
@@ -73,7 +73,7 @@ interactions:
       Get a Commercial license to receive bug fixes, updates and new features.
       Get a Free license to scan limited targets.
 
-      To get a new license, run <%= input[:pastel].bold("inspec license add")%> command and select a license type.
+      To get a new license, run <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%> command and select a license type.
     prompt_type: "say"
     paths: [exit]
 
