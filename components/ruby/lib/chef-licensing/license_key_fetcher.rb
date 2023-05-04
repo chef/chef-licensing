@@ -231,8 +231,13 @@ module ChefLicensing
 
     def unrestricted_license_added?(new_keys, license_type)
       if license_restricted?(license_type)
-        # Existing license keys are fetched to compare if old license key or a new one is added.
-        existing_license_keys_in_file = file_fetcher.fetch_license_keys_based_on_type(license_type)
+        # Existing license keys of same license type are fetched to compare if old license key or a new one is added.
+        # However, if user is trying to add free license, and user has active trial license, we fetch the trial license key
+        if license_type == :free && file_fetcher.user_has_active_trial_license?
+          existing_license_keys_in_file = file_fetcher.fetch_license_keys_based_on_type(:trial)
+        else
+          existing_license_keys_in_file = file_fetcher.fetch_license_keys_based_on_type(license_type)
+        end
         # Only prompt when a new trial license is added
         unless existing_license_keys_in_file.last == new_keys.first
           # prompt the message that this addition of license is restricted.

@@ -45,7 +45,12 @@ module ChefLicensing
         self.license_type = get_license_type(license_id)
         if license_restricted?(license_type)
           # Existing license keys needs to be fetcher to show details of existing license of license type which is restricted.
-          existing_license_keys_in_file = LicenseKeyFetcher::File.fetch_license_keys_based_on_type(license_type)
+          # However, if user is trying to add free license, and user has active trial license, we fetch the trial license key
+          if license_type == :free && user_has_active_trial_license?
+            existing_license_keys_in_file = LicenseKeyFetcher::File.fetch_license_keys_based_on_type(:trial)
+          else
+            existing_license_keys_in_file = LicenseKeyFetcher::File.fetch_license_keys_based_on_type(license_type)
+          end
           self.license_id = existing_license_keys_in_file.last
           false
         else
@@ -159,8 +164,12 @@ module ChefLicensing
         self.license_type = input[:license_type]
       end
 
-      def fetch_license_type(input)
-        license_type
+      def determine_restriction_type(input)
+        if license_type == :free && user_has_active_trial_license?
+          "active_trial_restriction"
+        else
+          "#{license_type}_restriction"
+        end
       end
 
       def fetch_license_type_restricted(inputs)
@@ -211,11 +220,22 @@ module ChefLicensing
       end
 
       def user_has_active_trial_license?
-        license_keys = ChefLicensing::LicenseKeyFetcher.fetch
-        return false if license_keys.empty?
+        return @active_trial_status if defined?(@active_trial_status)
 
-        license = ChefLicensing.client(license_keys: license_keys)
-        license.license_type.downcase == "trial" && license.active?
+        # Fetch all license keys available on the system
+        license_keys = ChefLicensing::LicenseKeyFetcher.fetch
+        @active_trial_status = false
+        unless license_keys.empty?
+          license_keys.each do |license_key|
+            license = ChefLicensing.client(license_keys: [license_key])
+            @active_trial_status = license.active? && license.license_type.downcase == "trial"
+            if @active_trial_status
+              self.license_id = license_key
+              break
+            end
+          end
+        end
+        @active_trial_status
       end
 
       def get_license_type(license_key)
