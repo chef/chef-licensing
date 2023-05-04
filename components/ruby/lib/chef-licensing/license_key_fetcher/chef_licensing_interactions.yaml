@@ -39,11 +39,12 @@ interactions:
     paths: [license_restriction_header_text]
 
   license_restriction_header_text:
-    action: fetch_license_type
-    paths: [trial_already_exist_message, free_license_already_exist_message]
+    action: determine_restriction_type
+    paths: [trial_already_exist_message, free_license_already_exist_message, active_trial_exist_message]
     response_path_map:
-      "trial": trial_already_exist_message
-      "free": free_license_already_exist_message
+      "trial_restriction": trial_already_exist_message
+      "free_restriction": free_license_already_exist_message
+      "active_trial_restriction": active_trial_exist_message
 
   trial_already_exist_message:
     messages: "A trial license already exists with following details \n"
@@ -52,6 +53,11 @@ interactions:
 
   free_license_already_exist_message:
     messages: "A free license already exists with following details \n"
+    prompt_type: "say"
+    paths: [add_license_info_in_restriction_flow]
+  
+  active_trial_exist_message:
+    messages: "An active trial license already exists with following details \n"
     prompt_type: "say"
     paths: [add_license_info_in_restriction_flow]
 
