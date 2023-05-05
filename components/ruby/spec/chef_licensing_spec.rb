@@ -64,7 +64,7 @@ RSpec.describe ChefLicensing do
     subject { described_class.check_feature_entitlement!(feature_name: feature, feature_id: nil) }
 
     before do
-      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/client")
+      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
         .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
         .to_return(body: { data: client_data, status_code: 200 }.to_json,
                      headers: { content_type: "application/json" })
@@ -88,7 +88,7 @@ RSpec.describe ChefLicensing do
       }
 
       before do
-        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/client")
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
           .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: false, status_code: 400 }.to_json,
                      headers: { content_type: "application/json" })
@@ -108,7 +108,7 @@ RSpec.describe ChefLicensing do
     subject { described_class.check_software_entitlement! }
 
     before do
-      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/client")
+      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
         .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
         .to_return(body: { data: client_data, status_code: 200 }.to_json,
                      headers: { content_type: "application/json" })
@@ -139,7 +139,7 @@ RSpec.describe ChefLicensing do
       }
 
       before do
-        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/client")
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
           .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: false, status_code: 400 }.to_json,
                      headers: { content_type: "application/json" })

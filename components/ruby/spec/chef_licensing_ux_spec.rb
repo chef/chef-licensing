@@ -55,12 +55,12 @@ RSpec.describe ChefLicensing::TUIEngine do
         .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
                    headers: { content_type: "application/json" })
 
-      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/client")
+      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
         .with(query: { licenseId: license_key, entitlementId: ChefLicensing::Config.chef_entitlement_id })
         .to_return(body: { data: valid_client_api_data, status_code: 200 }.to_json,
                   headers: { content_type: "application/json" })
 
-      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/desc")
+      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
         .with(query: { licenseId: license_key, entitlementId: ChefLicensing::Config.chef_entitlement_id })
         .to_return(body: { data: valid_describe_api_data, status_code: 200 }.to_json,
                   headers: { content_type: "application/json" })
