@@ -184,7 +184,6 @@ module ChefLicensing
 
       def filter_license_type_options(inputs)
         if (license_restricted?(:trial) && license_restricted?(:free)) || LicenseKeyFetcher::File.user_has_active_trial_license?
-          logger.debug "User has an active trial license, free and trial license options will be removed"
           "ask_for_commercial_only"
         elsif license_restricted?(:trial)
           "ask_for_license_except_trial"
@@ -226,8 +225,8 @@ module ChefLicensing
 
       def license_restricted?(license_type)
         file_fetcher = LicenseKeyFetcher::File.new({})
-        license_type_options = file_fetcher.license_type_generation_options_based_on_file
-        !(license_type_options.include? license_type)
+        allowed_license_types = file_fetcher.fetch_allowed_license_types_for_addition
+        !(allowed_license_types.include? license_type)
       end
     end
   end

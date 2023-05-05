@@ -62,8 +62,7 @@ module ChefLicensing
         @active_trial_status
       end
 
-      def license_type_generation_options_based_on_file
-        # TODO free license restrictions
+      def fetch_allowed_license_types_for_addition
         license_types = %i{free trial commercial}
         existing_license_types = fetch_license_types
 

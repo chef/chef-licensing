@@ -51,7 +51,8 @@ module ChefLicensing
       license_type = validate_and_fetch_license_type(new_keys)
       if license_type && !unrestricted_license_added?(new_keys, license_type)
         # break the flow after the prompt if there is a restriction in adding license
-        return new_keys
+        # and return the license keys persisted in the file or @license_keys if any
+        return fetch_from_file
       end
 
       logger.debug "License Key fetcher examining ENV checks"
@@ -59,7 +60,8 @@ module ChefLicensing
       license_type = validate_and_fetch_license_type(new_keys)
       if license_type && !unrestricted_license_added?(new_keys, license_type)
         # break the flow after the prompt if there is a restriction in adding license
-        return new_keys
+        # and return the license keys persisted in the file or @license_keys if any
+        return fetch_from_file
       end
 
       # If it has previously been fetched and persisted, read from disk and set runtime decision
@@ -215,8 +217,8 @@ module ChefLicensing
     end
 
     def license_restricted?(license_type)
-      license_type_options = file_fetcher.license_type_generation_options_based_on_file
-      !(license_type_options.include? license_type)
+      allowed_license_types = file_fetcher.fetch_allowed_license_types_for_addition
+      !(allowed_license_types.include? license_type)
     end
 
     def prompt_license_addition_restricted(license_type, existing_license_keys_in_file)
@@ -226,7 +228,7 @@ module ChefLicensing
       prompt_fetcher.config = config
       # Existing license keys are needed to show details of existing license of license type which is restricted.
       append_extra_info_to_tui_engine({ license_id: existing_license_keys_in_file.last, license_type: license_type })
-      prompt_fetcher.fetch if config[:output].isatty
+      prompt_fetcher.fetch
     end
 
     def unrestricted_license_added?(new_keys, license_type)
