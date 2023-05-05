@@ -14,8 +14,8 @@ module ChefLicensing
 
       END_POINTS = {
         VALIDATE: "validate",
-        GENERATE_TRIAL_LICENSE: "triallicense",
-        GENERATE_FREE_LICENSE: "freetierlicense",
+        GENERATE_TRIAL_LICENSE: "license/trial",
+        GENERATE_FREE_LICENSE: "license/free",
         FEATURE_BY_NAME: "license-service/featurebyname",
         FEATURE_BY_ID: "license-service/featurebyid",
         ENTITLEMENT_BY_NAME: "license-service/entitlementbyname",
