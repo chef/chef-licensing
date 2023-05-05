@@ -280,18 +280,19 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       let(:describe_api_data) {
         {
           "license" => [{
-            "licenseKey" => "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111",
+            "licenseKey" => "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-112",
             "serialNumber" => "testing",
             "name" => "testing",
             "status" => "active",
             "start" => "2022-12-02",
             "end" => "2023-12-02",
+            "licenseType" => "trial",
             "limits" => [
                {
                 "testing" => "software",
                  "id" => "guid",
                  "amount" => 2,
-                 "measure" => 2,
+                 "measure" => "nodes",
                  "used" => 2,
                  "status" => "Active",
                },

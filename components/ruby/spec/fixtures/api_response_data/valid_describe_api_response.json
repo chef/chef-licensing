@@ -7,12 +7,13 @@
       "status": "active",
       "start": "2022-12-02",
       "end": "2023-12-02",
+      "licenseType": "trial",
       "limits": [
         {
           "testing": "software",
           "id": "guid",
           "amount": 2,
-          "measure": 2,
+          "measure": "node",
           "used": 2,
           "status": "Active"
         }

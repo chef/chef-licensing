@@ -76,13 +76,13 @@ interactions:
   free_restriction_message:
     prompt_type: "say"
     messages:
-      Kindly generate a trial or commercial license by using command <%= input[:pastel].bold("inspec license add")%>
+      Kindly generate a trial or commercial license by using command <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%>
     paths: [exit]
 
   only_commercial_allowed_message:
     prompt_type: "say"
     messages:
-      Kindly generate a commercial license by using command <%= input[:pastel].bold("inspec license add")%>
+      Kindly generate a commercial license by using command <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%>
     paths: [exit]
 
   prompt_license_expired:
