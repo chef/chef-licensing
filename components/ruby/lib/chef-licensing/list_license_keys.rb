@@ -58,8 +58,8 @@ module ChefLicensing
       licenses_metadata.each do |license|
         # find the number of days left for the license to expire
         validity = (Date.parse(license.expiration_date) - Date.today).to_i
-        # TODO: The -1 limit would be changed to Unlimited in a separate PR
         num_of_units = license.limits&.first&.usage_limit || 0
+        num_of_units = num_of_units == -1 ? "Unlimited" : num_of_units
         unit_measure = license.limits&.first&.usage_measure || "unit"
 
         output.puts <<~LICENSE
