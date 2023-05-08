@@ -204,7 +204,7 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
              {
               "testing" => "software",
                "id" => "guid",
-               "amount" => 2,
+               "amount" => -1,
                "measure" => "nodes",
                "used" => 2,
                "status" => "Active",
@@ -273,7 +273,7 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
       expect { described_class.new(opts_for_llk).display_overview }.to_not raise_error
       expect(output_stream.string).to include("License Details")
       expect(output_stream.string).to include("Validity         :")
-      expect(output_stream.string).to include("No. Of Units     :")
+      expect(output_stream.string).to include("No. Of Units     : Unlimited Nodes")
     end
   end
 end
