@@ -51,7 +51,8 @@ module ChefLicensing
       license_type = validate_and_fetch_license_type(new_keys)
       if license_type && !unrestricted_license_added?(new_keys, license_type)
         # break the flow after the prompt if there is a restriction in adding license
-        return new_keys
+        # and return the license keys persisted in the file or @license_keys if any
+        return fetch_from_file
       end
 
       logger.debug "License Key fetcher examining ENV checks"
@@ -59,7 +60,8 @@ module ChefLicensing
       license_type = validate_and_fetch_license_type(new_keys)
       if license_type && !unrestricted_license_added?(new_keys, license_type)
         # break the flow after the prompt if there is a restriction in adding license
-        return new_keys
+        # and return the license keys persisted in the file or @license_keys if any
+        return fetch_from_file
       end
 
       # If it has previously been fetched and persisted, read from disk and set runtime decision
@@ -215,8 +217,8 @@ module ChefLicensing
     end
 
     def license_restricted?(license_type)
-      license_type_options = file_fetcher.license_type_generation_options_based_on_file
-      !(license_type_options.include? license_type)
+      allowed_license_types = file_fetcher.fetch_allowed_license_types_for_addition
+      !(allowed_license_types.include? license_type)
     end
 
     def prompt_license_addition_restricted(license_type, existing_license_keys_in_file)
@@ -231,8 +233,13 @@ module ChefLicensing
 
     def unrestricted_license_added?(new_keys, license_type)
       if license_restricted?(license_type)
-        # Existing license keys are fetched to compare if old license key or a new one is added.
-        existing_license_keys_in_file = file_fetcher.fetch_license_keys_based_on_type(license_type)
+        # Existing license keys of same license type are fetched to compare if old license key or a new one is added.
+        # However, if user is trying to add free license, and user has active trial license, we fetch the trial license key
+        if license_type == :free && file_fetcher.user_has_active_trial_license?
+          existing_license_keys_in_file = file_fetcher.fetch_license_keys_based_on_type(:trial)
+        else
+          existing_license_keys_in_file = file_fetcher.fetch_license_keys_based_on_type(license_type)
+        end
         # Only prompt when a new trial license is added
         unless existing_license_keys_in_file.last == new_keys.first
           # prompt the message that this addition of license is restricted.

@@ -53,13 +53,21 @@ module ChefLicensing
         end
       end
 
-      def license_type_generation_options_based_on_file
-        # TODO free license restrictions
+      def user_has_active_trial_license?
+        @active_trial_status = false
+        read_license_key_file
+        unless contents.nil?
+          @active_trial_status = contents[:licenses].any? { |license| license[:license_type] == :trial && ChefLicensing.client(license_keys: [license[:license_key]]).active? }
+        end
+        @active_trial_status
+      end
+
+      def fetch_allowed_license_types_for_addition
         license_types = %i{free trial commercial}
         existing_license_types = fetch_license_types
 
         license_types -= [:trial] if existing_license_types.include? :trial
-        license_types -= [:free] if existing_license_types.include? :free
+        license_types -= [:free] if existing_license_types.include?(:free) || user_has_active_trial_license?
         license_types.uniq
       end
 
@@ -137,6 +145,10 @@ module ChefLicensing
 
       def self.fetch_license_keys_based_on_type(license_type, opts = {})
         new(opts).fetch_license_keys_based_on_type(license_type)
+      end
+
+      def self.user_has_active_trial_license?(opts = {})
+        new(opts).user_has_active_trial_license?
       end
 
       private
