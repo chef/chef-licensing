@@ -41,9 +41,10 @@ module ChefLicensing
 
         puts_bold "License Limits"
         license.limits.each do |limit|
+          usage_limit = limit.usage_limit == -1 ? "Unlimited" : limit.usage_limit
           output.puts <<~LIMIT
             Usage Status  : #{limit.usage_status}
-            Usage Limit   : #{limit.usage_limit}
+            Usage Limit   : #{usage_limit}
             Usage Measure : #{limit.usage_measure}
             Used          : #{limit.used}
             Software      : #{limit.software}
