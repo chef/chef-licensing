@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.4.7 -->
-## [0.4.7](https://github.com/chef/chef-licensing/tree/0.4.7) (2023-05-09)
+<!-- latest_release 0.4.8 -->
+## [0.4.8](https://github.com/chef/chef-licensing/tree/0.4.8) (2023-05-09)
 
 #### Merged Pull Requests
-- CHEF-1959: Display Unlimited licenses properly for trial licenses [#103](https://github.com/chef/chef-licensing/pull/103) ([ahasunos](https://github.com/ahasunos))
+- CHEF-2901: Restrict addition of free license when user has an active trial license [#100](https://github.com/chef/chef-licensing/pull/100) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-2901: Restrict addition of free license when user has an active trial license [#100](https://github.com/chef/chef-licensing/pull/100) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.8 -->
 - CHEF-1959: Display Unlimited licenses properly for trial licenses [#103](https://github.com/chef/chef-licensing/pull/103) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.7 -->
 - Fix typo in the missing credentials message [#102](https://github.com/chef/chef-licensing/pull/102) ([Vasu1105](https://github.com/Vasu1105)) <!-- 0.4.6 -->
 - CHEF-48 Multiple Free License restrictions [#95](https://github.com/chef/chef-licensing/pull/95) ([Nik08](https://github.com/Nik08)) <!-- 0.4.5 -->
