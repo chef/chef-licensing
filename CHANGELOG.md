@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.4.5 -->
-## [0.4.5](https://github.com/chef/chef-licensing/tree/0.4.5) (2023-05-05)
+<!-- latest_release 0.4.6 -->
+## [0.4.6](https://github.com/chef/chef-licensing/tree/0.4.6) (2023-05-09)
 
 #### Merged Pull Requests
-- CHEF-48 Multiple Free License restrictions [#95](https://github.com/chef/chef-licensing/pull/95) ([Nik08](https://github.com/Nik08))
+- Fix typo in the missing credentials message [#102](https://github.com/chef/chef-licensing/pull/102) ([Vasu1105](https://github.com/Vasu1105))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Fix typo in the missing credentials message [#102](https://github.com/chef/chef-licensing/pull/102) ([Vasu1105](https://github.com/Vasu1105)) <!-- 0.4.6 -->
 - CHEF-48 Multiple Free License restrictions [#95](https://github.com/chef/chef-licensing/pull/95) ([Nik08](https://github.com/Nik08)) <!-- 0.4.5 -->
 - CHEF-2743: Remove inspec-specific references in chef-licensing [#99](https://github.com/chef/chef-licensing/pull/99) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.4 -->
 - CHEF-2505: Determine how to write unit test for UX components [#96](https://github.com/chef/chef-licensing/pull/96) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.3 -->
