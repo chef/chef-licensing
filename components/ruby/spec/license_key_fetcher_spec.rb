@@ -158,7 +158,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
           .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
                      headers: { content_type: "application/json" })
-        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/desc")
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
           .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: describe_api_data, status_code: 200 }.to_json,
             headers: { content_type: "application/json" })
@@ -194,7 +194,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
           .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
                      headers: { content_type: "application/json" })
-        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/desc")
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
           .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: describe_api_data, status_code: 200 }.to_json,
             headers: { content_type: "application/json" })
@@ -302,15 +302,15 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
           .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-112", version: api_version })
           .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
                 headers: { content_type: "application/json" })
-        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/client")
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
           .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111", entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
                   headers: { content_type: "application/json" })
-        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/client")
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
           .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-112", entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
                 headers: { content_type: "application/json" })
-        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/desc")
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
           .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-112", entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: describe_api_data, status_code: 200 }.to_json,
             headers: { content_type: "application/json" })
