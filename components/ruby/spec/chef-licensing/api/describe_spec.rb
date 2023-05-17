@@ -108,7 +108,7 @@ RSpec.describe ChefLicensing::Api::Describe do
 
     context "when license is valid" do
       before do
-        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/desc")
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
           .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: describe_api_data, status_code: 200 }.to_json,
                     headers: { content_type: "application/json" })
@@ -120,7 +120,7 @@ RSpec.describe ChefLicensing::Api::Describe do
     context "when license is invalid" do
       let(:error_message) { "Invalid licenses" }
       before do
-        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/desc")
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
           .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: false, message: error_message, status_code: 400 }.to_json,
                      headers: { content_type: "application/json" })
@@ -132,7 +132,7 @@ RSpec.describe ChefLicensing::Api::Describe do
     context "when api response is invalid with status code of 200 - Part 1" do
       let(:error_message) { "No license details found for the given license keys" }
       before do
-        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/desc")
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
           .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: describe_api_invalid_response, message: error_message, status_code: 200 }.to_json,
                      headers: { content_type: "application/json" })

@@ -124,7 +124,7 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
     }
 
     before do
-      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/desc")
+      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
         .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
         .to_return(body: { data: describe_api_data, status_code: 200 }.to_json,
                    headers: { content_type: "application/json" })
@@ -151,7 +151,7 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
     }
 
     before do
-      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/desc")
+      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
         .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
         .to_return(body: { status_code: 404 }.to_json,
                    headers: { content_type: "application/json" })
@@ -263,7 +263,7 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
     }
 
     before do
-      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/desc")
+      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
         .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
         .to_return(body: { data: describe_api_data, status_code: 200 }.to_json,
                    headers: { content_type: "application/json" })

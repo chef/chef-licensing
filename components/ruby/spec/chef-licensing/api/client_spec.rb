@@ -54,7 +54,7 @@ RSpec.describe ChefLicensing::Api::Client do
 
   describe ".info" do
     before do
-      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/client")
+      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
         .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
         .to_return(body: { data: client_data, status_code: 200 }.to_json,
                    headers: { content_type: "application/json" })
@@ -64,7 +64,7 @@ RSpec.describe ChefLicensing::Api::Client do
     context "when license client call raises error" do
       let(:error_message) { "Invalid licenses" }
       before do
-        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/client")
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
           .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: false, message: error_message, status_code: 400 }.to_json,
                      headers: { content_type: "application/json" })
