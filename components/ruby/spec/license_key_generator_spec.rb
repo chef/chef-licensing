@@ -94,7 +94,7 @@ RSpec.describe ChefLicensing::LicenseKeyGenerator do
   describe ".generate_trial_license!" do
     context "when params are valid" do
       before do
-        stub_request(:post, "#{ChefLicensing::Config.license_server_url}/v1/license/trial")
+        stub_request(:post, "#{ChefLicensing::Config.license_server_url}/v1/trial")
           .with(body: payload.to_json, headers: headers)
           .to_return(body: expected_response,
                      headers: { content_type: "application/json" })
@@ -107,7 +107,7 @@ RSpec.describe ChefLicensing::LicenseKeyGenerator do
 
     context "when params are bad" do
       before do
-        stub_request(:post, "#{ChefLicensing::Config.license_server_url}/v1/license/trial")
+        stub_request(:post, "#{ChefLicensing::Config.license_server_url}/v1/trial")
           .with(body: bad_params.to_json, headers: headers)
           .to_return(body: bad_params_response, headers: { content_type: "application/json" }, status: 400)
       end
@@ -123,7 +123,7 @@ RSpec.describe ChefLicensing::LicenseKeyGenerator do
           config.license_server_api_key = invalid_api_key
         end
 
-        stub_request(:post, "#{ChefLicensing::Config.license_server_url}/v1/license/trial")
+        stub_request(:post, "#{ChefLicensing::Config.license_server_url}/v1/trial")
           .with(body: payload.to_json, headers: headers)
           .to_return(body: invalid_api_key_response, headers: { content_type: "application/json" }, status: 403)
       end
@@ -134,7 +134,7 @@ RSpec.describe ChefLicensing::LicenseKeyGenerator do
   describe ".generate_free_license!" do
     context "when params are valid" do
       before do
-        stub_request(:post, "#{ChefLicensing::Config.license_server_url}/v1/license/free")
+        stub_request(:post, "#{ChefLicensing::Config.license_server_url}/v1/free")
           .with(body: payload.to_json, headers: headers)
           .to_return(body: expected_free_license_response,
                      headers: { content_type: "application/json" })
@@ -147,7 +147,7 @@ RSpec.describe ChefLicensing::LicenseKeyGenerator do
 
     context "when params are bad" do
       before do
-        stub_request(:post, "#{ChefLicensing::Config.license_server_url}/v1/license/free")
+        stub_request(:post, "#{ChefLicensing::Config.license_server_url}/v1/free")
           .with(body: bad_params.to_json, headers: headers)
           .to_return(body: bad_params_response, headers: { content_type: "application/json" }, status: 400)
       end
@@ -163,7 +163,7 @@ RSpec.describe ChefLicensing::LicenseKeyGenerator do
           config.license_server_api_key = invalid_api_key
         end
 
-        stub_request(:post, "#{ChefLicensing::Config.license_server_url}/v1/license/free")
+        stub_request(:post, "#{ChefLicensing::Config.license_server_url}/v1/free")
           .with(body: payload.to_json, headers: headers)
           .to_return(body: invalid_api_key_response, headers: { content_type: "application/json" }, status: 403)
       end
