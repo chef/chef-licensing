@@ -35,6 +35,14 @@ module ChefLicensing
           ping_check.detected?
       end
 
+      def licensing_service_local?
+        @is_local_license_service ||= LicensingService::Local.detected?
+      end
+
+      def licensing_service_global?
+        @is_global_license_service ||= !licensing_service_local?
+      end
+
       def chef_entitlement_id
         @chef_entitlement_id ||= ChefLicensing::ArgFetcher.fetch_value("--chef-entitlement-id", :string) || ChefLicensing::EnvFetcher.fetch_value("CHEF_ENTITLEMENT_ID", :string)
       end
