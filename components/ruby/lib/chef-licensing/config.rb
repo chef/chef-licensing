@@ -8,6 +8,10 @@ require_relative "air_gap_detection/ping"
 
 # Config class handles all configuration related to chef-licensing
 # Values can be set via block, environment variable or command line argument
+
+# Licensing service detection
+require_relative "licensing_service/local"
+
 module ChefLicensing
   class Config
     class << self
@@ -26,6 +30,14 @@ module ChefLicensing
         @air_gap_status = ChefLicensing::ArgFetcher.fetch_value("--airgap", :boolean) ||
           ChefLicensing::EnvFetcher.fetch_value("CHEF_AIR_GAP", :boolean) ||
           ping_check.detected?
+      end
+
+      def licensing_service_local?
+        @is_local_license_service ||= LicensingService::Local.detected?
+      end
+
+      def licensing_service_global?
+        @is_global_license_service ||= !licensing_service_local?
       end
 
       def chef_entitlement_id
