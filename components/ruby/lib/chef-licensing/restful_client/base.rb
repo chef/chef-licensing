@@ -22,6 +22,7 @@ module ChefLicensing
         ENTITLEMENT_BY_ID: "license-service/entitlementbyid",
         CLIENT: "client",
         DESCRIBE: "desc",
+        LICENSES_LIST: "listlicenses",
       }.freeze
 
       CURRENT_ENDPOINT_VERSION = 2
@@ -69,6 +70,10 @@ module ChefLicensing
 
       def describe(params = {})
         invoke_get_api(self.class::END_POINTS[:DESCRIBE], { licenseId: params[:license_keys], entitlementId: params[:entitlement_id] })
+      end
+
+      def list_licenses(params = {})
+        invoke_get_api(self.class::END_POINTS[:LICENSES_LIST])
       end
 
       private
