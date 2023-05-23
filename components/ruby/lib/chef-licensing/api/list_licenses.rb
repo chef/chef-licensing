@@ -16,18 +16,18 @@ module ChefLicensing
       end
 
       def info
-        return @licenses_list if @licenses_list
+        return @list_licenses if @list_licenses
 
         response = restful_client.list_licenses
         raise(ChefLicensing::ListLicensesError, response.message) unless response.status_code == 200 && response.data
 
-        @licenses_list = response.data
-        @licenses_list
+        @list_licenses = response.data
+        @list_licenses
       end
 
       private
 
-      attr_reader :restful_client, :licenses_list
+      attr_reader :restful_client, :list_licenses
     end
   end
 end
