@@ -17,7 +17,7 @@ module ChefLicensing
 
       def info
         response = restful_client.list_licenses
-        raise(ChefLicensing::ListLicensesError, response) unless response.status_code == 200 && response.data
+        raise ChefLicensing::ListLicensesError.new(response.message, response.status_code) unless response.status_code == 200 && response.data
 
         response.data
       end
