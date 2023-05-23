@@ -1,5 +1,6 @@
 require_relative "../config"
-require_relative "../api/local/licenses_list"
+require_relative "../api/list_licenses"
+require_relative "../exceptions/list_licenses_error"
 
 module ChefLicensing
   class LicensingService
@@ -17,10 +18,9 @@ module ChefLicensing
       end
 
       def detected?
-        # DUMMY call added - dependent on API integration
-        ChefLicensing::Api::Local::LicensesList.info
+        ChefLicensing::Api::ListLicenses.info
         true
-      rescue ChefLicensing::LicensesListError => e
+      rescue ChefLicensing::ListLicensesError => e
         # If API call returns 403, it is a global licensing service
         return false if e.status_code == 403
 
