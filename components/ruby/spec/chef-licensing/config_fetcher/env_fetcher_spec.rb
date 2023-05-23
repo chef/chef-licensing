@@ -22,17 +22,12 @@ RSpec.describe ChefLicensing::EnvFetcher do
         expect(env_fetcher.fetch_value("CHEF_LICENSE_SERVER", :string))
           .to eq "http://localhost:8080"
       end
-
-      it "returns nil if given environment variable is not present" do
-        expect(env_fetcher.fetch_value("CHEF_LICENSE_SERVER_API_KEY", :string)).to eq nil
-      end
     end
 
     context "when no type is specified for an environment variable" do
-      let(:env) { { "CHEF_LICENSE_SERVER" => "http://localhost:8080", "CHEF_LICENSE_SERVER_API_KEY" => "s0m3r4nd0mk3y" } }
+      let(:env) { { "CHEF_LICENSE_SERVER" => "http://localhost:8080" } }
       it "assumes the value is a string" do
         expect(env_fetcher.fetch_value("CHEF_LICENSE_SERVER")).to eq "http://localhost:8080"
-        expect(env_fetcher.fetch_value("CHEF_LICENSE_SERVER_API_KEY")).to eq "s0m3r4nd0mk3y"
       end
     end
   end
