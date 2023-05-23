@@ -22,7 +22,7 @@ module ChefLicensing
         ENTITLEMENT_BY_ID: "license-service/entitlementbyid",
         CLIENT: "client",
         DESCRIBE: "desc",
-        LICENSES_LIST: "listlicenses",
+        LIST_LICENSES: "listlicenses",
       }.freeze
 
       CURRENT_ENDPOINT_VERSION = 2
@@ -73,7 +73,7 @@ module ChefLicensing
       end
 
       def list_licenses(params = {})
-        invoke_get_api(self.class::END_POINTS[:LICENSES_LIST])
+        invoke_get_api(self.class::END_POINTS[:LIST_LICENSES])
       end
 
       private
