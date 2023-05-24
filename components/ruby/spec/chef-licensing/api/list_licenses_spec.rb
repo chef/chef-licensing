@@ -28,6 +28,8 @@ RSpec.describe ChefLicensing::Api::ListLicenses do
                    headers: { content_type: "application/json" })
 
       expect(ChefLicensing::Api::ListLicenses.info).to eq(licenses_list)
+      expect(ChefLicensing::Config.licensing_service_local?).to eq(true)
+      expect(ChefLicensing::Config.licensing_service_global?).to eq(false)
     end
   end
 
@@ -35,6 +37,7 @@ RSpec.describe ChefLicensing::Api::ListLicenses do
 
     before do
       ChefLicensing.configure do |config|
+        config.is_local_license_service = nil
         config.license_server_url = "http://globalhost-license-server/License"
       end
     end
@@ -43,8 +46,9 @@ RSpec.describe ChefLicensing::Api::ListLicenses do
       stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listlicenses")
         .to_return(body: invalid_list_licenses_api_response,
                     headers: { content_type: "application/json" })
-
       expect { ChefLicensing::Api::ListLicenses.info }.to raise_error(ChefLicensing::ListLicensesError, /You are not authorized to access this resource/)
+      expect(ChefLicensing::Config.licensing_service_local?).to eq(false)
+      expect(ChefLicensing::Config.licensing_service_global?).to eq(true)
     end
   end
 

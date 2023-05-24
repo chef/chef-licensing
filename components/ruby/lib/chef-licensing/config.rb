@@ -15,7 +15,7 @@ require_relative "licensing_service/local"
 module ChefLicensing
   class Config
     class << self
-      attr_writer :license_server_url, :air_gap_status, :chef_product_name, :chef_entitlement_id, :logger, :output, :chef_executable_name
+      attr_writer :license_server_url, :air_gap_status, :chef_product_name, :chef_entitlement_id, :logger, :output, :chef_executable_name, :is_local_license_service
 
       def license_server_url
         @license_server_url ||= ChefLicensing::ArgFetcher.fetch_value("--chef-license-server", :string) || ChefLicensing::EnvFetcher.fetch_value("CHEF_LICENSE_SERVER", :string)
@@ -37,7 +37,8 @@ module ChefLicensing
       end
 
       def licensing_service_global?
-        @is_global_license_service ||= !licensing_service_local?
+        # Returns true or false based on listlicenses API call done by licensing_service_local?
+        !licensing_service_local?
       end
 
       def chef_entitlement_id
