@@ -302,7 +302,7 @@ interactions:
       "false": user_first_name_validation_failure
 
   user_first_name_validation_failure:
-    messages: "Invalid name. It should contain only A-Z/a-z alphabets and _ , - or ` special characters."
+    messages: "Invalid name. It should contain only A-Z/a-z alphabets."
     prompt_type: "error"
     paths: [gather_user_first_name_for_license_generation]
 
@@ -319,7 +319,7 @@ interactions:
       "false": user_last_name_validation_failure
 
   user_last_name_validation_failure:
-    messages: "Invalid name. It should contain only A-Z/a-z alphabets and _ , - or ` special characters."
+    messages: "Invalid name. It should contain only A-Z/a-z alphabets."
     prompt_type: "error"
     paths: [gather_user_last_name_for_license_generation]
 
@@ -353,7 +353,7 @@ interactions:
       "false": user_company_name_validation_failure
 
   user_company_name_validation_failure:
-    messages: "Invalid company name. It should contain only A-Z/a-z alphabets and _ , . , - or ` special characters."
+    messages: "Invalid company name. It should contain only A-Z/a-z alphabets, numbers or special characters."
     prompt_type: "error"
     paths: [gather_user_company_for_license_generation]
 
