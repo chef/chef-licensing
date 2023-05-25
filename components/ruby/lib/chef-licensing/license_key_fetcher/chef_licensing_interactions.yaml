@@ -118,15 +118,6 @@ interactions:
       "I don't have a license ID and would like to generate a new license ID": info_of_license_types
       "Skip": skipped
 
-  skip_licensing:
-    messages: ["\nAre you sure to skip this step?",["Skip", "Generate a new license ID", "I already have a license ID"]]
-    prompt_type: "select"
-    paths: [ask_for_license_id, info_of_license_types, skipped]
-    response_path_map:
-      "I already have a license ID": ask_for_license_id
-      "Generate a new license ID": info_of_license_types
-      "Skip": skipped
-
   skipped:
     messages: "License ID validation skipped!"
     paths: [exit]
