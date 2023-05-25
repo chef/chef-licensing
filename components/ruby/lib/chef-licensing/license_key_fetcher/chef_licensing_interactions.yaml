@@ -19,14 +19,8 @@ interactions:
     paths: [ask_if_user_has_license_id]
 
   add_license_all:
-    messages: |
-      ------------------------------------------------------------
-        To continue using Chef <%= input[:chef_product_name] %>, a license ID is required.
-        (Free, Trial, or Commercial)
-
-        Continue to add a license.
-      -------------------------
-    prompt_type: "say"
+    messages: ""
+    prompt_type: "silent"
     paths: [ask_if_user_has_license_id]
 
   prompt_license_addition_restriction:
