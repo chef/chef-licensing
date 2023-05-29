@@ -32,13 +32,8 @@ module ChefLicensing
           ping_check.detected?
       end
 
-      def licensing_service_local?
+      def local_licensing_service?
         @is_local_license_service ||= LicensingService::Local.detected?
-      end
-
-      def licensing_service_global?
-        # Returns true or false based on listlicenses API call done by licensing_service_local?
-        !licensing_service_local?
       end
 
       def chef_entitlement_id
