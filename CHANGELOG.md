@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.4.9 -->
-## [0.4.9](https://github.com/chef/chef-licensing/tree/0.4.9) (2023-05-17)
+<!-- latest_release 0.4.10 -->
+## [0.4.10](https://github.com/chef/chef-licensing/tree/0.4.10) (2023-05-29)
 
 #### Merged Pull Requests
-- CHEF-3113: Update licensing server&#39;s endpoint  [#101](https://github.com/chef/chef-licensing/pull/101) ([ahasunos](https://github.com/ahasunos))
+- CHEF-3186: Remove bearer token authentication [#106](https://github.com/chef/chef-licensing/pull/106) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-3186: Remove bearer token authentication [#106](https://github.com/chef/chef-licensing/pull/106) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.10 -->
 - CHEF-3113: Update licensing server&#39;s endpoint  [#101](https://github.com/chef/chef-licensing/pull/101) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.9 -->
 - CHEF-2901: Restrict addition of free license when user has an active trial license [#100](https://github.com/chef/chef-licensing/pull/100) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.8 -->
 - CHEF-1959: Display Unlimited licenses properly for trial licenses [#103](https://github.com/chef/chef-licensing/pull/103) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.7 -->
