@@ -6,11 +6,11 @@ interactions:
       ------------------------------------------------------------
         License ID Validation
 
-        To continue using Chef <%= input[:chef_product_name] %>, a License ID is required.
-        (Free, Trial or Commercial)
+        To continue using Chef <%= input[:chef_product_name] %>, a license ID is required.
+        (Free, Trial, or Commercial)
 
-        If you have generated a license previously, you might
-        have received it in email.
+        If you generated a license previously, you might
+        have received it in an email.
 
         If you are a commercial user, you can also find it in the
         <%= input[:pastel].underline.green("supportlink.chef.io")%> portal.
@@ -21,8 +21,8 @@ interactions:
   add_license_all:
     messages: |
       ------------------------------------------------------------
-        To continue using Chef <%= input[:chef_product_name] %>, a License ID is required.
-        (Free, Trial or Commercial)
+        To continue using Chef <%= input[:chef_product_name] %>, a license ID is required.
+        (Free, Trial, or Commercial)
 
         Continue to add a license.
       -------------------------
@@ -47,17 +47,17 @@ interactions:
       "active_trial_restriction": active_trial_exist_message
 
   trial_already_exist_message:
-    messages: "A trial license already exists with following details \n"
+    messages: "A Trial License already exists with following details: \n"
     prompt_type: "say"
     paths: [add_license_info_in_restriction_flow]
 
   free_license_already_exist_message:
-    messages: "A free license already exists with following details \n"
+    messages: "A Free License already exists with following details: \n"
     prompt_type: "say"
     paths: [add_license_info_in_restriction_flow]
-  
+
   active_trial_exist_message:
-    messages: "An active trial license already exists with following details \n"
+    messages: "An active Trial License already exists with following details \n"
     prompt_type: "say"
     paths: [add_license_info_in_restriction_flow]
 
@@ -76,19 +76,19 @@ interactions:
   trial_restriction_message:
     prompt_type: "say"
     messages:
-      Kindly generate a free or commercial license by using command <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%>
+      Please generate a Free or Commercial License by running <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%>.
     paths: [exit]
 
   free_restriction_message:
     prompt_type: "say"
     messages:
-      Kindly generate a trial or commercial license by using command <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%>
+      Please generate a Trial or Commercial License by running <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%>.
     paths: [exit]
 
   only_commercial_allowed_message:
     prompt_type: "say"
     messages:
-      Kindly generate a commercial license by using command <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%>
+      Please generate a Commercial License by running <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%>.
     paths: [exit]
 
   prompt_license_expired:
@@ -96,18 +96,18 @@ interactions:
 
       <%= input[:pastel].yellow("! [WARNING]")%> <%= input[:license_type] %> License Expired
 
-      Get a Commercial license to receive bug fixes, updates and new features.
-      Get a Free license to scan limited targets.
+      Get a Commercial License to receive bug fixes, updates, and new features.
+      Get a Free License to scan limited targets.
 
-      To get a new license, run <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%> command and select a license type.
+      To get a new license, run <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%> and select a license type.
     prompt_type: "say"
     paths: [exit]
 
   prompt_license_about_to_expire:
     messages: |
 
-      <%= input[:pastel].yellow("! [WARNING]")%> Your license is about to expire in <%= input[:pastel].bold(input[:number_of_days_in_expiration]) %> <%= input[:pastel].bold("days.") %>
-      To avoid service disruptions, please get a commercial license before <%= input[:license_expiration_date] %>
+      <%= input[:pastel].yellow("! [WARNING]")%> Your license is about to expire in <%= input[:pastel].bold(input[:number_of_days_in_expiration]) %> <%= input[:pastel].bold("days.") %>.
+      To avoid service disruptions, get a Commercial License before <%= input[:license_expiration_date] %>.
     prompt_type: "say"
     paths: [exit]
 
@@ -124,7 +124,7 @@ interactions:
       "Skip": skip_message
 
   skip_message:
-    messages: ["\n! [WARNING] License is required to continue using the product"]
+    messages: ["\n! [WARNING] A license is required to continue using this product."]
     prompt_type: warn
     paths: [skip_licensing]
 
@@ -141,20 +141,20 @@ interactions:
     messages: |
       License ID validation skipped!
 
-      To generate the new license again in future, you can use
+      To generate a new license in future, use
       the following command:
       <command>
 
-      After generating the license, you can validate with the
-      help of the following command:
+      After generating a license, you can validate it with the
+      the following command:
       <command>
 
-      To know more about license types, their respective entitlement
-      and premium features, visit <link>
+      To know more about license types, their respective entitlement,
+      and premium features, visit <link>.
     paths: [exit]
 
   ask_for_license_id:
-    messages: "Please enter your License ID: "
+    messages: "Please enter your license ID: "
     prompt_type: "ask"
     paths: [validate_license_id_pattern]
 
@@ -182,7 +182,7 @@ interactions:
       "false": prompt_error_license_addition_restricted
 
   validation_success:
-    messages: "✔ [Success] License validated successfully"
+    messages: "✔ [Success] License validated successfully."
     prompt_type: "ok"
     paths: [display_license_info]
 
@@ -195,12 +195,12 @@ interactions:
     paths: [validation_failure]
 
   validation_failure:
-    messages: "✖ [Error] License validation failed: <%= input[:fetch_invalid_license_msg] %>"
+    messages: "✖ [Error] License validation failed: <%= input[:fetch_invalid_license_msg] %>."
     prompt_type: "error"
     paths: [retry_message]
 
   retry_message:
-    messages: "Please try again"
+    messages: "Please try again."
     paths: [ask_for_license_id]
 
 
@@ -208,7 +208,7 @@ interactions:
     messages: |
       License generation skipped!
 
-      A license is required to in order to use <%= input[:chef_product_name] %>.
+      A license is required to use <%= input[:chef_product_name] %>.
 
       Visit <link> to learn more about the licenses.
     paths: [exit]
@@ -234,75 +234,75 @@ interactions:
     prompt_type: "select"
     messages: ["Select the type of license below and then enter user details\n" ,
       [
-      "1. Commercial license\n     Get in touch with the Account/Sales team.\n",
-      "2. Quit license generation"
+      "1. Commercial License\n     Get in touch with the Account or Sales Team.\n",
+      "2. Quit license generation."
       ]]
     paths: [commercial_license_selection, exit]
     response_path_map:
-      "1. Commercial license\n     Get in touch with the Account/Sales team.\n": commercial_license_selection
+      "1. Commercial License\n     Get in touch with the Account or Sales Team.\n": commercial_license_selection
       "2. Quit license generation": exit
 
   ask_for_license_except_trial:
     prompt_type: "select"
     messages: ["Select the type of license below and then enter user details\n" ,
       [
-      "1. Free license\n     Validity: Unlimited\n     No. of targets: 10\n",
-      "2. Commercial license\n     Get in touch with the Account/Sales team.\n",
+      "1. Free License\n     Validity: Unlimited\n     No. of targets: 10\n",
+      "2. Commercial License\n     Get in touch with the Account or Sales Team.\n",
       "3. Quit license generation"
       ]]
     paths: [free_license_disclaimer, commercial_license_selection, exit]
     response_path_map:
-      "1. Free license\n     Validity: Unlimited\n     No. of targets: 10\n": free_license_disclaimer
-      "2. Commercial license\n     Get in touch with the Account/Sales team.\n": commercial_license_selection
+      "1. Free License\n     Validity: Unlimited\n     No. of targets: 10\n": free_license_disclaimer
+      "2. Commercial License\n     Get in touch with the Account or Sales Team.\n": commercial_license_selection
       "3. Quit license generation": exit
 
   ask_for_license_except_free:
     prompt_type: "select"
     messages: ["Select the type of license below and then enter user details\n" ,
       [
-      "1. Trial license\n     Validity: 30 Days\n     No. of targets: Unlimited\n",
-      "2. Commercial license\n     Get in touch with the Account/Sales team.\n",
+      "1. Trial License\n     Validity: 30 Days\n     No. of targets: Unlimited\n",
+      "2. Commercial License\n     Get in touch with the Account or Sales Team.\n",
       "3. Quit license generation"
       ]]
     paths: [trial_license_selection, commercial_license_selection, exit]
     response_path_map:
-      "1. Trial license\n     Validity: 30 Days\n     No. of targets: Unlimited\n": trial_license_selection
-      "2. Commercial license\n     Get in touch with the Account/Sales team.\n": commercial_license_selection
+      "1. Trial License\n     Validity: 30 Days\n     No. of targets: Unlimited\n": trial_license_selection
+      "2. Commercial License\n     Get in touch with the Account or Sales Team.\n": commercial_license_selection
       "3. Quit license generation": exit
 
   ask_for_all_license_type:
     prompt_type: "select"
     messages: ["Select the type of license below and then enter user details\n" ,
       [
-      "1. Free license\n     Validity: Unlimited\n     No. of targets: 10\n",
-      "2. Trial license\n     Validity: 30 Days\n     No. of targets: Unlimited\n",
-      "3. Commercial license\n     Get in touch with the Account/Sales team.\n",
+      "1. Free License\n     Validity: Unlimited\n     No. of targets: 10\n",
+      "2. Trial License\n     Validity: 30 Days\n     No. of targets: Unlimited\n",
+      "3. Commercial License\n     Get in touch with the Account or Sales Team.\n",
       "4. Quit license generation"
       ]]
     paths: [free_license_disclaimer, commercial_license_selection, trial_license_selection, exit]
     response_path_map:
-      "1. Free license\n     Validity: Unlimited\n     No. of targets: 10\n": free_license_disclaimer
-      "2. Trial license\n     Validity: 30 Days\n     No. of targets: Unlimited\n": trial_license_selection
-      "3. Commercial license\n     Get in touch with the Account/Sales team.\n": commercial_license_selection
+      "1. Free License\n     Validity: Unlimited\n     No. of targets: 10\n": free_license_disclaimer
+      "2. Trial License\n     Validity: 30 Days\n     No. of targets: Unlimited\n": trial_license_selection
+      "3. Commercial License\n     Get in touch with the Account or Sales Team.\n": commercial_license_selection
       "4. Quit license generation": exit
 
   free_license_disclaimer:
-    messages: '<%= input[:pastel].bold("Free license usage is subject to personal and non-commercial use only.\n")%>'
+    messages: '<%= input[:pastel].bold("A Free License can be used for personal, non-commercial use only.\n")%>'
     prompt_type: "warn"
     paths: [free_license_selection]
 
   free_license_selection:
-    messages: "Type: Free license\n  Validity: Unlimited\n  No. of targets: 10\n"
+    messages: "Type: Free License\n  Validity: Unlimited\n  No. of targets: 10\n"
     prompt_type: "silent"
     paths: [check_if_user_details_are_present]
 
   trial_license_selection:
-    messages: "Type: Trial license\n  Validity: 30 days\n  No. of targets: Unlimited\n"
+    messages: "Type: Trial License\n  Validity: 30 days\n  No. of targets: Unlimited\n"
     prompt_type: "silent"
     paths: [check_if_user_details_are_present]
 
   commercial_license_selection:
-    messages: "Type: Commercial license\n  Validity: Custom\n  No. of targets: Custom\n"
+    messages: "Type: Commercial License\n  Validity: Custom\n  No. of targets: Custom\n"
     prompt_type: "silent"
     paths: [check_if_user_details_are_present]
 
@@ -389,7 +389,7 @@ interactions:
     paths: [gather_user_company_for_license_generation]
 
   gather_user_phone_no_for_license_generation:
-    messages: "Enter Phone Number: "
+    messages: "Enter phone number: "
     prompt_type: "ask"
     paths: [validate_user_phone_no]
 
@@ -401,14 +401,14 @@ interactions:
       "false": user_phone_no_validation_failure
 
   user_phone_no_validation_failure:
-    messages: "Please enter valid phone number."
+    messages: "Please enter a valid phone number."
     prompt_type: "error"
     paths: [gather_user_phone_no_for_license_generation]
 
   print_to_review_details:
     messages: |
       ------------------------------------------------------------
-      Please review the details below and confirm to proceed
+      Review the details below and confirm to proceed.
       ------------------------------------------------------------
       License Details
 
@@ -471,20 +471,20 @@ interactions:
     messages: |
       <%= input[:pastel].green("✔ [Success] License generated successfully") %>
 
-      The license ID has been sent on <%= input[:gather_user_email_for_license_generation] %>.
-      You can also look up it in the SaleForce portal under the name of <%= input[:gather_user_first_name_for_license_generation] + " " + input[:gather_user_last_name_for_license_generation] %>.
+      The license ID has been sent to <%= input[:gather_user_email_for_license_generation] %>.
+      You can also look it up in the Salesforce portal under the name of <%= input[:gather_user_first_name_for_license_generation] + " " + input[:gather_user_last_name_for_license_generation] %>.
     paths: [ask_for_license_id]
 
   trial_license_generation_success:
     messages: |
       <%= input[:pastel].green("✔ [Success] License generated successfully") %>
 
-      The license ID has been sent on <%= input[:gather_user_email_for_license_generation] %>.
-      You can also look up it in the SaleForce portal under the name of <%= input[:gather_user_first_name_for_license_generation] + " " + input[:gather_user_last_name_for_license_generation] %>.
+      The license ID has been sent to <%= input[:gather_user_email_for_license_generation] %>.
+      You can also look it up in the Salesforce portal under the name of <%= input[:gather_user_first_name_for_license_generation] + " " + input[:gather_user_last_name_for_license_generation] %>.
     paths: [ask_for_license_id]
 
   commercial_license_generation_success:
-    messages: "Our Sales team will get in touch with you with further steps."
+    messages: "Our Sales Team will get in touch with you with further steps."
     paths: [exit]
 
   fetch_license_id:
@@ -492,7 +492,7 @@ interactions:
     paths: [exit]
 
   license_generation_failure:
-    messages: "✖ [Error] License generation failed"
+    messages: "✖ [Error] License generation failed."
     prompt_type: "error"
     paths: [check_failure_reason]
 
@@ -512,7 +512,7 @@ interactions:
     paths: [license_generation_rejected]
 
   license_generation_rejected:
-    messages: ["Your request for a license was denied for the following reason <%= input[:fetch_license_failure_rejection_msg] %>. Please select an Option", ["Try again", "Skip"]]
+    messages: ["Your request for a license was denied for the following reason: <%= input[:fetch_license_failure_rejection_msg] %>. Please select one of the following options:", ["Try again", "Skip"]]
     prompt_type: "select"
     paths: [pre_license_generation, skip_message]
     response_path_map:

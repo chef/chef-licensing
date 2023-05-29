@@ -71,7 +71,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
       expect(tui_engine.traversed_interaction).to eq(%i{start ask_if_user_has_license_id ask_for_license_id validate_license_id_pattern validate_license_id_with_api validate_license_restriction validation_success display_license_info fetch_license_id})
       expect(prompt.output.string).to include("I already have a license ID")
-      expect(prompt.output.string).to include("Please enter your License ID:")
+      expect(prompt.output.string).to include("Please enter your license ID:")
       expect(prompt.output.string).to include("License validated successfully")
     end
   end
