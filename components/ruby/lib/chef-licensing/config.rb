@@ -11,14 +11,10 @@ require_relative "air_gap_detection/ping"
 module ChefLicensing
   class Config
     class << self
-      attr_writer :license_server_url, :license_server_api_key, :air_gap_status, :chef_product_name, :chef_entitlement_id, :logger, :output, :chef_executable_name
+      attr_writer :license_server_url, :air_gap_status, :chef_product_name, :chef_entitlement_id, :logger, :output, :chef_executable_name
 
       def license_server_url
         @license_server_url ||= ChefLicensing::ArgFetcher.fetch_value("--chef-license-server", :string) || ChefLicensing::EnvFetcher.fetch_value("CHEF_LICENSE_SERVER", :string)
-      end
-
-      def license_server_api_key
-        @license_server_api_key ||= ChefLicensing::ArgFetcher.fetch_value("--chef-license-server-api-key", :string) || ChefLicensing::EnvFetcher.fetch_value("CHEF_LICENSE_SERVER_API_KEY", :string)
       end
 
       def air_gap_detected?

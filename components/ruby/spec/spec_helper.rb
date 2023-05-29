@@ -17,7 +17,6 @@ RSpec.configure do |config|
 end
 
 ENV["CHEF_LICENSE_SERVER"] = "http://localhost-license-server/License"
-ENV["CHEF_LICENSE_SERVER_API_KEY"] = "xDblv65Xt84wULmc8qTN78a3Dr2OuuKxa6GDvb67"
 
 # This is required when mocked down key pressed in tui_engine_spec.rb
 class StringIO

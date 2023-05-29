@@ -28,9 +28,6 @@ module ChefLicensing
 
       def initialize
         raise MissingAPICredentialsError, "Missing credential in config: Set in block chef_license_server or use environment variable CHEF_LICENSE_SERVER or pass through argument --chef-license-server" if ChefLicensing::Config.license_server_url.nil?
-
-        # License server API key is only used for License generation API
-        raise MissingAPICredentialsError, "Missing credential in config: Set in block chef_license_server_api_key or use environment variable CHEF_LICENSE_SERVER_API_KEY or pass through argument --chef-license-server-api-key" if ChefLicensing::Config.license_server_api_key.nil?
       end
 
       def validate(license)
@@ -38,13 +35,11 @@ module ChefLicensing
       end
 
       def generate_trial_license(payload)
-        headers = { 'x-api-key': ChefLicensing::Config.license_server_api_key }
-        invoke_post_api(self.class::END_POINTS[:GENERATE_TRIAL_LICENSE], payload, headers)
+        invoke_post_api(self.class::END_POINTS[:GENERATE_TRIAL_LICENSE], payload)
       end
 
       def generate_free_license(payload)
-        headers = { 'x-api-key': ChefLicensing::Config.license_server_api_key }
-        invoke_post_api(self.class::END_POINTS[:GENERATE_FREE_LICENSE], payload, headers)
+        invoke_post_api(self.class::END_POINTS[:GENERATE_FREE_LICENSE], payload)
       end
 
       def feature_by_name(payload)
