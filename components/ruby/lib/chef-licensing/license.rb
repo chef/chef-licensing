@@ -137,6 +137,10 @@ module ChefLicensing
       status.eql?("Active")
     end
 
+    def expiring_or_expired?
+      have_grace? || expired? || about_to_expire?
+    end
+
     def about_to_expire?
       require "Date" unless defined?(Date)
       self.number_of_days_in_expiration = (Date.parse(expiration_date) - Date.today).to_i
