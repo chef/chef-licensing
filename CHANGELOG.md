@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.4.12 -->
-## [0.4.12](https://github.com/chef/chef-licensing/tree/0.4.12) (2023-05-29)
+<!-- latest_release 0.4.13 -->
+## [0.4.13](https://github.com/chef/chef-licensing/tree/0.4.13) (2023-05-29)
 
 #### Merged Pull Requests
-- CHEF-2516 Update UI text [#108](https://github.com/chef/chef-licensing/pull/108) ([IanMadd](https://github.com/IanMadd))
+- CHEF-3275: Minor change in UI message and format [#109](https://github.com/chef/chef-licensing/pull/109) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-3275: Minor change in UI message and format [#109](https://github.com/chef/chef-licensing/pull/109) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.13 -->
 - CHEF-2516 Update UI text [#108](https://github.com/chef/chef-licensing/pull/108) ([IanMadd](https://github.com/IanMadd)) <!-- 0.4.12 -->
 - CHEF-2435: Integrate `listlicenses` API to fetch licenses [#105](https://github.com/chef/chef-licensing/pull/105) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.11 -->
 - CHEF-3186: Remove bearer token authentication [#106](https://github.com/chef/chef-licensing/pull/106) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.10 -->
