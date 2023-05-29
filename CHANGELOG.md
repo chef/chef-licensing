@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.4.13 -->
-## [0.4.13](https://github.com/chef/chef-licensing/tree/0.4.13) (2023-05-29)
+<!-- latest_release 0.4.14 -->
+## [0.4.14](https://github.com/chef/chef-licensing/tree/0.4.14) (2023-05-29)
 
 #### Merged Pull Requests
-- CHEF-3275: Minor change in UI message and format [#109](https://github.com/chef/chef-licensing/pull/109) ([ahasunos](https://github.com/ahasunos))
+- CHEF-3277: Change UX for Skip step in chef licensing [#110](https://github.com/chef/chef-licensing/pull/110) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-3277: Change UX for Skip step in chef licensing [#110](https://github.com/chef/chef-licensing/pull/110) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.14 -->
 - CHEF-3275: Minor change in UI message and format [#109](https://github.com/chef/chef-licensing/pull/109) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.13 -->
 - CHEF-2516 Update UI text [#108](https://github.com/chef/chef-licensing/pull/108) ([IanMadd](https://github.com/IanMadd)) <!-- 0.4.12 -->
 - CHEF-2435: Integrate `listlicenses` API to fetch licenses [#105](https://github.com/chef/chef-licensing/pull/105) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.11 -->
