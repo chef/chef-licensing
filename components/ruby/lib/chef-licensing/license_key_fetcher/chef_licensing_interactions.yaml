@@ -95,7 +95,7 @@ interactions:
 
       To get a new license, run <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%> and select a license type.
     prompt_type: "say"
-    paths: [exit]
+    paths: [fetch_license_id]
 
   prompt_license_about_to_expire:
     messages: |
@@ -104,7 +104,7 @@ interactions:
       To avoid service disruptions, get a Commercial License before <%= input[:license_expiration_date] %>.
       ------------------------------------------------------------
     prompt_type: "say"
-    paths: [exit]
+    paths: [fetch_license_id]
 
   ask_if_user_has_license_id:
     messages: ["\nPlease choose one of the options below",["I already have a license ID", "I don't have a license ID and would like to generate a new license ID", "Skip"]]
@@ -145,10 +145,18 @@ interactions:
 
   validate_license_restriction:
     action: is_license_allowed?
-    paths: [validation_success, prompt_error_license_addition_restricted]
+    paths: [validate_license_expiration, prompt_error_license_addition_restricted]
     response_path_map:
-      "true": validation_success
+      "true": validate_license_expiration
       "false": prompt_error_license_addition_restricted
+
+  validate_license_expiration:
+    action: license_expiration_status?
+    paths: [validation_success, prompt_license_about_to_expire, prompt_license_expired]
+    response_path_map:
+      "active": validation_success
+      "about_to_expire": prompt_license_about_to_expire
+      "expired": prompt_license_expired
 
   validation_success:
     messages: "✔ [Success] License validated successfully."
