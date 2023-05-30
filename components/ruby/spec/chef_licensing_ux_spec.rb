@@ -253,9 +253,9 @@ RSpec.describe ChefLicensing::TUIEngine do
 
       let(:lkf_opts) {
         {
-       argv: argv,
-       dir: tmpdir,
-            }
+          argv: argv,
+          dir: tmpdir,
+        }
       }
 
       let(:license_key_fetcher) { ChefLicensing::LicenseKeyFetcher.new(lkf_opts) }
@@ -312,5 +312,70 @@ RSpec.describe ChefLicensing::TUIEngine do
 
     end
 
+  end
+
+  context "free license restriction ux, user has an active trail license and tries to add free license via tui" do
+    Dir.mktmpdir do |tmpdir|
+      let(:argv) { ["--chef-license-key=tmns-58555821-925e-4a27-8fdc-e79dae5a425b-1234"] }
+
+      let(:lkf_opts) {
+        {
+          argv: argv,
+          dir: tmpdir,
+        }
+      }
+
+      let(:license_key_fetcher) { ChefLicensing::LicenseKeyFetcher.new(lkf_opts) }
+
+      let(:start_interaction) { :add_license_all }
+      let(:opts) {
+        {
+          prompt: prompt,
+          interaction_file: interaction_file,
+          dir: tmpdir,
+        }
+      }
+      let(:tui_engine) { described_class.new(opts) }
+
+      before do
+        license_key_fetcher.fetch_and_persist
+      end
+
+      it "checks if the license is persister" do
+        expect(license_key_fetcher.fetch).to eq(["tmns-58555821-925e-4a27-8fdc-e79dae5a425b-1234"])
+      end
+
+      before do
+        prompt.input << "\n"
+        prompt.input << valid_free_license_key_2
+        prompt.input << "\n"
+        prompt.input.rewind
+      end
+
+      let(:expected_flow_for_license_restriction) {
+        %i{
+          add_license_all
+          ask_if_user_has_license_id
+          ask_for_license_id
+          validate_license_id_pattern
+          validate_license_id_with_api
+          validate_license_restriction
+          prompt_error_license_addition_restricted
+          license_restriction_header_text
+          active_trial_exist_message
+          add_license_info_in_restriction_flow
+          license_restriction_foot_text
+          only_commercial_allowed_message
+        }
+      }
+
+      it "doesn't allow to add another free license key" do
+        expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
+        expect(tui_engine.traversed_interaction).to eq(expected_flow_for_license_restriction)
+        expect(prompt.output.string).to include("✖ [Error] License validation failed")
+        expect(prompt.output.string).to include("An active Trial License already exists with following details")
+        expect(prompt.output.string).to include("Please generate a Commercial License by running")
+      end
+    end
   end
 end
