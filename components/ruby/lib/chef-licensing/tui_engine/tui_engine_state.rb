@@ -15,7 +15,7 @@ module ChefLicensing
         @input[:pastel] = Pastel.new
         @logger = ChefLicensing::Config.logger
         @prompt = ChefLicensing::TUIEngine::TUIPrompt.new(opts)
-        @tui_actions = ChefLicensing::TUIEngine::TUIActions.new
+        @tui_actions = ChefLicensing::TUIEngine::TUIActions.new(opts)
       end
 
       def default_action(interaction)
