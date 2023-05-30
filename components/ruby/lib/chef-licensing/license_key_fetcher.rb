@@ -159,7 +159,7 @@ module ChefLicensing
     end
 
     def licenses_active?
-      spinner = TTY::Spinner.new(":spinner [Running] License validation in progress...", format: :dots, clear: true)
+      spinner = TTY::Spinner.new(":spinner [Running] License validation in progress...", format: :dots, clear: true, output: config[:output])
       spinner.auto_spin # Start the spinner
       # This call returns a license based on client logic
       # This API call is only made when multiple license keys are present or if client call was never done
