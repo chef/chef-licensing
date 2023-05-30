@@ -6,6 +6,7 @@ require "chef-licensing"
 require "tty-prompt"
 require "tty/prompt/test"
 require "json"
+require "chef-licensing/license_key_fetcher"
 
 RSpec.describe ChefLicensing::TUIEngine do
   let(:interaction_file) { File.join("lib/chef-licensing/license_key_fetcher", "chef_licensing_interactions.yaml") }
@@ -13,8 +14,10 @@ RSpec.describe ChefLicensing::TUIEngine do
   let(:logger) { Logger.new(output) }
   let(:valid_trial_license_key) { "tmns-58555821-925e-4a27-8fdc-e79dae5a425b-1234" }
   let(:valid_client_api_data) { JSON.parse(File.read("spec/fixtures/api_response_data/valid_client_api_response.json")) }
+  let(:valid_client_api_data_free_license) { JSON.parse(File.read("spec/fixtures/api_response_data/valid_client_api_response_free_license.json")) }
   let(:valid_describe_api_data) { JSON.parse(File.read("spec/fixtures/api_response_data/valid_describe_api_response.json")) }
   let(:valid_free_license_key) { "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111" }
+  let(:valid_free_license_key_2) { "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-112" }
 
   # escape sequences for arrow keys
   let(:simulate_up_arrow) { "\e[A" }
@@ -68,11 +71,26 @@ RSpec.describe ChefLicensing::TUIEngine do
 
     stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
       .with(query: { licenseId: valid_free_license_key, entitlementId: ChefLicensing::Config.chef_entitlement_id })
-      .to_return(body: { data: valid_client_api_data, status_code: 200 }.to_json,
+      .to_return(body: { data: valid_client_api_data_free_license, status_code: 200 }.to_json,
                 headers: { content_type: "application/json" })
 
     stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
       .with(query: { licenseId: valid_free_license_key, entitlementId: ChefLicensing::Config.chef_entitlement_id })
+      .to_return(body: { data: valid_describe_api_data, status_code: 200 }.to_json,
+                headers: { content_type: "application/json" })
+
+    stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+      .with(query: { licenseId: valid_free_license_key_2, version: 2 })
+      .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+                 headers: { content_type: "application/json" })
+
+    stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+      .with(query: { licenseId: valid_free_license_key_2, entitlementId: ChefLicensing::Config.chef_entitlement_id })
+      .to_return(body: { data: valid_client_api_data_free_license, status_code: 200 }.to_json,
+                headers: { content_type: "application/json" })
+
+    stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
+      .with(query: { licenseId: valid_free_license_key_2, entitlementId: ChefLicensing::Config.chef_entitlement_id })
       .to_return(body: { data: valid_describe_api_data, status_code: 200 }.to_json,
                 headers: { content_type: "application/json" })
 
@@ -227,5 +245,72 @@ RSpec.describe ChefLicensing::TUIEngine do
       expect(prompt.output.string).to include("Please enter the following details:\nFirst Name, Last Name, Email, Company, Phone")
       expect(prompt.output.string).to include("The license ID has been sent to johndoe@chef.com")
     end
+  end
+
+  context "free license restriction ux, user has a free license and tries to add another free license via tui" do
+    Dir.mktmpdir do |tmpdir|
+      let(:argv) { ["--chef-license-key=free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111"] }
+
+      let(:lkf_opts) {
+        {
+       argv: argv,
+       dir: tmpdir,
+            }
+      }
+
+      let(:license_key_fetcher) { ChefLicensing::LicenseKeyFetcher.new(lkf_opts) }
+
+      let(:start_interaction) { :add_license_all }
+      let(:opts) {
+        {
+          prompt: prompt,
+          interaction_file: interaction_file,
+          dir: tmpdir,
+        }
+      }
+      let(:tui_engine) { described_class.new(opts) }
+
+      before do
+        license_key_fetcher.fetch_and_persist
+      end
+
+      it "checks if the license is persister" do
+        expect(license_key_fetcher.fetch).to eq(["free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111"])
+      end
+
+      before do
+        prompt.input << "\n"
+        prompt.input << valid_free_license_key_2
+        prompt.input << "\n"
+        prompt.input.rewind
+      end
+
+      let(:expected_flow_for_license_restriction) {
+        %i{
+          add_license_all
+          ask_if_user_has_license_id
+          ask_for_license_id
+          validate_license_id_pattern
+          validate_license_id_with_api
+          validate_license_restriction
+          prompt_error_license_addition_restricted
+          license_restriction_header_text
+          free_license_already_exist_message
+          add_license_info_in_restriction_flow
+          license_restriction_foot_text
+          free_restriction_message
+        }
+      }
+
+      it "doesn't allow to add another free license key" do
+        expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
+        expect(tui_engine.traversed_interaction).to eq(expected_flow_for_license_restriction)
+        expect(prompt.output.string).to include("✖ [Error] License validation failed")
+        expect(prompt.output.string).to include("A Free License already exists with following details:")
+        expect(prompt.output.string).to include("Please generate a Trial or Commercial License by running")
+      end
+
+    end
+
   end
 end
