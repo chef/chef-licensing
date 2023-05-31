@@ -56,7 +56,6 @@ The `ChefLicensing::Config` class manages the configuration parameters used in t
 | air_gap_detected? | `--airgap`  | `CHEF_AIR_GAP` | Boolean |
 | logger | - | - | - |
 | output | - | - | - |
-| local_licensing_service? | - | - | Boolean |
 
 where:
 
@@ -72,7 +71,6 @@ where:
   The return value is a boolean, and is cached for the life of the process - airgap detection happens only once.
 - `logger`: sets the logger functionality for the Chef Licensing library. It defaults to `Logger.new(STDERR)` and the logger level as `INFO`
 - `output`: sets the output stream for the chef-licensing library. It defaults to `STDOUT` but could be directed the output stream to a file if required.
-- `local_licensing_service?`: helps detect if local/on-prem licensing service is used for the licensing system. It is determined if the `/listlicenses` API call is a success and returns list of license keys.
 
 #### Configure the Parameters directly in your Application
 
