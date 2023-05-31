@@ -15,7 +15,10 @@ require_relative "licensing_service/local"
 module ChefLicensing
   class Config
     class << self
-      attr_writer :license_server_url, :air_gap_status, :chef_product_name, :chef_entitlement_id, :logger, :output, :chef_executable_name, :is_local_license_service
+      attr_writer :license_server_url, :air_gap_status, :chef_product_name, :chef_entitlement_id, :logger, :output, :chef_executable_name
+
+      # Used by context class
+      attr_accessor :is_local_license_service
 
       def license_server_url
         @license_server_url ||= ChefLicensing::ArgFetcher.fetch_value("--chef-license-server", :string) || ChefLicensing::EnvFetcher.fetch_value("CHEF_LICENSE_SERVER", :string)
@@ -30,10 +33,6 @@ module ChefLicensing
         @air_gap_status = ChefLicensing::ArgFetcher.fetch_value("--airgap", :boolean) ||
           ChefLicensing::EnvFetcher.fetch_value("CHEF_AIR_GAP", :boolean) ||
           ping_check.detected?
-      end
-
-      def local_licensing_service?
-        @is_local_license_service ||= LicensingService::Local.detected?
       end
 
       def chef_entitlement_id
