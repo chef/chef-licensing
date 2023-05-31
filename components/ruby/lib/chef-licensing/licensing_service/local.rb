@@ -26,7 +26,7 @@ module ChefLicensing
         # If API call returns 403, it is a global licensing service
         return false if e.status_code == 403
 
-        logger.debug "Error occured while fetching licenses: #{e.message}"
+        raise "Error occured while fetching licenses: #{e.message}"
       end
     end
   end
