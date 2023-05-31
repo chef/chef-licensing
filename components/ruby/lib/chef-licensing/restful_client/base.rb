@@ -13,16 +13,10 @@ module ChefLicensing
     class Base
 
       END_POINTS = {
-        VALIDATE: "validate",
-        GENERATE_TRIAL_LICENSE: "trial",
-        GENERATE_FREE_LICENSE: "free",
         FEATURE_BY_NAME: "license-service/featurebyname",
         FEATURE_BY_ID: "license-service/featurebyid",
         ENTITLEMENT_BY_NAME: "license-service/entitlementbyname",
         ENTITLEMENT_BY_ID: "license-service/entitlementbyid",
-        CLIENT: "client",
-        DESCRIBE: "desc",
-        LIST_LICENSES: "listlicenses",
       }.freeze
 
       CURRENT_ENDPOINT_VERSION = 2
