@@ -18,6 +18,8 @@ module ChefLicensing
       end
 
       def detected?
+        return ChefLicensing::Config.is_local_license_service if ChefLicensing::Config.is_local_license_service
+
         ChefLicensing::Api::ListLicenses.info
         true
       rescue ChefLicensing::ListLicensesError => e

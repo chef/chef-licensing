@@ -1,6 +1,6 @@
 require "spec_helper"
 require "chef-licensing/api/list_licenses"
-require "chef-licensing/config"
+require "chef-licensing/context"
 
 RSpec.describe ChefLicensing::Api::ListLicenses do
   let(:valid_list_licenses_api_response) { File.read("spec/fixtures/api_response_data/valid_list_licenses_api_response.json") }
@@ -28,7 +28,7 @@ RSpec.describe ChefLicensing::Api::ListLicenses do
                    headers: { content_type: "application/json" })
 
       expect(ChefLicensing::Api::ListLicenses.info).to eq(licenses_list)
-      expect(ChefLicensing::Config.local_licensing_service?).to eq(true)
+      expect(ChefLicensing::Context.local_licensing_service?).to eq(true)
     end
   end
 
@@ -46,7 +46,7 @@ RSpec.describe ChefLicensing::Api::ListLicenses do
         .to_return(body: invalid_list_licenses_api_response,
                     headers: { content_type: "application/json" })
       expect { ChefLicensing::Api::ListLicenses.info }.to raise_error(ChefLicensing::ListLicensesError, /You are not authorized to access this resource/)
-      expect(ChefLicensing::Config.local_licensing_service?).to eq(false)
+      expect(ChefLicensing::Context.local_licensing_service?).to eq(false)
     end
   end
 
