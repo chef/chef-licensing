@@ -1,8 +1,7 @@
 require "chef-licensing/config"
 require "logger"
-require "chef-licensing"
 require "stringio"
-require "fileutils" unless defined?(FileUtils)
+require "chef-licensing"
 
 RSpec.describe ChefLicensing::Config do
   describe "#configure" do

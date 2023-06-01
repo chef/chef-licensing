@@ -2,6 +2,7 @@ require "singleton" unless defined?(Singleton)
 require "logger"
 require_relative "config_fetcher/arg_fetcher"
 require_relative "config_fetcher/env_fetcher"
+require_relative "license_key_fetcher/file"
 
 # TODO: Find a better way to do ping check
 require_relative "air_gap_detection/ping"

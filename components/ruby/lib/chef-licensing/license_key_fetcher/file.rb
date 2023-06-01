@@ -36,7 +36,7 @@ module ChefLicensing
 
       def fetch
         read_license_key_file
-        !contents.nil? && contents[:licenses] ? fetch_license_keys(contents[:licenses]) : []
+        contents&.key?(:licenses) ? fetch_license_keys(contents[:licenses]) : []
       end
 
       def fetch_license_keys(licenses)
@@ -57,7 +57,7 @@ module ChefLicensing
         @active_trial_status = false
         read_license_key_file
 
-        unless contents.nil? || contents[:licenses].nil?
+        if contents&.key?(:licenses)
           @active_trial_status = contents[:licenses].any? { |license| license[:license_type] == :trial && ChefLicensing.client(license_keys: [license[:license_key]]).active? }
         end
         @active_trial_status
@@ -229,13 +229,14 @@ module ChefLicensing
         return unless license_data
 
         if @contents.nil? || @contents.empty? # this case is likely to happen only during testing
-          @contents = {}
-          @contents[:file_format_version] = LICENSE_FILE_FORMAT_VERSION
-          @contents[:license_server_url] = @license_server_url
-          @contents[:licenses] = [license_data]
+          @contents = {
+            file_format_version: LICENSE_FILE_FORMAT_VERSION,
+            license_server_url: @license_server_url,
+            licenses: [license_data],
+          }
         elsif @contents[:licenses].nil?
           @contents[:licenses] = [license_data]
-        elsif fetch_license_keys(@contents[:licenses]).include?(license_data[:license_key])
+        elsif fetch_license_keys(@contents[:licenses])&.include?(license_data[:license_key])
           nil
         else
           @contents[:licenses] << license_data
