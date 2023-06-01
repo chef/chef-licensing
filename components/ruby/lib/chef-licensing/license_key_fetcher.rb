@@ -2,6 +2,7 @@ require "chef-config/path_helper"
 require "chef-config/windows"
 
 require_relative "config"
+require_relative "context"
 require_relative "config_fetcher/arg_fetcher"
 require_relative "config_fetcher/env_fetcher"
 require_relative "license_key_fetcher/base"
@@ -28,8 +29,8 @@ module ChefLicensing
       config[:logger] = logger
       config[:dir] = opts[:dir]
 
-      # This is the whole point - to obtain the license keys.
-      @license_keys = []
+      # While using on-prem licensing service, @license_keys are fetched from API
+      @license_keys = ChefLicensing::Context.license_keys || []
 
       argv = opts[:argv] || ARGV
       env = opts[:env] || ENV
@@ -111,7 +112,8 @@ module ChefLicensing
 
     # Note: Fetching from arg and env as well, to be able to fetch license when disk is non-writable
     def fetch
-      (fetch_license_key_from_arg << fetch_license_key_from_env << @file_fetcher.fetch).flatten.uniq
+      # While using on-prem licensing service, @license_keys are fetched from API
+      (fetch_license_key_from_arg << fetch_license_key_from_env << @file_fetcher.fetch << @license_keys).flatten.uniq
     end
 
     def self.fetch_and_persist(opts = {})

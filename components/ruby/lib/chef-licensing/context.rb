@@ -61,7 +61,7 @@ module ChefLicensing
 
     class Local < State
       def license_keys
-        # TODO - Return keys from API call
+        @license_keys ||= ChefLicensing::Api::ListLicenses.info
       end
     end
 
