@@ -12,7 +12,7 @@ module ChefLicensing
     # Represents a fethced license ID recorded on disk
     class File
       LICENSE_KEY_FILE = "licenses.yaml".freeze
-      LICENSE_FILE_FORMAT_VERSION = "3.0.0".freeze
+      LICENSE_FILE_FORMAT_VERSION = "4.0.0".freeze
 
       # License types list
       LICENSE_TYPES = {
