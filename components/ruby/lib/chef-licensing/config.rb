@@ -20,8 +20,13 @@ module ChefLicensing
       # Used by context class
       attr_accessor :is_local_license_service
 
-      def license_server_url
+      def license_server_url(opts = {})
+        return @license_server_url unless @license_server_url.nil?
+
         @license_server_url ||= ChefLicensing::ArgFetcher.fetch_value("--chef-license-server", :string) || ChefLicensing::EnvFetcher.fetch_value("CHEF_LICENSE_SERVER", :string)
+
+        @license_server_url = ChefLicensing::LicenseKeyFetcher::File.fetch_or_persist_url(@license_server_url, opts)
+        @license_server_url
       end
 
       def air_gap_detected?
