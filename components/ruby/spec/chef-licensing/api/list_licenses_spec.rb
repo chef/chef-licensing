@@ -23,7 +23,7 @@ RSpec.describe ChefLicensing::Api::ListLicenses do
     end
 
     it "returns a list of licenses" do
-      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listlicenses")
+      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
         .to_return(body: valid_list_licenses_api_response,
                    headers: { content_type: "application/json" })
 
@@ -40,7 +40,7 @@ RSpec.describe ChefLicensing::Api::ListLicenses do
     end
 
     it "raises and error" do
-      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listlicenses")
+      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
         .to_return(body: invalid_list_licenses_api_response,
                     headers: { content_type: "application/json" })
 

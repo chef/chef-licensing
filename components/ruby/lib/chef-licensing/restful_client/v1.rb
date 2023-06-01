@@ -10,7 +10,7 @@ module ChefLicensing
         GENERATE_FREE_LICENSE: "v1/free",
         CLIENT: "v1/client",
         DESCRIBE: "v1/desc",
-        LIST_LICENSES: "v1/listlicenses",
+        LIST_LICENSES: "v1/listLicenses",
       }).freeze
     end
   end
