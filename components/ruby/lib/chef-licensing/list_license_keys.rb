@@ -57,19 +57,24 @@ module ChefLicensing
     def display_overview
       output.puts "------------------------------------------------------------"
       licenses_metadata.each do |license|
-        # find the number of days left for the license to expire
-        validity = (Date.parse(license.expiration_date) - Date.today).to_i
+        # Sets the validity text for a free license as "Unlimited" and displays the number of days for others.
+        validity = if license.license_type == "free"
+                     "Unlimited"
+                   else
+                     # find the number of days left for the license to expire
+                     days = (Date.parse(license.expiration_date) - Date.today).to_i
+                     "#{days > 0 ? days : 0} #{"Day".pluralize(days)}"
+                   end
         num_of_units = license.limits&.first&.usage_limit || 0
         num_of_units = num_of_units == -1 ? "Unlimited" : num_of_units
         unit_measure = license.limits&.first&.usage_measure || "unit"
-
         output.puts <<~LICENSE
             #{pastel.bold("License Details")}
               Asset Name       : #{license.limits.first.software}
               License ID       : #{license.id}
               Type             : #{license.license_type.capitalize}
               Status           : #{license.status.capitalize}
-              Validity         : #{validity > 0 ? validity : 0} #{"Day".pluralize(validity)}
+              Validity         : #{validity}
               No. Of Units     : #{num_of_units} #{unit_measure.capitalize.pluralize(num_of_units)}
             ------------------------------------------------------------
         LICENSE
