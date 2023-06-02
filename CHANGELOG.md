@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.4.16 -->
-## [0.4.16](https://github.com/chef/chef-licensing/tree/0.4.16) (2023-06-01)
+<!-- latest_release 0.4.17 -->
+## [0.4.17](https://github.com/chef/chef-licensing/tree/0.4.17) (2023-06-02)
 
 #### Merged Pull Requests
-- CHEF-3278 Display validity for free license as Unlimited in the license details [#116](https://github.com/chef/chef-licensing/pull/116) ([Vasu1105](https://github.com/Vasu1105))
+- CHEF-78: UX testing for free license scenarios [#112](https://github.com/chef/chef-licensing/pull/112) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-78: UX testing for free license scenarios [#112](https://github.com/chef/chef-licensing/pull/112) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.17 -->
 - CHEF-3278 Display validity for free license as Unlimited in the license details [#116](https://github.com/chef/chef-licensing/pull/116) ([Vasu1105](https://github.com/Vasu1105)) <!-- 0.4.16 -->
 - List license typo fix and restful client cleanup [#113](https://github.com/chef/chef-licensing/pull/113) ([Nik08](https://github.com/Nik08)) <!-- 0.4.15 -->
 - CHEF-3277: Change UX for Skip step in chef licensing [#110](https://github.com/chef/chef-licensing/pull/110) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.14 -->
