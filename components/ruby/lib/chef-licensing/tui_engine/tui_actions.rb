@@ -13,6 +13,7 @@ module ChefLicensing
     class TUIActions
       attr_accessor :logger, :output, :license_id, :error_msg, :rejection_msg, :invalid_license_msg, :license_type
       def initialize(opts = {})
+        @opts = opts
         @logger = ChefLicensing::Config.logger
         @output = ChefLicensing::Config.output
       end
@@ -29,7 +30,7 @@ module ChefLicensing
 
       def is_license_valid_on_server?(input)
         license_id = input[:ask_for_license_id]
-        spinner = TTY::Spinner.new(":spinner [Running] License validation in progress...", format: :dots, clear: true)
+        spinner = TTY::Spinner.new(":spinner [Running] License validation in progress...", format: :dots, clear: true, output: output)
         spinner.auto_spin # Start the spinner
         is_valid = ChefLicensing::LicenseKeyValidator.validate!(license_id)
         spinner.success # Stop the spinner
@@ -46,10 +47,10 @@ module ChefLicensing
         if license_restricted?(license_type)
           # Existing license keys needs to be fetcher to show details of existing license of license type which is restricted.
           # However, if user is trying to add free license, and user has active trial license, we fetch the trial license key
-          if license_type == :free && LicenseKeyFetcher::File.user_has_active_trial_license?
-            existing_license_keys_in_file = LicenseKeyFetcher::File.fetch_license_keys_based_on_type(:trial)
+          if license_type == :free && LicenseKeyFetcher::File.user_has_active_trial_license?(@opts)
+            existing_license_keys_in_file = LicenseKeyFetcher::File.fetch_license_keys_based_on_type(:trial, @opts)
           else
-            existing_license_keys_in_file = LicenseKeyFetcher::File.fetch_license_keys_based_on_type(license_type)
+            existing_license_keys_in_file = LicenseKeyFetcher::File.fetch_license_keys_based_on_type(license_type, @opts)
           end
           self.license_id = existing_license_keys_in_file.last
           false
@@ -165,7 +166,7 @@ module ChefLicensing
       end
 
       def determine_restriction_type(input)
-        if license_type == :free && LicenseKeyFetcher::File.user_has_active_trial_license?
+        if license_type == :free && LicenseKeyFetcher::File.user_has_active_trial_license?(@opts)
           "active_trial_restriction"
         else
           "#{license_type}_restriction"
@@ -183,7 +184,7 @@ module ChefLicensing
       end
 
       def filter_license_type_options(inputs)
-        if (license_restricted?(:trial) && license_restricted?(:free)) || LicenseKeyFetcher::File.user_has_active_trial_license?
+        if (license_restricted?(:trial) && license_restricted?(:free)) || LicenseKeyFetcher::File.user_has_active_trial_license?(@opts)
           "ask_for_commercial_only"
         elsif license_restricted?(:trial)
           "ask_for_license_except_trial"
@@ -196,8 +197,10 @@ module ChefLicensing
 
       private
 
+      attr_accessor :opts
+
       def generate_license(inputs, license_type)
-        spinner = TTY::Spinner.new(":spinner [Running] License generation in progress...", format: :dots, clear: true)
+        spinner = TTY::Spinner.new(":spinner [Running] License generation in progress...", format: :dots, clear: true, output: output)
         spinner.auto_spin # Start the spinner
         self.license_id = ChefLicensing::LicenseKeyGenerator.send("generate_#{license_type}_license!",
           first_name: inputs[:gather_user_first_name_for_license_generation],
@@ -224,7 +227,7 @@ module ChefLicensing
       end
 
       def license_restricted?(license_type)
-        file_fetcher = LicenseKeyFetcher::File.new({})
+        file_fetcher = LicenseKeyFetcher::File.new(@opts)
         allowed_license_types = file_fetcher.fetch_allowed_license_types_for_addition
         !(allowed_license_types.include? license_type)
       end
