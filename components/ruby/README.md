@@ -870,3 +870,23 @@ interactions:
     messages: ["This is the exit prompt"]
     prompt_type: "say"
 ```
+
+
+### ChefLicensing Context
+
+The ChefLicensing Context module defines the interface for state management in chef licensing. It assists in state transition to `local` or `global` depending on the nature of licensing service used with the gem.
+
+State transition in the context is done using the LicensingService module. And each state defines its behaviour.
+
+#### Usage
+
+```ruby
+require "context"
+ChefLicensing::Context.<class_method>
+```
+
+where `class_method` are methods extended for this module.
+
+List of methods available with context module:
+- `local_licensing_service?` method determines if the chef licensing gem is using an on-prem licensing service.
+- `license_keys` method will return the list of license keys based on current state and it's behavior.
