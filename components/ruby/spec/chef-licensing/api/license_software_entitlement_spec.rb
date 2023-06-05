@@ -63,6 +63,7 @@ RSpec.describe ChefLicensing::Api::LicenseSoftwareEntitlement do
   before do
     ChefLicensing.configure do |conf|
       conf.license_server_url = "http://localhost-license-server/License"
+      conf.license_server_url_check_in_file = true
     end
   end
 
