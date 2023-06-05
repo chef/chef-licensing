@@ -121,8 +121,17 @@ module ChefLicensing
         @contents = {} if @contents.nil?
         @contents[:file_format_version] = LICENSE_FILE_FORMAT_VERSION
 
-        if license_server_url_from_config
+        if @contents[:license_server_url].nil?
           @contents[:license_server_url] = license_server_url_from_config
+        else
+          # check if license_server_url is a local url and is able to connect to the local server
+          # if yes, keep the local url as it is
+          # if no, persist the license_server_url from config
+          # Assuming, there's a method to check if local license server is running
+          unless local_license_server_running?(@contents[:license_server_url])
+            @contents[:license_server_url] = license_server_url_from_config
+          end
+          # check if any exception handling needs to be done.
         end
 
         write_license_file(license_key_file_path)
