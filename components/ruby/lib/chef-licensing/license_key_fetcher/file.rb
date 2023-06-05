@@ -111,27 +111,22 @@ module ChefLicensing
         !!seek
       end
 
-      def fetch_or_persist_url(license_server_url_from_config)
+      def fetch_or_persist_url(license_server_url_from_config, license_server_url_from_system = nil)
         dir = @opts[:dir]
         license_key_file_path = "#{dir}/#{LICENSE_KEY_FILE}"
         create_license_directory_if_not_exist(dir, license_key_file_path)
 
         @contents = load_license_file(license_key_file_path)
 
-        @contents = {} if @contents.nil?
-        @contents[:file_format_version] = LICENSE_FILE_FORMAT_VERSION
-
-        if @contents[:license_server_url].nil?
-          @contents[:license_server_url] = license_server_url_from_config
+        if @contents.nil?
+          @contents = {
+            file_format_version: LICENSE_FILE_FORMAT_VERSION,
+            license_server_url: license_server_url_from_system || license_server_url_from_config,
+          }
         else
-          # check if license_server_url is a local url and is able to connect to the local server
-          # if yes, keep the local url as it is
-          # if no, persist the license_server_url from config
-          # Assuming, there's a method to check if local license server is running
-          unless local_license_server_running?(@contents[:license_server_url])
-            @contents[:license_server_url] = license_server_url_from_config
+          if license_server_url_from_system && license_server_url_from_system != @contents[:license_server_url]
+            @contents[:license_server_url] = license_server_url_from_system
           end
-          # check if any exception handling needs to be done.
         end
 
         write_license_file(license_key_file_path)
@@ -153,8 +148,8 @@ module ChefLicensing
         new(opts).user_has_active_trial_license?
       end
 
-      def self.fetch_or_persist_url(license_server_url_from_config, opts = {})
-        new(opts).fetch_or_persist_url(license_server_url_from_config)
+      def self.fetch_or_persist_url(license_server_url_from_config, license_server_url_from_system = nil, opts = {})
+        new(opts).fetch_or_persist_url(license_server_url_from_config, license_server_url_from_system)
       end
 
       private
