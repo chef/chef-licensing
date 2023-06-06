@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.4.18 -->
-## [0.4.18](https://github.com/chef/chef-licensing/tree/0.4.18) (2023-06-05)
+<!-- latest_release 0.4.19 -->
+## [0.4.19](https://github.com/chef/chef-licensing/tree/0.4.19) (2023-06-06)
 
 #### Merged Pull Requests
-- CHEF-2507 Detect local and global licensing service [#104](https://github.com/chef/chef-licensing/pull/104) ([Nik08](https://github.com/Nik08))
+- CHEF-3258 Integration to fetch license keys from local licensing service using API [#119](https://github.com/chef/chef-licensing/pull/119) ([Nik08](https://github.com/Nik08))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-3258 Integration to fetch license keys from local licensing service using API [#119](https://github.com/chef/chef-licensing/pull/119) ([Nik08](https://github.com/Nik08)) <!-- 0.4.19 -->
 - CHEF-2507 Detect local and global licensing service [#104](https://github.com/chef/chef-licensing/pull/104) ([Nik08](https://github.com/Nik08)) <!-- 0.4.18 -->
 - CHEF-78: UX testing for free license scenarios [#112](https://github.com/chef/chef-licensing/pull/112) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.17 -->
 - CHEF-3278 Display validity for free license as Unlimited in the license details [#116](https://github.com/chef/chef-licensing/pull/116) ([Vasu1105](https://github.com/Vasu1105)) <!-- 0.4.16 -->
