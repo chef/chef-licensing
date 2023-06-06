@@ -271,14 +271,11 @@ interactions:
     paths: [check_if_user_details_are_present]
 
   commercial_license_selection:
-    messages: [
-    "Get in touch with the Sales Team by filling the: <%= input[:pastel].blue.underline.blue(\"https://www.chef.io/contact-us\") %> form and quit\n",
-    [Quit]
+    messages: ["Get in touch with the Sales Team by filling the: <%= input[:pastel].blue.underline.blue(\"https://www.chef.io/contact-us\") %> form and quit\n",
+      [Quit]
     ]
     prompt_type: "select"
     paths: [exit]
-    response_path_map:
-    "Quit": exit
 
   check_if_user_details_are_present:
     action: are_user_details_present?
@@ -386,7 +383,7 @@ interactions:
       ------------------------------------------------------------
       License Details
 
-        <%= input[:free_license_selection] || input[:trial_license_selection] || input[:commercial_license_selection] %>
+        <%= input[:free_license_selection] || input[:trial_license_selection] %>
       User Details
 
         First Name: <%= input[:gather_user_first_name_for_license_generation] %>
@@ -414,11 +411,10 @@ interactions:
 
   pre_license_generation:
     action: select_license_generation_based_on_type
-    paths: [generate_free_license, generate_trial_license, generate_commercial_license]
+    paths: [generate_free_license, generate_trial_license]
     response_path_map:
       "free": generate_free_license
       "trial": generate_trial_license
-      "commercial": generate_commercial_license
 
   generate_free_license:
     action: generate_free_license
@@ -434,13 +430,6 @@ interactions:
       "true": trial_license_generation_success
       "false": license_generation_failure
 
-  generate_commercial_license:
-    action: generate_commercial_license_lead
-    paths: [commercial_license_generation_success, license_generation_failure]
-    response_path_map:
-      "true": commercial_license_generation_success
-      "false": license_generation_failure
-
   free_license_generation_success:
     messages: |
       <%= input[:pastel].green("✔ [Success] License generated successfully") %>
@@ -454,10 +443,6 @@ interactions:
 
       The license ID has been sent to <%= input[:gather_user_email_for_license_generation] %>.
     paths: [ask_for_license_id]
-
-  commercial_license_generation_success:
-    messages: "Our Sales Team will get in touch with you with further steps."
-    paths: [exit]
 
   fetch_license_id:
     action: fetch_license_id
