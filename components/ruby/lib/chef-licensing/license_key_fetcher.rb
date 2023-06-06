@@ -53,7 +53,7 @@ module ChefLicensing
       if license_type && !unrestricted_license_added?(new_keys, license_type)
         # break the flow after the prompt if there is a restriction in adding license
         # and return the license keys persisted in the file or @license_keys if any
-        return fetch_from_file
+        return license_keys
       end
 
       logger.debug "License Key fetcher examining ENV checks"
@@ -62,12 +62,8 @@ module ChefLicensing
       if license_type && !unrestricted_license_added?(new_keys, license_type)
         # break the flow after the prompt if there is a restriction in adding license
         # and return the license keys persisted in the file or @license_keys if any
-        return fetch_from_file
+        return license_keys
       end
-
-      # If it has previously been fetched and persisted, read from disk and set runtime decision
-      logger.debug "License Key fetcher examining file checks"
-      fetch_from_file
 
       # licenses expiration check
       return @license_keys if !@license_keys.empty? && licenses_active?
@@ -149,15 +145,6 @@ module ChefLicensing
         end
       end
       prompt_fetcher.append_info_to_tui_engine(extra_info) unless extra_info.empty?
-    end
-
-    def fetch_from_file
-      if file_fetcher.persisted?
-        # This could be useful if the file was writable in past but is not writable in current scenario and new keys are not persisted in the file
-        file_keys = file_fetcher.fetch
-        @license_keys.concat(file_keys).uniq # uniq is required in case file was a writable and to avoid repeated values.
-      end
-      @license_keys = @license_keys.uniq
     end
 
     def licenses_active?
