@@ -271,7 +271,7 @@ interactions:
     paths: [check_if_user_details_are_present]
 
   commercial_license_selection:
-    messages: ["Get in touch with the Sales Team by filling the: <%= input[:pastel].blue.underline.blue(\"https://www.chef.io/contact-us\") %> form and quit\n",
+    messages: ["Get in touch with the Sales Team by filling out the form available at <%= input[:pastel].blue.underline.blue(\"https://www.chef.io/contact-us\") %>\n",
       [Quit]
     ]
     prompt_type: "select"
