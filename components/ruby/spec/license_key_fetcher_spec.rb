@@ -2,6 +2,7 @@ require "spec_helper"
 require_relative "../lib/chef-licensing"
 require "tmpdir"
 require "Date" unless defined?(Date)
+require_relative "../lib/chef-licensing/context"
 
 RSpec.describe ChefLicensing::LicenseKeyFetcher do
 
@@ -16,7 +17,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
     ChefLicensing.configure do |config|
       config.chef_product_name = "inspec"
       config.chef_entitlement_id = "3ff52c37-e41f-4f6c-ad4d-365192205968"
-      config.license_server_url = "http://localhost-license-server/License"
+      config.license_server_url = "http://globalhost-license-server/License"
       config.output = output
       config.logger = logger
     end
@@ -26,6 +27,11 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
     let(:argv)  { ["--chef-license-key=tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"] }
     let(:env) { { "CHEF_LICENSE_KEY" => "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111" } }
     let(:argv_with_space) { ["--chef-license-key", "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"] }
+    before do
+      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
+        .to_return(body: { data: [], status_code: 403 }.to_json,
+                  headers: { content_type: "application/json" })
+    end
 
     context "the license keys are passed in via the CLI with space and ENV; & file doesn't exist" do
       let(:opts) {
@@ -103,11 +109,53 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
         expect(license_key_fetcher.fetch).to eq([])
       end
     end
+
+    context "no license keys are passed via any means but using on-prem service" do
+
+      let(:argv) { [] }
+      let(:env) { {} }
+
+      let(:opts) {
+        {
+          logger: logger,
+          output: output,
+          argv: argv,
+          env: env,
+          dir: nil,
+        }
+      }
+
+      before do
+        ChefLicensing.configure do |config|
+          config.is_local_license_service = nil
+          config.license_server_url = "http://localhost-license-server/License"
+        end
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
+          .to_return(body: { data: ["tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"], status_code: 200 }.to_json,
+          headers: { content_type: "application/json" })
+        ChefLicensing::Context.current_context = nil
+      end
+
+      let(:license_key_fetcher) { ChefLicensing::LicenseKeyFetcher.new(opts) }
+
+      it "returns key fetched using on-prem service" do
+        expect(license_key_fetcher.fetch).to eq(["tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"])
+      end
+    end
   end
 
   describe "fetch_and_persist" do
     let(:argv) { ["--chef-license-key=tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"] }
     let(:env) { { "CHEF_LICENSE_KEY" => "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111" } }
+    before do
+      ChefLicensing.configure do |config|
+        config.is_local_license_service = nil
+      end
+      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
+        .to_return(body: { data: [], status_code: 403 }.to_json,
+                  headers: { content_type: "application/json" })
+      ChefLicensing::Context.current_context = nil
+    end
 
     context "the file does not exist; and no license keys are set either via arg or env" do
       let(:opts) {
@@ -332,9 +380,56 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
         end
       end
     end
+
+    context "no license keys are passed via any means but using on-prem service" do
+      let(:argv) { [] }
+      let(:env) { {} }
+
+      before do
+        ChefLicensing.configure do |config|
+          config.is_local_license_service = nil
+          config.license_server_url = "http://localhost-license-server/License"
+        end
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
+          .to_return(body: { data: ["tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"], status_code: 200 }.to_json,
+          headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
+                headers: { content_type: "application/json" })
+        ChefLicensing::Context.current_context = nil
+      end
+
+      Dir.mktmpdir do |tmpdir|
+        let(:opts) {
+          {
+            logger: logger,
+            argv: argv,
+            env: env,
+            output: output,
+            dir: tmpdir,
+          }
+        }
+
+        let(:license_key_fetcher) { described_class.new(opts) }
+        it "adds one license returned by on-prem service" do
+          expect(license_key_fetcher.fetch_and_persist).to eq(%w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150})
+        end
+      end
+    end
   end
 
   describe "verify license keys format" do
+
+    before do
+      ChefLicensing.configure do |config|
+        config.is_local_license_service = nil
+      end
+      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
+        .to_return(body: { data: [], status_code: 403 }.to_json,
+                  headers: { content_type: "application/json" })
+      ChefLicensing::Context.current_context = nil
+    end
 
     context "when the license key is not in the correct format of uuid" do
       let(:argv)  { ["--chef-license-key=tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-"] }
@@ -485,6 +580,16 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
   end
 
   describe "verify about to expire or expired licenses" do
+    before do
+      ChefLicensing.configure do |config|
+        config.is_local_license_service = nil
+      end
+      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
+        .to_return(body: { data: [], status_code: 403 }.to_json,
+                  headers: { content_type: "application/json" })
+      ChefLicensing::Context.current_context = nil
+    end
+
     let(:argv) { ["--chef-license-key=tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"] }
     let(:env) { {} }
 

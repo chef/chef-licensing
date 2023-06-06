@@ -56,11 +56,14 @@ RSpec.describe ChefLicensing::TUIEngine do
     ChefLicensing.configure do |config|
       config.logger = logger
       config.output = output
-      config.license_server_url = "http://localhost-license-server/License"
+      config.license_server_url = "http://globalhost-license-server/License"
       config.air_gap_status = false
       config.chef_product_name = "inspec"
       config.chef_entitlement_id = "3ff52c37-e41f-4f6c-ad4d-365192205968"
     end
+    stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
+      .to_return(body: { data: [], status_code: 403 }.to_json,
+                  headers: { content_type: "application/json" })
   end
 
   before do

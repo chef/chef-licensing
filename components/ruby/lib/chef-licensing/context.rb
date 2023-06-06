@@ -11,6 +11,8 @@ module ChefLicensing
     attr_reader :logger
 
     class << self
+      attr_writer :current_context
+
       def local_licensing_service?
         ChefLicensing::Config.is_local_license_service ||= LicensingService::Local.detected?
       end
@@ -26,14 +28,14 @@ module ChefLicensing
       private
 
       def current_context
-        @current_context ||= local_licensing_service? ? new(Local.new) : new(Global.new)
+        @current_context ||= local_licensing_service? ? new({ state: Local.new }) : new({ state: Global.new })
       end
     end
 
     # @param [State] state
-    def initialize(state)
+    def initialize(opts = {})
       @logger = ChefLicensing::Config.logger
-      transition_to(state)
+      transition_to(opts[:state])
     end
 
     # The Context allows changing the State object
@@ -61,7 +63,7 @@ module ChefLicensing
 
     class Local < State
       def license_keys
-        # TODO - Return keys from API call
+        @license_keys ||= ChefLicensing::Api::ListLicenses.info
       end
     end
 
