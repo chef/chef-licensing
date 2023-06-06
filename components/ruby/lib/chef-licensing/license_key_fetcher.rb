@@ -112,7 +112,7 @@ module ChefLicensing
 
     # Note: Fetching from arg and env as well, to be able to fetch license when disk is non-writable
     def fetch
-      # While using on-prem licensing service, @license_keys are fetched from API
+      # While using on-prem licensing service, @license_keys have been fetched from API
       (fetch_license_key_from_arg << fetch_license_key_from_env << @file_fetcher.fetch << @license_keys).flatten.uniq
     end
 
