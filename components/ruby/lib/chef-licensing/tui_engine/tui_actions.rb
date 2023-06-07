@@ -61,7 +61,7 @@ module ChefLicensing
 
       def is_user_name_valid?(input)
         user_name = input[:gather_user_last_name_for_license_generation] || input[:gather_user_first_name_for_license_generation]
-        (user_name =~ /\A[a-z_A-Z\-\`]{3,16}\Z/) == 0
+        (user_name =~ /\A[a-zA-Z]{1,16}\Z/) == 0
       end
 
       def is_email_valid?(input)
@@ -69,11 +69,12 @@ module ChefLicensing
       end
 
       def is_company_name_valid?(input)
-        (input[:gather_user_company_for_license_generation] =~ /\A[a-z_.\sA-Z\-\`]{3,16}\Z/) == 0
+        (input[:gather_user_company_for_license_generation] =~ /\A[a-zA-Z0-9][a-zA-Z0-9\W_]{2,15}\z/) == 0
       end
 
       def is_phone_no_valid?(input)
-        # TODO validation logic
+        # No validation
+        # Optional field
         true
       end
 
