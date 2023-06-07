@@ -172,6 +172,13 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
       }
     }
 
+    before do
+      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
+        .to_return(body: { data: [], status_code: 403 }.to_json,
+                  headers: { content_type: "application/json" })
+      ChefLicensing::Context.current_context = nil
+    end
+
     it "exits with error message about LicenseKeyNotFetchedError" do
       expect { described_class.new(opts_for_llk).display }.to raise_error(SystemExit)
       expect(output_stream.string).to include("Error occured while fetching license keys from disk")
