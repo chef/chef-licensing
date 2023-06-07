@@ -86,30 +86,6 @@ module ChefLicensing
         generate_license(input, :free)
       end
 
-      def generate_commercial_license_lead(input)
-        warn "\n\nCommercial license generation is not yet implemented!\n\n"
-        false
-
-        # TODO stub method definition needs to be implemented
-
-        #   puts "License generation request in progress..."
-        #   license_id = ChefLicensing.generate_commercial_license_lead!(
-        #     first_name: input[:gather_user_first_name_for_license_generation],
-        #     last_name: input[:gather_user_last_name_for_license_generation],
-        #     email_id: input[:gather_user_email_for_license_generation],
-        #     product: "inspec",
-        #     company: input[:gather_user_company_for_license_generation],
-        #     phone: input[:gather_user_phone_no_for_license_generation]
-        #   )
-        #   true
-        # rescue ChefLicensing::CommercialLicenseLeadGenerationFailed => e
-        #   self.error_msg = e.message
-        #   false
-        # rescue ChefLicensing::CommercialLicenseLeadGenerationRejected => e
-        #   self.rejection_msg = e.message
-        #   false
-      end
-
       def fetch_license_id(input)
         license_id
       end

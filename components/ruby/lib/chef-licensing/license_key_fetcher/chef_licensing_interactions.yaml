@@ -203,12 +203,12 @@ interactions:
     prompt_type: "select"
     messages: ["Select the type of license below and then enter user details\n" ,
       [
-      "1. Commercial License\n     Get in touch with the Account or Sales Team.\n",
+      "1. Commercial License\n",
       "2. Quit license generation."
       ]]
     paths: [commercial_license_selection, exit]
     response_path_map:
-      "1. Commercial License\n     Get in touch with the Account or Sales Team.\n": commercial_license_selection
+      "1. Commercial License\n": commercial_license_selection
       "2. Quit license generation": exit
 
   ask_for_license_except_trial:
@@ -216,13 +216,13 @@ interactions:
     messages: ["Select the type of license below and then enter user details\n" ,
       [
       "1. Free License\n     Validity: Unlimited\n     No. of targets: 10\n",
-      "2. Commercial License\n     Get in touch with the Account or Sales Team.\n",
+      "2. Commercial License\n",
       "3. Quit license generation"
       ]]
     paths: [free_license_disclaimer, commercial_license_selection, exit]
     response_path_map:
       "1. Free License\n     Validity: Unlimited\n     No. of targets: 10\n": free_license_disclaimer
-      "2. Commercial License\n     Get in touch with the Account or Sales Team.\n": commercial_license_selection
+      "2. Commercial License\n": commercial_license_selection
       "3. Quit license generation": exit
 
   ask_for_license_except_free:
@@ -230,13 +230,13 @@ interactions:
     messages: ["Select the type of license below and then enter user details\n" ,
       [
       "1. Trial License\n     Validity: 30 Days\n     No. of targets: Unlimited\n",
-      "2. Commercial License\n     Get in touch with the Account or Sales Team.\n",
+      "2. Commercial License\n",
       "3. Quit license generation"
       ]]
     paths: [trial_license_selection, commercial_license_selection, exit]
     response_path_map:
       "1. Trial License\n     Validity: 30 Days\n     No. of targets: Unlimited\n": trial_license_selection
-      "2. Commercial License\n     Get in touch with the Account or Sales Team.\n": commercial_license_selection
+      "2. Commercial License\n": commercial_license_selection
       "3. Quit license generation": exit
 
   ask_for_all_license_type:
@@ -245,14 +245,14 @@ interactions:
       [
       "1. Free License\n     Validity: Unlimited\n     No. of targets: 10\n",
       "2. Trial License\n     Validity: 30 Days\n     No. of targets: Unlimited\n",
-      "3. Commercial License\n     Get in touch with the Account or Sales Team.\n",
+      "3. Commercial License\n",
       "4. Quit license generation"
       ]]
     paths: [free_license_disclaimer, commercial_license_selection, trial_license_selection, exit]
     response_path_map:
       "1. Free License\n     Validity: Unlimited\n     No. of targets: 10\n": free_license_disclaimer
       "2. Trial License\n     Validity: 30 Days\n     No. of targets: Unlimited\n": trial_license_selection
-      "3. Commercial License\n     Get in touch with the Account or Sales Team.\n": commercial_license_selection
+      "3. Commercial License\n": commercial_license_selection
       "4. Quit license generation": exit
 
   free_license_disclaimer:
@@ -271,9 +271,11 @@ interactions:
     paths: [check_if_user_details_are_present]
 
   commercial_license_selection:
-    messages: "Type: Commercial License\n  Validity: Custom\n  No. of targets: Custom\n"
-    prompt_type: "silent"
-    paths: [check_if_user_details_are_present]
+    messages: ["Get in touch with the Sales Team by filling out the form available at <%= input[:pastel].blue.underline.blue(\"https://www.chef.io/contact-us\") %>\n",
+      [Quit]
+    ]
+    prompt_type: "select"
+    paths: [exit]
 
   check_if_user_details_are_present:
     action: are_user_details_present?
@@ -381,7 +383,7 @@ interactions:
       ------------------------------------------------------------
       License Details
 
-        <%= input[:free_license_selection] || input[:trial_license_selection] || input[:commercial_license_selection] %>
+        <%= input[:free_license_selection] || input[:trial_license_selection] %>
       User Details
 
         First Name: <%= input[:gather_user_first_name_for_license_generation] %>
@@ -409,11 +411,10 @@ interactions:
 
   pre_license_generation:
     action: select_license_generation_based_on_type
-    paths: [generate_free_license, generate_trial_license, generate_commercial_license]
+    paths: [generate_free_license, generate_trial_license]
     response_path_map:
       "free": generate_free_license
       "trial": generate_trial_license
-      "commercial": generate_commercial_license
 
   generate_free_license:
     action: generate_free_license
@@ -429,13 +430,6 @@ interactions:
       "true": trial_license_generation_success
       "false": license_generation_failure
 
-  generate_commercial_license:
-    action: generate_commercial_license_lead
-    paths: [commercial_license_generation_success, license_generation_failure]
-    response_path_map:
-      "true": commercial_license_generation_success
-      "false": license_generation_failure
-
   free_license_generation_success:
     messages: |
       <%= input[:pastel].green("✔ [Success] License generated successfully") %>
@@ -449,10 +443,6 @@ interactions:
 
       The license ID has been sent to <%= input[:gather_user_email_for_license_generation] %>.
     paths: [ask_for_license_id]
-
-  commercial_license_generation_success:
-    messages: "Our Sales Team will get in touch with you with further steps."
-    paths: [exit]
 
   fetch_license_id:
     action: fetch_license_id
