@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.4.20 -->
-## [0.4.20](https://github.com/chef/chef-licensing/tree/0.4.20) (2023-06-07)
+<!-- latest_release 0.4.21 -->
+## [0.4.21](https://github.com/chef/chef-licensing/tree/0.4.21) (2023-06-07)
 
 #### Merged Pull Requests
-- CHEF-2861 Form validation revised for name and company name [#107](https://github.com/chef/chef-licensing/pull/107) ([Nik08](https://github.com/Nik08))
+- CHEF-3374 - Updates the commercial option to show contact us link [#118](https://github.com/chef/chef-licensing/pull/118) ([Vasu1105](https://github.com/Vasu1105))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-3374 - Updates the commercial option to show contact us link [#118](https://github.com/chef/chef-licensing/pull/118) ([Vasu1105](https://github.com/Vasu1105)) <!-- 0.4.21 -->
 - CHEF-2861 Form validation revised for name and company name [#107](https://github.com/chef/chef-licensing/pull/107) ([Nik08](https://github.com/Nik08)) <!-- 0.4.20 -->
 - CHEF-3258 Integration to fetch license keys from local licensing service using API [#119](https://github.com/chef/chef-licensing/pull/119) ([Nik08](https://github.com/Nik08)) <!-- 0.4.19 -->
 - CHEF-2507 Detect local and global licensing service [#104](https://github.com/chef/chef-licensing/pull/104) ([Nik08](https://github.com/Nik08)) <!-- 0.4.18 -->
