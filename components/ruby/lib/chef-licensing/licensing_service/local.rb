@@ -22,7 +22,7 @@ module ChefLicensing
         # If API call returns 403, it is a global licensing service
         return false if e.status_code == 403
 
-        raise "Error occured while fetching licenses: #{e.message}"
+        raise(ChefLicensing::ListLicensesError.new("Error occured while fetching licenses #{e.message}", e.status_code))
       end
     end
   end
