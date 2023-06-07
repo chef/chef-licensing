@@ -57,6 +57,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       config.logger = logger
       config.output = output
       config.license_server_url = "http://globalhost-license-server/License"
+      config.license_server_url_check_in_file = true
       config.air_gap_status = false
       config.chef_product_name = "inspec"
       config.chef_entitlement_id = "3ff52c37-e41f-4f6c-ad4d-365192205968"

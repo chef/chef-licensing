@@ -12,7 +12,7 @@ module ChefLicensing
     # Represents a fethced license ID recorded on disk
     class File
       LICENSE_KEY_FILE = "licenses.yaml".freeze
-      LICENSE_FILE_FORMAT_VERSION = "3.0.0".freeze
+      LICENSE_FILE_FORMAT_VERSION = "4.0.0".freeze
 
       # License types list
       LICENSE_TYPES = {
@@ -36,8 +36,7 @@ module ChefLicensing
 
       def fetch
         read_license_key_file
-        license_keys = !contents.nil? && fetch_license_keys(contents[:licenses]) # list license keys
-        license_keys || []
+        contents&.key?(:licenses) ? fetch_license_keys(contents[:licenses]) : []
       end
 
       def fetch_license_keys(licenses)
@@ -46,7 +45,8 @@ module ChefLicensing
 
       def fetch_license_types
         read_license_key_file
-        if contents.nil?
+
+        if contents.nil? || contents[:licenses].nil?
           []
         else
           contents[:licenses].collect { |x| x[:license_type] }
@@ -56,7 +56,8 @@ module ChefLicensing
       def user_has_active_trial_license?
         @active_trial_status = false
         read_license_key_file
-        unless contents.nil?
+
+        if contents&.key?(:licenses)
           @active_trial_status = contents[:licenses].any? { |license| license[:license_type] == :trial && ChefLicensing.client(license_keys: [license[:license_key]]).active? }
         end
         @active_trial_status
@@ -96,47 +97,43 @@ module ChefLicensing
 
         dir = @opts[:dir]
         license_key_file_path = "#{dir}/#{LICENSE_KEY_FILE}"
-        begin
-          if ::File.exist?(license_key_file_path)
-            msg = "Could not read license key file #{license_key_file_path}"
-            current_keys = YAML.load_file(license_key_file_path)
+        create_license_directory_if_not_exist(dir, license_key_file_path)
 
-            if current_keys && current_keys[:licenses]
-              # Checking for unique keys
-              unless fetch_license_keys(current_keys[:licenses]).include? license_key
-                current_keys[:licenses].push(license_data)
-                current_keys[:file_format_version] = LICENSE_FILE_FORMAT_VERSION
-              end
-              @contents = current_keys
-            elsif !current_keys # if file is empty
-              @contents = {
-                licenses: [license_data] ,
-                file_format_version: LICENSE_FILE_FORMAT_VERSION,
-              }
-            end
-          else
-            @contents = {
-              licenses: [license_data] ,
-              file_format_version: LICENSE_FILE_FORMAT_VERSION,
-            }
-            msg = "Could not create directory for license_key file #{dir}"
-            FileUtils.mkdir_p(dir)
-          end
+        @contents = load_license_file(license_key_file_path)
 
-          # write/overwrite license file content in the file
-          msg = "Could not write telemetry license_key file #{license_key_file_path}"
-          ::File.write(license_key_file_path, YAML.dump(@contents))
-          []
-        rescue StandardError => e
-          logger.warn "#{msg}\n\t#{e.message}"
-          logger.debug "#{e.backtrace.join("\n\t")}"
-          [e]
-        end
+        load_license_data_to_contents(license_data)
+        write_license_file(license_key_file_path)
+        []
       end
 
       # Returns true if a license_key file exists.
       def persisted?
         !!seek
+      end
+
+      def fetch_or_persist_url(license_server_url_from_config, license_server_url_from_system = nil)
+        dir = @opts[:dir]
+        license_key_file_path = "#{dir}/#{LICENSE_KEY_FILE}"
+        create_license_directory_if_not_exist(dir, license_key_file_path)
+
+        @contents = load_license_file(license_key_file_path)
+
+        if @contents.nil?
+          @contents = {
+            file_format_version: LICENSE_FILE_FORMAT_VERSION,
+            license_server_url: license_server_url_from_system || license_server_url_from_config,
+          }
+        else
+          if license_server_url_from_system && license_server_url_from_system != @contents[:license_server_url]
+            @contents[:license_server_url] = license_server_url_from_system
+          end
+        end
+
+        write_license_file(license_key_file_path)
+        @license_server_url = @contents[:license_server_url]
+        @license_server_url
+      rescue StandardError => e
+        handle_error(e)
       end
 
       def self.default_file_location
@@ -151,7 +148,13 @@ module ChefLicensing
         new(opts).user_has_active_trial_license?
       end
 
+      def self.fetch_or_persist_url(license_server_url_from_config, license_server_url_from_system = nil, opts = {})
+        new(opts).fetch_or_persist_url(license_server_url_from_config, license_server_url_from_system)
+      end
+
       private
+
+      attr_accessor :license_server_url
 
       # Look for an *existing* license_id file in several locations.
       def seek
@@ -206,6 +209,55 @@ module ChefLicensing
 
       def major_version(version)
         Gem::Version.new(version).segments[0]
+      end
+
+      def create_license_directory_if_not_exist(dir, license_key_file_path)
+        return if ::File.exist?(license_key_file_path)
+
+        msg = "Could not create directory for license_key file #{dir}"
+        FileUtils.mkdir_p(dir)
+      rescue StandardError => e
+        handle_error(e, msg)
+      end
+
+      def load_license_file(license_key_file_path)
+        return unless ::File.exist?(license_key_file_path)
+
+        msg = "Could not read license key file #{license_key_file_path}"
+        YAML.load_file(license_key_file_path)
+      rescue StandardError => e
+        handle_error(e, msg)
+      end
+
+      def load_license_data_to_contents(license_data)
+        return unless license_data
+
+        if @contents.nil? || @contents.empty? # this case is likely to happen only during testing
+          @contents = {
+            file_format_version: LICENSE_FILE_FORMAT_VERSION,
+            license_server_url: @license_server_url,
+            licenses: [license_data],
+          }
+        elsif @contents[:licenses].nil?
+          @contents[:licenses] = [license_data]
+        elsif fetch_license_keys(@contents[:licenses])&.include?(license_data[:license_key])
+          nil
+        else
+          @contents[:licenses] << license_data
+        end
+      end
+
+      def write_license_file(license_key_file_path)
+        msg = "Could not write telemetry license_key file #{license_key_file_path}"
+        ::File.write(license_key_file_path, YAML.dump(@contents))
+      rescue StandardError => e
+        handle_error(e, msg)
+      end
+
+      def handle_error(e, message = nil)
+        logger.warn "#{message}\n\t#{e.message}"
+        logger.debug "#{e.backtrace.join("\n\t")}"
+        raise e
       end
     end
   end

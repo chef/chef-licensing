@@ -11,6 +11,7 @@ RSpec.describe ChefLicensing::Api::Client do
   before do
     ChefLicensing.configure do |conf|
       conf.license_server_url = "http://localhost-license-server/License"
+      conf.license_server_url_check_in_file = true
       conf.chef_product_name = "inspec"
       conf.chef_entitlement_id = "3ff52c37-e41f-4f6c-ad4d-365192205968"
     end

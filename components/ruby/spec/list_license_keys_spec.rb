@@ -17,6 +17,7 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
       conf.chef_product_name = "inspec"
       conf.chef_entitlement_id = "testing_entitlement_id"
       conf.license_server_url = "http://localhost-license-server/License"
+      conf.license_server_url_check_in_file = true
       conf.logger = logger
       conf.output = output_stream
     end

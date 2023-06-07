@@ -16,8 +16,6 @@ RSpec.configure do |config|
   config.exclude_pattern = "./vendor/**/*_spec.rb"
 end
 
-ENV["CHEF_LICENSE_SERVER"] = "http://localhost-license-server/License"
-
 # This is required when mocked down key pressed in tui_engine_spec.rb
 class StringIO
   def wait_readable(*)

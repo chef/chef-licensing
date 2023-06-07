@@ -7,6 +7,7 @@ RSpec.describe ChefLicensing::LicenseKeyGenerator do
   before do
     ChefLicensing.configure do |config|
       config.license_server_url = "http://localhost-license-server/License"
+      config.license_server_url_check_in_file = true
     end
   end
 
