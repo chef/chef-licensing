@@ -11,6 +11,7 @@ require_relative "license_key_fetcher/prompt"
 require_relative "../chef-licensing"
 require "tty-spinner"
 require_relative "exceptions/invalid_license"
+require_relative "exceptions/error"
 
 # LicenseKeyFetcher allows us to inspect obtain the license Key from the user in a variety of ways.
 module ChefLicensing
@@ -19,6 +20,9 @@ module ChefLicensing
     end
 
     class LicenseKeyNotPersistedError < RuntimeError
+    end
+
+    class LicenseKeyAddNotAllowed < Error
     end
 
     attr_reader :config, :license_keys, :arg_fetcher, :env_fetcher, :file_fetcher, :prompt_fetcher, :logger
@@ -47,6 +51,38 @@ module ChefLicensing
     # Methods for obtaining consent from the user.
     #
     def fetch_and_persist
+      if ChefLicensing::Context.local_licensing_service?
+        perform_on_prem_operations
+      else
+        perform_global_operations
+      end
+    end
+
+    def perform_on_prem_operations
+      # While using on-prem licensing service no option to add/generate license is enabled
+
+      # Licenses expiration check
+      return @license_keys if !@license_keys.empty? && licenses_active?
+
+      # Prompts if the keys are expired or expiring
+      if config[:output].isatty
+        append_extra_info_to_tui_engine # will add extra dynamic values in tui flows
+        logger.debug "License Key fetcher - detected TTY, prompting..."
+        prompt_fetcher.fetch
+      end
+
+      # Scenario: When a user is prompted for license expiry and license is not yet renewed
+      if %i{prompt_license_about_to_expire prompt_license_expired}.include?(config[:start_interaction])
+        # Not blocking any license type in case of expiry
+        return @license_keys
+      end
+
+      # Otherwise nothing was able to fetch a license. Throw an exception.
+      logger.debug "License Key fetcher - no license Key able to be fetched."
+      raise LicenseKeyNotFetchedError.new("Unable to obtain a License Key.")
+    end
+
+    def perform_global_operations
       logger.debug "License Key fetcher examining CLI arg checks"
       new_keys = fetch_license_key_from_arg
       license_type = validate_and_fetch_license_type(new_keys)
@@ -65,7 +101,7 @@ module ChefLicensing
         return license_keys
       end
 
-      # licenses expiration check
+      # Licenses expiration check
       return @license_keys if !@license_keys.empty? && licenses_active?
 
       # Lowest priority is to interactively prompt if we have a TTY
@@ -94,15 +130,20 @@ module ChefLicensing
     end
 
     def add_license
-      config = {}
-      config[:start_interaction] = :add_license_all
-      prompt_fetcher.config = config
-      append_extra_info_to_tui_engine
-      new_keys = prompt_fetcher.fetch
-      unless new_keys.empty?
-        prompt_fetcher.license_type ||= get_license_type(new_keys.first)
-        persist_and_concat(new_keys, prompt_fetcher.license_type)
-        license_keys
+      if ChefLicensing::Context.local_licensing_service?
+        # TBD Need to discuss error message with product
+        raise LicenseKeyAddNotAllowed.new("inspec license add is not operational with on-prem service")
+      else
+        config = {}
+        config[:start_interaction] = :add_license_all
+        prompt_fetcher.config = config
+        append_extra_info_to_tui_engine
+        new_keys = prompt_fetcher.fetch
+        unless new_keys.empty?
+          prompt_fetcher.license_type ||= get_license_type(new_keys.first)
+          persist_and_concat(new_keys, prompt_fetcher.license_type)
+          license_keys
+        end
       end
     end
 
