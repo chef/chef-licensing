@@ -43,6 +43,15 @@ RSpec.describe ChefLicensing::TUIEngine do
     }.to_json
   }
 
+  let(:trial_license_generation_success_response) {
+    {
+      "delivery": "RealTime",
+      "licenseId": valid_trial_license_key,
+      "message": "Success",
+      "status_code": 200,
+    }.to_json
+  }
+
   let(:prompt) { TTY::Prompt::Test.new }
 
   let(:opts) {
@@ -62,12 +71,14 @@ RSpec.describe ChefLicensing::TUIEngine do
       config.chef_product_name = "inspec"
       config.chef_entitlement_id = "3ff52c37-e41f-4f6c-ad4d-365192205968"
     end
+  end
+
+  # Stubbing all the required API calls
+  before do
     stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
       .to_return(body: { data: [], status_code: 403 }.to_json,
                   headers: { content_type: "application/json" })
-  end
 
-  before do
     stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
       .with(query: { licenseId: valid_free_license_key, version: 2 })
       .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
@@ -117,6 +128,12 @@ RSpec.describe ChefLicensing::TUIEngine do
       .with(body: user_details_payload.to_json)
       .to_return(body: free_license_generation_success_response,
                   headers: { content_type: "application/json" })
+
+    stub_request(:post, "#{ChefLicensing::Config.license_server_url}/v1/trial")
+    .with(body: user_details_payload.to_json)
+    .to_return(body: trial_license_generation_success_response,
+                headers: { content_type: "application/json" })
+
   end
 
   context "ux for tui entry - user enters a valid trial license id" do
@@ -380,6 +397,70 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect(prompt.output.string).to include("An active Trial License already exists with following details")
         expect(prompt.output.string).to include("Please generate a Commercial License by running")
       end
+    end
+  end
+
+  context "trial license generation ux, user follows all steps correctly" do
+    let(:start_interaction) { :start }
+
+    before do
+      prompt.input << simulate_down_arrow
+      prompt.input << "\n"
+      prompt.input << simulate_down_arrow
+      prompt.input << "\n"
+      prompt.input << "John\nDoe\njohndoe@chef.com\nProgress Chef\n123-456-7890\n"
+      prompt.input << "\n"
+      prompt.input << valid_trial_license_key
+      prompt.input << "\n"
+      prompt.input.rewind
+    end
+
+    let(:tui_engine) { described_class.new(opts) }
+
+    let(:expected_flow_for_license_generation) {
+      %i{
+        start
+        ask_if_user_has_license_id
+        info_of_license_types
+        filter_license_type_options
+        ask_for_all_license_type
+        trial_license_selection
+        check_if_user_details_are_present
+        ask_for_user_details
+        gather_user_first_name_for_license_generation
+        validate_user_first_name_for_license_generation
+        gather_user_last_name_for_license_generation
+        validate_user_last_name_for_license_generation
+        gather_user_email_for_license_generation
+        validate_user_email_for_license_generation
+        gather_user_company_for_license_generation
+        validate_user_company_name_for_license_generation
+        gather_user_phone_no_for_license_generation
+        validate_user_phone_no
+        print_to_review_details
+        ask_for_review_confirmation
+        pre_license_generation
+        generate_trial_license
+        trial_license_generation_success
+        ask_for_license_id
+        validate_license_id_pattern
+        validate_license_id_with_api
+        validate_license_restriction
+        validation_success
+        display_license_info
+        fetch_license_id
+      }
+    }
+
+    it "generates the license successfully traversing through the interactions in expected order" do
+      expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
+      expect(tui_engine.traversed_interaction).to eq(expected_flow_for_license_generation)
+      expect(prompt.output.string).to include("I don't have a license ID and would like to generate a new license ID")
+      expect(prompt.output.string).to include("Select the type of license below and then enter user details")
+      expect(prompt.output.string).to include("2. Trial License")
+      expect(prompt.output.string).to include("No. of targets: Unlimited")
+      expect(prompt.output.string).to include("Please enter the following details:\nFirst Name, Last Name, Email, Company, Phone")
+      expect(prompt.output.string).to include("The license ID has been sent to johndoe@chef.com")
     end
   end
 end
