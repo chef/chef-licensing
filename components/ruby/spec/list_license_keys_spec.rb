@@ -110,4 +110,24 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
       expect(output_stream.string).to include("No. Of Units     : 2 Nodes")
     end
   end
+
+  describe "when the license keys are fetched from the local licensing server" do
+    before do
+      ChefLicensing.configure do |config|
+        config.is_local_license_service = nil
+        config.license_server_url = "http://localhost-license-server/License"
+      end
+      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
+        .to_return(body: { data: ["tmns-bea68bbb-1e85-44ea-8b98-a654b011174b-4227"], status_code: 200 }.to_json,
+        headers: { content_type: "application/json" })
+      ChefLicensing::Context.current_context = nil
+    end
+
+    it "displays the information about the license keys without errors" do
+      expect { described_class.new({ output: output_stream }).display }.to_not raise_error
+      expect(output_stream.string).to include("+------------ License Information ------------+")
+      expect(output_stream.string).to include("License Key     :")
+      expect(output_stream.string).to include("Type            :")
+    end
+  end
 end
