@@ -108,7 +108,7 @@ module ChefLicensing
     end
 
     def fetch_license_keys(opts = {})
-      license_keys = opts[:license_keys] || ChefLicensing::LicenseKeyFetcher.fetch({ logger: logger, dir: opts[:dir] })
+      license_keys = opts[:license_keys] || ChefLicensing::LicenseKeyFetcher.fetch({ dir: opts[:dir] })
 
       if license_keys.empty?
         logger.debug "No license keys found on disk."
