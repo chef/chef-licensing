@@ -61,6 +61,9 @@ module ChefLicensing
     def perform_on_prem_operations
       # While using on-prem licensing service no option to add/generate license is enabled
 
+      new_keys = fetch_license_key_from_arg
+      raise LicenseKeyAddNotAllowed.new("'--chef-license-key <value>' option is not supported with airgapped environment. You cannot add license from airgapped environment.") unless new_keys.empty?
+
       # Licenses expiration check
       return @license_keys if !@license_keys.empty? && licenses_active?
 
@@ -132,7 +135,7 @@ module ChefLicensing
     def add_license
       if ChefLicensing::Context.local_licensing_service?
         # TBD Need to discuss error message with product
-        raise LicenseKeyAddNotAllowed.new("inspec license add is not operational with on-prem service")
+        raise LicenseKeyAddNotAllowed.new("'inspec license add' command is not supported with airgapped environment. You cannot generate license from airgapped environment.")
       else
         config = {}
         config[:start_interaction] = :add_license_all
