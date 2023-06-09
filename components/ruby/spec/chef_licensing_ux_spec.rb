@@ -695,4 +695,12 @@ RSpec.describe ChefLicensing::TUIEngine do
       expect(prompt.output.string).to include("The license ID has been sent to johndoe@chef.com")
     end
   end
+
+  context "ux for tui entry - user enters an expired trial license id" do
+    # TODO
+  end
+
+  context "ux for tui entry - user enters about to expire trial license id" do
+    # TODO
+  end
 end
