@@ -64,14 +64,18 @@ module ChefLicensing
       new_keys = fetch_license_key_from_arg
       raise LicenseKeyAddNotAllowed.new("'--chef-license-key <value>' option is not supported with airgapped environment. You cannot add license from airgapped environment.") unless new_keys.empty?
 
-      # Licenses expiration check
-      return @license_keys if !@license_keys.empty? && licenses_active?
-
-      # Prompts if the keys are expired or expiring
-      if config[:output].isatty
-        append_extra_info_to_tui_engine # will add extra dynamic values in tui flows
-        logger.debug "License Key fetcher - detected TTY, prompting..."
-        prompt_fetcher.fetch
+      unless @license_keys.empty?
+        # Licenses expiration check
+        if licenses_active?
+          return @license_keys
+        else
+          # Prompts if the keys are expired or expiring
+          if config[:output].isatty
+            append_extra_info_to_tui_engine # will add extra dynamic values in tui flows
+            logger.debug "License Key fetcher - detected TTY, prompting..."
+            prompt_fetcher.fetch
+          end
+        end
       end
 
       # Scenario: When a user is prompted for license expiry and license is not yet renewed
@@ -134,7 +138,6 @@ module ChefLicensing
 
     def add_license
       if ChefLicensing::Context.local_licensing_service?
-        # TBD Need to discuss error message with product
         raise LicenseKeyAddNotAllowed.new("'inspec license add' command is not supported with airgapped environment. You cannot generate license from airgapped environment.")
       else
         config = {}
@@ -178,7 +181,7 @@ module ChefLicensing
 
       # default values
       extra_info[:chef_product_name] = ChefLicensing::Config.chef_product_name&.capitalize
-      unless @license_keys.empty? && !license
+      if license
         extra_info[:license_type] = license.license_type.capitalize
         extra_info[:number_of_days_in_expiration] = license.number_of_days_in_expiration
         extra_info[:license_expiration_date] = Date.parse(license.expiration_date).strftime("%a, %d %b %Y")
