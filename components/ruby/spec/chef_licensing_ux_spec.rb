@@ -164,7 +164,6 @@ RSpec.describe ChefLicensing::TUIEngine do
   end
 
   context "ux for tui entry - user enters a valid trial license id" do
-
     let(:start_interaction) { :start }
 
     # user press enters to select I already have a license ID
@@ -389,7 +388,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         license_key_fetcher.fetch_and_persist
       end
 
-      it "checks if the license is persister" do
+      it "checks if the license is persisted" do
         expect(license_key_fetcher.fetch).to eq(["tmns-58555821-925e-4a27-8fdc-e79dae5a425b-1234"])
       end
 
@@ -554,7 +553,6 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect(prompt.output.string).to include("Please generate a Commercial License by running")
       end
     end
-
   end
 
   context "trial license restriction ux, user has an expired trial license and tries to add another trial license via tui" do
