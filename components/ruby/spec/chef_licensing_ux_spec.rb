@@ -696,11 +696,31 @@ RSpec.describe ChefLicensing::TUIEngine do
     end
   end
 
-  context "ux for tui entry - user enters an expired trial license id" do
-    # TODO
+  context "user executes with an expired trial license id" do
+    # license_key_fetcher is responsible for setting the start_interaction to :prompt_license_expired
+    let(:start_interaction) { :prompt_license_expired }
+    let(:tui_engine) { described_class.new(opts) }
+
+    it "shows the error message for expired license" do
+      expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
+      expect(tui_engine.traversed_interaction).to eq([:prompt_license_expired])
+      expect(prompt.output.string).to include("License Expired")
+      expect(prompt.output.string).to include("Get a Commercial License to receive bug fixes, updates, and new features.")
+      expect(prompt.output.string).to include("Get a Free License to scan limited targets.")
+    end
+
   end
 
-  context "ux for tui entry - user enters about to expire trial license id" do
-    # TODO
+  context "user executes with an about to expire trial license id" do
+    # license_key_fetcher is responsible for setting the start_interaction to :prompt_license_about_to_expire
+    let(:start_interaction) { :prompt_license_about_to_expire }
+    let(:tui_engine) { described_class.new(opts) }
+
+    it "shows the warning message for about to expire license" do
+      expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
+      expect(tui_engine.traversed_interaction).to eq([:prompt_license_about_to_expire])
+      expect(prompt.output.string).to include("Your license is about to expire in")
+      expect(prompt.output.string).to include("To avoid service disruptions, get a Commercial License before")
+    end
   end
 end
