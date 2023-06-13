@@ -13,7 +13,10 @@ RSpec.describe ChefLicensing::TUIEngine do
   let(:output) { StringIO.new }
   let(:logger) { Logger.new(output) }
   let(:valid_trial_license_key) { "tmns-58555821-925e-4a27-8fdc-e79dae5a425b-1234" }
+  let(:valid_trial_license_key_2) { "tmns-58555821-925e-4a27-8fdc-e79dae5a425b-1235" }
+  let(:expired_trial_license_key) { "tmns-58555821-925e-4a27-8fdc-e79dae5a425b-1236" }
   let(:valid_client_api_data) { JSON.parse(File.read("spec/fixtures/api_response_data/valid_client_api_response.json")) }
+  let(:expired_trial_license_client_api_data) { JSON.parse(File.read("spec/fixtures/api_response_data/expired_trial_license_client_api_response.json")) }
   let(:valid_client_api_data_free_license) { JSON.parse(File.read("spec/fixtures/api_response_data/valid_client_api_response_free_license.json")) }
   let(:valid_describe_api_data) { JSON.parse(File.read("spec/fixtures/api_response_data/valid_describe_api_response.json")) }
   let(:valid_free_license_key) { "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111" }
@@ -43,6 +46,15 @@ RSpec.describe ChefLicensing::TUIEngine do
     }.to_json
   }
 
+  let(:trial_license_generation_success_response) {
+    {
+      "delivery": "RealTime",
+      "licenseId": valid_trial_license_key,
+      "message": "Success",
+      "status_code": 200,
+    }.to_json
+  }
+
   let(:prompt) { TTY::Prompt::Test.new }
 
   let(:opts) {
@@ -62,12 +74,14 @@ RSpec.describe ChefLicensing::TUIEngine do
       config.chef_product_name = "inspec"
       config.chef_entitlement_id = "3ff52c37-e41f-4f6c-ad4d-365192205968"
     end
+  end
+
+  # Stubbing all the required API calls
+  before do
     stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
       .to_return(body: { data: [], status_code: 403 }.to_json,
                   headers: { content_type: "application/json" })
-  end
 
-  before do
     stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
       .with(query: { licenseId: valid_free_license_key, version: 2 })
       .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
@@ -103,9 +117,29 @@ RSpec.describe ChefLicensing::TUIEngine do
       .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
                   headers: { content_type: "application/json" })
 
+    stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+      .with(query: { licenseId: valid_trial_license_key_2, version: 2 })
+      .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+                  headers: { content_type: "application/json" })
+
+    stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+      .with(query: { licenseId: expired_trial_license_key, version: 2 })
+      .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+                  headers: { content_type: "application/json" })
+
     stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
       .with(query: { licenseId: valid_trial_license_key, entitlementId: ChefLicensing::Config.chef_entitlement_id })
       .to_return(body: { data: valid_client_api_data, status_code: 200 }.to_json,
+                headers: { content_type: "application/json" })
+
+    stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+      .with(query: { licenseId: valid_trial_license_key_2, entitlementId: ChefLicensing::Config.chef_entitlement_id })
+      .to_return(body: { data: valid_client_api_data, status_code: 200 }.to_json,
+                headers: { content_type: "application/json" })
+
+    stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+      .with(query: { licenseId: expired_trial_license_key, entitlementId: ChefLicensing::Config.chef_entitlement_id })
+      .to_return(body: { data: expired_trial_license_client_api_data, status_code: 200 }.to_json,
                 headers: { content_type: "application/json" })
 
     stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
@@ -113,14 +147,23 @@ RSpec.describe ChefLicensing::TUIEngine do
       .to_return(body: { data: valid_describe_api_data, status_code: 200 }.to_json,
                 headers: { content_type: "application/json" })
 
+    stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
+      .with(query: { licenseId: expired_trial_license_key, entitlementId: ChefLicensing::Config.chef_entitlement_id })
+      .to_return(body: { data: valid_describe_api_data, status_code: 200 }.to_json,
+                headers: { content_type: "application/json" })
     stub_request(:post, "#{ChefLicensing::Config.license_server_url}/v1/free")
       .with(body: user_details_payload.to_json)
       .to_return(body: free_license_generation_success_response,
                   headers: { content_type: "application/json" })
+
+    stub_request(:post, "#{ChefLicensing::Config.license_server_url}/v1/trial")
+      .with(body: user_details_payload.to_json)
+      .to_return(body: trial_license_generation_success_response,
+                headers: { content_type: "application/json" })
+
   end
 
   context "ux for tui entry - user enters a valid trial license id" do
-
     let(:start_interaction) { :start }
 
     # user press enters to select I already have a license ID
@@ -345,7 +388,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         license_key_fetcher.fetch_and_persist
       end
 
-      it "checks if the license is persister" do
+      it "checks if the license is persisted" do
         expect(license_key_fetcher.fetch).to eq(["tmns-58555821-925e-4a27-8fdc-e79dae5a425b-1234"])
       end
 
@@ -380,6 +423,302 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect(prompt.output.string).to include("An active Trial License already exists with following details")
         expect(prompt.output.string).to include("Please generate a Commercial License by running")
       end
+    end
+  end
+
+  context "trial license generation ux, user follows all steps correctly" do
+    let(:start_interaction) { :start }
+
+    before do
+      prompt.input << simulate_down_arrow
+      prompt.input << "\n"
+      prompt.input << simulate_down_arrow
+      prompt.input << "\n"
+      prompt.input << "John\nDoe\njohndoe@chef.com\nProgress Chef\n123-456-7890\n"
+      prompt.input << "\n"
+      prompt.input << valid_trial_license_key
+      prompt.input << "\n"
+      prompt.input.rewind
+    end
+
+    let(:tui_engine) { described_class.new(opts) }
+
+    let(:expected_flow_for_license_generation) {
+      %i{
+        start
+        ask_if_user_has_license_id
+        info_of_license_types
+        filter_license_type_options
+        ask_for_all_license_type
+        trial_license_selection
+        check_if_user_details_are_present
+        ask_for_user_details
+        gather_user_first_name_for_license_generation
+        validate_user_first_name_for_license_generation
+        gather_user_last_name_for_license_generation
+        validate_user_last_name_for_license_generation
+        gather_user_email_for_license_generation
+        validate_user_email_for_license_generation
+        gather_user_company_for_license_generation
+        validate_user_company_name_for_license_generation
+        gather_user_phone_no_for_license_generation
+        validate_user_phone_no
+        print_to_review_details
+        ask_for_review_confirmation
+        pre_license_generation
+        generate_trial_license
+        trial_license_generation_success
+        ask_for_license_id
+        validate_license_id_pattern
+        validate_license_id_with_api
+        validate_license_restriction
+        validation_success
+        display_license_info
+        fetch_license_id
+      }
+    }
+
+    it "generates the license successfully traversing through the interactions in expected order" do
+      expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
+      expect(tui_engine.traversed_interaction).to eq(expected_flow_for_license_generation)
+      expect(prompt.output.string).to include("I don't have a license ID and would like to generate a new license ID")
+      expect(prompt.output.string).to include("Select the type of license below and then enter user details")
+      expect(prompt.output.string).to include("2. Trial License")
+      expect(prompt.output.string).to include("No. of targets: Unlimited")
+      expect(prompt.output.string).to include("Please enter the following details:\nFirst Name, Last Name, Email, Company, Phone")
+      expect(prompt.output.string).to include("The license ID has been sent to johndoe@chef.com")
+    end
+  end
+
+  context "trial license restriction ux, user has an active trial license and tries to add another trial license via tui" do
+    Dir.mktmpdir do |tmpdir|
+      let(:argv) { ["--chef-license-key=#{valid_trial_license_key}"] }
+
+      let(:lkf_opts) {
+        {
+          argv: argv,
+          dir: tmpdir,
+        }
+      }
+
+      let(:license_key_fetcher) { ChefLicensing::LicenseKeyFetcher.new(lkf_opts) }
+
+      let(:start_interaction) { :add_license_all }
+      let(:opts) {
+        {
+          prompt: prompt,
+          interaction_file: interaction_file,
+          dir: tmpdir,
+        }
+      }
+      let(:tui_engine) { described_class.new(opts) }
+
+      before do
+        license_key_fetcher.fetch_and_persist
+      end
+
+      it "checks if the license is persisted" do
+        expect(license_key_fetcher.fetch).to eq([valid_trial_license_key])
+      end
+
+      before do
+        prompt.input << "\n"
+        prompt.input << valid_trial_license_key_2
+        prompt.input << "\n"
+        prompt.input.rewind
+      end
+
+      let(:expected_flow_for_license_restriction) {
+        %i{
+          add_license_all
+          ask_if_user_has_license_id
+          ask_for_license_id
+          validate_license_id_pattern
+          validate_license_id_with_api
+          validate_license_restriction
+          prompt_error_license_addition_restricted
+          license_restriction_header_text
+          trial_already_exist_message
+          add_license_info_in_restriction_flow
+          license_restriction_foot_text
+          only_commercial_allowed_message
+        }
+      }
+
+      it "doesn't allow to add another free license key" do
+        expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
+        expect(tui_engine.traversed_interaction).to eq(expected_flow_for_license_restriction)
+        expect(prompt.output.string).to include("✖ [Error] License validation failed")
+        expect(prompt.output.string).to include("A Trial License already exists with following details:")
+        expect(prompt.output.string).to include("Please generate a Commercial License by running")
+      end
+    end
+  end
+
+  context "trial license restriction ux, user has an expired trial license and tries to add another trial license via tui" do
+    Dir.mktmpdir do |tmpdir|
+      let(:argv) { ["--chef-license-key=#{expired_trial_license_key}"] }
+
+      let(:lkf_opts) {
+        {
+          argv: argv,
+          dir: tmpdir,
+        }
+      }
+
+      let(:license_key_fetcher) { ChefLicensing::LicenseKeyFetcher.new(lkf_opts) }
+
+      let(:start_interaction) { :add_license_all }
+      let(:opts) {
+        {
+          prompt: prompt,
+          interaction_file: interaction_file,
+          dir: tmpdir,
+        }
+      }
+      let(:tui_engine) { described_class.new(opts) }
+
+      before do
+        license_key_fetcher.fetch_and_persist
+      end
+
+      it "checks if the license is persisted" do
+        expect(license_key_fetcher.fetch).to eq([expired_trial_license_key])
+      end
+
+      before do
+        prompt.input << "\n"
+        prompt.input << valid_trial_license_key_2
+        prompt.input << "\n"
+        prompt.input.rewind
+      end
+
+      let(:expected_flow_for_license_restriction) {
+        %i{
+          add_license_all
+          ask_if_user_has_license_id
+          ask_for_license_id
+          validate_license_id_pattern
+          validate_license_id_with_api
+          validate_license_restriction
+          prompt_error_license_addition_restricted
+          license_restriction_header_text
+          trial_already_exist_message
+          add_license_info_in_restriction_flow
+          license_restriction_foot_text
+          trial_restriction_message
+        }
+      }
+
+      it "doesn't allow to add another free license key" do
+        expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
+        expect(tui_engine.traversed_interaction).to eq(expected_flow_for_license_restriction)
+        expect(prompt.output.string).to include("✖ [Error] License validation failed")
+        expect(prompt.output.string).to include("A Trial License already exists with following details:")
+        expect(prompt.output.string).to include("Please generate a Free or Commercial License by running")
+      end
+    end
+  end
+
+  context "user selects free license and changes the license type to trial" do
+    let(:start_interaction) { :start }
+
+    before do
+      prompt.input << simulate_down_arrow
+      prompt.input << "\n\n"
+      prompt.input << "John\nDoe\njohndoe@chef.com\nProgress Chef\n123-456-7890\n"
+      prompt.input << simulate_down_arrow
+      prompt.input << "\n"
+      prompt.input << simulate_down_arrow
+      prompt.input << "\n\n"
+      prompt.input << valid_trial_license_key
+      prompt.input << "\n"
+      prompt.input.rewind
+    end
+
+    let(:tui_engine) { described_class.new(opts) }
+
+    let(:expected_flow_for_license_generation) {
+      %i{
+        start
+        ask_if_user_has_license_id
+        info_of_license_types
+        filter_license_type_options
+        ask_for_all_license_type
+        free_license_disclaimer
+        free_license_selection
+        check_if_user_details_are_present
+        ask_for_user_details
+        gather_user_first_name_for_license_generation
+        validate_user_first_name_for_license_generation
+        gather_user_last_name_for_license_generation
+        validate_user_last_name_for_license_generation
+        gather_user_email_for_license_generation
+        validate_user_email_for_license_generation
+        gather_user_company_for_license_generation
+        validate_user_company_name_for_license_generation
+        gather_user_phone_no_for_license_generation
+        validate_user_phone_no
+        print_to_review_details
+        ask_for_review_confirmation
+        clear_current_license_type_selection
+        info_of_license_types
+        filter_license_type_options
+        ask_for_all_license_type
+        trial_license_selection
+        check_if_user_details_are_present
+        print_to_review_details
+        ask_for_review_confirmation
+        pre_license_generation
+        generate_trial_license
+        trial_license_generation_success
+        ask_for_license_id
+        validate_license_id_pattern
+        validate_license_id_with_api
+        validate_license_restriction
+        validation_success
+        display_license_info
+        fetch_license_id
+      }
+    }
+
+    it "generates the license successfully traversing through the interactions in expected order" do
+      expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
+      expect(tui_engine.traversed_interaction).to eq(expected_flow_for_license_generation)
+      expect(prompt.output.string).to include("I don't have a license ID and would like to generate a new license ID")
+      expect(prompt.output.string).to include("Select the type of license below and then enter user details")
+      expect(prompt.output.string).to include("2. Trial License")
+      expect(prompt.output.string).to include("No. of targets: Unlimited")
+      expect(prompt.output.string).to include("Please enter the following details:\nFirst Name, Last Name, Email, Company, Phone")
+      expect(prompt.output.string).to include("The license ID has been sent to johndoe@chef.com")
+    end
+  end
+
+  context "user executes with an expired trial license id" do
+    # license_key_fetcher is responsible for setting the start_interaction to :prompt_license_expired
+    let(:start_interaction) { :prompt_license_expired }
+    let(:tui_engine) { described_class.new(opts) }
+
+    it "shows the error message for expired license" do
+      expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
+      expect(tui_engine.traversed_interaction).to eq([:prompt_license_expired])
+      expect(prompt.output.string).to include("License Expired")
+      expect(prompt.output.string).to include("Get a Commercial License to receive bug fixes, updates, and new features.")
+      expect(prompt.output.string).to include("Get a Free License to scan limited targets.")
+    end
+
+  end
+
+  context "user executes with an about to expire trial license id" do
+    # license_key_fetcher is responsible for setting the start_interaction to :prompt_license_about_to_expire
+    let(:start_interaction) { :prompt_license_about_to_expire }
+    let(:tui_engine) { described_class.new(opts) }
+
+    it "shows the warning message for about to expire license" do
+      expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
+      expect(tui_engine.traversed_interaction).to eq([:prompt_license_about_to_expire])
+      expect(prompt.output.string).to include("Your license is about to expire in")
+      expect(prompt.output.string).to include("To avoid service disruptions, get a Commercial License before")
     end
   end
 end

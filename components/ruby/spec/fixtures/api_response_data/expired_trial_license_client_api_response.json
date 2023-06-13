@@ -1,0 +1,40 @@
+{
+  "cache": {
+    "lastModified": "2023-05-02T09:32:04Z",
+    "evaluatedOn": "2023-06-08T11:01:57.070514057Z",
+    "expires": "2023-06-09T11:01:57.070514134Z",
+    "cacheControl": "private, max-age:46083"
+  },
+  "client": {
+    "license": "trial",
+    "status": "Expired",
+    "changesTo": "Expired",
+    "changesOn": "2023-06-01T00:00:00Z",
+    "changesIn": -7,
+    "usage": "Expired",
+    "used": 0,
+    "limit": 0,
+    "measure": "Target"
+  },
+  "assets": null,
+  "features": [
+    {
+      "name": "Inspec-Parallel",
+      "id": "c891f0fa-fa71-8b98-b694-7b5462595f35"
+    }
+  ],
+  "entitlement": {
+    "id": "3ff52c37-e41f-4f6c-ad4d-365192205968",
+    "name": "InSpec",
+    "start": "2023-05-02",
+    "end": "2023-06-01",
+    "licenses": 0,
+    "limits": [
+      {
+        "measure": "Target",
+        "amount": -1
+      }
+    ],
+    "entitled": false
+  }
+}
