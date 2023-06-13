@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.4.22 -->
-## [0.4.22](https://github.com/chef/chef-licensing/tree/0.4.22) (2023-06-13)
+<!-- latest_release 0.4.23 -->
+## [0.4.23](https://github.com/chef/chef-licensing/tree/0.4.23) (2023-06-13)
 
 #### Merged Pull Requests
-- FIX: Do not raise exception as we handled and logged it already [#123](https://github.com/chef/chef-licensing/pull/123) ([ahasunos](https://github.com/ahasunos))
+- CHEF-77: UX tests for trial license scenarios [#122](https://github.com/chef/chef-licensing/pull/122) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-77: UX tests for trial license scenarios [#122](https://github.com/chef/chef-licensing/pull/122) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.23 -->
 - FIX: Do not raise exception as we handled and logged it already [#123](https://github.com/chef/chef-licensing/pull/123) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.22 -->
 - CHEF-3374 - Updates the commercial option to show contact us link [#118](https://github.com/chef/chef-licensing/pull/118) ([Vasu1105](https://github.com/Vasu1105)) <!-- 0.4.21 -->
 - CHEF-2861 Form validation revised for name and company name [#107](https://github.com/chef/chef-licensing/pull/107) ([Nik08](https://github.com/Nik08)) <!-- 0.4.20 -->
