@@ -1,3 +1,4 @@
+require_relative "../exceptions/invalid_license"
 module ChefLicensing
   class LicenseKeyFetcher
     class Base
@@ -21,7 +22,7 @@ module ChefLicensing
         end
       end
 
-      class InvalidLicenseKeyFormat < StandardError; end
+      class InvalidLicenseKeyFormat < InvalidLicense; end
     end
   end
 end
