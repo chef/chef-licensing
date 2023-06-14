@@ -129,11 +129,16 @@ module ChefLicensing
           end
         end
 
-        write_license_file(license_key_file_path)
-        @license_server_url = @contents[:license_server_url]
+        # Ensure the license server URL is returned to the caller in all cases
+        # (even if it's not persisted to the licenses.yaml file on the disk)
+        begin
+          write_license_file(license_key_file_path)
+        rescue StandardError => e
+          handle_error(e)
+        ensure
+          @license_server_url = @contents[:license_server_url]
+        end
         @license_server_url
-      rescue StandardError => e
-        handle_error(e)
       end
 
       def self.default_file_location
