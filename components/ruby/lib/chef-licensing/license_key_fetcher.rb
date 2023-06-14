@@ -112,7 +112,10 @@ module ChefLicensing
         # and return the license keys persisted in the file or @license_keys if any
         return license_keys
       end
-      # licenses expiration check
+
+      # Return keys if license keys are active and not expired or expiring
+      # Return keys if there is any error in /client API call, and do not block the flow.
+      # Client API possible errors will be handled in software entitlement check call (made after this)
       return @license_keys if (!@license_keys.empty? && licenses_active?) || client_api_call_error
 
       # Lowest priority is to interactively prompt if we have a TTY
