@@ -34,6 +34,7 @@ module ChefLicensing
       config[:dir] = opts[:dir]
 
       # While using on-prem licensing service, @license_keys are fetched from API
+      # While using global licensing service, @license_keys are fetched from file
       @license_keys = ChefLicensing::Context.license_keys(opts) || []
 
       argv = opts[:argv] || ARGV
