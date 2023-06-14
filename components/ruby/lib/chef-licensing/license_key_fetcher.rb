@@ -12,6 +12,7 @@ require_relative "../chef-licensing"
 require "tty-spinner"
 require_relative "exceptions/invalid_license"
 require_relative "exceptions/error"
+require_relative "exceptions/client_error"
 
 # LicenseKeyFetcher allows us to inspect obtain the license Key from the user in a variety of ways.
 module ChefLicensing
@@ -26,6 +27,8 @@ module ChefLicensing
     end
 
     attr_reader :config, :license_keys, :arg_fetcher, :env_fetcher, :file_fetcher, :prompt_fetcher, :logger
+    attr_accessor :client_api_call_error
+
     def initialize(opts = {})
       @config = opts
       @logger = ChefLicensing::Config.logger
@@ -109,9 +112,8 @@ module ChefLicensing
         # and return the license keys persisted in the file or @license_keys if any
         return license_keys
       end
-
-      # Licenses expiration check
-      return @license_keys if !@license_keys.empty? && licenses_active?
+      # licenses expiration check
+      return @license_keys if (!@license_keys.empty? && licenses_active?) || client_api_call_error
 
       # Lowest priority is to interactively prompt if we have a TTY
       if config[:output].isatty
@@ -219,6 +221,11 @@ module ChefLicensing
       else
         true
       end
+    rescue ChefLicensing::ClientError => e
+      spinner.success
+      logger.debug "Error in License Expiration Check using Client API #{e.message}"
+      self.client_api_call_error = true
+      false
     end
 
     def validate_and_fetch_license_type(new_keys)
