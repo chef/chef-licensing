@@ -53,8 +53,12 @@ The `ChefLicensing::Config` class manages the configuration parameters used in t
 | chef_product_name | `--chef-product-name` | `CHEF_PRODUCT_NAME` | String |
 | chef_executable_name | `--chef-executable-name` | `CHEF_EXECUTABLE_NAME` | String |
 | chef_entitlement_id | `--chef-entitlement-id` | `CHEF_ENTITLEMENT_ID` | String |
-| air_gap_detected? | `--airgap`  | `CHEF_AIR_GAP` | Boolean |
+| air_gap_detected? | `--airgap` | `CHEF_AIR_GAP` | Boolean |
 | logger | - | - | - |
+| logger's log level | `--log-level` | `LOG_LEVEL` | String |
+| logger's log level | `--chef-log-level` | `CHEF_LOG_LEVEL` | String |
+| logger's log location | `--log-location` | `LOG_LOCATION` | String |
+| logger's log location | `--chef-log-location` | `CHEF_LOG_LOCATION` | String |
 | output | - | - | - |
 
 where:
@@ -70,6 +74,8 @@ where:
 
   The return value is a boolean, and is cached for the life of the process - airgap detection happens only once.
 - `logger`: sets the logger functionality for the Chef Licensing library. It defaults to `Logger.new(STDERR)` and the logger level as `INFO`
+  - The logger level can be set via the argument using the `--log-level` or `--chef-log-level` or via the environment using the keys `LOG_LEVEL` or `CHEF_LOG_LEVEL`. Valid values are: `info`, `warn`, `debug`, `error` and `fatal`. Defaults to `info` if the logger level is not provided or is invalid.
+  - The logger location can be set via the argument using the `--log-location` or `--chef-log-location` or via the environment using the keys `LOG_LOCATION` or `CHEF_LOG_LOCATION`. Defaults to `STDERR` if the location is not provided.
 - `output`: sets the output stream for the chef-licensing library. It defaults to `STDOUT` but could be directed the output stream to a file if required.
 
 #### Configure the Parameters directly in your Application
