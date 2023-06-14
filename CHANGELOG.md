@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.4.23 -->
-## [0.4.23](https://github.com/chef/chef-licensing/tree/0.4.23) (2023-06-13)
+<!-- latest_release 0.4.24 -->
+## [0.4.24](https://github.com/chef/chef-licensing/tree/0.4.24) (2023-06-14)
 
 #### Merged Pull Requests
-- CHEF-77: UX tests for trial license scenarios [#122](https://github.com/chef/chef-licensing/pull/122) ([ahasunos](https://github.com/ahasunos))
+- Malformed license key format graceful error handling [#124](https://github.com/chef/chef-licensing/pull/124) ([Nik08](https://github.com/Nik08))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Malformed license key format graceful error handling [#124](https://github.com/chef/chef-licensing/pull/124) ([Nik08](https://github.com/Nik08)) <!-- 0.4.24 -->
 - CHEF-77: UX tests for trial license scenarios [#122](https://github.com/chef/chef-licensing/pull/122) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.23 -->
 - FIX: Do not raise exception as we handled and logged it already [#123](https://github.com/chef/chef-licensing/pull/123) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.22 -->
 - CHEF-3374 - Updates the commercial option to show contact us link [#118](https://github.com/chef/chef-licensing/pull/118) ([Vasu1105](https://github.com/Vasu1105)) <!-- 0.4.21 -->
