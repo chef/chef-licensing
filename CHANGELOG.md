@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.4.25 -->
-## [0.4.25](https://github.com/chef/chef-licensing/tree/0.4.25) (2023-06-14)
+<!-- latest_release 0.4.26 -->
+## [0.4.26](https://github.com/chef/chef-licensing/tree/0.4.26) (2023-06-14)
 
 #### Merged Pull Requests
-- Return license server url to config in all case [#126](https://github.com/chef/chef-licensing/pull/126) ([ahasunos](https://github.com/ahasunos))
+- CHEF-3594: Test Commercial License UX in License Generation Menu [#128](https://github.com/chef/chef-licensing/pull/128) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-3594: Test Commercial License UX in License Generation Menu [#128](https://github.com/chef/chef-licensing/pull/128) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.26 -->
 - Return license server url to config in all case [#126](https://github.com/chef/chef-licensing/pull/126) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.25 -->
 - Malformed license key format graceful error handling [#124](https://github.com/chef/chef-licensing/pull/124) ([Nik08](https://github.com/Nik08)) <!-- 0.4.24 -->
 - CHEF-77: UX tests for trial license scenarios [#122](https://github.com/chef/chef-licensing/pull/122) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.23 -->
