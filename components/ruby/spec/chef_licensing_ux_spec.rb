@@ -721,4 +721,76 @@ RSpec.describe ChefLicensing::TUIEngine do
       expect(prompt.output.string).to include("To avoid service disruptions, get a Commercial License before")
     end
   end
+
+  context "user selects commercial license generation process via the inital prompts" do
+    let(:start_interaction) { :start }
+
+    before do
+      prompt.input << simulate_down_arrow
+      prompt.input << "\n"
+      prompt.input << simulate_down_arrow
+      prompt.input << simulate_down_arrow
+      prompt.input << "\n"
+      prompt.input << "\n"
+      prompt.input.rewind
+    end
+
+    let(:tui_engine) { described_class.new(opts) }
+
+    let(:expected_commercial_flow) {
+      %i{
+        start
+        ask_if_user_has_license_id
+        info_of_license_types
+        filter_license_type_options
+        ask_for_all_license_type
+        commercial_license_selection
+      }
+    }
+
+    it "generates the license successfully traversing through the interactions in expected order" do
+      expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
+      expect(tui_engine.traversed_interaction).to eq(expected_commercial_flow)
+      expect(prompt.output.string).to include("I don't have a license ID and would like to generate a new license ID")
+      expect(prompt.output.string).to include("Select the type of license below and then enter user details")
+      expect(prompt.output.string).to include("3. Commercial License")
+      expect(prompt.output.string).to include("Get in touch with the Sales Team by filling out the form available at")
+    end
+  end
+
+  context "user selects commercial license generation process via the license add flow" do
+    let(:start_interaction) { :add_license_all }
+
+    before do
+      prompt.input << simulate_down_arrow
+      prompt.input << "\n"
+      prompt.input << simulate_down_arrow
+      prompt.input << simulate_down_arrow
+      prompt.input << "\n"
+      prompt.input << "\n"
+      prompt.input.rewind
+    end
+
+    let(:tui_engine) { described_class.new(opts) }
+
+    let(:expected_commercial_flow) {
+      %i{
+        add_license_all
+        ask_if_user_has_license_id
+        info_of_license_types
+        filter_license_type_options
+        ask_for_all_license_type
+        commercial_license_selection
+      }
+    }
+
+    it "generates the license successfully traversing through the interactions in expected order" do
+      expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
+      expect(tui_engine.traversed_interaction).to eq(expected_commercial_flow)
+      expect(prompt.output.string).to include("I don't have a license ID and would like to generate a new license ID")
+      expect(prompt.output.string).to include("Select the type of license below and then enter user details")
+      expect(prompt.output.string).to include("3. Commercial License")
+      expect(prompt.output.string).to include("Get in touch with the Sales Team by filling out the form available at")
+    end
+  end
 end
