@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.4.26 -->
-## [0.4.26](https://github.com/chef/chef-licensing/tree/0.4.26) (2023-06-14)
+<!-- latest_release 0.4.27 -->
+## [0.4.27](https://github.com/chef/chef-licensing/tree/0.4.27) (2023-06-14)
 
 #### Merged Pull Requests
-- CHEF-3594: Test Commercial License UX in License Generation Menu [#128](https://github.com/chef/chef-licensing/pull/128) ([ahasunos](https://github.com/ahasunos))
+- CHEF-3184 Disable license keys persist in local license service mode [#121](https://github.com/chef/chef-licensing/pull/121) ([Nik08](https://github.com/Nik08))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-3184 Disable license keys persist in local license service mode [#121](https://github.com/chef/chef-licensing/pull/121) ([Nik08](https://github.com/Nik08)) <!-- 0.4.27 -->
 - CHEF-3594: Test Commercial License UX in License Generation Menu [#128](https://github.com/chef/chef-licensing/pull/128) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.26 -->
 - Return license server url to config in all case [#126](https://github.com/chef/chef-licensing/pull/126) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.25 -->
 - Malformed license key format graceful error handling [#124](https://github.com/chef/chef-licensing/pull/124) ([Nik08](https://github.com/Nik08)) <!-- 0.4.24 -->
