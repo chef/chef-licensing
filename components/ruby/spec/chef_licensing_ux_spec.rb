@@ -180,7 +180,7 @@ RSpec.describe ChefLicensing::TUIEngine do
 
     it "exits successfully traversing through the interactions in expected order" do
       expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
-      expect(tui_engine.traversed_interaction).to eq(%i{start ask_if_user_has_license_id ask_for_license_id validate_license_id_pattern validate_license_id_with_api validate_license_restriction validation_success display_license_info fetch_license_id})
+      expect(tui_engine.traversed_interaction).to eq(%i{start ask_if_user_has_license_id ask_for_license_id validate_license_id_pattern validate_license_id_with_api validate_license_restriction validate_license_expiration validation_success display_license_info fetch_license_id})
       expect(prompt.output.string).to include("I already have a license ID")
       expect(prompt.output.string).to include("Please enter your license ID:")
       expect(prompt.output.string).to include("License validated successfully")
@@ -224,7 +224,7 @@ RSpec.describe ChefLicensing::TUIEngine do
 
     it "exits successfully traversing through the interactions in expected order" do
       expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
-      expect(tui_engine.traversed_interaction).to eq(%i{start ask_if_user_has_license_id ask_for_license_id validate_license_id_pattern ask_for_license_id validate_license_id_pattern validate_license_id_with_api validate_license_restriction validation_success display_license_info fetch_license_id})
+      expect(tui_engine.traversed_interaction).to eq(%i{start ask_if_user_has_license_id ask_for_license_id validate_license_id_pattern ask_for_license_id validate_license_id_pattern validate_license_id_with_api validate_license_restriction validate_license_expiration validation_success display_license_info fetch_license_id})
       expect(prompt.output.string).to include("I already have a license ID")
       expect(prompt.output.string).to include("Please enter your license ID:")
       expect(output.string).to include("Malformed License Key passed on command line - should be ")
@@ -277,6 +277,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         validate_license_id_pattern
         validate_license_id_with_api
         validate_license_restriction
+        validate_license_expiration
         validation_success
         display_license_info
         fetch_license_id
@@ -472,6 +473,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         validate_license_id_pattern
         validate_license_id_with_api
         validate_license_restriction
+        validate_license_expiration
         validation_success
         display_license_info
         fetch_license_id
@@ -676,6 +678,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         validate_license_id_pattern
         validate_license_id_with_api
         validate_license_restriction
+        validate_license_expiration
         validation_success
         display_license_info
         fetch_license_id
@@ -701,9 +704,9 @@ RSpec.describe ChefLicensing::TUIEngine do
 
     it "shows the error message for expired license" do
       expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
-      expect(tui_engine.traversed_interaction).to eq([:prompt_license_expired])
+      expect(tui_engine.traversed_interaction).to eq(%i{prompt_license_expired fetch_license_id})
       expect(prompt.output.string).to include("License Expired")
-      expect(prompt.output.string).to include("Get a Commercial License to receive bug fixes, updates, and new features.")
+      expect(prompt.output.string).to include("Get a Commercial License to receive bug fixes, updates")
       expect(prompt.output.string).to include("Get a Free License to scan limited targets.")
     end
 
@@ -716,9 +719,9 @@ RSpec.describe ChefLicensing::TUIEngine do
 
     it "shows the warning message for about to expire license" do
       expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
-      expect(tui_engine.traversed_interaction).to eq([:prompt_license_about_to_expire])
+      expect(tui_engine.traversed_interaction).to eq(%i{prompt_license_about_to_expire fetch_license_id})
       expect(prompt.output.string).to include("Your license is about to expire in")
-      expect(prompt.output.string).to include("To avoid service disruptions, get a Commercial License before")
+      expect(prompt.output.string).to include("To avoid service disruptions, get a Commercial License")
     end
   end
 end

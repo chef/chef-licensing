@@ -213,7 +213,7 @@ module ChefLicensing
       end
 
       def get_license(license_key)
-        spinner = TTY::Spinner.new(":spinner [Running] License validation in progress...", format: :dots, clear: true)
+        spinner = TTY::Spinner.new(":spinner [Running] License validation in progress...", format: :dots, clear: true, output: output)
         spinner.auto_spin # Start the spinner
         client_api_call(license_key)
         # Intentional lag of 1 second when license is expiring or expired
