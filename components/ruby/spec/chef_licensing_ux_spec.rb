@@ -330,6 +330,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         prompt.input << valid_free_license_key_2
         prompt.input << "\n"
         prompt.input.rewind
+        ChefLicensing::Context.current_context = nil
       end
 
       let(:expected_flow_for_license_restriction) {
@@ -514,6 +515,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       let(:tui_engine) { described_class.new(opts) }
 
       before do
+        ChefLicensing::Context.current_context = nil
         license_key_fetcher.fetch_and_persist
       end
 
@@ -579,6 +581,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       let(:tui_engine) { described_class.new(opts) }
 
       before do
+        ChefLicensing::Context.current_context = nil
         license_key_fetcher.fetch_and_persist
       end
 

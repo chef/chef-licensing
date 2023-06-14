@@ -29,6 +29,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
     let(:env) { { "CHEF_LICENSE_KEY" => "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111" } }
     let(:argv_with_space) { ["--chef-license-key", "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"] }
     before do
+      ChefLicensing::Context.current_context = nil
       stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
         .to_return(body: { data: [], status_code: 403 }.to_json,
                   headers: { content_type: "application/json" })

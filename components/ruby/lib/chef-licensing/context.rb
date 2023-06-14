@@ -8,7 +8,7 @@ module ChefLicensing
   class Context
 
     attr_accessor :state
-    attr_reader :logger
+    attr_reader :logger, :options
 
     class << self
       attr_writer :current_context
@@ -21,21 +21,33 @@ module ChefLicensing
       # Current context changes the state determined using LicensingService module
 
       # Return license keys from current context
-      def license_keys
-        current_context.license_keys
+      def license_keys(options = {})
+        current_context(options).license_keys
       end
 
       private
 
-      def current_context
-        @current_context ||= local_licensing_service? ? new({ state: Local.new }) : new({ state: Global.new })
+      def current_context(options)
+        return @current_context if @current_context
+
+        @current_context = context_based_on_state(options)
       end
+
+      def context_based_on_state(options)
+        if local_licensing_service?
+          new(Local.new, options)
+        else
+          new(Global.new, options)
+        end
+      end
+
     end
 
     # @param [State] state
-    def initialize(opts = {})
+    def initialize(state, options = {})
+      @options = options
       @logger = ChefLicensing::Config.logger
-      transition_to(opts[:state])
+      transition_to(state)
     end
 
     # The Context allows changing the State object
@@ -43,6 +55,7 @@ module ChefLicensing
       logger.debug "Chef Licensing Context: Transition to #{state.class}"
       @state = state
       @state.context = self
+      @state.options = options
     end
 
     # The Context delegates part of its behavior to the current State object.
@@ -51,7 +64,7 @@ module ChefLicensing
     end
 
     class State
-      attr_accessor :context
+      attr_accessor :context, :options
 
       # @abstract
       def license_keys
@@ -63,13 +76,21 @@ module ChefLicensing
 
     class Local < State
       def license_keys
-        @license_keys ||= ChefLicensing::Api::ListLicenses.info
+        @license_keys ||= ChefLicensing::Api::ListLicenses.info || []
       end
     end
 
     class Global < State
       def license_keys
-        # TODO - Return keys from file
+        @license_keys ||= fetch_license_keys_from_file || []
+      end
+
+      def fetch_license_keys_from_file
+        file_fetcher = LicenseKeyFetcher::File.new(options)
+        if file_fetcher.persisted?
+          # This could be useful if the file was writable in past but is not writable in current scenario and new keys are not persisted in the file
+          file_fetcher.fetch
+        end
       end
     end
 

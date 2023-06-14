@@ -11,6 +11,7 @@ require_relative "license_key_fetcher/prompt"
 require_relative "../chef-licensing"
 require "tty-spinner"
 require_relative "exceptions/invalid_license"
+require_relative "exceptions/error"
 
 # LicenseKeyFetcher allows us to inspect obtain the license Key from the user in a variety of ways.
 module ChefLicensing
@@ -19,6 +20,9 @@ module ChefLicensing
     end
 
     class LicenseKeyNotPersistedError < RuntimeError
+    end
+
+    class LicenseKeyAddNotAllowed < Error
     end
 
     attr_reader :config, :license_keys, :arg_fetcher, :env_fetcher, :file_fetcher, :prompt_fetcher, :logger
@@ -30,7 +34,8 @@ module ChefLicensing
       config[:dir] = opts[:dir]
 
       # While using on-prem licensing service, @license_keys are fetched from API
-      @license_keys = ChefLicensing::Context.license_keys || []
+      # While using global licensing service, @license_keys are fetched from file
+      @license_keys = ChefLicensing::Context.license_keys(opts) || []
 
       argv = opts[:argv] || ARGV
       env = opts[:env] || ENV
@@ -47,13 +52,52 @@ module ChefLicensing
     # Methods for obtaining consent from the user.
     #
     def fetch_and_persist
+      if ChefLicensing::Context.local_licensing_service?
+        perform_on_prem_operations
+      else
+        perform_global_operations
+      end
+    end
+
+    def perform_on_prem_operations
+      # While using on-prem licensing service no option to add/generate license is enabled
+
+      new_keys = fetch_license_key_from_arg
+      raise LicenseKeyAddNotAllowed.new("'--chef-license-key <value>' option is not supported with airgapped environment. You cannot add license from airgapped environment.") unless new_keys.empty?
+
+      unless @license_keys.empty?
+        # Licenses expiration check
+        if licenses_active?
+          return @license_keys
+        else
+          # Prompts if the keys are expired or expiring
+          if config[:output].isatty
+            append_extra_info_to_tui_engine # will add extra dynamic values in tui flows
+            logger.debug "License Key fetcher - detected TTY, prompting..."
+            prompt_fetcher.fetch
+          end
+        end
+      end
+
+      # Scenario: When a user is prompted for license expiry and license is not yet renewed
+      if %i{prompt_license_about_to_expire prompt_license_expired}.include?(config[:start_interaction])
+        # Not blocking any license type in case of expiry
+        return @license_keys
+      end
+
+      # Otherwise nothing was able to fetch a license. Throw an exception.
+      logger.debug "License Key fetcher - no license Key able to be fetched."
+      raise LicenseKeyNotFetchedError.new("Unable to obtain a License Key.")
+    end
+
+    def perform_global_operations
       logger.debug "License Key fetcher examining CLI arg checks"
       new_keys = fetch_license_key_from_arg
       license_type = validate_and_fetch_license_type(new_keys)
       if license_type && !unrestricted_license_added?(new_keys, license_type)
         # break the flow after the prompt if there is a restriction in adding license
         # and return the license keys persisted in the file or @license_keys if any
-        return fetch_from_file
+        return license_keys
       end
 
       logger.debug "License Key fetcher examining ENV checks"
@@ -62,14 +106,10 @@ module ChefLicensing
       if license_type && !unrestricted_license_added?(new_keys, license_type)
         # break the flow after the prompt if there is a restriction in adding license
         # and return the license keys persisted in the file or @license_keys if any
-        return fetch_from_file
+        return license_keys
       end
 
-      # If it has previously been fetched and persisted, read from disk and set runtime decision
-      logger.debug "License Key fetcher examining file checks"
-      fetch_from_file
-
-      # licenses expiration check
+      # Licenses expiration check
       return @license_keys if !@license_keys.empty? && licenses_active?
 
       # Lowest priority is to interactively prompt if we have a TTY
@@ -98,22 +138,27 @@ module ChefLicensing
     end
 
     def add_license
-      config = {}
-      config[:start_interaction] = :add_license_all
-      prompt_fetcher.config = config
-      append_extra_info_to_tui_engine
-      new_keys = prompt_fetcher.fetch
-      unless new_keys.empty?
-        prompt_fetcher.license_type ||= get_license_type(new_keys.first)
-        persist_and_concat(new_keys, prompt_fetcher.license_type)
-        license_keys
+      if ChefLicensing::Context.local_licensing_service?
+        raise LicenseKeyAddNotAllowed.new("'inspec license add' command is not supported with airgapped environment. You cannot generate license from airgapped environment.")
+      else
+        config = {}
+        config[:start_interaction] = :add_license_all
+        prompt_fetcher.config = config
+        append_extra_info_to_tui_engine
+        new_keys = prompt_fetcher.fetch
+        unless new_keys.empty?
+          prompt_fetcher.license_type ||= get_license_type(new_keys.first)
+          persist_and_concat(new_keys, prompt_fetcher.license_type)
+          license_keys
+        end
       end
     end
 
     # Note: Fetching from arg and env as well, to be able to fetch license when disk is non-writable
     def fetch
       # While using on-prem licensing service, @license_keys have been fetched from API
-      (fetch_license_key_from_arg << fetch_license_key_from_env << @file_fetcher.fetch << @license_keys).flatten.uniq
+      # While using global licensing service, @license_keys have been fetched from file
+      (fetch_license_key_from_arg << fetch_license_key_from_env << @license_keys).flatten.uniq
     end
 
     def self.fetch_and_persist(opts = {})
@@ -137,7 +182,7 @@ module ChefLicensing
 
       # default values
       extra_info[:chef_product_name] = ChefLicensing::Config.chef_product_name&.capitalize
-      unless @license_keys.empty? && !license
+      if license
         extra_info[:license_type] = license.license_type.capitalize
         extra_info[:number_of_days_in_expiration] = license.number_of_days_in_expiration
         extra_info[:license_expiration_date] = Date.parse(license.expiration_date).strftime("%a, %d %b %Y")
@@ -149,15 +194,6 @@ module ChefLicensing
         end
       end
       prompt_fetcher.append_info_to_tui_engine(extra_info) unless extra_info.empty?
-    end
-
-    def fetch_from_file
-      if file_fetcher.persisted?
-        # This could be useful if the file was writable in past but is not writable in current scenario and new keys are not persisted in the file
-        file_keys = file_fetcher.fetch
-        @license_keys.concat(file_keys).uniq # uniq is required in case file was a writable and to avoid repeated values.
-      end
-      @license_keys = @license_keys.uniq
     end
 
     def licenses_active?
