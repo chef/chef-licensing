@@ -24,6 +24,8 @@ module ChefLicensing
 
       def initialize
         raise MissingAPICredentialsError, "Missing credential in config: Set in block chef_license_server or use environment variable CHEF_LICENSE_SERVER or pass through argument --chef-license-server" if ChefLicensing::Config.license_server_url.nil?
+
+        @logger = ChefLicensing::Config.logger
       end
 
       def validate(license)
@@ -68,6 +70,8 @@ module ChefLicensing
 
       private
 
+      attr_reader :logger
+
       # a common method to handle the get API calls
       def invoke_get_api(endpoint, params = {})
         handle_get_connection do |connection|
@@ -92,10 +96,11 @@ module ChefLicensing
         # handle faraday errors
         yield get_connection
       rescue Faraday::ClientError => e
-        # log errors
+        logger.debug "Restful Client Error #{e.message}"
         raise RestfulClientError, e.message
       rescue Faraday::ConnectionFailed => e
         # Handling it with a separate RestfulClientConnectionError class to help handle different Client behavior
+        logger.debug "Restful Client Connection Error: #{e.message}"
         raise RestfulClientConnectionError, e.message
       end
 
@@ -103,10 +108,11 @@ module ChefLicensing
         # handle faraday errors
         yield post_connection
       rescue Faraday::ClientError => e
-        # log errors
+        logger.debug "Restful Client Error #{e.message}"
         raise RestfulClientError, e.message
       rescue Faraday::ConnectionFailed => e
         # Handling it with a separate RestfulClientConnectionError class to help handle different Client behavior
+        logger.debug "Restful Client Connection Error: #{e.message}"
         raise RestfulClientConnectionError, e.message
       end
 
@@ -115,7 +121,7 @@ module ChefLicensing
         Faraday.new(url: ChefLicensing::Config.license_server_url) do |config|
           config.request :json
           config.response :json, parser_options: { object_class: OpenStruct }
-          config.use Faraday::HttpCache, shared_cache: false, logger: ChefLicensing::Config.logger, store: store
+          config.use Faraday::HttpCache, shared_cache: false, logger: logger, store: store
           config.adapter Faraday.default_adapter
         end
       end
