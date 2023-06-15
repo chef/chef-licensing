@@ -260,7 +260,6 @@ module ChefLicensing
       end
 
       def handle_error(e, message = nil)
-        logger.warn "#{message}\n\t#{e.message}"
         logger.debug "#{e.backtrace.join("\n\t")}"
         e
       end
