@@ -3,6 +3,7 @@ require "faraday/http_cache"
 require "active_support"
 require "tmpdir" unless defined?(Dir.mktmpdir)
 require_relative "../exceptions/restful_client_error"
+require_relative "../exceptions/restful_client_connection_error"
 require_relative "../exceptions/missing_api_credentials_error"
 require_relative "../config"
 
@@ -93,6 +94,9 @@ module ChefLicensing
       rescue Faraday::ClientError => e
         # log errors
         raise RestfulClientError, e.message
+      rescue Faraday::ConnectionFailed => e
+        # Handling it with a separate RestfulClientConnectionError class to help handle different Client behavior
+        raise RestfulClientConnectionError, e.message
       end
 
       def handle_post_connection
@@ -101,6 +105,9 @@ module ChefLicensing
       rescue Faraday::ClientError => e
         # log errors
         raise RestfulClientError, e.message
+      rescue Faraday::ConnectionFailed => e
+        # Handling it with a separate RestfulClientConnectionError class to help handle different Client behavior
+        raise RestfulClientConnectionError, e.message
       end
 
       def get_connection
