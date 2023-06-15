@@ -11,7 +11,7 @@ require "tty-spinner"
 module ChefLicensing
   class TUIEngine
     class TUIActions
-      attr_accessor :logger, :output, :license_id, :error_msg, :rejection_msg, :invalid_license_msg, :license_type
+      attr_accessor :logger, :output, :license_id, :error_msg, :rejection_msg, :invalid_license_msg, :license_type, :license
       def initialize(opts = {})
         @opts = opts
         @logger = ChefLicensing::Config.logger
@@ -43,7 +43,8 @@ module ChefLicensing
       end
 
       def is_license_allowed?(input)
-        self.license_type = get_license_type(license_id)
+        client_api_call(license_id)
+        self.license_type = get_license_type
         if license_restricted?(license_type)
           # Existing license keys needs to be fetcher to show details of existing license of license type which is restricted.
           # However, if user is trying to add free license, and user has active trial license, we fetch the trial license key
@@ -56,6 +57,19 @@ module ChefLicensing
           false
         else
           true
+        end
+      end
+
+      def license_expiration_status?(input)
+        get_license(license_id)
+        if license.expired? || license.have_grace?
+          "expired"
+        elsif license.about_to_expire?
+          input[:license_expiration_date] = Date.parse(license.expiration_date).strftime("%a, %d %b %Y")
+          input[:number_of_days_in_expiration] = license.number_of_days_in_expiration
+          "about_to_expire"
+        else
+          "active"
         end
       end
 
@@ -198,8 +212,20 @@ module ChefLicensing
         false
       end
 
-      def get_license_type(license_key)
-        license = ChefLicensing.client(license_keys: [license_key])
+      def get_license(license_key)
+        spinner = TTY::Spinner.new(":spinner [Running] License validation in progress...", format: :dots, clear: true, output: output)
+        spinner.auto_spin # Start the spinner
+        client_api_call(license_key)
+        # Intentional lag of 1 second when license is expiring or expired
+        sleep 1 if license.expiring_or_expired?
+        spinner.success # Stop the spinner
+      end
+
+      def client_api_call(license_key)
+        self.license ||= ChefLicensing.client(license_keys: [license_key])
+      end
+
+      def get_license_type
         license.license_type.downcase.to_sym
       end
 
