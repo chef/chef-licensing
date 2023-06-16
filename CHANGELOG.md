@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.4.29 -->
-## [0.4.29](https://github.com/chef/chef-licensing/tree/0.4.29) (2023-06-15)
+<!-- latest_release 0.4.30 -->
+## [0.4.30](https://github.com/chef/chef-licensing/tree/0.4.30) (2023-06-16)
 
 #### Merged Pull Requests
-- CHEF-3276 UI/UX revised changes in expiration flow [#111](https://github.com/chef/chef-licensing/pull/111) ([Nik08](https://github.com/Nik08))
+- HACK: Remove warn level log message to fix omnibus test for inspec [#130](https://github.com/chef/chef-licensing/pull/130) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- HACK: Remove warn level log message to fix omnibus test for inspec [#130](https://github.com/chef/chef-licensing/pull/130) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.30 -->
 - CHEF-3276 UI/UX revised changes in expiration flow [#111](https://github.com/chef/chef-licensing/pull/111) ([Nik08](https://github.com/Nik08)) <!-- 0.4.29 -->
 - CHEF-3259: Modify license list command to fetch license information from local license server [#117](https://github.com/chef/chef-licensing/pull/117) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.28 -->
 - CHEF-3184 Disable license keys persist in local license service mode [#121](https://github.com/chef/chef-licensing/pull/121) ([Nik08](https://github.com/Nik08)) <!-- 0.4.27 -->
