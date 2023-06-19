@@ -862,7 +862,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       }
     }
 
-    it "generates the license successfully traversing through the interactions in expected order" do
+    it "skips the license generation process" do
       expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
       expect(tui_engine.traversed_interaction).to eq(expected_skip_flow)
       expect(prompt.output.string).to include("Skip")
