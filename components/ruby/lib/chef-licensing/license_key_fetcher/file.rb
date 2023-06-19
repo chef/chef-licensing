@@ -138,6 +138,7 @@ module ChefLicensing
         ensure
           @license_server_url = @contents[:license_server_url]
         end
+        logger.debug "License server URL: #{@license_server_url}"
         @license_server_url
       end
 
@@ -200,6 +201,7 @@ module ChefLicensing
       def read_license_key_file
         return contents if contents
 
+        logger.debug "Reading license file from #{seek}"
         path = seek
         return nil unless path
 
@@ -208,6 +210,7 @@ module ChefLicensing
         if major_version(@contents[:file_format_version]) == major_version(LICENSE_FILE_FORMAT_VERSION)
           @contents
         else
+          logger.debug "License File version #{@contents[:file_format_version]} not supported."
           raise LicenseKeyNotFetchedError.new("License File version #{@contents[:file_format_version]} not supported.")
         end
       end
@@ -219,6 +222,7 @@ module ChefLicensing
       def create_license_directory_if_not_exist(dir, license_key_file_path)
         return if ::File.exist?(license_key_file_path)
 
+        logger.debug "Creating directory for license_key file at #{dir}"
         msg = "Could not create directory for license_key file #{dir}"
         FileUtils.mkdir_p(dir)
       rescue StandardError => e
@@ -228,6 +232,7 @@ module ChefLicensing
       def load_license_file(license_key_file_path)
         return unless ::File.exist?(license_key_file_path)
 
+        logger.debug "Reading license_key file at #{license_key_file_path}"
         msg = "Could not read license key file #{license_key_file_path}"
         YAML.load_file(license_key_file_path)
       rescue StandardError => e
@@ -237,6 +242,7 @@ module ChefLicensing
       def load_license_data_to_contents(license_data)
         return unless license_data
 
+        logger.debug "Loading license data to contents"
         if @contents.nil? || @contents.empty? # this case is likely to happen only during testing
           @contents = {
             file_format_version: LICENSE_FILE_FORMAT_VERSION,
@@ -253,6 +259,7 @@ module ChefLicensing
       end
 
       def write_license_file(license_key_file_path)
+        logger.debug "Writing license_key file at #{license_key_file_path}"
         msg = "Could not write telemetry license_key file #{license_key_file_path}"
         ::File.write(license_key_file_path, YAML.dump(@contents))
       rescue StandardError => e

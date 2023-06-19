@@ -9,7 +9,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
   let(:license_key_file) { "licenses.yaml" }
   let(:unsupported_vesion_license_dir) { "spec/fixtures/unsupported_version_license" }
   let(:multiple_keys_license_dir) { "spec/fixtures/multiple_license_keys_license" }
-  let(:logger) { double("Logger") }
+  let(:logger) { Logger.new(StringIO.new) }
 
   before do
     ChefLicensing.configure do |config|

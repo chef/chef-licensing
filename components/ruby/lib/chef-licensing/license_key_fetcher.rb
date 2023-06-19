@@ -34,6 +34,7 @@ module ChefLicensing
       config[:dir] = opts[:dir]
 
       # While using on-prem licensing service, @license_keys are fetched from API
+      logger.debug "License Key fetcher - fetching license keys depending upon the context (either API or file)"
       # While using global licensing service, @license_keys are fetched from file
       @license_keys = ChefLicensing::Context.license_keys(opts) || []
 
@@ -138,6 +139,7 @@ module ChefLicensing
     end
 
     def add_license
+      logger.debug "License Key fetcher - add license flow, starting..."
       if ChefLicensing::Context.local_licensing_service?
         raise LicenseKeyAddNotAllowed.new("'inspec license add' command is not supported with airgapped environment. You cannot generate license from airgapped environment.")
       else
@@ -197,6 +199,7 @@ module ChefLicensing
     end
 
     def licenses_active?
+      logger.debug "License Key fetcher - checking if licenses are active"
       spinner = TTY::Spinner.new(":spinner [Running] License validation in progress...", format: :dots, clear: true, output: config[:output])
       spinner.auto_spin # Start the spinner
       # This call returns a license based on client logic
@@ -262,6 +265,7 @@ module ChefLicensing
     end
 
     def prompt_license_addition_restricted(license_type, existing_license_keys_in_file)
+      logger.debug "License Key fetcher - prompting license addition restriction"
       # For trial license
       # TODO for free license
       config[:start_interaction] = :prompt_license_addition_restriction
