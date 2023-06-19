@@ -348,6 +348,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           add_license_info_in_restriction_flow
           license_restriction_foot_text
           free_restriction_message
+          exit_with_message
         }
       }
 
@@ -415,6 +416,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           add_license_info_in_restriction_flow
           license_restriction_foot_text
           only_commercial_allowed_message
+          exit_with_message
         }
       }
 
@@ -546,6 +548,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           add_license_info_in_restriction_flow
           license_restriction_foot_text
           only_commercial_allowed_message
+          exit_with_message
         }
       }
 
@@ -612,6 +615,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           add_license_info_in_restriction_flow
           license_restriction_foot_text
           trial_restriction_message
+          exit_with_message
         }
       }
 
@@ -751,6 +755,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         filter_license_type_options
         ask_for_all_license_type
         commercial_license_selection
+        exit_with_message
       }
     }
 
@@ -787,6 +792,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         filter_license_type_options
         ask_for_all_license_type
         commercial_license_selection
+        exit_with_message
       }
     }
 
