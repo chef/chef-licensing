@@ -71,19 +71,19 @@ interactions:
     prompt_type: "say"
     messages:
       Please generate a Free or Commercial License by running <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%>.
-    paths: [exit]
+    paths: [exit_with_message]
 
   free_restriction_message:
     prompt_type: "say"
     messages:
       Please generate a Trial or Commercial License by running <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%>.
-    paths: [exit]
+    paths: [exit_with_message]
 
   only_commercial_allowed_message:
     prompt_type: "say"
     messages:
       Please generate a Commercial License by running <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%>.
-    paths: [exit]
+    paths: [exit_with_message]
 
   prompt_license_expired:
     messages: |
@@ -163,7 +163,7 @@ interactions:
 
   skipped:
     messages: "License ID validation skipped!"
-    paths: [exit]
+    paths: [exit_with_message]
 
   ask_for_license_id:
     messages: "Please enter your license ID: "
@@ -317,7 +317,7 @@ interactions:
       [Quit]
     ]
     prompt_type: "select"
-    paths: [exit]
+    paths: [exit_with_message]
 
   check_if_user_details_are_present:
     action: are_user_details_present?
@@ -527,4 +527,8 @@ interactions:
       "Skip": skip_message
 
   exit:
+    messages: ""
+
+  exit_with_message:
     messages: "Thank you."
+    paths: [exit]
