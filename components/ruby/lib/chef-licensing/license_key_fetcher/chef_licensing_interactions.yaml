@@ -21,7 +21,7 @@ interactions:
   add_license_all:
     messages: ""
     prompt_type: "silent"
-    paths: [ask_if_user_has_license_id]
+    paths: [ask_if_user_has_license_id_for_license_addition]
 
   prompt_license_addition_restriction:
     action: set_license_info
@@ -122,6 +122,18 @@ interactions:
       "I already have a license ID": ask_for_license_id
       "I don't have a license ID and would like to generate a new license ID": info_of_license_types
       "Skip": skipped
+
+  ask_if_user_has_license_id_for_license_addition:
+    messages: ["\nPlease choose one of the options below",["Validate a generated license ID", "Generate a new license ID", "Quit license addition"]]
+    prompt_type: "timeout_select"
+    prompt_attributes:
+      timeout_duration: 60
+      timeout_message: "\nPrompt timed out. Use non-interactive flags or enter an answer within 60 seconds."
+    paths: [ask_for_license_id, info_of_license_types, exit]
+    response_path_map:
+      "Validate a generated license ID": ask_for_license_id
+      "Generate a new license ID": info_of_license_types
+      "Quit license addition": exit
 
   skipped:
     messages: "License ID validation skipped!"
