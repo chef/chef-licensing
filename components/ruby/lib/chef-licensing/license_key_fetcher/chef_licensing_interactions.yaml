@@ -106,7 +106,7 @@ interactions:
         <%= input[:pastel].yellow("! [WARNING]")%> Your license is about to expire in <%= input[:pastel].bold(input[:number_of_days_in_expiration]) %> <%= input[:pastel].bold("days.") %>
 
         To avoid service disruptions, get a Commercial License
-        before <%= input[:license_expiration_date] %>.
+        before <%= input[:pastel].bold(input[:license_expiration_date]) %>.
       ------------------------------------------------------------
     prompt_type: "say"
     paths: [fetch_license_id]
