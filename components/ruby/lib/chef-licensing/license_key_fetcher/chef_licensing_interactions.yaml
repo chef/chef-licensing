@@ -100,6 +100,18 @@ interactions:
     prompt_type: "say"
     paths: [fetch_license_id]
 
+  prompt_license_expired_local_mode:
+    messages: |
+      ------------------------------------------------------------
+        <%= input[:pastel].yellow("! [WARNING]")%> <%= input[:license_type] %> License Expired
+
+        Get a Commercial License to receive bug fixes, updates
+        and new features.
+        Get a Free License to scan limited targets.
+      ------------------------------------------------------------
+    prompt_type: "say"
+    paths: [fetch_license_id]
+
   prompt_license_about_to_expire:
     messages: |
       ------------------------------------------------------------
@@ -183,11 +195,12 @@ interactions:
 
   validate_license_expiration:
     action: license_expiration_status?
-    paths: [validation_success, prompt_license_about_to_expire, prompt_license_expired]
+    paths: [validation_success, prompt_license_about_to_expire, prompt_license_expired, prompt_license_expired_local_mode]
     response_path_map:
       "active": validation_success
       "about_to_expire": prompt_license_about_to_expire
       "expired": prompt_license_expired
+      "expired_in_local_mode": prompt_license_expired_local_mode
 
   validation_success:
     messages: "✔ [Success] License validated successfully."

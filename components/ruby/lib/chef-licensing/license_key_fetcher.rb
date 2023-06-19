@@ -214,7 +214,11 @@ module ChefLicensing
       sleep 2 if license.expiring_or_expired?
       spinner.success # Stop the spinner
       if license.expired? || license.have_grace?
-        config[:start_interaction] = :prompt_license_expired
+        if ChefLicensing::Context.local_licensing_service?
+          config[:start_interaction] = :prompt_license_expired_local_mode
+        else
+          config[:start_interaction] = :prompt_license_expired
+        end
         prompt_fetcher.config = config
         false
       elsif license.about_to_expire?
