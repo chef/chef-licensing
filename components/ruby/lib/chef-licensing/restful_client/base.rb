@@ -5,6 +5,7 @@ require "tmpdir" unless defined?(Dir.mktmpdir)
 require_relative "../exceptions/restful_client_error"
 require_relative "../exceptions/missing_api_credentials_error"
 require_relative "../config"
+require_relative "middleware/exceptions_handler"
 
 module ChefLicensing
   module RestfulClient
@@ -109,6 +110,7 @@ module ChefLicensing
           config.request :json
           config.response :json, parser_options: { object_class: OpenStruct }
           config.use Faraday::HttpCache, shared_cache: false, logger: ChefLicensing::Config.logger, store: store
+          config.use Middleware::ExceptionsHandler
           config.adapter Faraday.default_adapter
         end
       end
@@ -117,6 +119,7 @@ module ChefLicensing
         Faraday.new(url: ChefLicensing::Config.license_server_url) do |config|
           config.request :json
           config.response :json, parser_options: { object_class: OpenStruct }
+          config.use Middleware::ExceptionsHandler
         end
       end
 
