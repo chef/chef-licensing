@@ -715,6 +715,23 @@ RSpec.describe ChefLicensing::TUIEngine do
       expect(prompt.output.string).to include("License Expired")
       expect(prompt.output.string).to include("Get a Commercial License to receive bug fixes, updates")
       expect(prompt.output.string).to include("Get a Free License to scan limited targets.")
+      expect(prompt.output.string).to include("license add")
+    end
+
+  end
+
+  context "user executes with an expired trial license id while using local licensing service" do
+    # license_key_fetcher is responsible for setting the start_interaction to :prompt_license_expired_local_mode
+    let(:start_interaction) { :prompt_license_expired_local_mode }
+    let(:tui_engine) { described_class.new(opts) }
+
+    it "shows the error message for expired license" do
+      expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
+      expect(tui_engine.traversed_interaction).to eq(%i{prompt_license_expired_local_mode fetch_license_id})
+      expect(prompt.output.string).to include("License Expired")
+      expect(prompt.output.string).to include("Get a Commercial License to receive bug fixes, updates")
+      expect(prompt.output.string).to include("Get a Free License to scan limited targets.")
+      expect(prompt.output.string).to_not include("license add")
     end
 
   end
