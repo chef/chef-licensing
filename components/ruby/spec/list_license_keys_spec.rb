@@ -27,6 +27,7 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
   before do
     logger.level = Logger::INFO
     ChefLicensing.configure do |conf|
+      conf.is_local_license_service = nil
       conf.chef_product_name = "inspec"
       conf.chef_entitlement_id = "testing_entitlement_id"
       conf.license_server_url = "http://localhost-license-server/License"

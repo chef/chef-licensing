@@ -970,4 +970,35 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       end
     end
   end
+
+  describe "add_license" do
+    before do
+      ChefLicensing.configure do |config|
+        config.is_local_license_service = nil
+        config.license_server_url = "http://localhost-license-server/License"
+      end
+      ChefLicensing::Context.current_context = nil
+      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
+        .to_return(body: { data: ["tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"], status_code: 200 }.to_json,
+        headers: { content_type: "application/json" })
+    end
+
+    context "running license add command in local mode" do
+      let(:opts) {
+        {
+          logger: logger,
+          argv: [],
+          env: {},
+          output: output,
+          dir: nil,
+        }
+      }
+
+      let(:license_key_fetcher) { ChefLicensing::LicenseKeyFetcher.new(opts) }
+
+      it "raises exception" do
+        expect { license_key_fetcher.add_license }.to raise_error(ChefLicensing::LicenseKeyFetcher::LicenseKeyAddNotAllowed, "'inspec license add' command is not supported with airgapped environment. You cannot generate license from airgapped environment.")
+      end
+    end
+  end
 end
