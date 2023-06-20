@@ -419,6 +419,80 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
         end
       end
     end
+
+    context "license keys are passed via argument while using on-prem service" do
+      let(:argv) { ["--chef-license-key=free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111"] }
+      let(:env) { {} }
+
+      before do
+        ChefLicensing.configure do |config|
+          config.is_local_license_service = nil
+          config.license_server_url = "http://localhost-license-server/License"
+        end
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
+          .to_return(body: { data: ["tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"], status_code: 200 }.to_json,
+          headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
+                headers: { content_type: "application/json" })
+        ChefLicensing::Context.current_context = nil
+      end
+
+      Dir.mktmpdir do |tmpdir|
+        let(:opts) {
+          {
+            logger: logger,
+            argv: argv,
+            env: env,
+            output: output,
+            dir: tmpdir,
+          }
+        }
+
+        let(:license_key_fetcher) { described_class.new(opts) }
+        it "raises exception" do
+          expect { license_key_fetcher.fetch_and_persist }.to raise_error(ChefLicensing::LicenseKeyFetcher::LicenseKeyAddNotAllowed, "'--chef-license-key <value>' option is not supported with airgapped environment. You cannot add license from airgapped environment.")
+        end
+      end
+    end
+
+    context "no license keys are passed via env while using on-prem service" do
+      let(:argv) { [] }
+      let(:env) { { "CHEF_LICENSE_KEY" => "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111" } }
+
+      before do
+        ChefLicensing.configure do |config|
+          config.is_local_license_service = nil
+          config.license_server_url = "http://localhost-license-server/License"
+        end
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
+          .to_return(body: { data: ["tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"], status_code: 200 }.to_json,
+          headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
+                headers: { content_type: "application/json" })
+        ChefLicensing::Context.current_context = nil
+      end
+
+      Dir.mktmpdir do |tmpdir|
+        let(:opts) {
+          {
+            logger: logger,
+            argv: argv,
+            env: env,
+            output: output,
+            dir: tmpdir,
+          }
+        }
+
+        let(:license_key_fetcher) { described_class.new(opts) }
+        it "raises exception" do
+          expect { license_key_fetcher.fetch_and_persist }.to raise_error(ChefLicensing::LicenseKeyFetcher::LicenseKeyAddNotAllowed, "'CHEF_LICENSE_KEY' environment variable option is not supported with airgapped environment. You cannot add license from airgapped environment.")
+        end
+      end
+    end
   end
 
   describe "verify license keys format" do

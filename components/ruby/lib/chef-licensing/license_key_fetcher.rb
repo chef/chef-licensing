@@ -65,6 +65,11 @@ module ChefLicensing
       new_keys = fetch_license_key_from_arg
       raise LicenseKeyAddNotAllowed.new("'--chef-license-key <value>' option is not supported with airgapped environment. You cannot add license from airgapped environment.") unless new_keys.empty?
 
+      new_keys = fetch_license_key_from_env
+      if !new_keys.empty? && !(@license_keys.include? new_keys.first)
+        raise LicenseKeyAddNotAllowed.new("'CHEF_LICENSE_KEY' environment variable option is not supported with airgapped environment. You cannot add license from airgapped environment.")
+      end
+
       unless @license_keys.empty?
         # Licenses expiration check
         if licenses_active?
