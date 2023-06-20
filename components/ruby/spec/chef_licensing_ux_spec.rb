@@ -337,7 +337,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       let(:expected_flow_for_license_restriction) {
         %i{
           add_license_all
-          ask_if_user_has_license_id
+          ask_if_user_has_license_id_for_license_addition
           ask_for_license_id
           validate_license_id_pattern
           validate_license_id_with_api
@@ -404,7 +404,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       let(:expected_flow_for_license_restriction) {
         %i{
           add_license_all
-          ask_if_user_has_license_id
+          ask_if_user_has_license_id_for_license_addition
           ask_for_license_id
           validate_license_id_pattern
           validate_license_id_with_api
@@ -535,7 +535,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       let(:expected_flow_for_license_restriction) {
         %i{
           add_license_all
-          ask_if_user_has_license_id
+          ask_if_user_has_license_id_for_license_addition
           ask_for_license_id
           validate_license_id_pattern
           validate_license_id_with_api
@@ -601,7 +601,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       let(:expected_flow_for_license_restriction) {
         %i{
           add_license_all
-          ask_if_user_has_license_id
+          ask_if_user_has_license_id_for_license_addition
           ask_for_license_id
           validate_license_id_pattern
           validate_license_id_with_api
@@ -782,7 +782,7 @@ RSpec.describe ChefLicensing::TUIEngine do
     let(:expected_commercial_flow) {
       %i{
         add_license_all
-        ask_if_user_has_license_id
+        ask_if_user_has_license_id_for_license_addition
         info_of_license_types
         filter_license_type_options
         ask_for_all_license_type
@@ -793,10 +793,50 @@ RSpec.describe ChefLicensing::TUIEngine do
     it "generates the license successfully traversing through the interactions in expected order" do
       expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
       expect(tui_engine.traversed_interaction).to eq(expected_commercial_flow)
-      expect(prompt.output.string).to include("I don't have a license ID and would like to generate a new license ID")
+      expect(prompt.output.string).to include("Generate a new license ID")
       expect(prompt.output.string).to include("Select the type of license below and then enter user details")
       expect(prompt.output.string).to include("3. Commercial License")
       expect(prompt.output.string).to include("Get in touch with the Sales Team by filling out the form available at")
+    end
+  end
+
+  context "user adds a license invoking license add flow" do
+    let(:start_interaction) { :add_license_all }
+
+    before do
+      prompt.input << "\n"
+      prompt.input << valid_trial_license_key
+      prompt.input << "\n"
+      prompt.input.rewind
+    end
+
+    let(:tui_engine) { described_class.new(opts) }
+
+    it "exits successfully traversing through the interactions in expected order" do
+      expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
+      expect(tui_engine.traversed_interaction).to eq(%i{add_license_all ask_if_user_has_license_id_for_license_addition ask_for_license_id validate_license_id_pattern validate_license_id_with_api validate_license_restriction validate_license_expiration validation_success display_license_info fetch_license_id})
+      expect(prompt.output.string).to include("Validate a generated license ID")
+      expect(prompt.output.string).to include("Please enter your license ID:")
+      expect(prompt.output.string).to include("License validated successfully")
+    end
+  end
+
+  context "user invokes license add flow and quits" do
+    let(:start_interaction) { :add_license_all }
+
+    before do
+      prompt.input << simulate_down_arrow
+      prompt.input << simulate_down_arrow
+      prompt.input << "\n"
+      prompt.input.rewind
+    end
+
+    let(:tui_engine) { described_class.new(opts) }
+
+    it "exits successfully traversing through the interactions in expected order" do
+      expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
+      expect(tui_engine.traversed_interaction).to eq(%i{add_license_all ask_if_user_has_license_id_for_license_addition})
+      expect(prompt.output.string).to include("Quit license addition")
     end
   end
 end
