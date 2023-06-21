@@ -4,9 +4,6 @@ require_relative "config_fetcher/arg_fetcher"
 require_relative "config_fetcher/env_fetcher"
 require_relative "license_key_fetcher/file"
 
-# TODO: Find a better way to do ping check
-require_relative "air_gap_detection/ping"
-
 # Config class handles all configuration related to chef-licensing
 # Values can be set via block, environment variable or command line argument
 
@@ -16,7 +13,7 @@ require_relative "licensing_service/local"
 module ChefLicensing
   class Config
     class << self
-      attr_writer :license_server_url, :air_gap_status, :chef_product_name, :chef_entitlement_id, :logger, :output, :chef_executable_name, :license_server_url_check_in_file
+      attr_writer :license_server_url, :chef_product_name, :chef_entitlement_id, :logger, :output, :chef_executable_name, :license_server_url_check_in_file
 
       # Used by context class
       attr_accessor :is_local_license_service
@@ -29,17 +26,6 @@ module ChefLicensing
         @license_server_url = ChefLicensing::LicenseKeyFetcher::File.fetch_or_persist_url(@license_server_url, license_server_url_from_system, opts)
         @license_server_url_check_in_file = true
         @license_server_url
-      end
-
-      def air_gap_detected?
-        return @air_gap_status unless @air_gap_status.nil?
-
-        # TODO: Find a better way to do ping check
-        # TODO: Check if the license_server_url is nil
-        ping_check = AirGapDetection::Ping.new(license_server_url)
-        @air_gap_status = ChefLicensing::ArgFetcher.fetch_value("--airgap", :boolean) ||
-          ChefLicensing::EnvFetcher.fetch_value("CHEF_AIR_GAP", :boolean) ||
-          ping_check.detected?
       end
 
       def chef_entitlement_id
