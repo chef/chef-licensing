@@ -117,10 +117,24 @@ interactions:
     prompt_attributes:
       timeout_duration: 60
       timeout_message: "\nPrompt timed out. Use non-interactive flags or enter an answer within 60 seconds."
-    paths: [ask_for_license_id, info_of_license_types, skipped]
+    paths: [ask_for_license_id, info_of_license_types, skip_message]
     response_path_map:
       "I already have a license ID": ask_for_license_id
       "I don't have a license ID and would like to generate a new license ID": info_of_license_types
+      "Skip": skip_message
+
+  skip_message:
+    messages: ["\n! [WARNING] A license is required to continue using this product."]
+    prompt_type: warn
+    paths: [skip_licensing]
+
+  skip_licensing:
+    messages: ["\nAre you sure to skip this step?",["Skip", "Generate a new license ID", "I already have a license ID"]]
+    prompt_type: "select"
+    paths: [ask_for_license_id, info_of_license_types, skipped]
+    response_path_map:
+      "I already have a license ID": ask_for_license_id
+      "Generate a new license ID": info_of_license_types
       "Skip": skipped
 
   ask_if_user_has_license_id_for_license_addition:
@@ -196,16 +210,6 @@ interactions:
   retry_message:
     messages: "Please try again."
     paths: [ask_for_license_id]
-
-
-  license_generation_skipped:
-    messages: |
-      License generation skipped!
-
-      A license is required to use <%= input[:chef_product_name] %>.
-
-      Visit <link> to learn more about the licenses.
-    paths: [exit]
 
   info_of_license_types:
     messages: |
@@ -496,18 +500,18 @@ interactions:
   license_generation_rejected:
     messages: ["Your request for a license was denied for the following reason: <%= input[:fetch_license_failure_rejection_msg] %>. Please select one of the following options:", ["Try again", "Skip"]]
     prompt_type: "select"
-    paths: [pre_license_generation, skipped]
+    paths: [pre_license_generation, skip_message]
     response_path_map:
       "Try again": pre_license_generation
-      "Skip": skipped
+      "Skip": skip_message
 
   license_generation_with_errors:
     messages: ["\nAn error occurred while generating your license.\nError message: <%= input[:fetch_license_failure_error_msg] %>\n", ["Try again", "Skip"]]
     prompt_type: "select"
-    paths: [pre_license_generation, skipped]
+    paths: [pre_license_generation, skip_message]
     response_path_map:
       "Try again": pre_license_generation
-      "Skip": skipped
+      "Skip": skip_message
 
   exit:
     messages: "Thank you."

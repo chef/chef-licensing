@@ -839,4 +839,36 @@ RSpec.describe ChefLicensing::TUIEngine do
       expect(prompt.output.string).to include("Quit license addition")
     end
   end
+
+  context "user skips the licensing generation process" do
+    let(:start_interaction) { :start }
+
+    before do
+      prompt.input << simulate_down_arrow
+      prompt.input << simulate_down_arrow
+      prompt.input << "\n\n"
+      prompt.input.rewind
+    end
+
+    let(:tui_engine) { described_class.new(opts) }
+
+    let(:expected_skip_flow) {
+      %i{
+        start
+        ask_if_user_has_license_id
+        skip_message
+        skip_licensing
+        skipped
+      }
+    }
+
+    it "skips the license generation process" do
+      expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
+      expect(tui_engine.traversed_interaction).to eq(expected_skip_flow)
+      expect(prompt.output.string).to include("Skip")
+      expect(prompt.output.string).to include("Are you sure to skip this step?")
+      expect(prompt.output.string).to include("! [WARNING] A license is required to continue using this product")
+      expect(prompt.output.string).to include("License ID validation skipped!")
+    end
+  end
 end
