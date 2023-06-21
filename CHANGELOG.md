@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.4.33 -->
-## [0.4.33](https://github.com/chef/chef-licensing/tree/0.4.33) (2023-06-21)
+<!-- latest_release 0.4.34 -->
+## [0.4.34](https://github.com/chef/chef-licensing/tree/0.4.34) (2023-06-21)
 
 #### Merged Pull Requests
-- Error handling for license expiration check - client API [#127](https://github.com/chef/chef-licensing/pull/127) ([Nik08](https://github.com/Nik08))
+- CHEF-3276 UX revised changes on expiration flow [#133](https://github.com/chef/chef-licensing/pull/133) ([Nik08](https://github.com/Nik08))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-3276 UX revised changes on expiration flow [#133](https://github.com/chef/chef-licensing/pull/133) ([Nik08](https://github.com/Nik08)) <!-- 0.4.34 -->
 - Error handling for license expiration check - client API [#127](https://github.com/chef/chef-licensing/pull/127) ([Nik08](https://github.com/Nik08)) <!-- 0.4.33 -->
 - CHEF-3277: Fix UX for Skip step in chef licensing [#131](https://github.com/chef/chef-licensing/pull/131) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.32 -->
 - CHEF-3578: Support log level and log location capabilities for chef licensing logger [#125](https://github.com/chef/chef-licensing/pull/125) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.31 -->
