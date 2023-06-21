@@ -882,6 +882,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         skip_message
         skip_licensing
         skipped
+        exit_with_message
       }
     }
 
