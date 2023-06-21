@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.4.31 -->
-## [0.4.31](https://github.com/chef/chef-licensing/tree/0.4.31) (2023-06-19)
+<!-- latest_release 0.4.32 -->
+## [0.4.32](https://github.com/chef/chef-licensing/tree/0.4.32) (2023-06-21)
 
 #### Merged Pull Requests
-- CHEF-3578: Support log level and log location capabilities for chef licensing logger [#125](https://github.com/chef/chef-licensing/pull/125) ([ahasunos](https://github.com/ahasunos))
+- CHEF-3277: Fix UX for Skip step in chef licensing [#131](https://github.com/chef/chef-licensing/pull/131) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-3277: Fix UX for Skip step in chef licensing [#131](https://github.com/chef/chef-licensing/pull/131) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.32 -->
 - CHEF-3578: Support log level and log location capabilities for chef licensing logger [#125](https://github.com/chef/chef-licensing/pull/125) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.31 -->
 - HACK: Remove warn level log message to fix omnibus test for inspec [#130](https://github.com/chef/chef-licensing/pull/130) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.30 -->
 - CHEF-3276 UI/UX revised changes in expiration flow [#111](https://github.com/chef/chef-licensing/pull/111) ([Nik08](https://github.com/Nik08)) <!-- 0.4.29 -->
