@@ -29,15 +29,15 @@ module ChefLicensing
       end
 
       def chef_entitlement_id
-        @chef_entitlement_id ||= ChefLicensing::ArgFetcher.fetch_value("--chef-entitlement-id", :string) || ChefLicensing::EnvFetcher.fetch_value("CHEF_ENTITLEMENT_ID", :string)
+        @chef_entitlement_id
       end
 
       def chef_product_name
-        @chef_product_name ||= ChefLicensing::ArgFetcher.fetch_value("--chef-product-name", :string) || ChefLicensing::EnvFetcher.fetch_value("CHEF_PRODUCT_NAME", :string)
+        @chef_product_name
       end
 
       def chef_executable_name
-        @chef_executable_name ||= ChefLicensing::ArgFetcher.fetch_value("--chef-executable-name", :string) || ChefLicensing::EnvFetcher.fetch_value("CHEF_EXECUTABLE_NAME", :string)
+        @chef_executable_name
       end
 
       def logger
@@ -67,37 +67,7 @@ module ChefLicensing
       end
 
       def output
-        return @output if @output
-
-        # Check if user wants to write to a file or to stdout
-        no_stdout_check = ChefLicensing::ArgFetcher.fetch_value("--chef-license-no-stdout", :boolean) || ChefLicensing::EnvFetcher.fetch_value("CHEF_LICENSE_NO_STDOUT", :boolean)
-
-        unless no_stdout_check
-          @output = STDOUT
-          return @output
-        end
-
-        # Check if user wants to write to a file
-        file_path = ChefLicensing::ArgFetcher.fetch_value("--chef-license-output-file", :string) || ChefLicensing::EnvFetcher.fetch_value("CHEF_LICENSE_OUTPUT_FILE", :string)
-
-        # Set the default file path if file path is not provided by the user
-        file_path = "~/.chef/output_logs" if file_path.nil? || file_path.empty?
-
-        # Expand the file path
-        file_path = File.expand_path(file_path)
-
-        # Create the file if it does not exist
-        FileUtils.touch(file_path) unless File.exist?(file_path)
-
-        # Check if the file is writable
-        unless File.writable?(file_path)
-          @output = StringIO.new
-          return @output
-        end
-
-        # Open the file in write mode
-        @output = File.open(file_path, "w")
-        @output
+        @output ||= STDOUT
       end
     end
   end
