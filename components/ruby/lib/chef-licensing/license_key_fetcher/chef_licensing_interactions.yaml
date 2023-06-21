@@ -71,19 +71,19 @@ interactions:
     prompt_type: "say"
     messages:
       Please generate a Free or Commercial License by running <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%>.
-    paths: [exit]
+    paths: [exit_with_message]
 
   free_restriction_message:
     prompt_type: "say"
     messages:
       Please generate a Trial or Commercial License by running <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%>.
-    paths: [exit]
+    paths: [exit_with_message]
 
   only_commercial_allowed_message:
     prompt_type: "say"
     messages:
       Please generate a Commercial License by running <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%>.
-    paths: [exit]
+    paths: [exit_with_message]
 
   prompt_license_expired:
     messages: |
@@ -100,13 +100,25 @@ interactions:
     prompt_type: "say"
     paths: [fetch_license_id]
 
+  prompt_license_expired_local_mode:
+    messages: |
+      ------------------------------------------------------------
+        <%= input[:pastel].yellow("! [WARNING]")%> <%= input[:license_type] %> License Expired
+
+        Get a Commercial License to receive bug fixes, updates
+        and new features.
+        Get a Free License to scan limited targets.
+      ------------------------------------------------------------
+    prompt_type: "say"
+    paths: [fetch_license_id]
+
   prompt_license_about_to_expire:
     messages: |
       ------------------------------------------------------------
         <%= input[:pastel].yellow("! [WARNING]")%> Your license is about to expire in <%= input[:pastel].bold(input[:number_of_days_in_expiration]) %> <%= input[:pastel].bold("days.") %>
 
         To avoid service disruptions, get a Commercial License
-        before <%= input[:license_expiration_date] %>.
+        before <%= input[:pastel].bold(input[:license_expiration_date]) %>.
       ------------------------------------------------------------
     prompt_type: "say"
     paths: [fetch_license_id]
@@ -151,7 +163,7 @@ interactions:
 
   skipped:
     messages: "License ID validation skipped!"
-    paths: [exit]
+    paths: [exit_with_message]
 
   ask_for_license_id:
     messages: "Please enter your license ID: "
@@ -183,11 +195,12 @@ interactions:
 
   validate_license_expiration:
     action: license_expiration_status?
-    paths: [validation_success, prompt_license_about_to_expire, prompt_license_expired]
+    paths: [validation_success, prompt_license_about_to_expire, prompt_license_expired, prompt_license_expired_local_mode]
     response_path_map:
       "active": validation_success
       "about_to_expire": prompt_license_about_to_expire
       "expired": prompt_license_expired
+      "expired_in_local_mode": prompt_license_expired_local_mode
 
   validation_success:
     messages: "✔ [Success] License validated successfully."
@@ -304,7 +317,7 @@ interactions:
       [Quit]
     ]
     prompt_type: "select"
-    paths: [exit]
+    paths: [exit_with_message]
 
   check_if_user_details_are_present:
     action: are_user_details_present?
@@ -514,4 +527,8 @@ interactions:
       "Skip": skip_message
 
   exit:
+    messages: ""
+
+  exit_with_message:
     messages: "Thank you."
+    paths: [exit]

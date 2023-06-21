@@ -5,6 +5,7 @@ require_relative "../exceptions/license_generation_failed"
 require_relative "../exceptions/license_generation_rejected"
 require_relative "../license_key_fetcher/base"
 require_relative "../config"
+require_relative "../context"
 require_relative "../list_license_keys"
 require "tty-spinner"
 
@@ -63,7 +64,7 @@ module ChefLicensing
       def license_expiration_status?(input)
         get_license(license_id)
         if license.expired? || license.have_grace?
-          "expired"
+          ChefLicensing::Context.local_licensing_service? ? "expired_in_local_mode" : "expired"
         elsif license.about_to_expire?
           input[:license_expiration_date] = Date.parse(license.expiration_date).strftime("%a, %d %b %Y")
           input[:number_of_days_in_expiration] = license.number_of_days_in_expiration
@@ -216,8 +217,6 @@ module ChefLicensing
         spinner = TTY::Spinner.new(":spinner [Running] License validation in progress...", format: :dots, clear: true, output: output)
         spinner.auto_spin # Start the spinner
         client_api_call(license_key)
-        # Intentional lag of 1 second when license is expiring or expired
-        sleep 1 if license.expiring_or_expired?
         spinner.success # Stop the spinner
       end
 
