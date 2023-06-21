@@ -15,6 +15,11 @@ module ChefLicensing
           long: "--chef-license-key KEY",
           description: "Add a new Chef License Key to the license store. Ignores duplicates.",
           required: false
+
+        klass.option :chef_license_server,
+          long: "--chef-license-server URL",
+          description: "Add a custom Chef License Server URL. Overrides the global license server URL.",
+          required: false
       end
 
     end
