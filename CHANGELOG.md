@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.4.35 -->
-## [0.4.35](https://github.com/chef/chef-licensing/tree/0.4.35) (2023-06-22)
+<!-- latest_release 0.4.36 -->
+## [0.4.36](https://github.com/chef/chef-licensing/tree/0.4.36) (2023-06-22)
 
 #### Merged Pull Requests
-- CHEF-3666 Global service detection to use 404 status code [#134](https://github.com/chef/chef-licensing/pull/134) ([Nik08](https://github.com/Nik08))
+- Feature/CHEF-3553 improve error handling [#136](https://github.com/chef/chef-licensing/pull/136) ([sathish-progress](https://github.com/sathish-progress))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Feature/CHEF-3553 improve error handling [#136](https://github.com/chef/chef-licensing/pull/136) ([sathish-progress](https://github.com/sathish-progress)) <!-- 0.4.36 -->
 - CHEF-3666 Global service detection to use 404 status code [#134](https://github.com/chef/chef-licensing/pull/134) ([Nik08](https://github.com/Nik08)) <!-- 0.4.35 -->
 - CHEF-3276 UX revised changes on expiration flow [#133](https://github.com/chef/chef-licensing/pull/133) ([Nik08](https://github.com/Nik08)) <!-- 0.4.34 -->
 - Error handling for license expiration check - client API [#127](https://github.com/chef/chef-licensing/pull/127) ([Nik08](https://github.com/Nik08)) <!-- 0.4.33 -->
