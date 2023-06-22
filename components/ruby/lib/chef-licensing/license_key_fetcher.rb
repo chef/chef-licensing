@@ -189,6 +189,8 @@ module ChefLicensing
 
       # default values
       extra_info[:chef_product_name] = ChefLicensing::Config.chef_product_name&.capitalize
+      # Note: The unit measure is decided by the UX/Product.
+      extra_info[:unit_measure] = ChefLicensing::Config.chef_product_name&.downcase == "inspec" ? "targets" : "nodes"
       if license
         extra_info[:license_type] = license.license_type.capitalize
         extra_info[:number_of_days_in_expiration] = license.number_of_days_in_expiration
