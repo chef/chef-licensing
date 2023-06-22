@@ -107,7 +107,7 @@ interactions:
 
         Get a Commercial License to receive bug fixes, updates
         and new features.
-        Get a Free License to scan limited  <%= input[:unit_measure] %>.
+        Get a Free License to scan limited <%= input[:unit_measure] %>.
       ------------------------------------------------------------
     prompt_type: "say"
     paths: [fetch_license_id]
@@ -263,7 +263,8 @@ interactions:
       ]]
     paths: [free_license_disclaimer, commercial_license_selection, exit]
     response_path_map:
-      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 <%= input[:unit_measure] %>\n": free_license_disclaimer
+      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 nodes\n": free_license_disclaimer
+      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 targets\n": free_license_disclaimer
       "2. Commercial License\n": commercial_license_selection
       "3. Quit license generation": exit
 
@@ -277,7 +278,8 @@ interactions:
       ]]
     paths: [trial_license_selection, commercial_license_selection, exit]
     response_path_map:
-      "1. Trial License\n     Validity: 30 Days\n     No. of units: Unlimited <%= input[:unit_measure] %>\n": trial_license_selection
+      "1. Trial License\n     Validity: 30 Days\n     No. of units: Unlimited nodes\n": trial_license_selection
+      "1. Trial License\n     Validity: 30 Days\n     No. of units: Unlimited targets\n": trial_license_selection
       "2. Commercial License\n": commercial_license_selection
       "3. Quit license generation": exit
 
@@ -292,8 +294,10 @@ interactions:
       ]]
     paths: [free_license_disclaimer, commercial_license_selection, trial_license_selection, exit]
     response_path_map:
-      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 <%= input[:unit_measure] %>\n": free_license_disclaimer
-      "2. Trial License\n     Validity: 30 Days\n     No. of units: Unlimited <%= input[:unit_measure] %>\n": trial_license_selection
+      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 nodes\n": free_license_disclaimer
+      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 targets\n": free_license_disclaimer
+      "2. Trial License\n     Validity: 30 Days\n     No. of units: Unlimited nodes\n": trial_license_selection
+      "2. Trial License\n     Validity: 30 Days\n     No. of units: Unlimited targets\n": trial_license_selection
       "3. Commercial License\n": commercial_license_selection
       "4. Quit license generation": exit
 
