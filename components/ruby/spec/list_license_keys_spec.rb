@@ -91,7 +91,7 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
 
     before do
       stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
-        .to_return(body: { data: [], status_code: 403 }.to_json,
+        .to_return(body: { data: [], status_code: 404 }.to_json,
                   headers: { content_type: "application/json" })
       ChefLicensing::Context.current_context = nil
     end

@@ -19,8 +19,8 @@ module ChefLicensing
         ChefLicensing::Api::ListLicenses.info
         true
       rescue ChefLicensing::ListLicensesError => e
-        # If API call returns 403, it is a global licensing service
-        return false if e.status_code == 403
+        # If API call returns 404, it is a global licensing service
+        return false if e.status_code == 404
 
         raise(ChefLicensing::ListLicensesError.new("Error occured while fetching licenses #{e.message}", e.status_code))
       end
