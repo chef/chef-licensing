@@ -13,10 +13,10 @@ require_relative "licensing_service/local"
 module ChefLicensing
   class Config
     class << self
-      attr_writer :license_server_url, :chef_product_name, :chef_entitlement_id, :logger, :output, :chef_executable_name, :license_server_url_check_in_file
+      attr_writer :license_server_url, :logger, :output, :license_server_url_check_in_file
 
-      # Used by context class
-      attr_accessor :is_local_license_service
+      # is_local_license_service is used by context class
+      attr_accessor :is_local_license_service, :chef_entitlement_id, :chef_product_name, :chef_executable_name
 
       def license_server_url(opts = {})
         return @license_server_url if @license_server_url && @license_server_url_check_in_file
@@ -28,41 +28,11 @@ module ChefLicensing
         @license_server_url
       end
 
-      def chef_entitlement_id
-        @chef_entitlement_id
-      end
-
-      def chef_product_name
-        @chef_product_name
-      end
-
-      def chef_executable_name
-        @chef_executable_name
-      end
-
       def logger
         return @logger if @logger
 
-        # Supporting both --chef-log-level and --log-level for compatibility with InSpec and to stay aligned with Chef Licensing naming convention
-        log_level = ChefLicensing::ArgFetcher.fetch_value("--log-level", :string) || ChefLicensing::EnvFetcher.fetch_value("LOG_LEVEL", :string) ||
-          ChefLicensing::ArgFetcher.fetch_value("--chef-log-level", :string) || ChefLicensing::EnvFetcher.fetch_value("CHEF_LOG_LEVEL", :string)
-        log_location = ChefLicensing::ArgFetcher.fetch_value("--log-location", :string) || ChefLicensing::EnvFetcher.fetch_value("LOG_LOCATION", :string) ||
-          ChefLicensing::ArgFetcher.fetch_value("--chef-log-location", :string) || ChefLicensing::EnvFetcher.fetch_value("CHEF_LOG_LOCATION", :string)
-
-        if log_level.nil? || log_level.empty?
-          log_level = Logger::INFO
-        else
-          unless %w{debug info warn error fatal}.include?(log_level.downcase)
-            warn "Invalid log level #{log_level}. Valid log levels are debug, info, warn, error, fatal. Setting log level to info"
-            log_level = Logger::INFO
-          end
-          log_level = Logger.const_get(log_level.upcase)
-        end
-
-        log_location = STDERR if log_location.nil? || log_location.empty?
-
-        @logger = Logger.new(log_location)
-        @logger.level = log_level
+        @logger = Logger.new(STDERR)
+        @logger.level = Logger::INFO
         @logger
       end
 
