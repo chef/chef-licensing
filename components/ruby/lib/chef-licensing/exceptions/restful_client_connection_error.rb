@@ -3,7 +3,7 @@ require_relative "error"
 module ChefLicensing
   class RestfulClientConnectionError < Error
     def message
-      super || "License Server Connection Error"
+      super || "Restful Client Connection Error"
     end
   end
 end
