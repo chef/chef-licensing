@@ -12,6 +12,10 @@ module ChefLicensing
         klass.class_option :chef_license_key,
           type: :string,
           desc: "Add a new Chef License Key to the license store. Ignores duplicates."
+
+        klass.class_option :chef_license_server,
+          type: :string,
+          desc: "Add a custom Chef License Server URL. Overrides the global license server URL."
       end
     end
   end
