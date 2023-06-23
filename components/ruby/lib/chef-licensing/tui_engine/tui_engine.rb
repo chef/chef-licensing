@@ -25,14 +25,18 @@ module ChefLicensing
       start_interaction_id ||= @tui_interactions.keys.first
       current_interaction = @tui_interactions[start_interaction_id]
 
+      previous_interaction = nil
+
       until current_interaction.nil? || current_interaction.id == :exit
         @traversed_interaction << current_interaction.id
         state.default_action(current_interaction)
+        previous_interaction = current_interaction
         current_interaction = state.next_interaction_id.nil? ? nil : current_interaction.paths[state.next_interaction_id.to_sym]
       end
 
       # If the last interaction is not the exit interaction. Something went wrong in the flow.
-      raise ChefLicensing::TUIEngine::IncompleteFlowException, "Something went wrong in the flow." unless current_interaction&.id == :exit
+      # raise the message where the flow broke.
+      raise ChefLicensing::TUIEngine::IncompleteFlowException, "Something went wrong in the flow. The last interaction was #{previous_interaction&.id}." unless current_interaction&.id == :exit
 
       state.default_action(current_interaction)
       # remove the pastel key we used in tui engine state for styling and return the remaining parsed input

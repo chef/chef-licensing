@@ -176,7 +176,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       let(:tui_engine) { described_class.new(config) }
 
       it "should raise exception of incomplete path" do
-        expect { tui_engine.run_interaction }.to raise_error(ChefLicensing::TUIEngine::IncompleteFlowException, /Something went wrong in the flow./)
+        expect { tui_engine.run_interaction }.to raise_error(ChefLicensing::TUIEngine::IncompleteFlowException, /Something went wrong in the flow. The last interaction was start/)
       end
     end
 
