@@ -12,7 +12,6 @@ RSpec.describe ChefLicensing do
     described_class.configure do |config|
       config.license_server_url = "http://localhost-license-server/License"
       config.license_server_url_check_in_file = true
-      config.air_gap_status = false
       config.chef_product_name = "inspec"
       config.chef_entitlement_id = "3ff52c37-e41f-4f6c-ad4d-365192205968"
       config.logger = logger
@@ -154,7 +153,6 @@ RSpec.describe ChefLicensing do
   describe ".configure" do
 
     let(:license_server_url) { "https://license-server.example.com" }
-    let(:air_gap_status) { false }
     let(:chef_product_name) { "chef" }
     let(:chef_entitlement_id) { "0000-1111-2222-3333" }
     let(:logger) { Logger.new(STDOUT) }
@@ -162,7 +160,6 @@ RSpec.describe ChefLicensing do
     before do
       described_class.configure do |config|
         config.license_server_url = "https://license-server.example.com"
-        config.air_gap_status = false
         config.chef_product_name = "chef"
         config.chef_entitlement_id = "0000-1111-2222-3333"
         config.logger = logger
@@ -171,7 +168,6 @@ RSpec.describe ChefLicensing do
 
     it "sets all the configuration values" do
       expect(ChefLicensing::Config.license_server_url).to eq(license_server_url)
-      expect(ChefLicensing::Config.air_gap_detected?).to eq(false)
       expect(ChefLicensing::Config.chef_product_name).to eq(chef_product_name)
       expect(ChefLicensing::Config.chef_entitlement_id).to eq(chef_entitlement_id)
       expect(ChefLicensing::Config.logger).to eq(logger)

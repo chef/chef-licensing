@@ -43,7 +43,7 @@ To use the Chef licensing library, certain configuration values such as the serv
 
 The `ChefLicensing::Config` class manages the configuration parameters used in the Chef Licensing library.
 
-<!-- Discuss with team to find which are the optional other than air_gap and logger -->
+<!-- Discuss with team to find which are the optional other and logger -->
 
 #### Configure the Parameters using argument flag or environment variable
 
@@ -53,7 +53,6 @@ The `ChefLicensing::Config` class manages the configuration parameters used in t
 | chef_product_name | `--chef-product-name` | `CHEF_PRODUCT_NAME` | String |
 | chef_executable_name | `--chef-executable-name` | `CHEF_EXECUTABLE_NAME` | String |
 | chef_entitlement_id | `--chef-entitlement-id` | `CHEF_ENTITLEMENT_ID` | String |
-| air_gap_detected? | `--airgap` | `CHEF_AIR_GAP` | Boolean |
 | logger | - | - | - |
 | logger's log level | `--log-level` | `LOG_LEVEL` | String |
 | logger's log level | `--chef-log-level` | `CHEF_LOG_LEVEL` | String |
@@ -67,12 +66,6 @@ where:
 - `chef_product_name`: the name of the chef software using this library
 - `chef_executable_name`: the name of the chef software's executable using this library
 - `chef_entitlement_id`: the unique entitlement id of the chef's software
-- `air_gap_detected?`: helps detect an air gap condition, which is necessary for the licensing system to determine when to function in an offline mode. An air gap environment is determined to be present if any of the following conditions are met: 
-  - the environment variable is set, 
-  - the argument flag is provided, 
-  - or there is an inability to ping the licensing server URL.
-
-  The return value is a boolean, and is cached for the life of the process - airgap detection happens only once.
 - `logger`: sets the logger functionality for the Chef Licensing library. It defaults to `Logger.new(STDERR)` and the logger level as `INFO`
   - The logger level can be set via the argument using the `--log-level` or `--chef-log-level` or via the environment using the keys `LOG_LEVEL` or `CHEF_LOG_LEVEL`. Valid values are: `info`, `warn`, `debug`, `error` and `fatal`. Defaults to `info` if the logger level is not provided or is invalid.
   - The logger location can be set via the argument using the `--log-location` or `--chef-log-location` or via the environment using the keys `LOG_LOCATION` or `CHEF_LOG_LOCATION`. Defaults to `STDERR` if the location is not provided.
@@ -85,7 +78,6 @@ require "chef-licensing"
 
 ChefLicensing.configure do |config|
   config.license_server_url = "https://license.chef.io"
-  config.air_gap_status = false
   config.chef_product_name = "chef"
   config.chef_executable_name = "inspec"
   config.chef_entitlement_id = "chef123"

@@ -7,9 +7,9 @@ RSpec.describe ChefLicensing::EnvFetcher do
   describe "env_fetcher can fetch values in below formats" do
 
     context "when a boolean environment variable is passed" do
-      let(:env) { { "CHEF_AIR_GAP" => "1" } }
+      let(:env) { { "CHEF_SOME_VARIABLE" => "1" } }
       it "returns true if given environment variable is present" do
-        expect(env_fetcher.fetch_value("CHEF_AIR_GAP", :boolean)).to eq true
+        expect(env_fetcher.fetch_value("CHEF_SOME_VARIABLE", :boolean)).to eq true
       end
       it "returns false if given environment variable is not present" do
         expect(env_fetcher.fetch_value("CHEF_UNKNOWN", :boolean)).to eq false
