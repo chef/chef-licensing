@@ -75,9 +75,31 @@ module ChefLicensing
 
       # a common method to handle the get API calls
       def invoke_get_api(endpoint, params = {})
-        handle_get_connection do |connection|
-          connection.get(endpoint, params).body
+        urls = ChefLicensing::Config.license_server_url.split(",")
+        response = nil
+
+        urls.each do |url|
+          handle_get_connection(url) do |connection|
+            response = connection.get(endpoint, params)
+            # Update the value of license server url in config if there are multiple urls
+            ChefLicensing::Config.license_server_url = url if urls.size > 1
+            break
+          end
+        rescue RestfulClientConnectionError => e
+          logger.debug "Connection failed to #{url} with error: #{e.message}"
         end
+
+        error_message = <<~EOM
+          Unable to connect to the licensing server. #{ChefLicensing::Config.chef_product_name} requires server communication to operate.
+          The following URL(s) were tried:\n#{
+            urls.each_with_index.map do |url, index|
+              "#{index + 1}. #{url}"
+            end.join("\n")
+          }
+        EOM
+        raise RestfulClientConnectionError, error_message if response.nil?
+
+        response.body
       end
 
       # a common method to handle the post API calls
@@ -93,9 +115,9 @@ module ChefLicensing
         end
       end
 
-      def handle_get_connection
+      def handle_get_connection(url = nil)
         # handle faraday errors
-        yield get_connection
+        yield get_connection(url)
       rescue Faraday::ClientError => e
         logger.debug "Restful Client Error #{e.message}"
         raise RestfulClientError, e.message
@@ -109,9 +131,9 @@ module ChefLicensing
         raise RestfulClientError, e.message
       end
 
-      def get_connection
+      def get_connection(url = nil)
         store = ::ActiveSupport::Cache.lookup_store(:file_store, Dir.tmpdir)
-        Faraday.new(url: ChefLicensing::Config.license_server_url) do |config|
+        Faraday.new(url: url) do |config|
           config.request :json
           config.response :json, parser_options: { object_class: OpenStruct }
           config.use Faraday::HttpCache, shared_cache: false, logger: logger, store: store
