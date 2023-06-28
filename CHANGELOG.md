@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.4.39 -->
-## [0.4.39](https://github.com/chef/chef-licensing/tree/0.4.39) (2023-06-26)
+<!-- latest_release 0.4.40 -->
+## [0.4.40](https://github.com/chef/chef-licensing/tree/0.4.40) (2023-06-28)
 
 #### Merged Pull Requests
-- Remove traces of air_gap_detected method [#140](https://github.com/chef/chef-licensing/pull/140) ([ahasunos](https://github.com/ahasunos))
+- CHEF-3726: Restrict setting certain options via arguments or environment variables; confine to config block only [#138](https://github.com/chef/chef-licensing/pull/138) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-3726: Restrict setting certain options via arguments or environment variables; confine to config block only [#138](https://github.com/chef/chef-licensing/pull/138) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.40 -->
 - Remove traces of air_gap_detected method [#140](https://github.com/chef/chef-licensing/pull/140) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.39 -->
 - Improve TUI Engine&#39;s error message to debug broken flows [#143](https://github.com/chef/chef-licensing/pull/143) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.38 -->
 - CHEF-3698: Add `--chef-license-server` to Chef Licensing CLI Flags [#137](https://github.com/chef/chef-licensing/pull/137) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.37 -->
