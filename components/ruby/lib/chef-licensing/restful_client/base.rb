@@ -89,16 +89,7 @@ module ChefLicensing
           logger.debug "Connection failed to #{url} with error: #{e.message}"
         end
 
-        error_message = <<~EOM
-          Unable to connect to the licensing server. #{ChefLicensing::Config.chef_product_name} requires server communication to operate.
-          The following URL(s) were tried:\n#{
-            urls.each_with_index.map do |url, index|
-              "#{index + 1}. #{url}"
-            end.join("\n")
-          }
-        EOM
-        raise RestfulClientConnectionError, error_message if response.nil?
-
+        raise_restful_client_conn_error(urls) if response.nil?
         response.body
       end
 
@@ -121,16 +112,7 @@ module ChefLicensing
           logger.debug "Connection failed to #{url} with error: #{e.message}"
         end
 
-        error_message = <<~EOM
-          Unable to connect to the licensing server. #{ChefLicensing::Config.chef_product_name} requires server communication to operate.
-          The following URL(s) were tried:\n#{
-            urls.each_with_index.map do |url, index|
-              "#{index + 1}. #{url}"
-            end.join("\n")
-          }
-        EOM
-
-        raise RestfulClientConnectionError, error_message if response.nil?
+        raise_restful_client_conn_error(urls) if response.nil?
 
         raise RestfulClientError, format_error_from(response) unless response.success?
 
@@ -177,6 +159,19 @@ module ChefLicensing
         return response.reason_phrase unless error_details
 
         error_details
+      end
+
+      def raise_restful_client_conn_error(urls)
+        error_message = <<~EOM
+          Unable to connect to the licensing server. #{ChefLicensing::Config.chef_product_name} requires server communication to operate.
+          The following URL(s) were tried:\n#{
+            urls.each_with_index.map do |url, index|
+              "#{index + 1}. #{url}"
+            end.join("\n")
+          }
+        EOM
+
+        raise RestfulClientConnectionError, error_message
       end
     end
   end
