@@ -104,15 +104,37 @@ module ChefLicensing
 
       # a common method to handle the post API calls
       def invoke_post_api(endpoint, payload, headers = {})
-        handle_post_connection do |connection|
-          response = connection.post(endpoint) do |request|
-            request.body = payload.to_json
-            request.headers = headers
-          end
-          raise RestfulClientError, format_error_from(response) unless response.success?
+        urls = ChefLicensing::Config.license_server_url.split(",")
+        response = nil
 
-          response.body
+        urls.each do |url|
+          handle_post_connection(url) do |connection|
+            response = connection.post(endpoint) do |request|
+              request.body = payload.to_json
+              request.headers = headers
+            end
+            # Update the value of license server url in config if there are multiple urls
+            ChefLicensing::Config.license_server_url = url if urls.size > 1
+            break
+          end
+        rescue RestfulClientConnectionError => e
+          logger.debug "Connection failed to #{url} with error: #{e.message}"
         end
+
+        error_message = <<~EOM
+          Unable to connect to the licensing server. #{ChefLicensing::Config.chef_product_name} requires server communication to operate.
+          The following URL(s) were tried:\n#{
+            urls.each_with_index.map do |url, index|
+              "#{index + 1}. #{url}"
+            end.join("\n")
+          }
+        EOM
+
+        raise RestfulClientConnectionError, error_message if response.nil?
+
+        raise RestfulClientError, format_error_from(response) unless response.success?
+
+        response.body
       end
 
       def handle_get_connection(url = nil)
@@ -123,9 +145,9 @@ module ChefLicensing
         raise RestfulClientError, e.message
       end
 
-      def handle_post_connection
+      def handle_post_connection(url = nil)
         # handle faraday errors
-        yield post_connection
+        yield post_connection(url)
       rescue Faraday::ClientError => e
         logger.debug "Restful Client Error #{e.message}"
         raise RestfulClientError, e.message
@@ -142,8 +164,8 @@ module ChefLicensing
         end
       end
 
-      def post_connection
-        Faraday.new(url: ChefLicensing::Config.license_server_url) do |config|
+      def post_connection(url = nil)
+        Faraday.new(url: url) do |config|
           config.request :json
           config.response :json, parser_options: { object_class: OpenStruct }
           config.use Middleware::ExceptionsHandler
