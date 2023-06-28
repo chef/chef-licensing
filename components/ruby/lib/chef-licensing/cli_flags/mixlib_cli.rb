@@ -13,7 +13,7 @@ module ChefLicensing
         # TBD need to confirm the name of the option
         klass.option :chef_license_key,
           long: "--chef-license-key KEY",
-          description: "Add a new Chef License Key to the license store. Ignores duplicates.",
+          description: "Add a new Chef License Key to the license store. Ignores duplicates (not applicable to local licensing service)",
           required: false
 
         klass.option :chef_license_server,
