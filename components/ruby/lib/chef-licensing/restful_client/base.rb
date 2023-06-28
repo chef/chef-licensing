@@ -75,48 +75,38 @@ module ChefLicensing
 
       # a common method to handle the get API calls
       def invoke_get_api(endpoint, params = {})
-        urls = ChefLicensing::Config.license_server_url.split(",")
-        response = nil
-
-        urls.each do |url|
-          handle_get_connection(url) do |connection|
-            response = connection.get(endpoint, params)
-            # Update the value of license server url in config if there are multiple urls
-            ChefLicensing::Config.license_server_url = url if urls.size > 1
-            break
-          end
-        rescue RestfulClientConnectionError => e
-          logger.debug "Connection failed to #{url} with error: #{e.message}"
-        end
-
-        raise_restful_client_conn_error(urls) if response.nil?
+        response = invoke_api(ChefLicensing::Config.license_server_url.split(","), endpoint, :get, nil, params)
         response.body
       end
 
       # a common method to handle the post API calls
       def invoke_post_api(endpoint, payload, headers = {})
-        urls = ChefLicensing::Config.license_server_url.split(",")
-        response = nil
+        response = invoke_api(ChefLicensing::Config.license_server_url.split(","), endpoint, :post, payload, nil, headers)
+        raise RestfulClientError, format_error_from(response) unless response.success?
 
+        response.body
+      end
+
+      def invoke_api(urls, endpoint, http_method, payload = nil, params = {}, headers = {})
+        handle_connection = http_method == :get ? method(:handle_get_connection) : method(:handle_post_connection)
+        response = nil
         urls.each do |url|
-          handle_post_connection(url) do |connection|
-            response = connection.post(endpoint) do |request|
-              request.body = payload.to_json
-              request.headers = headers
+          handle_connection.call(url) do |connection|
+            response = connection.send(http_method, endpoint) do |request|
+              request.body = payload.to_json if payload
+              request.params = params if params
+              request.headers = headers if headers
             end
             # Update the value of license server url in config if there are multiple urls
             ChefLicensing::Config.license_server_url = url if urls.size > 1
-            break
+            break response
           end
         rescue RestfulClientConnectionError => e
           logger.debug "Connection failed to #{url} with error: #{e.message}"
         end
 
         raise_restful_client_conn_error(urls) if response.nil?
-
-        raise RestfulClientError, format_error_from(response) unless response.success?
-
-        response.body
+        response
       end
 
       def handle_get_connection(url = nil)
