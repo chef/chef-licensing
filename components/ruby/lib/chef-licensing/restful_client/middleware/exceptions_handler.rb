@@ -8,7 +8,9 @@ module Middleware
     def call(env)
       @app.call(env)
     rescue Faraday::ConnectionFailed => e
-      raise ChefLicensing::RestfulClientConnectionError, e.message
+      ChefLicensing::Config.logger.debug("Connection failed to #{ChefLicensing::Config.license_server_url} with error: #{e.message}")
+      error_message = "Unable to connect to the licensing server at #{ChefLicensing::Config.license_server_url}.\nPlease check if the server is reachable and try again. #{ChefLicensing::Config.chef_product_name} requires server communication to operate."
+      raise ChefLicensing::RestfulClientConnectionError, error_message
     end
   end
 end
