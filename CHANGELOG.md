@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.4.42 -->
-## [0.4.42](https://github.com/chef/chef-licensing/tree/0.4.42) (2023-07-06)
+<!-- latest_release 0.4.43 -->
+## [0.4.43](https://github.com/chef/chef-licensing/tree/0.4.43) (2023-07-06)
 
 #### Merged Pull Requests
-- CHEF-3829: Clarify error message when license server is unreachable [#144](https://github.com/chef/chef-licensing/pull/144) ([ahasunos](https://github.com/ahasunos))
+- Set License ID string in gemspec to select LICENSE file [#146](https://github.com/chef/chef-licensing/pull/146) ([clintoncwolfe](https://github.com/clintoncwolfe))
 <!-- latest_release -->
 
 <!-- release_rollup -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Set License ID string in gemspec to select LICENSE file [#146](https://github.com/chef/chef-licensing/pull/146) ([clintoncwolfe](https://github.com/clintoncwolfe)) <!-- 0.4.43 -->
 - CHEF-3829: Clarify error message when license server is unreachable [#144](https://github.com/chef/chef-licensing/pull/144) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.42 -->
 - CHEF-3704 Updated description for `--chef-license-key` argument -  local licensing service mode [#139](https://github.com/chef/chef-licensing/pull/139) ([Nik08](https://github.com/Nik08)) <!-- 0.4.41 -->
 - CHEF-3726: Restrict setting certain options via arguments or environment variables; confine to config block only [#138](https://github.com/chef/chef-licensing/pull/138) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.40 -->
