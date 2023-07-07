@@ -37,6 +37,13 @@ RSpec.describe ChefLicensing::TUIEngine do
     }
   }
 
+  let(:additional_info_for_tui_engine) {
+    {
+      chef_product_name: ChefLicensing::Config.chef_product_name&.capitalize,
+      unit_measure: "targets",
+    }
+  }
+
   let(:free_license_generation_success_response) {
     {
       "delivery": "RealTime",
@@ -284,6 +291,7 @@ RSpec.describe ChefLicensing::TUIEngine do
     }
 
     it "generates the license successfully traversing through the interactions in expected order" do
+      expect { tui_engine.append_info_to_input(additional_info_for_tui_engine) }.to_not raise_error
       expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
       expect(tui_engine.traversed_interaction).to eq(expected_flow_for_license_generation)
       expect(prompt.output.string).to include("I don't have a license ID and would like to generate a new license ID")
@@ -483,12 +491,13 @@ RSpec.describe ChefLicensing::TUIEngine do
     }
 
     it "generates the license successfully traversing through the interactions in expected order" do
+      expect { tui_engine.append_info_to_input(additional_info_for_tui_engine) }.to_not raise_error
       expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
       expect(tui_engine.traversed_interaction).to eq(expected_flow_for_license_generation)
       expect(prompt.output.string).to include("I don't have a license ID and would like to generate a new license ID")
       expect(prompt.output.string).to include("Select the type of license below and then enter user details")
       expect(prompt.output.string).to include("2. Trial License")
-      expect(prompt.output.string).to include("No. of targets: Unlimited")
+      expect(prompt.output.string).to include("No. of units: Unlimited targets")
       expect(prompt.output.string).to include("Please enter the following details:\nFirst Name, Last Name, Email, Company, Phone")
       expect(prompt.output.string).to include("The license ID has been sent to johndoe@chef.com")
     end
@@ -692,12 +701,13 @@ RSpec.describe ChefLicensing::TUIEngine do
     }
 
     it "generates the license successfully traversing through the interactions in expected order" do
+      expect { tui_engine.append_info_to_input(additional_info_for_tui_engine) }.to_not raise_error
       expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
       expect(tui_engine.traversed_interaction).to eq(expected_flow_for_license_generation)
       expect(prompt.output.string).to include("I don't have a license ID and would like to generate a new license ID")
       expect(prompt.output.string).to include("Select the type of license below and then enter user details")
       expect(prompt.output.string).to include("2. Trial License")
-      expect(prompt.output.string).to include("No. of targets: Unlimited")
+      expect(prompt.output.string).to include("No. of units: Unlimited targets")
       expect(prompt.output.string).to include("Please enter the following details:\nFirst Name, Last Name, Email, Company, Phone")
       expect(prompt.output.string).to include("The license ID has been sent to johndoe@chef.com")
     end
@@ -709,6 +719,7 @@ RSpec.describe ChefLicensing::TUIEngine do
     let(:tui_engine) { described_class.new(opts) }
 
     it "shows the error message for expired license" do
+      expect { tui_engine.append_info_to_input(additional_info_for_tui_engine) }.to_not raise_error
       expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
       expect(tui_engine.traversed_interaction).to eq(%i{prompt_license_expired fetch_license_id})
       expect(prompt.output.string).to include("License Expired")
@@ -725,6 +736,7 @@ RSpec.describe ChefLicensing::TUIEngine do
     let(:tui_engine) { described_class.new(opts) }
 
     it "shows the error message for expired license" do
+      expect { tui_engine.append_info_to_input(additional_info_for_tui_engine) }.to_not raise_error
       expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
       expect(tui_engine.traversed_interaction).to eq(%i{prompt_license_expired_local_mode fetch_license_id})
       expect(prompt.output.string).to include("License Expired")
