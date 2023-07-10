@@ -5,6 +5,7 @@ require "date"
 require "fileutils" unless defined?(FileUtils)
 require_relative "../license_key_fetcher"
 require_relative "../config"
+require_relative "../exceptions/invalid_file_format_version"
 
 module ChefLicensing
   class LicenseKeyFetcher
@@ -211,7 +212,7 @@ module ChefLicensing
           @contents
         else
           logger.debug "License File version #{@contents[:file_format_version]} not supported."
-          raise LicenseKeyNotFetchedError.new("License File version #{@contents[:file_format_version]} not supported.")
+          raise ChefLicensing::InvalidFileFormatVersion.new("Unable to read licenses. License File version #{@contents[:file_format_version]} not supported.")
         end
       end
 
