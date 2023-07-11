@@ -269,6 +269,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         gather_user_last_name_for_license_generation
         validate_user_last_name_for_license_generation
         gather_user_email_for_license_generation
+        gather_user_email_for_free_license_generation
         validate_user_email_for_license_generation
         gather_user_company_for_license_generation
         validate_user_company_name_for_license_generation
@@ -469,6 +470,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         gather_user_last_name_for_license_generation
         validate_user_last_name_for_license_generation
         gather_user_email_for_license_generation
+        gather_user_email_for_trial_license_generation
         validate_user_email_for_license_generation
         gather_user_company_for_license_generation
         validate_user_company_name_for_license_generation
@@ -671,6 +673,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         gather_user_last_name_for_license_generation
         validate_user_last_name_for_license_generation
         gather_user_email_for_license_generation
+        gather_user_email_for_free_license_generation
         validate_user_email_for_license_generation
         gather_user_company_for_license_generation
         validate_user_company_name_for_license_generation

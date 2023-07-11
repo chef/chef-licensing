@@ -80,7 +80,7 @@ module ChefLicensing
       end
 
       def is_email_valid?(input)
-        (input[:gather_user_email_for_license_generation] =~ URI::MailTo::EMAIL_REGEXP) == 0
+        (gather_user_email_for_license_generation(input) =~ URI::MailTo::EMAIL_REGEXP) == 0
       end
 
       def is_company_name_valid?(input)
@@ -147,7 +147,7 @@ module ChefLicensing
       def are_user_details_present?(inputs)
         inputs.key?(:gather_user_first_name_for_license_generation) &&
           inputs.key?(:gather_user_last_name_for_license_generation) &&
-          inputs.key?(:gather_user_email_for_license_generation) &&
+          gather_user_email_for_license_generation(inputs) &&
           inputs.key?(:gather_user_company_for_license_generation) &&
           inputs.key?(:gather_user_phone_no_for_license_generation)
       end
@@ -187,6 +187,19 @@ module ChefLicensing
         end
       end
 
+      def get_license_type_selected_for_generation(input)
+        # License generation only allowed for trial and free licenses
+        if input[:free_license_selection]
+          "free"
+        elsif input[:trial_license_selection]
+          "trial"
+        end
+      end
+
+      def gather_user_email_for_license_generation(input)
+        input[:gather_user_email_for_trial_license_generation] || input[:gather_user_email_for_free_license_generation]
+      end
+
       private
 
       attr_accessor :opts
@@ -197,7 +210,7 @@ module ChefLicensing
         self.license_id = ChefLicensing::LicenseKeyGenerator.send("generate_#{license_type}_license!",
           first_name: inputs[:gather_user_first_name_for_license_generation],
           last_name: inputs[:gather_user_last_name_for_license_generation],
-          email_id: inputs[:gather_user_email_for_license_generation],
+          email_id: gather_user_email_for_license_generation(inputs),
           product: ChefLicensing::Config.chef_product_name&.capitalize,
           company: inputs[:gather_user_company_for_license_generation],
           phone: inputs[:gather_user_phone_no_for_license_generation])
