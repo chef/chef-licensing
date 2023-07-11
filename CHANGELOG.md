@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.4.43 -->
-## [0.4.43](https://github.com/chef/chef-licensing/tree/0.4.43) (2023-07-06)
+<!-- latest_release 0.4.44 -->
+## [0.4.44](https://github.com/chef/chef-licensing/tree/0.4.44) (2023-07-11)
 
 #### Merged Pull Requests
-- Set License ID string in gemspec to select LICENSE file [#146](https://github.com/chef/chef-licensing/pull/146) ([clintoncwolfe](https://github.com/clintoncwolfe))
+- CHEF-4068: Modify expeditor config to publish to rubygems on promote [#147](https://github.com/chef/chef-licensing/pull/147) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=0.4.43 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-4068: Modify expeditor config to publish to rubygems on promote [#147](https://github.com/chef/chef-licensing/pull/147) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.44 -->
 - Set License ID string in gemspec to select LICENSE file [#146](https://github.com/chef/chef-licensing/pull/146) ([clintoncwolfe](https://github.com/clintoncwolfe)) <!-- 0.4.43 -->
 - CHEF-3829: Clarify error message when license server is unreachable [#144](https://github.com/chef/chef-licensing/pull/144) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.42 -->
 - CHEF-3704 Updated description for `--chef-license-key` argument -  local licensing service mode [#139](https://github.com/chef/chef-licensing/pull/139) ([Nik08](https://github.com/Nik08)) <!-- 0.4.41 -->
