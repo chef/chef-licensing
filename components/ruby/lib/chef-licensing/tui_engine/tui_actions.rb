@@ -144,6 +144,15 @@ module ChefLicensing
         inputs.delete(:commercial_license_selection)
       end
 
+      def clear_current_user_details(inputs)
+        inputs.delete(:gather_user_first_name_for_license_generation)
+        inputs.delete(:gather_user_last_name_for_license_generation)
+        inputs.delete(:gather_user_company_for_license_generation)
+        inputs.delete(:gather_user_phone_no_for_license_generation)
+        inputs.delete(:gather_user_email_for_trial_license_generation)
+        inputs.delete(:gather_user_email_for_free_license_generation)
+      end
+
       def are_user_details_present?(inputs)
         inputs.key?(:gather_user_first_name_for_license_generation) &&
           inputs.key?(:gather_user_last_name_for_license_generation) &&
