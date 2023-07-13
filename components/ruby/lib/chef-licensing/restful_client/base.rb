@@ -91,18 +91,20 @@ module ChefLicensing
         handle_connection = http_method == :get ? method(:handle_get_connection) : method(:handle_post_connection)
         response = nil
         urls.each do |url|
+          logger.debug "Trying to connect to #{url}"
           handle_connection.call(url) do |connection|
             response = connection.send(http_method, endpoint) do |request|
               request.body = payload.to_json if payload
               request.params = params if params
               request.headers = headers if headers
             end
-            # Update the value of license server url in config if there are multiple urls
-            ChefLicensing::Config.license_server_url = url if urls.size > 1
-            break response
           end
+          # Update the value of license server url in config if there are multiple urls
+          ChefLicensing::Config.license_server_url = url if urls.size > 1
+          logger.debug "Connection succeeded to #{url}"
+          break response
         rescue RestfulClientConnectionError => e
-          logger.debug "Connection failed to #{url} with error: #{e.message}"
+          logger.warn "Connection failed to #{url}"
         end
 
         raise_restful_client_conn_error(urls) if response.nil?

@@ -61,7 +61,8 @@ RSpec.describe ChefLicensing::RestfulClient::V1 do
 
     it "finds a URL which is reachable and invokes the endpoint with that URL" do
       expect(base_obj.validate(free_license_key).data).to eq(true)
-      expect(output.string).to include("Connection failed to http://localhost-1-license-server/License with error")
+      expect(output.string).to include("Connection succeeded to http://localhost-2-license-server/License")
+      expect(output.string).to include("Connection failed to http://localhost-1-license-server/License")
       # it updates the config with the reachable URL
       expect(ChefLicensing::Config.license_server_url).to eq("http://localhost-2-license-server/License")
     end
