@@ -90,7 +90,10 @@ module ChefLicensing
       def invoke_api(urls, endpoint, http_method, payload = nil, params = {}, headers = {})
         handle_connection = http_method == :get ? method(:handle_get_connection) : method(:handle_post_connection)
         response = nil
-        urls.each do |url|
+        # Note: Current limit is set to 5 attempts for trying to connect to the server
+        n = urls.size > 5 ? 5 : urls.size
+        n.times do |i|
+          url = urls[i]
           logger.debug "Trying to connect to #{url}"
           handle_connection.call(url) do |connection|
             response = connection.send(http_method, endpoint) do |request|
@@ -103,7 +106,7 @@ module ChefLicensing
           ChefLicensing::Config.license_server_url = url if urls.size > 1
           logger.debug "Connection succeeded to #{url}"
           break response
-        rescue RestfulClientConnectionError => e
+        rescue RestfulClientConnectionError
           logger.warn "Connection failed to #{url}"
         end
 
