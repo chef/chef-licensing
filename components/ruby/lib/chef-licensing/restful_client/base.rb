@@ -108,6 +108,8 @@ module ChefLicensing
           break response
         rescue RestfulClientConnectionError
           logger.warn "Connection failed to #{url}"
+        rescue URI::InvalidURIError
+          logger.warn "Invalid URI #{url}"
         end
 
         raise_restful_client_conn_error(urls) if response.nil?
