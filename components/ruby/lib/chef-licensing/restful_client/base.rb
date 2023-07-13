@@ -93,7 +93,7 @@ module ChefLicensing
         # Note: Current limit is set to 5 attempts for trying to connect to the server
         n = urls.size > 5 ? 5 : urls.size
         n.times do |i|
-          url = urls[i]
+          url = urls[i].strip
           logger.debug "Trying to connect to #{url}"
           handle_connection.call(url) do |connection|
             response = connection.send(http_method, endpoint) do |request|
