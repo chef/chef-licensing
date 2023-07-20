@@ -90,7 +90,7 @@ module ChefLicensing
       def invoke_api(urls, endpoint, http_method, payload = nil, params = {}, headers = {})
         handle_connection = http_method == :get ? method(:handle_get_connection) : method(:handle_post_connection)
         response = nil
-        # Note: Current limit is set to 5 attempts for trying to connect to the server
+        # Note: Limiting the number of retries for different urls to 5 or less (if there are less than 5 urls)
         n = urls.size > 5 ? 5 : urls.size
         n.times do |i|
           url = urls[i].strip
@@ -102,7 +102,8 @@ module ChefLicensing
               request.headers = headers if headers
             end
           end
-          # Update the value of license server url in config if there are multiple urls
+          # At this point, we have a successful connection
+          # Update the value of license server url in config if there are multiple urls and break the loop
           ChefLicensing::Config.license_server_url = url if urls.size > 1
           logger.debug "Connection succeeded to #{url}"
           break response

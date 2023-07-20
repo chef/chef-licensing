@@ -137,4 +137,34 @@ RSpec.describe ChefLicensing::RestfulClient::V1 do
       expect(ChefLicensing::Config.license_server_url).to eq("http://localhost-2-license-server/License")
     end
   end
+
+  context "when more than 5 license_server_url is set in config" do
+
+    let(:urls) { "http://localhost-2-license-server/License, http://localhost-2-license-server/License, http://localhost-2-license-server/License, http://localhost-2-license-server/License, http://localhost-2-license-server/License, http://localhost-2-license-server/License, http://localhost-2-license-server/License" }
+
+    before do
+      ChefLicensing.configure do |config|
+        config.logger = logger
+        config.output = output
+        config.license_server_url = urls
+        config.license_server_url_check_in_file = true
+        config.chef_product_name = "inspec"
+        config.chef_entitlement_id = "3ff52c37-e41f-4f6c-ad4d-365192205968"
+      end
+    end
+
+    before do
+      # stub the first url to be unreachable
+      stub_request(:get, "http://localhost-2-license-server/License/v1/validate")
+        .with(query: { licenseId: free_license_key, version: 2 })
+        .to_raise(Errno::ECONNREFUSED)
+    end
+
+    let(:base_obj) { described_class.new }
+
+    it "breaks after 5th attempt and raises an error" do
+      expect { base_obj.validate(free_license_key) }.to raise_error(ChefLicensing::RestfulClientConnectionError, /Unable to connect to the licensing server. inspec requires server communication to operate/ )
+      expect(output.string).to include("Connection failed to http://localhost-2-license-server/License")
+    end
+  end
 end
