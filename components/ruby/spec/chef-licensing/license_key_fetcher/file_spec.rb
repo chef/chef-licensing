@@ -34,7 +34,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
     it "raises error for unsupported version of license file with wrong version" do
       Dir.mktmpdir do |tmpdir|
         file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: unsupported_vesion_license_dir })
-        expect { file_fetcher.fetch }.to raise_error(RuntimeError, /License File version 0.0.0 not supported./)
+        expect { file_fetcher.fetch }.to raise_error(ChefLicensing::InvalidFileFormatVersion, /License File version 0.0.0 not supported./)
       end
     end
 

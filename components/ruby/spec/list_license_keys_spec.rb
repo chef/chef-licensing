@@ -97,8 +97,7 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
     end
 
     it "exits with error message about LicenseKeyNotFetchedError" do
-      expect { described_class.new(opts_for_llk).display }.to raise_error(SystemExit)
-      expect(output_stream.string).to include("Error occured while fetching license keys from disk")
+      expect { described_class.new(opts_for_llk).display }.to raise_error(ChefLicensing::InvalidFileFormatVersion, /License File version 0.0.0 not supported./)
     end
   end
 
