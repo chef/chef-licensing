@@ -1,9 +1,17 @@
 # Changelog
 
-<!-- latest_release -->
+<!-- latest_release 0.4.45 -->
+## [0.4.45](https://github.com/chef/chef-licensing/tree/0.4.45) (2023-07-21)
+
+#### Merged Pull Requests
+- CHEF-3843: Update exception class for invalid file format version of licenses.yaml [#148](https://github.com/chef/chef-licensing/pull/148) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=0.4.44 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- CHEF-3843: Update exception class for invalid file format version of licenses.yaml [#148](https://github.com/chef/chef-licensing/pull/148) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.45 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
@@ -124,4 +132,3 @@
 - Set License ID string in gemspec to select LICENSE file [#146](https://github.com/chef/chef-licensing/pull/146) ([clintoncwolfe](https://github.com/clintoncwolfe))
 - CHEF-4068: Modify expeditor config to publish to rubygems on promote [#147](https://github.com/chef/chef-licensing/pull/147) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_stable_release -->
-
