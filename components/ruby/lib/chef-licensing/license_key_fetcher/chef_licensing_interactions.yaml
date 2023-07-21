@@ -372,6 +372,18 @@ interactions:
     paths: [gather_user_last_name_for_license_generation]
 
   gather_user_email_for_license_generation:
+    action: get_license_type_selected_for_generation
+    paths: [gather_user_email_for_trial_license_generation, gather_user_email_for_free_license_generation]
+    response_path_map:
+      "trial": gather_user_email_for_trial_license_generation
+      "free": gather_user_email_for_free_license_generation
+
+  gather_user_email_for_trial_license_generation:
+    messages: "Enter Email Address (Business email is mandatory for a trial license):"
+    prompt_type: "ask"
+    paths: [validate_user_email_for_license_generation]
+
+  gather_user_email_for_free_license_generation:
     messages: "Enter Email Address: "
     prompt_type: "ask"
     paths: [validate_user_email_for_license_generation]
@@ -434,7 +446,7 @@ interactions:
 
         First Name: <%= input[:gather_user_first_name_for_license_generation] %>
         Last Name: <%= input[:gather_user_last_name_for_license_generation] %>
-        Email: <%= input[:gather_user_email_for_license_generation] %>
+        Email: <%= input[:gather_user_email_for_trial_license_generation] || input[:gather_user_email_for_free_license_generation] %>
         Company: <%= input[:gather_user_company_for_license_generation] %>
         Phone number: <%= input[:gather_user_phone_no_for_license_generation] %>
       ------------------------------------------------------------
@@ -444,12 +456,16 @@ interactions:
   ask_for_review_confirmation:
     prompt_type: "select"
     messages: ["Please select", ["Confirm the details and proceed", "Reselect the license type", "Edit user details", "Quit the license generation process"]]
-    paths: [pre_license_generation, clear_current_license_type_selection, ask_for_user_details, exit]
+    paths: [pre_license_generation, clear_current_license_type_selection, clear_current_user_details, exit]
     response_path_map:
       "Confirm the details and proceed": pre_license_generation
       "Reselect the license type": clear_current_license_type_selection
-      "Edit user details": ask_for_user_details
+      "Edit user details": clear_current_user_details
       "Quit the license generation process": exit
+
+  clear_current_user_details:
+    action: clear_current_user_details
+    paths: [ask_for_user_details]
 
   clear_current_license_type_selection:
     action: clear_license_type_selection
@@ -480,14 +496,14 @@ interactions:
     messages: |
       <%= input[:pastel].green("✔ [Success] License generated successfully") %>
 
-      The license ID has been sent to <%= input[:gather_user_email_for_license_generation] %>.
+      The license ID has been sent to <%= input[:gather_user_email_for_trial_license_generation] || input[:gather_user_email_for_free_license_generation] %>.
     paths: [ask_for_license_id]
 
   trial_license_generation_success:
     messages: |
       <%= input[:pastel].green("✔ [Success] License generated successfully") %>
 
-      The license ID has been sent to <%= input[:gather_user_email_for_license_generation] %>.
+      The license ID has been sent to <%= input[:gather_user_email_for_trial_license_generation] || input[:gather_user_email_for_free_license_generation] %>.
     paths: [ask_for_license_id]
 
   fetch_license_id:

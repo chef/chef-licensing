@@ -269,6 +269,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         gather_user_last_name_for_license_generation
         validate_user_last_name_for_license_generation
         gather_user_email_for_license_generation
+        gather_user_email_for_free_license_generation
         validate_user_email_for_license_generation
         gather_user_company_for_license_generation
         validate_user_company_name_for_license_generation
@@ -469,6 +470,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         gather_user_last_name_for_license_generation
         validate_user_last_name_for_license_generation
         gather_user_email_for_license_generation
+        gather_user_email_for_trial_license_generation
         validate_user_email_for_license_generation
         gather_user_company_for_license_generation
         validate_user_company_name_for_license_generation
@@ -671,6 +673,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         gather_user_last_name_for_license_generation
         validate_user_last_name_for_license_generation
         gather_user_email_for_license_generation
+        gather_user_email_for_free_license_generation
         validate_user_email_for_license_generation
         gather_user_company_for_license_generation
         validate_user_company_name_for_license_generation
@@ -709,6 +712,104 @@ RSpec.describe ChefLicensing::TUIEngine do
       expect(prompt.output.string).to include("2. Trial License")
       expect(prompt.output.string).to include("No. of units: Unlimited targets")
       expect(prompt.output.string).to include("Please enter the following details:\nFirst Name, Last Name, Email, Company, Phone")
+      expect(prompt.output.string).to include("The license ID has been sent to johndoe@chef.com")
+    end
+  end
+
+  context "user selects free license and changes the license type to trial and also edits user details" do
+    let(:start_interaction) { :start }
+
+    before do
+      prompt.input << simulate_down_arrow
+      prompt.input << "\n\n"
+      prompt.input << "John\nDoe\njohndoe@chef.com\nProgress Chef\n123-456-7890\n"
+      prompt.input << simulate_down_arrow
+      prompt.input << "\n"
+      prompt.input << simulate_down_arrow
+      prompt.input << "\n"
+      prompt.input << simulate_down_arrow
+      prompt.input << simulate_down_arrow
+      prompt.input << "\n"
+      prompt.input << "John\nDoe\njohndoe@chef.com\nProgress Chef\n123-456-7890\n"
+      prompt.input << "\n"
+      prompt.input << valid_trial_license_key
+      prompt.input << "\n"
+      prompt.input.rewind
+    end
+
+    let(:tui_engine) { described_class.new(opts) }
+
+    let(:expected_flow_for_license_generation) {
+      %i{
+        start
+        ask_if_user_has_license_id
+        info_of_license_types
+        filter_license_type_options
+        ask_for_all_license_type
+        free_license_disclaimer
+        free_license_selection
+        check_if_user_details_are_present
+        ask_for_user_details
+        gather_user_first_name_for_license_generation
+        validate_user_first_name_for_license_generation
+        gather_user_last_name_for_license_generation
+        validate_user_last_name_for_license_generation
+        gather_user_email_for_license_generation
+        gather_user_email_for_free_license_generation
+        validate_user_email_for_license_generation
+        gather_user_company_for_license_generation
+        validate_user_company_name_for_license_generation
+        gather_user_phone_no_for_license_generation
+        validate_user_phone_no
+        print_to_review_details
+        ask_for_review_confirmation
+        clear_current_license_type_selection
+        info_of_license_types
+        filter_license_type_options
+        ask_for_all_license_type
+        trial_license_selection
+        check_if_user_details_are_present
+        print_to_review_details
+        ask_for_review_confirmation
+        clear_current_user_details
+        ask_for_user_details
+        gather_user_first_name_for_license_generation
+        validate_user_first_name_for_license_generation
+        gather_user_last_name_for_license_generation
+        validate_user_last_name_for_license_generation
+        gather_user_email_for_license_generation
+        gather_user_email_for_trial_license_generation
+        validate_user_email_for_license_generation
+        gather_user_company_for_license_generation
+        validate_user_company_name_for_license_generation
+        gather_user_phone_no_for_license_generation
+        validate_user_phone_no
+        print_to_review_details
+        ask_for_review_confirmation
+        pre_license_generation
+        generate_trial_license
+        trial_license_generation_success
+        ask_for_license_id
+        validate_license_id_pattern
+        validate_license_id_with_api
+        validate_license_restriction
+        validate_license_expiration
+        validation_success
+        display_license_info
+        fetch_license_id
+      }
+    }
+
+    it "generates the license successfully traversing through the interactions in expected order" do
+      expect { tui_engine.append_info_to_input(additional_info_for_tui_engine) }.to_not raise_error
+      expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
+      expect(tui_engine.traversed_interaction).to eq(expected_flow_for_license_generation)
+      expect(prompt.output.string).to include("I don't have a license ID and would like to generate a new license ID")
+      expect(prompt.output.string).to include("Select the type of license below and then enter user details")
+      expect(prompt.output.string).to include("2. Trial License")
+      expect(prompt.output.string).to include("No. of units: Unlimited targets")
+      expect(prompt.output.string).to include("Please enter the following details:\nFirst Name, Last Name, Email, Company, Phone")
+      expect(prompt.output.string).to include("Enter Email Address (Business email is mandatory for a trial license)")
       expect(prompt.output.string).to include("The license ID has been sent to johndoe@chef.com")
     end
   end
