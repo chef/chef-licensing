@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.4.45 -->
-## [0.4.45](https://github.com/chef/chef-licensing/tree/0.4.45) (2023-07-21)
+<!-- latest_release 0.4.46 -->
+## [0.4.46](https://github.com/chef/chef-licensing/tree/0.4.46) (2023-07-21)
 
 #### Merged Pull Requests
-- CHEF-3843: Update exception class for invalid file format version of licenses.yaml [#148](https://github.com/chef/chef-licensing/pull/148) ([ahasunos](https://github.com/ahasunos))
+- CHEF-3900 Text changes for email address form for trial generation [#149](https://github.com/chef/chef-licensing/pull/149) ([Nik08](https://github.com/Nik08))
 <!-- latest_release -->
 
 <!-- release_rollup since=0.4.44 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-3900 Text changes for email address form for trial generation [#149](https://github.com/chef/chef-licensing/pull/149) ([Nik08](https://github.com/Nik08)) <!-- 0.4.46 -->
 - CHEF-3843: Update exception class for invalid file format version of licenses.yaml [#148](https://github.com/chef/chef-licensing/pull/148) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.45 -->
 <!-- release_rollup -->
 
