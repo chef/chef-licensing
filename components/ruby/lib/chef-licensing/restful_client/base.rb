@@ -22,6 +22,7 @@ module ChefLicensing
       }.freeze
 
       CURRENT_ENDPOINT_VERSION = 2
+      REQUEST_LIMIT = 5
 
       def initialize
         raise MissingAPICredentialsError, "Missing credential in config: Set in block chef_license_server or use environment variable CHEF_LICENSE_SERVER or pass through argument --chef-license-server" if ChefLicensing::Config.license_server_url.nil?
@@ -90,10 +91,14 @@ module ChefLicensing
       def invoke_api(urls, endpoint, http_method, payload = nil, params = {}, headers = {})
         handle_connection = http_method == :get ? method(:handle_get_connection) : method(:handle_post_connection)
         response = nil
-        # Note: Limiting the number of retries for different urls to 5 or less (if there are less than 5 urls)
-        n = urls.size > 5 ? 5 : urls.size
-        n.times do |i|
-          url = urls[i].strip
+        attempted_urls = []
+
+        logger.warn "Only the first #{REQUEST_LIMIT} urls will be tried." if urls.size > REQUEST_LIMIT
+        urls.each_with_index do |url, i|
+          url = url.strip
+          attempted_urls << url
+          break if i == REQUEST_LIMIT - 1
+
           logger.debug "Trying to connect to #{url}"
           handle_connection.call(url) do |connection|
             response = connection.send(http_method, endpoint) do |request|
@@ -103,8 +108,8 @@ module ChefLicensing
             end
           end
           # At this point, we have a successful connection
-          # Update the value of license server url in config if there are multiple urls and break the loop
-          ChefLicensing::Config.license_server_url = url if urls.size > 1
+          # Update the value of license server url in config
+          ChefLicensing::Config.license_server_url = url
           logger.debug "Connection succeeded to #{url}"
           break response
         rescue RestfulClientConnectionError
@@ -113,7 +118,7 @@ module ChefLicensing
           logger.warn "Invalid URI #{url}"
         end
 
-        raise_restful_client_conn_error(urls) if response.nil?
+        raise_restful_client_conn_error(attempted_urls) if response.nil?
         response
       end
 

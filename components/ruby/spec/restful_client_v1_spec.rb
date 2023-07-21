@@ -164,6 +164,7 @@ RSpec.describe ChefLicensing::RestfulClient::V1 do
 
     it "breaks after 5th attempt and raises an error" do
       expect { base_obj.validate(free_license_key) }.to raise_error(ChefLicensing::RestfulClientConnectionError, /Unable to connect to the licensing server. inspec requires server communication to operate/ )
+      expect(output.string).to include("Only the first 5 urls will be tried")
       expect(output.string).to include("Connection failed to http://localhost-2-license-server/License")
     end
   end
