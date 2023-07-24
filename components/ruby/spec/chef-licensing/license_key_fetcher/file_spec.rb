@@ -9,11 +9,15 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
   let(:license_key_file) { "licenses.yaml" }
   let(:unsupported_vesion_license_dir) { "spec/fixtures/unsupported_version_license" }
   let(:multiple_keys_license_dir) { "spec/fixtures/multiple_license_keys_license" }
-  let(:logger) { Logger.new(StringIO.new) }
+  let(:output) { StringIO.new }
+  let(:logger) { Logger.new(output) }
+  let(:v3_license_dir) { "spec/fixtures/v3_licenses" }
 
   before do
     ChefLicensing.configure do |config|
       config.logger = logger
+      config.license_server_url = "https://license.chef.io"
+      config.license_server_url_check_in_file = true
     end
   end
 
@@ -41,6 +45,19 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
     it "returns multiple license keys from a license file" do
       file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: multiple_keys_license_dir })
       expect(file_fetcher.fetch).to eq(%w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150 free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111})
+    end
+
+    it "loads license from a version 3 license file and upgrades it to version 4" do
+      Dir.mktmpdir do |tmpdir|
+        FileUtils.cp_r("#{v3_license_dir}/licenses.yaml", tmpdir)
+        file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: tmpdir })
+        expect(file_fetcher.fetch).to eq(["free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111"])
+        expect(output.string).to include("License File version 3.0.0 is deprecated")
+        expect(output.string).to include("Automatically migrating license file to version 4.0.0")
+        file_contents = YAML.load_file("#{tmpdir}/licenses.yaml")
+        expect(file_contents[:file_format_version]).to eq("4.0.0")
+        expect(file_contents[:license_server_url]).to eq("https://license.chef.io")
+      end
     end
   end
 
