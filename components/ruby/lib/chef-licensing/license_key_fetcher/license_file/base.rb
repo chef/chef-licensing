@@ -12,6 +12,9 @@ module ChefLicensing
         ],
       }.freeze
 
+      # @param [Hash] data: The data to verify
+      # @param [Hash] expected_structure: The structure to verify against
+      # @return [Boolean] true if the data matches the expected structure, false otherwise
       def self.verify_structure(data, expected_structure = self::EXPECTED_STRUCTURE)
         return false unless data.is_a?(Hash)
 
@@ -36,16 +39,21 @@ module ChefLicensing
         true
       end
 
+      # @return [Hash] The primary structure of the license file, without nested structures
       def self.load_primary_structure
         expected_structure_dup = self::EXPECTED_STRUCTURE.dup
         expected_structure_dup[:licenses] = []
         expected_structure_dup
       end
 
+      # @return [Hash] The complete structure of the license file, including nested structures
       def self.load_structure
         self::EXPECTED_STRUCTURE
       end
 
+      # @param [Hash] contents: The contents of the license file
+      # @param [Integer] version: The version of the license file
+      # @return [Hash] The contents of the license file after migration
       def self.migrate_structure(contents, version)
         raise NotImplementedError, "#{self.class} has not implemented method '#{__method__}'"
       end

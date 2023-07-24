@@ -11,6 +11,9 @@ module ChefLicensing
         license_server_url: String,
       }).freeze
 
+      # @param [Hash] contents: The contents of the license file
+      # @param [Integer] version: The version of the license file
+      # @return [Hash] The contents of the license file after migration
       def self.migrate_structure(contents, version)
         # Backwards compatibility for version 3 license files
         if version == 3
