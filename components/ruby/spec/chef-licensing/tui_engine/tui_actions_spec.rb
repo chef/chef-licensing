@@ -45,5 +45,15 @@ RSpec.describe ChefLicensing::TUIEngine::TUIActions do
         expect(tui_actions.is_company_name_valid?({ gather_user_company_for_license_generation: company_name })).to be_falsey
       end
     end
+
+    unhandled_company_names = [
+      "A  " # 3 characters, but by using space
+    ]
+
+    unhandled_company_names.each do |company_name|
+      it "should return false but returns true for unhandled company name '#{company_name}'" do
+        expect(tui_actions.is_company_name_valid?({ gather_user_company_for_license_generation: company_name })).to be_truthy
+      end
+    end
   end
 end
