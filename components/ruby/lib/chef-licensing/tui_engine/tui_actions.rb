@@ -84,7 +84,12 @@ module ChefLicensing
       end
 
       def is_company_name_valid?(input)
-        (input[:gather_user_company_for_license_generation] =~ /\A[a-zA-Z0-9][a-zA-Z0-9\W_]{2,15}\z/) == 0
+        # Current validation:
+        # The string cannot start with a space.
+        # The string must have a minimum of three characters and a maximum of 20 characters.
+        # The string can contain any combination of characters, including special characters, alphanumeric characters, and spaces.
+        # The string can have additional words separated by spaces, but the total length of the entire cannot exceed 20.
+        (input[:gather_user_company_for_license_generation] =~ /\A(?=.{3,20}\z)(?! )[\w\W]{1,}( [\w\W]+){0,19}\z/) == 0
       end
 
       def is_phone_no_valid?(input)
