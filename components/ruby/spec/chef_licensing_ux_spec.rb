@@ -300,6 +300,10 @@ RSpec.describe ChefLicensing::TUIEngine do
       expect(prompt.output.string).to include("A Free License can be used for personal, non-commercial use only.")
       expect(prompt.output.string).to include("Please enter the following details:\nFirst Name, Last Name, Email, Company, Phone")
       expect(prompt.output.string).to include("The license ID has been sent to johndoe@chef.com")
+      expect(prompt.output.string).to include("By requesting a license you agree to receive email communications from Progress Software")
+      expect(prompt.output.string).to include("or its Partners, containing information about Progress Software’s products.")
+      expect(prompt.output.string).to include("I acknowledge my data will be used in accordance with Progress' Privacy Policy")
+      expect(prompt.output.string).to include("and understand I may withdraw my consent at any time.")
     end
   end
 
@@ -502,6 +506,10 @@ RSpec.describe ChefLicensing::TUIEngine do
       expect(prompt.output.string).to include("No. of units: Unlimited targets")
       expect(prompt.output.string).to include("Please enter the following details:\nFirst Name, Last Name, Email, Company, Phone")
       expect(prompt.output.string).to include("The license ID has been sent to johndoe@chef.com")
+      expect(prompt.output.string).to include("By requesting a license you agree to receive email communications from Progress Software")
+      expect(prompt.output.string).to include("or its Partners, containing information about Progress Software’s products.")
+      expect(prompt.output.string).to include("I acknowledge my data will be used in accordance with Progress' Privacy Policy")
+      expect(prompt.output.string).to include("and understand I may withdraw my consent at any time.")
     end
   end
 
