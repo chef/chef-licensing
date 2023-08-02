@@ -47,7 +47,7 @@ RSpec.describe ChefLicensing::TUIEngine::TUIActions do
     end
 
     unhandled_company_names = [
-      "A  " # 3 characters, but by using space
+      "A  ", # 3 characters, but by using space
     ]
 
     unhandled_company_names.each do |company_name|
