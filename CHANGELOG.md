@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.5.0 -->
-## [0.5.0](https://github.com/chef/chef-licensing/tree/0.5.0) (2023-07-25)
+<!-- latest_release 0.5.1 -->
+## [0.5.1](https://github.com/chef/chef-licensing/tree/0.5.1) (2023-08-02)
 
 #### Merged Pull Requests
-- CHEF-4087: Feature support multiple license server URLs  [#145](https://github.com/chef/chef-licensing/pull/145) ([ahasunos](https://github.com/ahasunos))
+- CHEF-5063: Add GDPR notice before asking user details [#151](https://github.com/chef/chef-licensing/pull/151) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup since=0.4.44 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-5063: Add GDPR notice before asking user details [#151](https://github.com/chef/chef-licensing/pull/151) ([ahasunos](https://github.com/ahasunos)) <!-- 0.5.1 -->
 - CHEF-4087: Feature support multiple license server URLs  [#145](https://github.com/chef/chef-licensing/pull/145) ([ahasunos](https://github.com/ahasunos)) <!-- 0.5.0 -->
 - CHEF-3900 Text changes for email address form for trial generation [#149](https://github.com/chef/chef-licensing/pull/149) ([Nik08](https://github.com/Nik08)) <!-- 0.4.46 -->
 - CHEF-3843: Update exception class for invalid file format version of licenses.yaml [#148](https://github.com/chef/chef-licensing/pull/148) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.45 -->
