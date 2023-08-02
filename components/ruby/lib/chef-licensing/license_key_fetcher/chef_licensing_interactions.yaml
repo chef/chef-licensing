@@ -332,6 +332,11 @@ interactions:
 
   ask_for_user_details:
     messages: |
+      By requesting a license you agree to receive email communications from Progress Software
+      or its Partners, containing information about Progress Software’s products.
+      I acknowledge my data will be used in accordance with Progress' Privacy Policy
+      and understand I may withdraw my consent at any time.
+
       Please enter the following details:
       First Name, Last Name, Email, Company, Phone
 
