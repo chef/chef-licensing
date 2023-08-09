@@ -212,6 +212,9 @@ module ChefLicensing
         # only checking for major version for file format for breaking changes
         @contents ||= YAML.load(::File.read(path))
 
+        # raise error if the file_format_version key is missing
+        raise LicenseFileCorrupted.new("Unrecognized license file; :file_format_version missing.") unless @contents.key?(:file_format_version)
+
         # Three possible cases after loading the license file contents:
         # 1. If the file format version is the same as the current version (latest), verify the structure and return the contents.
         # 2. If the file format version is different but supported, migrate the contents to the current version and return them.

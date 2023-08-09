@@ -12,6 +12,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
   let(:output) { StringIO.new }
   let(:logger) { Logger.new(output) }
   let(:v3_license_dir) { "spec/fixtures/v3_licenses" }
+  let(:license_file_without_file_format_version) { "spec/fixtures/license_file_without_file_format_version" }
 
   before do
     ChefLicensing.configure do |config|
@@ -57,6 +58,14 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
         file_contents = YAML.load_file("#{tmpdir}/licenses.yaml")
         expect(file_contents[:file_format_version]).to eq("4.0.0")
         expect(file_contents[:license_server_url]).to eq("https://license.chef.io")
+      end
+    end
+
+    it "raises an error if file_format_version is not present" do
+      Dir.mktmpdir do |tmpdir|
+        FileUtils.cp_r("#{license_file_without_file_format_version}/licenses.yaml", tmpdir)
+        file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: tmpdir })
+        expect { file_fetcher.fetch }.to raise_error(ChefLicensing::LicenseFileCorrupted, /Unrecognized license file; :file_format_version missing./)
       end
     end
   end
