@@ -5,6 +5,9 @@ require "date"
 require "fileutils" unless defined?(FileUtils)
 require_relative "../license_key_fetcher"
 require_relative "../config"
+require_relative "../exceptions/license_file_corrupted"
+require_relative "license_file/v4"
+require_relative "license_file/v3"
 require_relative "../exceptions/invalid_file_format_version"
 
 module ChefLicensing
@@ -119,15 +122,15 @@ module ChefLicensing
 
         @contents = load_license_file(license_key_file_path)
 
+        # Two possible cases:
+        # 1. If contents is nil, load basic license data with the latest structure.
+        # 2. If contents is not nil, but the license server URL in contents is different from the system's,
+        #    update the license server URL in contents and licenses.yaml file.
         if @contents.nil?
-          @contents = {
-            file_format_version: LICENSE_FILE_FORMAT_VERSION,
-            license_server_url: license_server_url_from_system || license_server_url_from_config,
-          }
-        else
-          if license_server_url_from_system && license_server_url_from_system != @contents[:license_server_url]
-            @contents[:license_server_url] = license_server_url_from_system
-          end
+          url = license_server_url_from_system || license_server_url_from_config
+          load_basic_license_data_to_contents(url, [])
+        elsif @contents && license_server_url_from_system && license_server_url_from_system != @contents[:license_server_url]
+          @contents[:license_server_url] = license_server_url_from_system
         end
 
         # Ensure the license server URL is returned to the caller in all cases
@@ -208,7 +211,23 @@ module ChefLicensing
 
         # only checking for major version for file format for breaking changes
         @contents ||= YAML.load(::File.read(path))
+
+        # raise error if the file_format_version key is missing
+        raise LicenseFileCorrupted.new("Unrecognized license file; :file_format_version missing.") unless @contents.key?(:file_format_version)
+
+        # Three possible cases after loading the license file contents:
+        # 1. If the file format version is the same as the current version (latest), verify the structure and return the contents.
+        # 2. If the file format version is different but supported, migrate the contents to the current version and return them.
+        # 3. If the file format version is different and not supported, raise an error.
         if major_version(@contents[:file_format_version]) == major_version(LICENSE_FILE_FORMAT_VERSION)
+          current_version_class_name = get_license_file_class(LICENSE_FILE_FORMAT_VERSION)
+          # we ignore any additional keys in the license file during verification
+          raise LicenseFileCorrupted.new("Invalid data found in the license file.") unless current_version_class_name.send(:verify_structure, @contents)
+
+          @contents
+        elsif license_file_class_exists?(@contents[:file_format_version])
+          @contents = migrate_license_file_content_to_current_version(@contents)
+          write_license_file(path) # update the license file contents to the latest version
           @contents
         else
           logger.debug "License File version #{@contents[:file_format_version]} not supported."
@@ -245,11 +264,7 @@ module ChefLicensing
 
         logger.debug "Loading license data to contents"
         if @contents.nil? || @contents.empty? # this case is likely to happen only during testing
-          @contents = {
-            file_format_version: LICENSE_FILE_FORMAT_VERSION,
-            license_server_url: @license_server_url,
-            licenses: [license_data],
-          }
+          load_basic_license_data_to_contents(@license_server_url, [license_data])
         elsif @contents[:licenses].nil?
           @contents[:licenses] = [license_data]
         elsif fetch_license_keys(@contents[:licenses])&.include?(license_data[:license_key])
@@ -270,6 +285,38 @@ module ChefLicensing
       def handle_error(e, message = nil)
         logger.debug "#{e.backtrace.join("\n\t")}"
         e
+      end
+
+      # Returns the license file class for the given version.
+      def get_license_file_class(version)
+        Object.const_get("ChefLicensing::LicenseFile::V#{major_version(version)}")
+      end
+
+      # Returns true if the license file class for the given version exists.
+      def license_file_class_exists?(version)
+        Object.const_defined?("ChefLicensing::LicenseFile::V#{major_version(version)}")
+      end
+
+      # Loads the basic license data to contents in the current version's structure.
+      def load_basic_license_data_to_contents(url, license_data = [])
+        current_version_class_name = get_license_file_class(LICENSE_FILE_FORMAT_VERSION)
+        @contents = current_version_class_name.send(:load_primary_structure)
+        @contents[:file_format_version] = LICENSE_FILE_FORMAT_VERSION
+        @contents[:license_server_url] = url || ""
+        @contents[:licenses] = license_data
+      end
+
+      # Migrates the license file content to the current version and returns the migrated contents.
+      def migrate_license_file_content_to_current_version(contents)
+        logger.warn "License File version #{contents[:file_format_version]} is deprecated."
+        logger.warn "Automatically migrating license file to version #{LICENSE_FILE_FORMAT_VERSION}."
+        given_version_class_name = get_license_file_class(contents[:file_format_version])
+        # we ignore any additional keys in the license file during verification
+        raise LicenseFileCorrupted.new("Invalid data found in the license file.") unless given_version_class_name.send(:verify_structure, contents)
+
+        current_version_class_name = get_license_file_class(LICENSE_FILE_FORMAT_VERSION)
+        contents = current_version_class_name.send(:migrate_structure, contents, major_version(contents[:file_format_version]))
+        contents
       end
     end
   end
