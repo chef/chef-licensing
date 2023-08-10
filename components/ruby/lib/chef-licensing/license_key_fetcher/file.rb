@@ -221,6 +221,7 @@ module ChefLicensing
         # 3. If the file format version is different and not supported, raise an error.
         if major_version(@contents[:file_format_version]) == major_version(LICENSE_FILE_FORMAT_VERSION)
           current_version_class_name = get_license_file_class(LICENSE_FILE_FORMAT_VERSION)
+          # we ignore any additional keys in the license file during verification
           raise LicenseFileCorrupted.new("Invalid data found in the license file.") unless current_version_class_name.send(:verify_structure, @contents)
 
           @contents
@@ -310,6 +311,7 @@ module ChefLicensing
         logger.warn "License File version #{contents[:file_format_version]} is deprecated."
         logger.warn "Automatically migrating license file to version #{LICENSE_FILE_FORMAT_VERSION}."
         given_version_class_name = get_license_file_class(contents[:file_format_version])
+        # we ignore any additional keys in the license file during verification
         raise LicenseFileCorrupted.new("Invalid data found in the license file.") unless given_version_class_name.send(:verify_structure, contents)
 
         current_version_class_name = get_license_file_class(LICENSE_FILE_FORMAT_VERSION)

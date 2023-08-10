@@ -15,6 +15,7 @@ module ChefLicensing
       # @param [Hash] data: The data to verify
       # @param [Hash] expected_structure: The structure to verify against
       # @return [Boolean] true if the data matches the expected structure, false otherwise
+      # @note This method ignores extra keys in the data that are not in the expected structure
       def self.verify_structure(data, expected_structure = self::EXPECTED_STRUCTURE)
         return false unless data.is_a?(Hash)
 
