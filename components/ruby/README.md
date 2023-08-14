@@ -81,10 +81,16 @@ ChefLicensing.configure do |config|
   config.chef_product_name = "chef"
   config.chef_executable_name = "inspec"
   config.chef_entitlement_id = "chef123"
+  config.chef_license_key="free-t0832est-1111-1te1-b1e5-011t182test3-111"
+  config.license_server_url_in_config_file = true
   config.logger = Logger.new($stdout)
 end
 
 ```
+where:
+
+- `chef_license_key`: the unique License key which validates software entitlement to the Chef's Software.
+- `license_server_url_in_config_file`: a boolean flag set when license server url to be used from config block.
 
 <!-- Usage section contains all the methods that the client would invoke while using the Chef Licensing Library -->
 ## Usage

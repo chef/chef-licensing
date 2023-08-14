@@ -115,7 +115,6 @@ module ChefLicensing
 
       logger.debug "License Key fetcher examining ENV checks"
       new_keys = fetch_license_key_from_env
-      # require "pry"; binding.pry
       license_type = validate_and_fetch_license_type(new_keys)
       if license_type && !unrestricted_license_added?(new_keys, license_type)
         # break the flow after the prompt if there is a restriction in adding license
