@@ -90,5 +90,34 @@ RSpec.describe ChefLicensing::Config do
         ARGV.clear
       end
     end
+
+    context "updating values in licenses.yaml file for license server url via config" do
+      let(:temp_dir) { Dir.mktmpdir }
+      let(:original_file) { "spec/fixtures/license_file_with_server_url/licenses.yaml" }
+
+      before do
+        FileUtils.cp(original_file, "#{temp_dir}/licenses.yaml")
+        ChefLicensing.configure do |config|
+          config.license_server_url_check_in_file = false
+          config.license_server_url_in_config_file = true
+          config.license_server_url = "https://custom-licensing-server-2.com/License"
+        end
+      end
+
+      let(:opts) {
+        {
+          dir: "#{temp_dir}",
+        }
+      }
+
+      it "updates the value in licenses.yaml file" do
+        # load the original file first and check the value
+        expect(YAML.load_file("#{temp_dir}/licenses.yaml")[:license_server_url]).to eq("https://custom-licensing-server.com/License")
+        # this will update the value in licenses.yaml file
+        expect(ChefLicensing::Config.license_server_url(opts)).to eq("https://custom-licensing-server-2.com/License")
+        # load the file again and check the value
+        expect(YAML.load_file("#{temp_dir}/licenses.yaml")[:license_server_url]).to eq("https://custom-licensing-server-2.com/License")
+      end
+    end
   end
 end
