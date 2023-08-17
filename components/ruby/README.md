@@ -90,7 +90,7 @@ end
 where:
 
 - `chef_license_key`: the unique License key which validates software entitlement to the Chef's Software.
-- `license_server_url_in_config_file`: a boolean flag set when license server url to be used from config block.
+- `license_server_url_in_config_file`: a boolean flag when license server url needs to be reset from config block.
 
 <!-- Usage section contains all the methods that the client would invoke while using the Chef Licensing Library -->
 ## Usage
