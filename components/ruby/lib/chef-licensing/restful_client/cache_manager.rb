@@ -20,6 +20,7 @@ module ChefLicensing
       # @param [String] key: The key to store in the cache
       # @param [Object] data: The data to store in the cache
       # @param [Integer] time_to_live: The time to live for the cached data - will be useful for testing
+      # @return [void]
       def store(key, data, time_to_live = nil)
         time_to_live ||= calculate_time_to_live(data)
         options = { expires_in: time_to_live }
