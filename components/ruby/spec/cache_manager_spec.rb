@@ -1,4 +1,5 @@
 require "spec_helper"
+require "chef-licensing/restful_client/cache_manager"
 
 RSpec.describe ChefLicensing::RestfulClient::CacheManager do
   describe "#fetch" do
