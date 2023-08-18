@@ -20,7 +20,7 @@ module ChefLicensing
       # @param [String] key: The key to store in the cache
       # @param [Object] data: The data to store in the cache
       # @param [Integer] time_to_live: The time to live for the cached data - will be useful for testing
-      # @return [void]
+      # @return [Boolean] Whether the data is stored in the cache or not, true if stored
       def store(key, data, time_to_live = nil)
         time_to_live ||= calculate_time_to_live(data)
         options = { expires_in: time_to_live }
@@ -28,7 +28,7 @@ module ChefLicensing
       end
 
       # @param [String] key: The key to delete from the cache
-      # @return [void]
+      # @return [Boolean/Nil] Whether the key is deleted or not; true if deleted, nil if key does not exist
       def delete(key)
         @cache.delete(key)
       end

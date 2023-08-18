@@ -32,8 +32,12 @@ RSpec.describe ChefLicensing::RestfulClient::CacheManager do
       let(:cache_manager) { described_class.new(dir) }
     end
 
-    it "stores the data in the cache" do
+    it "returns true when the data is stored in the cache" do
       expect(cache_manager.store("key", "data")).to eq(true)
+    end
+
+    it "returns true when the data is stored in the cache with a TTL" do
+      expect(cache_manager.store("key", "data", 2)).to eq(true)
     end
 
     it "is able to store the data in the cache with a TTL parsed from the data" do
@@ -57,6 +61,15 @@ RSpec.describe ChefLicensing::RestfulClient::CacheManager do
       # TODO: Decide if we want to raise an error when the key is not cached
       it "does not raise an error when the key is not cached" do
         cache_manager.delete("key_2")
+      end
+
+      it "returns true when the key is deleted" do
+        cache_manager.store("key", "data")
+        expect(cache_manager.delete("key")).to eq(true)
+      end
+
+      it "returns nil when the key is not cached and is attempted to delete" do
+        expect(cache_manager.delete("key_2")).to be_nil
       end
     end
   end
