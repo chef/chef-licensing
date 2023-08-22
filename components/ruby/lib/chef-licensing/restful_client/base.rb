@@ -74,12 +74,13 @@ module ChefLicensing
 
       # a common method to handle the get API calls
       def invoke_get_api(endpoint, params = {})
-        if self.class::CACHE_ENDPOINTS.include?(endpoint)
+        if self.class::CACHE_ENDPOINTS.include?(endpoint) && ChefLicensing::Config.cache_enabled?
           cache_key = construct_cache_key(endpoint, params[:licenseId])
           @cache_manager.fetch(cache_key) do
             response = invoke_api(ChefLicensing::Config.license_server_url.split(","), endpoint, :get, nil, params)
             ttl_for_cache = get_ttl_for_cache(response.body) # we receive cache expiration (and other cache info) from the response in the body
-            @cache_manager.store(cache_key, response.body, ttl_for_cache)
+            # we cache only if the response is successful and the status code is 200 (OK) - Check with the team if this is the right approach
+            @cache_manager.store(cache_key, response.body, ttl_for_cache) if response.success? && response&.body&.status_code == 200
             response.body
           end
         else
@@ -199,7 +200,7 @@ module ChefLicensing
       end
 
       def get_ttl_for_cache(response_data)
-        if response_data&.data&.cache&.expires
+        if response_data.respond_to?(:data) && response_data.data.respond_to?(:cache) && response_data.data.cache.respond_to?(:expires)
           convert_timestamp_to_time_in_seconds(response_data.data.cache.expires)
         else
           # TODO: Decide if we want to raise an error here
