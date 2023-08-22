@@ -8,6 +8,7 @@ require_relative "../exceptions/missing_api_credentials_error"
 require_relative "../config"
 require_relative "middleware/exceptions_handler"
 require_relative "cache_manager"
+require "time" unless defined?(Time.zone_offset)
 
 module ChefLicensing
   module RestfulClient
@@ -77,7 +78,8 @@ module ChefLicensing
           cache_key = construct_cache_key(endpoint, params[:licenseId])
           @cache_manager.fetch(cache_key) do
             response = invoke_api(ChefLicensing::Config.license_server_url.split(","), endpoint, :get, nil, params)
-            @cache_manager.store(cache_key, response.body)
+            ttl_for_cache = get_ttl_for_cache(response.body) # we receive cache expiration (and other cache info) from the response in the body
+            @cache_manager.store(cache_key, response.body, ttl_for_cache)
             response.body
           end
         else
@@ -185,8 +187,30 @@ module ChefLicensing
       end
 
       def construct_cache_key(endpoint, license_id)
-        # a simple key construction - it can be improved later
+        # license_id is a comma separated string
+        # we split it, sort it and join it back to make sure the cache key is consistent
+        # for the same license ids in different order
+        license_id = license_id.split(",").sort.join("")
+
+        # TODO: Do we want to hash the license_id string to make the cache key shorter?
+        # require "digest"
+        # hashed_endpoint = Digest::SHA256.hexdigest("#{endpoint}_#{license_id}")
         "#{endpoint}_#{license_id}"
+      end
+
+      def get_ttl_for_cache(response_data)
+        if response_data&.data&.cache&.expires
+          convert_timestamp_to_time_in_seconds(response_data.data.cache.expires)
+        else
+          # TODO: Decide if we want to raise an error here
+          nil
+        end
+      end
+
+      def convert_timestamp_to_time_in_seconds(timestamp)
+        current_time = Time.now.utc
+        expires_at = Time.parse(timestamp)
+        (expires_at - current_time).to_i
       end
     end
   end

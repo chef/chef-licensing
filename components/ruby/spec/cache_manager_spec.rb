@@ -40,12 +40,6 @@ RSpec.describe ChefLicensing::RestfulClient::CacheManager do
     it "returns true when the data is stored in the cache with a TTL" do
       expect(cache_manager.store("key", "data", 2)).to eq(true)
     end
-
-    it "is able to store the data in the cache with a TTL parsed from the data" do
-      # data is expected to be a response from the chef-licensing API and understands the structure to parse the TTL
-      data = OpenStruct.new(data: OpenStruct.new(cache: OpenStruct.new(expires: "2020-01-01T00:00:00Z")))
-      expect(cache_manager.store("key", data)).to eq(true)
-    end
   end
 
   describe "#delete" do
