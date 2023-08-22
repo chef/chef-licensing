@@ -7,6 +7,7 @@ require_relative "../exceptions/restful_client_connection_error"
 require_relative "../exceptions/missing_api_credentials_error"
 require_relative "../config"
 require_relative "middleware/exceptions_handler"
+require_relative "cache_manager"
 
 module ChefLicensing
   module RestfulClient
@@ -21,12 +22,16 @@ module ChefLicensing
         ENTITLEMENT_BY_ID: "license-service/entitlementbyid",
       }.freeze
 
+      CACHE_ENDPOINTS = [
+      ].freeze
+
       CURRENT_ENDPOINT_VERSION = 2
       REQUEST_LIMIT = 5
 
       def initialize
         raise MissingAPICredentialsError, "Missing credential in config: Set in block chef_license_server or use environment variable CHEF_LICENSE_SERVER or pass through argument --chef-license-server" if ChefLicensing::Config.license_server_url.nil?
 
+        @cache_manager = ChefLicensing::RestfulClient::CacheManager.new
         @logger = ChefLicensing::Config.logger
       end
 
@@ -76,8 +81,18 @@ module ChefLicensing
 
       # a common method to handle the get API calls
       def invoke_get_api(endpoint, params = {})
-        response = invoke_api(ChefLicensing::Config.license_server_url.split(","), endpoint, :get, nil, params)
-        response.body
+        if self.class::CACHE_ENDPOINTS.include?(endpoint)
+          cache_key = construct_cache_key(endpoint, params[:licenseId])
+          @cache_manager.fetch(cache_key) do
+            response = invoke_api(ChefLicensing::Config.license_server_url.split(","), endpoint, :get, nil, params)
+            @cache_manager.store(cache_key, response.body)
+            response.body
+          end
+        else
+          # Current flow with no application-level caching
+          response = invoke_api(ChefLicensing::Config.license_server_url.split(","), endpoint, :get, nil, params)
+          response.body
+        end
       end
 
       # a common method to handle the post API calls
@@ -175,6 +190,11 @@ module ChefLicensing
         EOM
 
         raise RestfulClientConnectionError, error_message
+      end
+
+      def construct_cache_key(endpoint, license_id)
+        # a simple key construction - it can be improved later
+        "#{endpoint}_#{license_id}"
       end
     end
   end

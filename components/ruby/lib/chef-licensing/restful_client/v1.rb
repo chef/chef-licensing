@@ -12,6 +12,10 @@ module ChefLicensing
         DESCRIBE: "v1/desc",
         LIST_LICENSES: "v1/listLicenses",
       }).freeze
+
+      CACHE_ENDPOINTS = [
+        END_POINTS[:CLIENT],
+      ].freeze
     end
   end
 end
