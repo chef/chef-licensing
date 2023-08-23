@@ -21,6 +21,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       config.license_server_url_check_in_file = true
       config.output = output
       config.logger = logger
+      config.cache_enabled = false
     end
   end
 

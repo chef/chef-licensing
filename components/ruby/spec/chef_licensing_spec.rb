@@ -15,6 +15,7 @@ RSpec.describe ChefLicensing do
       config.chef_product_name = "inspec"
       config.chef_entitlement_id = "3ff52c37-e41f-4f6c-ad4d-365192205968"
       config.logger = logger
+      config.cache_enabled = false
     end
   end
 

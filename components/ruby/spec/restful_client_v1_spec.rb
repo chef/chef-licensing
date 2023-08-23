@@ -1,6 +1,7 @@
 require "spec_helper"
 require "chef-licensing/config"
 require "chef-licensing/restful_client/v1"
+require "chef-licensing/restful_client/cache_manager"
 
 RSpec.describe ChefLicensing::RestfulClient::V1 do
   let(:output) { StringIO.new }
@@ -16,6 +17,7 @@ RSpec.describe ChefLicensing::RestfulClient::V1 do
         config.license_server_url_check_in_file = true
         config.chef_product_name = "inspec"
         config.chef_entitlement_id = "3ff52c37-e41f-4f6c-ad4d-365192205968"
+        config.cache_enabled = false
       end
     end
 
@@ -42,6 +44,7 @@ RSpec.describe ChefLicensing::RestfulClient::V1 do
         config.license_server_url_check_in_file = true
         config.chef_product_name = "inspec"
         config.chef_entitlement_id = "3ff52c37-e41f-4f6c-ad4d-365192205968"
+        config.cache_enabled = false
       end
     end
 
@@ -77,6 +80,7 @@ RSpec.describe ChefLicensing::RestfulClient::V1 do
         config.license_server_url_check_in_file = true
         config.chef_product_name = "inspec"
         config.chef_entitlement_id = "3ff52c37-e41f-4f6c-ad4d-365192205968"
+        config.cache_enabled = false
       end
     end
 
@@ -112,6 +116,7 @@ RSpec.describe ChefLicensing::RestfulClient::V1 do
         config.license_server_url_check_in_file = true
         config.chef_product_name = "inspec"
         config.chef_entitlement_id = "3ff52c37-e41f-4f6c-ad4d-365192205968"
+        config.cache_enabled = false
       end
     end
 
@@ -150,6 +155,7 @@ RSpec.describe ChefLicensing::RestfulClient::V1 do
         config.license_server_url_check_in_file = true
         config.chef_product_name = "inspec"
         config.chef_entitlement_id = "3ff52c37-e41f-4f6c-ad4d-365192205968"
+        config.cache_enabled = false
       end
     end
 
