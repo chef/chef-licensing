@@ -174,4 +174,50 @@ RSpec.describe ChefLicensing::RestfulClient::V1 do
       expect(output.string).to include("Connection failed to http://localhost-2-license-server/License")
     end
   end
+
+  context "when cache is enabled and the endpoint invoked is included in CACHE_ENDPOINTS" do
+    Dir.mktmpdir do |dir|
+      let(:license_keys) { "tmns-bea68bbb-1e85-44ea-8b98-a654b011174b-0000" }
+      let(:client_data) { JSON.parse(File.read("spec/fixtures/api_response_data/valid_client_api_response.json")) }
+
+      let(:cache_manager) { ChefLicensing::RestfulClient::CacheManager.new(dir) }
+      let(:base_obj) { described_class.new( { :cache_manager => cache_manager })}
+      # Note: We do not need to set any config here as the default is cache_enabled = true
+      before do
+        ChefLicensing.configure do |config|
+          config.logger = logger
+          config.output = output
+          config.license_server_url = "http://globalhost-license-server/License"
+          config.license_server_url_check_in_file = true
+          config.chef_product_name = "inspec"
+          config.chef_entitlement_id = "3ff52c37-e41f-4f6c-ad4d-365192205968"
+          config.cache_enabled = true
+        end
+      end
+
+      before do
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+          .with(query: { licenseId: license_keys, entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: client_data, status_code: 200 }.to_json,
+                     headers: { content_type: "application/json" })
+      end
+
+      it "invokes the endpoint and caches the response" do
+        # it returns the json response as an object of OpenStruct, hence checking for truthy
+        expect(base_obj.client(license_keys: license_keys, entitlement_id: ChefLicensing::Config.chef_entitlement_id).data).to be_truthy
+        expect(output.string).to include("Fetching data from cache")
+        expect(output.string).to include("Cache not found")
+        expect(output.string).to include("Fetching data from server")
+        expect(output.string).to include("Storing data in cache")
+      end
+
+      it "invokes the endpoint and fetches the response from cache" do
+        expect(base_obj.client(license_keys: license_keys, entitlement_id: ChefLicensing::Config.chef_entitlement_id).data).to be_truthy
+        expect(output.string).to include("Fetching data from cache")
+        expect(output.string).not_to include("Fetching data from server")
+        expect(output.string).not_to include("Storing data in cache")
+        expect(output.string).not_to include("Cache not found")
+      end
+    end
+  end
 end
