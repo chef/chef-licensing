@@ -29,10 +29,10 @@ module ChefLicensing
       CURRENT_ENDPOINT_VERSION = 2
       REQUEST_LIMIT = 5
 
-      def initialize
+      def initialize(opts = {})
         raise MissingAPICredentialsError, "Missing credential in config: Set in block chef_license_server or use environment variable CHEF_LICENSE_SERVER or pass through argument --chef-license-server" if ChefLicensing::Config.license_server_url.nil?
 
-        @cache_manager = ChefLicensing::RestfulClient::CacheManager.new
+        @cache_manager = opts[:cache_manager] || ChefLicensing::RestfulClient::CacheManager.new
         @logger = ChefLicensing::Config.logger
       end
 
@@ -76,10 +76,14 @@ module ChefLicensing
       def invoke_get_api(endpoint, params = {})
         if self.class::CACHE_ENDPOINTS.include?(endpoint) && ChefLicensing::Config.cache_enabled?
           cache_key = construct_cache_key(endpoint, params[:licenseId])
+          logger.debug "Fetching data from cache for #{cache_key}"
           @cache_manager.fetch(cache_key) do
+            logger.debug "Cache not found for #{cache_key}"
+            logger.debug "Fetching data from server for #{cache_key}"
             response = invoke_api(ChefLicensing::Config.license_server_url.split(","), endpoint, :get, nil, params)
             ttl_for_cache = get_ttl_for_cache(response.body) # we receive cache expiration (and other cache info) from the response in the body
             # we cache only if the response is successful and the status code is 200 (OK) - Check with the team if this is the right approach
+            logger.debug "Storing data in cache for #{cache_key}"
             @cache_manager.store(cache_key, response.body, ttl_for_cache) if response.success? && response&.body&.status_code == 200
             response.body
           end
