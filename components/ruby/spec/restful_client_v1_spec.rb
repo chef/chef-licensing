@@ -181,7 +181,7 @@ RSpec.describe ChefLicensing::RestfulClient::V1 do
       let(:client_data) { JSON.parse(File.read("spec/fixtures/api_response_data/valid_client_api_response.json")) }
 
       let(:cache_manager) { ChefLicensing::RestfulClient::CacheManager.new(dir) }
-      let(:base_obj) { described_class.new( { :cache_manager => cache_manager })}
+      let(:base_obj) { described_class.new( { cache_manager: cache_manager }) }
       # Note: We do not need to set any config here as the default is cache_enabled = true
       before do
         ChefLicensing.configure do |config|
