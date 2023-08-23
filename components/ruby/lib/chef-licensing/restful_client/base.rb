@@ -9,6 +9,7 @@ require_relative "../config"
 require_relative "middleware/exceptions_handler"
 require_relative "cache_manager"
 require "time" unless defined?(Time.zone_offset)
+require "digest" unless defined?(Digest)
 
 module ChefLicensing
   module RestfulClient
@@ -83,7 +84,7 @@ module ChefLicensing
       # a common method to handle the get API calls
       def invoke_get_api(endpoint, params = {})
         if self.class::CACHE_ENDPOINTS.include?(endpoint) && ChefLicensing::Config.cache_enabled?
-          cache_key = construct_cache_key(endpoint, params[:licenseId])
+          cache_key = construct_cache_key(endpoint, params)
           logger.debug "Fetching data from cache for #{cache_key}"
           @cache_manager.fetch(cache_key) do
             logger.debug "Cache not found for #{cache_key}"
@@ -199,16 +200,24 @@ module ChefLicensing
         raise RestfulClientConnectionError, error_message
       end
 
-      def construct_cache_key(endpoint, license_id)
-        # license_id is a comma separated string
-        # we split it, sort it and join it back to make sure the cache key is consistent
-        # for the same license ids in different order
-        license_id = license_id.split(",").sort.join("")
+      def construct_cache_key(endpoint, params = {})
+        string_to_hash = "#{ChefLicensing::Config.license_server_url}_#{endpoint}"
 
-        # TODO: Do we want to hash the license_id string to make the cache key shorter?
-        # require "digest"
-        # hashed_endpoint = Digest::SHA256.hexdigest("#{endpoint}_#{license_id}")
-        "#{endpoint}_#{license_id}"
+        if params[:licenseId]
+          license_id = params[:licenseId]
+
+          # license_id is a comma separated string
+          # we split it, sort it and join it back to make sure the cache key is consistent
+          # for the same license ids in different order
+          license_id = license_id.split(",").sort.join("")
+          string_to_hash += "_#{license_id}"
+        end
+
+        if params[:entitlementId]
+          string_to_hash += "_#{params[:entitlementId]}"
+        end
+
+        Digest::SHA256.hexdigest(string_to_hash)
       end
 
       def get_ttl_for_cache(response_data)
