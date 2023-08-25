@@ -175,7 +175,7 @@ RSpec.describe ChefLicensing::RestfulClient::V1 do
     end
   end
 
-  context "when cache is enabled and the endpoint invoked is included in CACHE_ENDPOINTS" do
+  context "when cache is enabled and the endpoint invoked is included in CACHE_ENDPOINTS & clearing cache" do
     Dir.mktmpdir do |dir|
       let(:license_keys) { "tmns-bea68bbb-1e85-44ea-8b98-a654b011174b-0000" }
       let(:client_data) { JSON.parse(File.read("spec/fixtures/api_response_data/valid_client_api_response.json")) }
@@ -217,6 +217,12 @@ RSpec.describe ChefLicensing::RestfulClient::V1 do
         expect(output.string).not_to include("Fetching data from server")
         expect(output.string).not_to include("Storing data in cache")
         expect(output.string).not_to include("Cache not found")
+      end
+
+      it "clears the cache" do
+        expect(base_obj.clear_cache(ChefLicensing::RestfulClient::V1::END_POINTS[:CLIENT], { licenseId: license_keys, entitlementId: ChefLicensing::Config.chef_entitlement_id })).to be_truthy
+        expect(output.string).to include("Clearing cache for #{ChefLicensing::RestfulClient::V1::END_POINTS[:CLIENT]}")
+        expect(output.string).to include("CacheManager: Deleting")
       end
     end
   end
