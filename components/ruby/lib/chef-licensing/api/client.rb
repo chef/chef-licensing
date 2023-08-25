@@ -12,6 +12,10 @@ module ChefLicensing
         def info(opts = {})
           new(opts).info
         end
+
+        def clear_client_cache(opts = {})
+          new(opts).clear_client_cache
+        end
       end
 
       def initialize(opts = {})
@@ -29,6 +33,10 @@ module ChefLicensing
         else
           raise(ChefLicensing::ClientError, response.message)
         end
+      end
+
+      def clear_client_cache
+        restful_client.clear_cache(ChefLicensing::RestfulClient::V1::END_POINTS[:CLIENT], { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
       end
 
       private

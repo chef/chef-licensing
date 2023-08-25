@@ -66,5 +66,9 @@ module ChefLicensing
     def add_license
       ChefLicensing::LicenseKeyFetcher.add_license
     end
+
+    def clear_client_api_cached_response(opts = {})
+      ChefLicensing::Api::Client.clear_client_cache(opts)
+    end
   end
 end
