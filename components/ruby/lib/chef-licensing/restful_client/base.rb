@@ -69,6 +69,11 @@ module ChefLicensing
         invoke_get_api(self.class::END_POINTS[:LIST_LICENSES])
       end
 
+      def clear_cache(endpoint, params = {})
+        cache_key = construct_cache_key(endpoint, params)
+        @cache_manager.delete(cache_key)
+      end
+
       private
 
       attr_reader :logger
