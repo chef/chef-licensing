@@ -70,6 +70,7 @@ module ChefLicensing
       end
 
       def clear_cache(endpoint, params = {})
+        logger.debug("Clearing cache for #{endpoint} with params #{params}")
         cache_key = construct_cache_key(endpoint, params)
         @cache_manager.delete(cache_key)
       end
