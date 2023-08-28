@@ -221,12 +221,17 @@ module ChefLicensing
       end
 
       def get_ttl_for_cache(response_data)
-        if response_data.respond_to?(:data) && response_data.data.respond_to?(:cache) && response_data.data.cache.respond_to?(:expires)
-          convert_timestamp_to_time_in_seconds(response_data.data.cache.expires)
-        else
-          # TODO: Decide if we want to raise an error here
-          nil
+        if response_data.respond_to?(:data) && response_data.data.respond_to?(:cache)
+          fetch_cache_expiration_from_cache_control(response_data.data.cache) || fetch_cache_expiration_from_expires(response_data.data.cache)
         end
+      end
+
+      def fetch_cache_expiration_from_cache_control(cache_info)
+        cache_info.cacheControl.match(/max-age:(\d+)/)[1].to_i if cache_info.respond_to?(:cacheControl)
+      end
+
+      def fetch_cache_expiration_from_expires(cache_info)
+        convert_timestamp_to_time_in_seconds(cache_info.expires) if cache_info.respond_to?(:expires)
       end
 
       def convert_timestamp_to_time_in_seconds(timestamp)
