@@ -261,10 +261,10 @@ interactions:
       "2. Commercial License\n",
       "3. Quit license generation"
       ]]
-    paths: [free_license_disclaimer, commercial_license_selection, exit]
+    paths: [free_trial_license_selection, commercial_license_selection, exit]
     response_path_map:
-      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 nodes\n": free_license_disclaimer
-      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 targets\n": free_license_disclaimer
+      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 nodes\n": free_trial_license_selection
+      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 targets\n": free_trial_license_selection
       "2. Commercial License\n": commercial_license_selection
       "3. Quit license generation": exit
 
@@ -276,10 +276,10 @@ interactions:
       "2. Commercial License\n",
       "3. Quit license generation"
       ]]
-    paths: [trial_license_selection, commercial_license_selection, exit]
+    paths: [free_trial_license_selection, commercial_license_selection, exit]
     response_path_map:
-      "1. Trial License\n     Validity: 30 Days\n     No. of units: Unlimited nodes\n": trial_license_selection
-      "1. Trial License\n     Validity: 30 Days\n     No. of units: Unlimited targets\n": trial_license_selection
+      "1. Trial License\n     Validity: 30 Days\n     No. of units: Unlimited nodes\n": free_trial_license_selection
+      "1. Trial License\n     Validity: 30 Days\n     No. of units: Unlimited targets\n": free_trial_license_selection
       "2. Commercial License\n": commercial_license_selection
       "3. Quit license generation": exit
 
@@ -292,14 +292,21 @@ interactions:
       "3. Commercial License\n",
       "4. Quit license generation"
       ]]
-    paths: [free_license_disclaimer, commercial_license_selection, trial_license_selection, exit]
+    paths: [free_trial_license_selection, commercial_license_selection, exit]
     response_path_map:
-      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 nodes\n": free_license_disclaimer
-      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 targets\n": free_license_disclaimer
-      "2. Trial License\n     Validity: 30 Days\n     No. of units: Unlimited nodes\n": trial_license_selection
-      "2. Trial License\n     Validity: 30 Days\n     No. of units: Unlimited targets\n": trial_license_selection
+      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 nodes\n": free_trial_license_selection
+      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 targets\n": free_trial_license_selection
+      "2. Trial License\n     Validity: 30 Days\n     No. of units: Unlimited nodes\n": free_trial_license_selection
+      "2. Trial License\n     Validity: 30 Days\n     No. of units: Unlimited targets\n": free_trial_license_selection
       "3. Commercial License\n": commercial_license_selection
       "4. Quit license generation": exit
+
+  free_trial_license_selection:
+    messages: ["Complete the form available at <%= input[:pastel].blue.underline.blue(\"https://www.chef.io\") %>\n",
+      [Quit]
+    ]
+    prompt_type: "select"
+    paths: [exit_with_message]
 
   free_license_disclaimer:
     messages: '<%= input[:pastel].bold("A Free License can be used for personal, non-commercial use only.\n")%>'
