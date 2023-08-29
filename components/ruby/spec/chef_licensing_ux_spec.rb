@@ -675,8 +675,9 @@ RSpec.describe ChefLicensing::TUIEngine do
 
       before do
         ChefLicensing::Context.current_context = nil
-        license_key_fetcher.fetch_and_persist
       end
+
+      it { expect { license_key_fetcher.fetch_and_persist }.to raise_error(ChefLicensing::LicenseKeyFetcher::LicenseKeyNotFetchedError) }
 
       it "checks if the license is persisted" do
         expect(license_key_fetcher.fetch).to eq([expired_trial_license_key])
