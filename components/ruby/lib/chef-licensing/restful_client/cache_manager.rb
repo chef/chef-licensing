@@ -5,7 +5,8 @@ require_relative "../config"
 module ChefLicensing
   module RestfulClient
     class CacheManager
-      DEFAULT_TTL = 60
+      attr_writer :default_ttl
+
       def initialize(cache_dir = nil)
         @cache = ActiveSupport::Cache::FileStore.new(cache_dir || Dir.tmpdir)
         @logger = ChefLicensing::Config.logger
@@ -25,7 +26,7 @@ module ChefLicensing
       # @return [Boolean] Whether the data is stored in the cache or not, true if stored
       def store(key, data, time_to_live = nil)
         @logger.debug("CacheManager: Storing #{key} in cache")
-        time_to_live ||= DEFAULT_TTL
+        time_to_live ||= @default_ttl || 60
         options = { expires_in: time_to_live }
         @cache.write(key, data, options)
       end
