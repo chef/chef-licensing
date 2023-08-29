@@ -34,14 +34,6 @@ module ChefLicensing
         invoke_get_api(self.class::END_POINTS[:VALIDATE], { licenseId: license, version: CURRENT_ENDPOINT_VERSION })
       end
 
-      def generate_trial_license(payload)
-        invoke_post_api(self.class::END_POINTS[:GENERATE_TRIAL_LICENSE], payload)
-      end
-
-      def generate_free_license(payload)
-        invoke_post_api(self.class::END_POINTS[:GENERATE_FREE_LICENSE], payload)
-      end
-
       def feature_by_name(payload)
         invoke_post_api(self.class::END_POINTS[:FEATURE_BY_NAME], payload)
       end
