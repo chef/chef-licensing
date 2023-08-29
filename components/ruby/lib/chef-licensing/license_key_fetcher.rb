@@ -86,15 +86,9 @@ module ChefLicensing
       end
 
       # Scenario: When a user is prompted for license expiry and license is not yet renewed
-      if %i{prompt_license_about_to_expire prompt_license_expired_local_mode prompt_license_exhausted}.include?(config[:start_interaction])
-        # Not blocking any license type in case of expiry or for commercial license exhaustion
-        if config[:start_interaction] == :prompt_license_exhausted
-          # If user has exhausted commercial license, we are not blocking
-          # we are blocking only when user has exhausted free license, hence LicenseKeyNotFetchedError is raised for free license
-          return @license_keys if license.license_type.downcase == "commercial"
-        else
-          return @license_keys
-        end
+      if %i{prompt_license_about_to_expire prompt_license_expired_local_mode}.include?(config[:start_interaction])
+        # Not blocking any license type in case of expiry
+        return @license_keys
       end
 
       # Otherwise nothing was able to fetch a license. Throw an exception.
