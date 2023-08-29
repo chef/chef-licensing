@@ -1,6 +1,7 @@
 require "faraday" unless defined?(Faraday)
 require "faraday/http_cache"
 require "active_support"
+require "active_support/time"
 require "tmpdir" unless defined?(Dir.mktmpdir)
 require_relative "../exceptions/restful_client_error"
 require_relative "../exceptions/restful_client_connection_error"
@@ -8,7 +9,6 @@ require_relative "../exceptions/missing_api_credentials_error"
 require_relative "../config"
 require_relative "middleware/exceptions_handler"
 require_relative "cache_manager"
-require "time" unless defined?(Time.zone_offset)
 require "digest" unless defined?(Digest)
 
 module ChefLicensing
@@ -226,8 +226,9 @@ module ChefLicensing
       end
 
       def convert_timestamp_to_time_in_seconds(timestamp)
-        current_time = Time.now.utc
-        expires_at = Time.parse(timestamp)
+        Time.zone = "UTC"
+        expires_at = Time.zone.parse(timestamp)
+        current_time = Time.zone.now
         (expires_at - current_time).to_i
       end
     end
