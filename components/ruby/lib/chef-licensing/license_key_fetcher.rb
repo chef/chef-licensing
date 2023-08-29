@@ -83,9 +83,9 @@ module ChefLicensing
         end
       end
 
-      # Scenario: When a user is prompted for license expiry and license is not yet renewed
-      if %i{prompt_license_about_to_expire prompt_license_expired_local_mode}.include?(config[:start_interaction])
-        # Not blocking any license type in case of expiry
+      # Scenario: When a user is prompted with license about to expire message and license is not yet renewed
+      if %i{prompt_license_about_to_expire}.include?(config[:start_interaction])
+        # Not blocking any license type in case of license about to expire scenario only
         return @license_keys
       end
 
@@ -132,9 +132,9 @@ module ChefLicensing
         end
       end
 
-      # Scenario: When a user is prompted for license expiry and license is not yet renewed
-      if new_keys.empty? && %i{prompt_license_about_to_expire prompt_license_expired}.include?(config[:start_interaction])
-        # Not blocking any license type in case of expiry
+      # Scenario: When a user is prompted with license about to expire message and license is not yet renewed
+      if new_keys.empty? && %i{prompt_license_about_to_expire}.include?(config[:start_interaction])
+        # Not blocking any license type in case of license about to expire scenario only
         return @license_keys
       end
 
