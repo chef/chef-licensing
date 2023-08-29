@@ -37,7 +37,7 @@ Then, run `bundle install` to install the library and its dependencies.
 <!-- Usage Prerequisites contains the configuration to be done before using the library in the client's application -->
 ## Usage Prerequisites
 
-To use the Chef licensing library, certain configuration values such as the server URL, server API key, etc. must be set to generate, validate, and check for entitlements. These values can be set via the environment or the library, or passed as arguments while executing your application.
+To use the Chef licensing library, certain configuration values such as the server URL, server API key, etc. must be set to validate, and check for entitlements. These values can be set via the environment or the library, or passed as arguments while executing your application.
 
 ### Configurations of Chef Licensing Library
 
@@ -226,56 +226,7 @@ However, if an error occurs during the process, the `ChefLicensing::ClientError`
 ## APIs
 
 The following APIs provide an abstraction layer for the RESTful actions that are available through the licensing server. These APIs enable various operations such as validation, generation, and others to be performed.
-### Generate License Key
-
-It helps to generate a license.
-
-#### Trial license generation
-
-```ruby
-require 'chef-licensing/license_key_generator'
-
-ChefLicensing::LicenseKeyGenerator.generate_trial_license!(
-  first_name: "John",
-  last_name: "Doe",
-  email_id: "johndoe@progress.com",
-  product: "inspec",
-  company: "Progress",
-  phone: "000-000-0000"
-)
-```
 <!-- Give examples for the possible value for product in this example, maybe? -->
-
-#### Response
-
-If successful, the license key generation process responds with a valid trial license key.
-<!-- Add about the location maybe? -->
-
-However, in case of errors, the `ChefLicensing::LicenseGenerationFailed` class returns the message directly from the license generation server as the exception message.
-
-#### Free license generation
-
-```ruby
-require 'chef-licensing/license_key_generator'
-
-ChefLicensing::LicenseKeyGenerator.generate_free_license!(
-  first_name: "John",
-  last_name: "Doe",
-  email_id: "johndoe@progress.com",
-  product: "inspec",
-  company: "Progress",
-  phone: "000-000-0000"
-)
-```
-<!-- Give examples for the possible value for product in this example, maybe? -->
-
-#### Response
-
-If successful, the license key generation process responds with a valid free license key.
-<!-- Add about the location maybe? -->
-
-However, in case of errors, the `ChefLicensing::LicenseGenerationFailed` class returns the message directly from the license generation server as the exception message.
-
 ### Validate License Key
 
 It helps to validate array of licenses.
