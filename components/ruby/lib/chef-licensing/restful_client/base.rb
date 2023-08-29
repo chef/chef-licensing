@@ -91,7 +91,6 @@ module ChefLicensing
             logger.debug "Fetching data from server for #{cache_key}"
             response = invoke_api(ChefLicensing::Config.license_server_url.split(","), endpoint, :get, nil, params)
             ttl_for_cache = get_ttl_for_cache(response.body) # we receive cache expiration (and other cache info) from the response in the body
-            # we cache only if the response is successful and the status code is 200 (OK) - Check with the team if this is the right approach
             logger.debug "Storing data in cache for #{cache_key}"
             @cache_manager.store(cache_key, response.body, ttl_for_cache) if response.success? && response&.body&.status_code == 200
             response.body
