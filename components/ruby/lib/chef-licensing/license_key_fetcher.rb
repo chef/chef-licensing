@@ -73,7 +73,7 @@ module ChefLicensing
         # Licenses expiration check
         # Client API possible errors will be handled in software entitlement check call (made after this)
         # client_api_call_error is set to true when there is an error in licenses_active? call
-        if licenses_active? || client_api_call_error
+        if licenses_active? || client_api_call_error || client_api_call_error
           return @license_keys
         else
           # Prompts if the keys are expired or expiring
@@ -85,9 +85,10 @@ module ChefLicensing
         end
       end
 
-      # Scenario: When a user is prompted for license expiry and license is not yet renewed
-      if %i{prompt_license_about_to_expire prompt_license_expired_local_mode}.include?(config[:start_interaction])
-        # Not blocking any license type in case of expiry
+      # Scenario: When a user is prompted with license about to expire message and license is not yet renewed
+      # Scenario: When a user is prompted with license expired message in grace period and license is not yet renewed
+      if license && !license.expired?
+        # Not blocking any license type in case of license about to expire and grace scenario only
         return @license_keys
       end
 
@@ -131,20 +132,15 @@ module ChefLicensing
           # If license type is not selected using TUI, assign it using API call to fetch type.
           prompt_fetcher.license_type ||= get_license_type(new_keys.first)
           persist_and_concat(new_keys, prompt_fetcher.license_type)
-          return license_keys
+          return license_keys unless license&.expired?
         end
       end
 
-      # Scenario: When a user is prompted for license expiry or non-commercial usage warning and license is not yet renewed
-      if new_keys.empty? && %i{warn_non_commercial_license prompt_license_about_to_expire prompt_license_expired prompt_license_exhausted}.include?(config[:start_interaction])
-        # Not blocking any license type in case of expiry, non-commercial usage or for commercial license exhaustion
-        if config[:start_interaction] == :prompt_license_exhausted
-          # If user has exhausted commercial license, we are not blocking
-          # we are blocking only when user has exhausted free license, hence LicenseKeyNotFetchedError is raised for free license
-          return @license_keys if license.license_type.downcase == "commercial"
-        else
-          return @license_keys
-        end
+      if new_keys.empty? && (license && !license.expired?)
+        # Scenario: When a user is prompted with license about to expire message and license is not yet renewed
+        # Scenario: When a user is prompted with license expired message in grace period and license is not yet renewed
+        # Not blocking any license type in case of license about to expire and grace scenario only
+        return @license_keys
       end
 
       # Otherwise nothing was able to fetch a license. Throw an exception.
