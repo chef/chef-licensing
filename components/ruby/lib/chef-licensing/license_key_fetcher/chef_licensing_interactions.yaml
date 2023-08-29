@@ -301,6 +301,7 @@ interactions:
       "3. Commercial License\n": commercial_license_selection
       "4. Quit license generation": exit
 
+  # TODO: Fix the message and update link with the actual license generation link
   free_trial_license_selection:
     messages: ["Complete the form available at <%= input[:pastel].blue.underline.blue(\"https://www.chef.io\") %>\n",
       [Quit]
