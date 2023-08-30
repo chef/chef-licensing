@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.5.3 -->
-## [0.5.3](https://github.com/chef/chef-licensing/tree/0.5.3) (2023-08-10)
+<!-- latest_release 0.5.4 -->
+## [0.5.4](https://github.com/chef/chef-licensing/tree/0.5.4) (2023-08-30)
 
 #### Merged Pull Requests
-- CHEF-3841: Handle different versions of `licenses.yaml` file [Backward Compatibility Support] [#150](https://github.com/chef/chef-licensing/pull/150) ([ahasunos](https://github.com/ahasunos))
+- CHEF-5918: License Generation Flow - Remove the form asking for details while generating free and trial license [#158](https://github.com/chef/chef-licensing/pull/158) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup since=0.4.44 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-5918: License Generation Flow - Remove the form asking for details while generating free and trial license [#158](https://github.com/chef/chef-licensing/pull/158) ([ahasunos](https://github.com/ahasunos)) <!-- 0.5.4 -->
 - CHEF-3841: Handle different versions of `licenses.yaml` file [Backward Compatibility Support] [#150](https://github.com/chef/chef-licensing/pull/150) ([ahasunos](https://github.com/ahasunos)) <!-- 0.5.3 -->
 - Update regex for company name validation [#152](https://github.com/chef/chef-licensing/pull/152) ([ahasunos](https://github.com/ahasunos)) <!-- 0.5.2 -->
 - CHEF-5063: Add GDPR notice before asking user details [#151](https://github.com/chef/chef-licensing/pull/151) ([ahasunos](https://github.com/ahasunos)) <!-- 0.5.1 -->
