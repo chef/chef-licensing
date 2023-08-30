@@ -304,10 +304,16 @@ interactions:
   # TODO: Fix the message and update link with the actual license generation link
   free_trial_license_selection:
     messages: ["Complete the form available at <%= input[:pastel].blue.underline.blue(\"https://www.chef.io\") %>\n",
-      [Quit]
+      [
+      Validate a generated license ID,
+      Quit
+      ]
     ]
     prompt_type: "select"
-    paths: [exit_with_message]
+    paths: [exit_with_message, ask_for_license_id]
+    response_path_map:
+      "Validate a generated license ID": ask_for_license_id
+      "Quit": exit_with_message
 
   commercial_license_selection:
     messages: ["Get in touch with the Sales Team by filling out the form available at <%= input[:pastel].blue.underline.blue(\"https://www.chef.io/contact-us\") %>\n",
