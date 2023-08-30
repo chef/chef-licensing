@@ -238,12 +238,13 @@ RSpec.describe ChefLicensing::TUIEngine do
     end
   end
 
-  context "free license generation ux, user follows all steps correctly" do
+  context "free license generation ux, user follows all steps correctly and exits" do
     let(:start_interaction) { :start }
 
     before do
       prompt.input << simulate_down_arrow
       prompt.input << "\n\n"
+      prompt.input << simulate_down_arrow
       prompt.input << "\n"
       prompt.input.rewind
     end
@@ -259,6 +260,48 @@ RSpec.describe ChefLicensing::TUIEngine do
         ask_for_all_license_type
         free_trial_license_selection
         exit_with_message
+      }
+    }
+
+    it "generates the license successfully traversing through the interactions in expected order" do
+      expect { tui_engine.append_info_to_input(additional_info_for_tui_engine) }.to_not raise_error
+      expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
+      expect(tui_engine.traversed_interaction).to eq(expected_flow_for_license_generation)
+      expect(prompt.output.string).to include("I don't have a license ID and would like to generate a new license ID")
+      expect(prompt.output.string).to include("Select the type of license below and then enter user details")
+      # TODO: expect the new form sentence to include later
+    end
+  end
+
+  context "free license generation ux, user follows all steps correctly and provides free license key; post generation from web" do
+    let(:start_interaction) { :start }
+
+    before do
+      prompt.input << simulate_down_arrow
+      prompt.input << "\n\n\n"
+      prompt.input << valid_free_license_key
+      prompt.input << "\n"
+      prompt.input.rewind
+    end
+
+    let(:tui_engine) { described_class.new(opts) }
+
+    let(:expected_flow_for_license_generation) {
+      %i{
+        start
+        ask_if_user_has_license_id
+        info_of_license_types
+        filter_license_type_options
+        ask_for_all_license_type
+        free_trial_license_selection
+        ask_for_license_id
+        validate_license_id_pattern
+        validate_license_id_with_api
+        validate_license_restriction
+        validate_license_expiration
+        validation_success
+        display_license_info
+        fetch_license_id
       }
     }
 
@@ -407,14 +450,16 @@ RSpec.describe ChefLicensing::TUIEngine do
     end
   end
 
-  context "trial license generation ux, user follows all steps correctly" do
+  context "trial license generation ux, user follows all steps correctly and exits" do
     let(:start_interaction) { :start }
 
     before do
       prompt.input << simulate_down_arrow
       prompt.input << "\n"
       prompt.input << simulate_down_arrow
-      prompt.input << "\n\n"
+      prompt.input << "\n"
+      prompt.input << simulate_down_arrow
+      prompt.input << "\n"
       prompt.input.rewind
     end
 
@@ -429,6 +474,52 @@ RSpec.describe ChefLicensing::TUIEngine do
         ask_for_all_license_type
         free_trial_license_selection
         exit_with_message
+      }
+    }
+
+    it "generates the license successfully traversing through the interactions in expected order" do
+      expect { tui_engine.append_info_to_input(additional_info_for_tui_engine) }.to_not raise_error
+      expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
+      expect(tui_engine.traversed_interaction).to eq(expected_flow_for_license_generation)
+      expect(prompt.output.string).to include("I don't have a license ID and would like to generate a new license ID")
+      expect(prompt.output.string).to include("Select the type of license below and then enter user details")
+      expect(prompt.output.string).to include("2. Trial License")
+      expect(prompt.output.string).to include("No. of units: Unlimited targets")
+      # TODO: expect the new form sentence to include later
+    end
+  end
+
+  context "trial license generation ux, user follows all steps correctly and provides a trial license; post generation from web" do
+    let(:start_interaction) { :start }
+
+    before do
+      prompt.input << simulate_down_arrow
+      prompt.input << "\n"
+      prompt.input << simulate_down_arrow
+      prompt.input << "\n\n"
+      prompt.input << valid_trial_license_key
+      prompt.input << "\n"
+      prompt.input.rewind
+    end
+
+    let(:tui_engine) { described_class.new(opts) }
+
+    let(:expected_flow_for_license_generation) {
+      %i{
+        start
+        ask_if_user_has_license_id
+        info_of_license_types
+        filter_license_type_options
+        ask_for_all_license_type
+        free_trial_license_selection
+        ask_for_license_id
+        validate_license_id_pattern
+        validate_license_id_with_api
+        validate_license_restriction
+        validate_license_expiration
+        validation_success
+        display_license_info
+        fetch_license_id
       }
     }
 
