@@ -1,8 +1,5 @@
 require_relative "../license_key_validator"
-require_relative "../license_key_generator"
 require_relative "../exceptions/invalid_license"
-require_relative "../exceptions/license_generation_failed"
-require_relative "../exceptions/license_generation_rejected"
 require_relative "../license_key_fetcher/base"
 require_relative "../config"
 require_relative "../context"
@@ -74,65 +71,8 @@ module ChefLicensing
         end
       end
 
-      def is_user_name_valid?(input)
-        user_name = input[:gather_user_last_name_for_license_generation] || input[:gather_user_first_name_for_license_generation]
-        (user_name =~ /\A[a-zA-Z]{1,16}\Z/) == 0
-      end
-
-      def is_email_valid?(input)
-        (gather_user_email_for_license_generation(input) =~ URI::MailTo::EMAIL_REGEXP) == 0
-      end
-
-      def is_company_name_valid?(input)
-        # Current validation:
-        # The string cannot start with a space.
-        # The string must have a minimum of three characters and a maximum of 20 characters.
-        # The string can contain any combination of characters, including special characters, alphanumeric characters, and spaces.
-        # The string can have additional words separated by spaces, but the total length of the entire cannot exceed 20.
-        (input[:gather_user_company_for_license_generation] =~ /\A(?=.{3,20}\z)(?! )[\w\W]{1,}( [\w\W]+){0,19}\z/) == 0
-      end
-
-      def is_phone_no_valid?(input)
-        # No validation
-        # Optional field
-        true
-      end
-
-      def generate_trial_license(input)
-        generate_license(input, :trial)
-      end
-
-      def generate_free_license(input)
-        generate_license(input, :free)
-      end
-
       def fetch_license_id(input)
         license_id
-      end
-
-      def fetch_license_failure_error_msg(input)
-        error_msg
-      end
-
-      def fetch_license_failure_rejection_msg(input)
-        rejection_msg
-      end
-
-      def select_license_generation_based_on_type(inputs)
-        if inputs.key? :free_license_selection
-          inputs[:license_type] = :free
-          "free"
-        elsif inputs.key? :trial_license_selection
-          inputs[:license_type] = :trial
-          "trial"
-        else
-          inputs[:license_type] = :commercial
-          "commercial"
-        end
-      end
-
-      def license_generation_rejected?(inputs)
-        !!rejection_msg
       end
 
       def fetch_invalid_license_msg(input)
@@ -141,29 +81,6 @@ module ChefLicensing
 
       def display_license_info(inputs)
         ChefLicensing::ListLicenseKeys.display_overview({ license_keys: [license_id] })
-      end
-
-      def clear_license_type_selection(inputs)
-        inputs.delete(:free_license_selection)
-        inputs.delete(:trial_license_selection)
-        inputs.delete(:commercial_license_selection)
-      end
-
-      def clear_current_user_details(inputs)
-        inputs.delete(:gather_user_first_name_for_license_generation)
-        inputs.delete(:gather_user_last_name_for_license_generation)
-        inputs.delete(:gather_user_company_for_license_generation)
-        inputs.delete(:gather_user_phone_no_for_license_generation)
-        inputs.delete(:gather_user_email_for_trial_license_generation)
-        inputs.delete(:gather_user_email_for_free_license_generation)
-      end
-
-      def are_user_details_present?(inputs)
-        inputs.key?(:gather_user_first_name_for_license_generation) &&
-          inputs.key?(:gather_user_last_name_for_license_generation) &&
-          gather_user_email_for_license_generation(inputs) &&
-          inputs.key?(:gather_user_company_for_license_generation) &&
-          inputs.key?(:gather_user_phone_no_for_license_generation)
       end
 
       def set_license_info(input)
@@ -201,44 +118,9 @@ module ChefLicensing
         end
       end
 
-      def get_license_type_selected_for_generation(input)
-        # License generation only allowed for trial and free licenses
-        if input[:free_license_selection]
-          "free"
-        elsif input[:trial_license_selection]
-          "trial"
-        end
-      end
-
-      def gather_user_email_for_license_generation(input)
-        input[:gather_user_email_for_trial_license_generation] || input[:gather_user_email_for_free_license_generation]
-      end
-
       private
 
       attr_accessor :opts
-
-      def generate_license(inputs, license_type)
-        spinner = TTY::Spinner.new(":spinner [Running] License generation in progress...", format: :dots, clear: true, output: output)
-        spinner.auto_spin # Start the spinner
-        self.license_id = ChefLicensing::LicenseKeyGenerator.send("generate_#{license_type}_license!",
-          first_name: inputs[:gather_user_first_name_for_license_generation],
-          last_name: inputs[:gather_user_last_name_for_license_generation],
-          email_id: gather_user_email_for_license_generation(inputs),
-          product: ChefLicensing::Config.chef_product_name&.capitalize,
-          company: inputs[:gather_user_company_for_license_generation],
-          phone: inputs[:gather_user_phone_no_for_license_generation])
-        spinner.success # Stop the spinner
-        true
-      rescue ChefLicensing::LicenseGenerationFailed => e
-        spinner.error # Stop the spinner
-        self.error_msg = e.message
-        false
-      rescue ChefLicensing::LicenseGenerationRejected => e
-        spinner.error # Stop the spinner
-        self.rejection_msg = e.message
-        false
-      end
 
       def get_license(license_key)
         spinner = TTY::Spinner.new(":spinner [Running] License validation in progress...", format: :dots, clear: true, output: output)

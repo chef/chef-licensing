@@ -261,10 +261,10 @@ interactions:
       "2. Commercial License\n",
       "3. Quit license generation"
       ]]
-    paths: [free_license_disclaimer, commercial_license_selection, exit]
+    paths: [free_trial_license_selection, commercial_license_selection, exit]
     response_path_map:
-      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 nodes\n": free_license_disclaimer
-      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 targets\n": free_license_disclaimer
+      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 nodes\n": free_trial_license_selection
+      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 targets\n": free_trial_license_selection
       "2. Commercial License\n": commercial_license_selection
       "3. Quit license generation": exit
 
@@ -276,10 +276,10 @@ interactions:
       "2. Commercial License\n",
       "3. Quit license generation"
       ]]
-    paths: [trial_license_selection, commercial_license_selection, exit]
+    paths: [free_trial_license_selection, commercial_license_selection, exit]
     response_path_map:
-      "1. Trial License\n     Validity: 30 Days\n     No. of units: Unlimited nodes\n": trial_license_selection
-      "1. Trial License\n     Validity: 30 Days\n     No. of units: Unlimited targets\n": trial_license_selection
+      "1. Trial License\n     Validity: 30 Days\n     No. of units: Unlimited nodes\n": free_trial_license_selection
+      "1. Trial License\n     Validity: 30 Days\n     No. of units: Unlimited targets\n": free_trial_license_selection
       "2. Commercial License\n": commercial_license_selection
       "3. Quit license generation": exit
 
@@ -292,29 +292,22 @@ interactions:
       "3. Commercial License\n",
       "4. Quit license generation"
       ]]
-    paths: [free_license_disclaimer, commercial_license_selection, trial_license_selection, exit]
+    paths: [free_trial_license_selection, commercial_license_selection, exit]
     response_path_map:
-      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 nodes\n": free_license_disclaimer
-      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 targets\n": free_license_disclaimer
-      "2. Trial License\n     Validity: 30 Days\n     No. of units: Unlimited nodes\n": trial_license_selection
-      "2. Trial License\n     Validity: 30 Days\n     No. of units: Unlimited targets\n": trial_license_selection
+      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 nodes\n": free_trial_license_selection
+      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 targets\n": free_trial_license_selection
+      "2. Trial License\n     Validity: 30 Days\n     No. of units: Unlimited nodes\n": free_trial_license_selection
+      "2. Trial License\n     Validity: 30 Days\n     No. of units: Unlimited targets\n": free_trial_license_selection
       "3. Commercial License\n": commercial_license_selection
       "4. Quit license generation": exit
 
-  free_license_disclaimer:
-    messages: '<%= input[:pastel].bold("A Free License can be used for personal, non-commercial use only.\n")%>'
-    prompt_type: "warn"
-    paths: [free_license_selection]
-
-  free_license_selection:
-    messages: "Type: Free License\n  Validity: Unlimited\n  No. of units: 10 <%= input[:unit_measure] %>\n"
-    prompt_type: "silent"
-    paths: [check_if_user_details_are_present]
-
-  trial_license_selection:
-    messages: "Type: Trial License\n  Validity: 30 days\n  No. of units: Unlimited <%= input[:unit_measure] %>\n"
-    prompt_type: "silent"
-    paths: [check_if_user_details_are_present]
+  # TODO: Fix the message and update link with the actual license generation link
+  free_trial_license_selection:
+    messages: ["Complete the form available at <%= input[:pastel].blue.underline.blue(\"https://www.chef.io\") %>\n",
+      [Quit]
+    ]
+    prompt_type: "select"
+    paths: [exit_with_message]
 
   commercial_license_selection:
     messages: ["Get in touch with the Sales Team by filling out the form available at <%= input[:pastel].blue.underline.blue(\"https://www.chef.io/contact-us\") %>\n",
@@ -323,233 +316,9 @@ interactions:
     prompt_type: "select"
     paths: [exit_with_message]
 
-  check_if_user_details_are_present:
-    action: are_user_details_present?
-    paths: [ask_for_user_details, print_to_review_details]
-    response_path_map:
-      "true": "print_to_review_details"
-      "false": "ask_for_user_details"
-
-  ask_for_user_details:
-    messages: |
-      By requesting a license you agree to receive email communications from Progress Software
-      or its Partners, containing information about Progress Software’s products.
-      I acknowledge my data will be used in accordance with Progress' Privacy Policy
-      and understand I may withdraw my consent at any time.
-
-      Please enter the following details:
-      First Name, Last Name, Email, Company, Phone
-
-    paths: [gather_user_first_name_for_license_generation]
-
-  gather_user_first_name_for_license_generation:
-    messages: "Enter First Name: "
-    prompt_type: "ask"
-    paths: [validate_user_first_name_for_license_generation]
-
-  validate_user_first_name_for_license_generation:
-    action: is_user_name_valid?
-    paths: [gather_user_last_name_for_license_generation, user_first_name_validation_failure]
-    response_path_map:
-      "true": gather_user_last_name_for_license_generation
-      "false": user_first_name_validation_failure
-
-  user_first_name_validation_failure:
-    messages: "Invalid name. It should contain only A-Z/a-z alphabets."
-    prompt_type: "error"
-    paths: [gather_user_first_name_for_license_generation]
-
-  gather_user_last_name_for_license_generation:
-    messages: "Enter Last Name: "
-    prompt_type: "ask"
-    paths: [validate_user_last_name_for_license_generation]
-
-  validate_user_last_name_for_license_generation:
-    action: is_user_name_valid?
-    paths: [gather_user_email_for_license_generation, user_last_name_validation_failure]
-    response_path_map:
-      "true": gather_user_email_for_license_generation
-      "false": user_last_name_validation_failure
-
-  user_last_name_validation_failure:
-    messages: "Invalid name. It should contain only A-Z/a-z alphabets."
-    prompt_type: "error"
-    paths: [gather_user_last_name_for_license_generation]
-
-  gather_user_email_for_license_generation:
-    action: get_license_type_selected_for_generation
-    paths: [gather_user_email_for_trial_license_generation, gather_user_email_for_free_license_generation]
-    response_path_map:
-      "trial": gather_user_email_for_trial_license_generation
-      "free": gather_user_email_for_free_license_generation
-
-  gather_user_email_for_trial_license_generation:
-    messages: "Enter Email Address (Business email is mandatory for a trial license):"
-    prompt_type: "ask"
-    paths: [validate_user_email_for_license_generation]
-
-  gather_user_email_for_free_license_generation:
-    messages: "Enter Email Address: "
-    prompt_type: "ask"
-    paths: [validate_user_email_for_license_generation]
-
-  validate_user_email_for_license_generation:
-    action: is_email_valid?
-    paths: [gather_user_company_for_license_generation, user_email_validation_failure]
-    response_path_map:
-      "true": gather_user_company_for_license_generation
-      "false": user_email_validation_failure
-
-  user_email_validation_failure:
-    messages: "Invalid email address."
-    prompt_type: "error"
-    paths: [gather_user_email_for_license_generation]
-
-  gather_user_company_for_license_generation:
-    messages: "Enter Company Name: "
-    prompt_type: "ask"
-    paths: [validate_user_company_name_for_license_generation]
-
-  validate_user_company_name_for_license_generation:
-    action: is_company_name_valid?
-    paths: [gather_user_phone_no_for_license_generation, user_company_name_validation_failure]
-    response_path_map:
-      "true": gather_user_phone_no_for_license_generation
-      "false": user_company_name_validation_failure
-
-  user_company_name_validation_failure:
-    messages: "Invalid company name. It should contain only A-Z/a-z alphabets, numbers or special characters."
-    prompt_type: "error"
-    paths: [gather_user_company_for_license_generation]
-
-  gather_user_phone_no_for_license_generation:
-    messages: "Enter phone number: "
-    prompt_type: "ask"
-    paths: [validate_user_phone_no]
-
-  validate_user_phone_no:
-    action: is_phone_no_valid?
-    paths: [print_to_review_details, user_phone_no_validation_failure]
-    response_path_map:
-      "true": print_to_review_details
-      "false": user_phone_no_validation_failure
-
-  user_phone_no_validation_failure:
-    messages: "Please enter a valid phone number."
-    prompt_type: "error"
-    paths: [gather_user_phone_no_for_license_generation]
-
-  print_to_review_details:
-    messages: |
-      ------------------------------------------------------------
-      Review the details below and confirm to proceed.
-      ------------------------------------------------------------
-      License Details
-
-        <%= input[:free_license_selection] || input[:trial_license_selection] %>
-      User Details
-
-        First Name: <%= input[:gather_user_first_name_for_license_generation] %>
-        Last Name: <%= input[:gather_user_last_name_for_license_generation] %>
-        Email: <%= input[:gather_user_email_for_trial_license_generation] || input[:gather_user_email_for_free_license_generation] %>
-        Company: <%= input[:gather_user_company_for_license_generation] %>
-        Phone number: <%= input[:gather_user_phone_no_for_license_generation] %>
-      ------------------------------------------------------------
-    prompt_type: "say"
-    paths: [ask_for_review_confirmation]
-
-  ask_for_review_confirmation:
-    prompt_type: "select"
-    messages: ["Please select", ["Confirm the details and proceed", "Reselect the license type", "Edit user details", "Quit the license generation process"]]
-    paths: [pre_license_generation, clear_current_license_type_selection, clear_current_user_details, exit]
-    response_path_map:
-      "Confirm the details and proceed": pre_license_generation
-      "Reselect the license type": clear_current_license_type_selection
-      "Edit user details": clear_current_user_details
-      "Quit the license generation process": exit
-
-  clear_current_user_details:
-    action: clear_current_user_details
-    paths: [ask_for_user_details]
-
-  clear_current_license_type_selection:
-    action: clear_license_type_selection
-    paths: [info_of_license_types]
-
-  pre_license_generation:
-    action: select_license_generation_based_on_type
-    paths: [generate_free_license, generate_trial_license]
-    response_path_map:
-      "free": generate_free_license
-      "trial": generate_trial_license
-
-  generate_free_license:
-    action: generate_free_license
-    paths: [free_license_generation_success, license_generation_failure]
-    response_path_map:
-      "true": free_license_generation_success
-      "false": license_generation_failure
-
-  generate_trial_license:
-    action: generate_trial_license
-    paths: [trial_license_generation_success, license_generation_failure]
-    response_path_map:
-      "true": trial_license_generation_success
-      "false": license_generation_failure
-
-  free_license_generation_success:
-    messages: |
-      <%= input[:pastel].green("✔ [Success] License generated successfully") %>
-
-      The license ID has been sent to <%= input[:gather_user_email_for_trial_license_generation] || input[:gather_user_email_for_free_license_generation] %>.
-    paths: [ask_for_license_id]
-
-  trial_license_generation_success:
-    messages: |
-      <%= input[:pastel].green("✔ [Success] License generated successfully") %>
-
-      The license ID has been sent to <%= input[:gather_user_email_for_trial_license_generation] || input[:gather_user_email_for_free_license_generation] %>.
-    paths: [ask_for_license_id]
-
   fetch_license_id:
     action: fetch_license_id
     paths: [exit]
-
-  license_generation_failure:
-    messages: "✖ [Error] License generation failed."
-    prompt_type: "error"
-    paths: [check_failure_reason]
-
-  check_failure_reason:
-    action: license_generation_rejected?
-    paths: [fetch_license_failure_error_msg, fetch_license_failure_rejection_msg]
-    response_path_map:
-      "true": fetch_license_failure_rejection_msg
-      "false": fetch_license_failure_error_msg
-
-  fetch_license_failure_error_msg:
-    action: fetch_license_failure_error_msg
-    paths: [license_generation_with_errors]
-
-  fetch_license_failure_rejection_msg:
-    action: fetch_license_failure_rejection_msg
-    paths: [license_generation_rejected]
-
-  license_generation_rejected:
-    messages: ["Your request for a license was denied for the following reason: <%= input[:fetch_license_failure_rejection_msg] %>. Please select one of the following options:", ["Try again", "Skip"]]
-    prompt_type: "select"
-    paths: [pre_license_generation, skip_message]
-    response_path_map:
-      "Try again": pre_license_generation
-      "Skip": skip_message
-
-  license_generation_with_errors:
-    messages: ["\nAn error occurred while generating your license.\nError message: <%= input[:fetch_license_failure_error_msg] %>\n", ["Try again", "Skip"]]
-    prompt_type: "select"
-    paths: [pre_license_generation, skip_message]
-    response_path_map:
-      "Try again": pre_license_generation
-      "Skip": skip_message
 
   exit:
     messages: ""
