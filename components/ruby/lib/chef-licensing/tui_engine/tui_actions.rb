@@ -1,8 +1,5 @@
 require_relative "../license_key_validator"
-require_relative "../license_key_generator"
 require_relative "../exceptions/invalid_license"
-require_relative "../exceptions/license_generation_failed"
-require_relative "../exceptions/license_generation_rejected"
 require_relative "../license_key_fetcher/base"
 require_relative "../config"
 require_relative "../context"
