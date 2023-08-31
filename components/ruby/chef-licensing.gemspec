@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.version       = ChefLicensing::VERSION
   spec.authors       = ["Inspec Team"]
   spec.email         = ["inspec@progress.com"]
-  spec.license       = "LicenseRef-LICENSE"
+  spec.license       = "Apache-2.0"
 
   spec.summary       = %q{Chef License storage, generation, and entitlement}
   spec.description   = %q{Ruby library to support CLI tools that use Progress Chef license storage, generation, and entitlement.}
