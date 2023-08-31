@@ -71,7 +71,8 @@ module ChefLicensing
 
       unless @license_keys.empty?
         # Licenses expiration check
-        if licenses_active?
+        # Client API possible errors will be handled in software entitlement check call (made after this)
+        if licenses_active? || client_api_call_error
           return @license_keys
         else
           # Prompts if the keys are expired or expiring
