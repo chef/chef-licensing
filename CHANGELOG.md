@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.5.4 -->
-## [0.5.4](https://github.com/chef/chef-licensing/tree/0.5.4) (2023-08-30)
+<!-- latest_release 0.5.5 -->
+## [0.5.5](https://github.com/chef/chef-licensing/tree/0.5.5) (2023-08-31)
 
 #### Merged Pull Requests
-- CHEF-5918: License Generation Flow - Remove the form asking for details while generating free and trial license [#158](https://github.com/chef/chef-licensing/pull/158) ([ahasunos](https://github.com/ahasunos))
+- Local licensing mode - Error handling for license expiration check [#162](https://github.com/chef/chef-licensing/pull/162) ([Nik08](https://github.com/Nik08))
 <!-- latest_release -->
 
 <!-- release_rollup since=0.4.44 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Local licensing mode - Error handling for license expiration check [#162](https://github.com/chef/chef-licensing/pull/162) ([Nik08](https://github.com/Nik08)) <!-- 0.5.5 -->
 - CHEF-5918: License Generation Flow - Remove the form asking for details while generating free and trial license [#158](https://github.com/chef/chef-licensing/pull/158) ([ahasunos](https://github.com/ahasunos)) <!-- 0.5.4 -->
 - CHEF-3841: Handle different versions of `licenses.yaml` file [Backward Compatibility Support] [#150](https://github.com/chef/chef-licensing/pull/150) ([ahasunos](https://github.com/ahasunos)) <!-- 0.5.3 -->
 - Update regex for company name validation [#152](https://github.com/chef/chef-licensing/pull/152) ([ahasunos](https://github.com/ahasunos)) <!-- 0.5.2 -->
