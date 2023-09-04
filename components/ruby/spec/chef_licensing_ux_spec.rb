@@ -259,7 +259,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         filter_license_type_options
         ask_for_all_license_type
         free_trial_license_selection
-        exit_with_message
+        validate_license_later_message
       }
     }
 
@@ -269,7 +269,9 @@ RSpec.describe ChefLicensing::TUIEngine do
       expect(tui_engine.traversed_interaction).to eq(expected_flow_for_license_generation)
       expect(prompt.output.string).to include("I don't have a license ID and would like to generate a new license ID")
       expect(prompt.output.string).to include("Select the type of license below and then enter user details")
-      # TODO: expect the new form sentence to include later
+      expect(prompt.output.string).to include("Quit and validate license later")
+      expect(prompt.output.string).to include("You can validate the license later on by selecting")
+      expect(prompt.output.string).to include("License can also be validated by running")
     end
   end
 
@@ -311,7 +313,9 @@ RSpec.describe ChefLicensing::TUIEngine do
       expect(tui_engine.traversed_interaction).to eq(expected_flow_for_license_generation)
       expect(prompt.output.string).to include("I don't have a license ID and would like to generate a new license ID")
       expect(prompt.output.string).to include("Select the type of license below and then enter user details")
-      # TODO: expect the new form sentence to include later
+      expect(prompt.output.string).to include("Kindly complete the user registration at")
+      expect(prompt.output.string).to include("Once you submit the details, you will receive the license ID on the email id you provided.")
+      expect(prompt.output.string).to include("Validate license now")
     end
   end
 
@@ -473,7 +477,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         filter_license_type_options
         ask_for_all_license_type
         free_trial_license_selection
-        exit_with_message
+        validate_license_later_message
       }
     }
 
@@ -485,7 +489,9 @@ RSpec.describe ChefLicensing::TUIEngine do
       expect(prompt.output.string).to include("Select the type of license below and then enter user details")
       expect(prompt.output.string).to include("2. Trial License")
       expect(prompt.output.string).to include("No. of units: Unlimited targets")
-      # TODO: expect the new form sentence to include later
+      expect(prompt.output.string).to include("Quit and validate license later")
+      expect(prompt.output.string).to include("You can validate the license later on by selecting")
+      expect(prompt.output.string).to include("License can also be validated by running")
     end
   end
 
@@ -531,7 +537,9 @@ RSpec.describe ChefLicensing::TUIEngine do
       expect(prompt.output.string).to include("Select the type of license below and then enter user details")
       expect(prompt.output.string).to include("2. Trial License")
       expect(prompt.output.string).to include("No. of units: Unlimited targets")
-      # TODO: expect the new form sentence to include later
+      expect(prompt.output.string).to include("Kindly complete the user registration at")
+      expect(prompt.output.string).to include("Once you submit the details, you will receive the license ID on the email id you provided.")
+      expect(prompt.output.string).to include("Validate license now")
     end
   end
 
