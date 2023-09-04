@@ -11,8 +11,12 @@ module ChefLicensing
         LIST_LICENSES: "v1/listLicenses",
       }).freeze
 
-      CACHE_ENDPOINTS = [
+      CACHE_FIRST_ENDPOINTS = [
         END_POINTS[:CLIENT],
+      ].freeze
+
+      API_FALLBACK_ENDPOINTS = [
+        END_POINTS[:LIST_LICENSES],
       ].freeze
     end
   end

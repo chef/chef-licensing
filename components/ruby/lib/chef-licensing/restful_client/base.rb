@@ -24,7 +24,10 @@ module ChefLicensing
         ENTITLEMENT_BY_ID: "license-service/entitlementbyid",
       }.freeze
 
-      CACHE_ENDPOINTS = [
+      CACHE_FIRST_ENDPOINTS = [
+      ].freeze
+
+      API_FALLBACK_ENDPOINTS = [
       ].freeze
 
       CURRENT_ENDPOINT_VERSION = 2
@@ -81,23 +84,54 @@ module ChefLicensing
 
       # a common method to handle the get API calls
       def invoke_get_api(endpoint, params = {})
-        if self.class::CACHE_ENDPOINTS.include?(endpoint) && ChefLicensing::Config.cache_enabled?
-          cache_key = construct_cache_key(endpoint, params)
-          logger.debug "Fetching data from cache for #{cache_key}"
-          @cache_manager.fetch(cache_key) do
-            logger.debug "Cache not found for #{cache_key}"
-            logger.debug "Fetching data from server for #{cache_key}"
-            response = invoke_api(ChefLicensing::Config.license_server_url.split(","), endpoint, :get, nil, params)
-            ttl_for_cache = get_ttl_for_cache(response.body) # we receive cache expiration (and other cache info) from the response in the body
-            logger.debug "Storing data in cache for #{cache_key}"
-            @cache_manager.store(cache_key, response.body, ttl_for_cache) if response.success? && response&.body&.status_code == 200
-            response.body
-          end
+        if self.class::API_FALLBACK_ENDPOINTS.include?(endpoint)
+          perform_api_fallback_operation(endpoint, params)
+        elsif self.class::CACHE_FIRST_ENDPOINTS.include?(endpoint) && ChefLicensing::Config.cache_enabled?
+          perform_cache_first_operation(endpoint, params)
         else
-          # Current flow with no application-level caching
+          perform_default_operation(endpoint, params)
+        end
+      end
+
+      # No application-level caching
+      def perform_default_operation(endpoint, params = {})
+        logger.debug "Fetching data from server for #{endpoint}"
+        response = invoke_api(ChefLicensing::Config.license_server_url.split(","), endpoint, :get, nil, params)
+        response.body
+      end
+
+      # Try to fetch data from application-cache first and if it fails, fallback to server
+      def perform_cache_first_operation(endpoint, params = {})
+        cache_key = construct_cache_key(endpoint, params)
+        logger.debug "Fetching data from cache for #{cache_key}"
+        @cache_manager.fetch(cache_key) do
+          logger.debug "Cache not found for #{cache_key}"
+          logger.debug "Fetching data from server for #{cache_key}"
           response = invoke_api(ChefLicensing::Config.license_server_url.split(","), endpoint, :get, nil, params)
+          ttl_for_cache = get_ttl_for_cache(response.body) # we receive cache expiration (and other cache info) from the response in the body
+          logger.debug "Storing data in cache for #{cache_key}"
+          @cache_manager.store(cache_key, response.body, ttl_for_cache) if response.success? && response&.body&.status_code == 200
           response.body
         end
+      end
+
+      # Try to fetch data from the server first and if it fails, fallback to application-cache
+      # TODO: Handle multiple license server urls as the cache key is formed using the url
+      def perform_api_fallback_operation(endpoint, params = {})
+        response = invoke_api(ChefLicensing::Config.license_server_url.split(","), endpoint, :get, nil, params)
+        cache_key = construct_cache_key(endpoint, params)
+        logger.debug "Storing data in cache for #{cache_key}"
+        # TODO: We don't receive cache info in the response body for listLicenses endpoint
+        # so temporarily we are hardcoding the ttl to 46108 seconds (12 hours); check with the server team
+        @cache_manager.store(cache_key, response.body, get_ttl_for_cache(response.body) || 46108)
+        response.body
+      rescue RestfulClientConnectionError => e
+        logger.debug "Restful Client Connection Error #{e.message}"
+        logger.debug "Falling back to cache for #{endpoint}"
+        response_data = fetch_cache_with_fallback(endpoint, params)
+        cache_key = construct_cache_key(endpoint, params)
+        logger.debug "Fetching data from cache for #{cache_key}"
+        @cache_manager.fetch(cache_key)
       end
 
       # a common method to handle the post API calls
