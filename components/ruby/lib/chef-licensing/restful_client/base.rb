@@ -102,6 +102,8 @@ module ChefLicensing
 
       # Try to fetch data from application-cache first and if it fails, fallback to server
       def perform_cache_first_operation(endpoint, params = {})
+        # Here, we do not iterate over multiple license server urls because
+        # perform_api_fallback_operation will take care of that and update the license server url in config
         cache_key = construct_cache_key(endpoint, params)
         logger.debug "Fetching data from cache for #{cache_key}"
         @cache_manager.fetch(cache_key) do
@@ -116,22 +118,36 @@ module ChefLicensing
       end
 
       # Try to fetch data from the server first and if it fails, fallback to application-cache
-      # TODO: Handle multiple license server urls as the cache key is formed using the url
       def perform_api_fallback_operation(endpoint, params = {})
         response = invoke_api(ChefLicensing::Config.license_server_url.split(","), endpoint, :get, nil, params)
         cache_key = construct_cache_key(endpoint, params)
         logger.debug "Storing data in cache for #{cache_key}"
         # TODO: We don't receive cache info in the response body for listLicenses endpoint
         # so temporarily we are hardcoding the ttl to 46108 seconds (12 hours); check with the server team
-        @cache_manager.store(cache_key, response.body, get_ttl_for_cache(response.body) || 46108)
+        @cache_manager.store(cache_key, response.body, get_ttl_for_cache(response.body) || 46108) if response&.body&.status_code == 200 || response&.body&.status_code == 404
         response.body
       rescue RestfulClientConnectionError => e
         logger.debug "Restful Client Connection Error #{e.message}"
         logger.debug "Falling back to cache for #{endpoint}"
-        response_data = fetch_cache_with_fallback(endpoint, params)
-        cache_key = construct_cache_key(endpoint, params)
-        logger.debug "Fetching data from cache for #{cache_key}"
-        @cache_manager.fetch(cache_key)
+        cached_response = fetch_cache_with_fallback(endpoint, params)
+        raise_restful_client_conn_error(ChefLicensing::Config.license_server_url.split(",")) if cached_response.nil?
+        cached_response
+      end
+
+      def fetch_cache_with_fallback(endpoint, params = {})
+        urls = ChefLicensing::Config.license_server_url.split(",")
+        response = nil
+        urls.each do |url|
+          cache_key = construct_cache_key(endpoint, params, url)
+          logger.debug "Checking cache for #{cache_key}"
+          if is_cached?(cache_key)
+            logger.debug "Cache found for #{cache_key}"
+            ChefLicensing::Config.license_server_url = url
+            response = @cache_manager.fetch(cache_key)
+            break
+          end
+        end
+        response
       end
 
       # a common method to handle the post API calls
@@ -231,8 +247,8 @@ module ChefLicensing
         raise RestfulClientConnectionError, error_message
       end
 
-      def construct_cache_key(endpoint, params = {})
-        string_to_hash = "#{ChefLicensing::Config.license_server_url}_#{endpoint}"
+      def construct_cache_key(endpoint, params = {}, license_server_url = ChefLicensing::Config.license_server_url)
+        string_to_hash = "#{license_server_url}_#{endpoint}"
 
         if params[:licenseId]
           license_id = params[:licenseId]
