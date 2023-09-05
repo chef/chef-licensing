@@ -301,13 +301,27 @@ interactions:
       "3. Commercial License\n": commercial_license_selection
       "4. Quit license generation": exit
 
-  # TODO: Fix the message and update link with the actual license generation link
+  # Note: The below link is specific to InSpec; as per PO there will be different link for other products.
+  #       We need to update the link for other products once we have the link or update to a common link.
   free_trial_license_selection:
-    messages: ["Complete the form available at <%= input[:pastel].blue.underline.blue(\"https://www.chef.io\") %>\n",
-      [Quit]
+    messages: ["<%= input[:pastel].yellow(\"!\") %> Kindly complete the user registration at <%= input[:pastel].blue.underline.blue(\"https://www.chef.io/licensing/inspec/license-genertation-free-trial\") %>\nOnce you submit the details, you will receive the license ID on the email id you provided.\n\nSelect an option",
+      [
+      Validate license now,
+      Quit and validate license later
+      ]
     ]
     prompt_type: "select"
-    paths: [exit_with_message]
+    paths: [validate_license_later_message, ask_for_license_id]
+    response_path_map:
+      "Validate license now": ask_for_license_id
+      "Quit and validate license later": validate_license_later_message
+
+  # TODO: Update the link for other ways to validate the license document.
+  validate_license_later_message:
+    messages: |
+      You can validate the license later on by selecting <%= input[:pastel].bold("'I already have a license ID'") %> when prompted for license.
+      To learn about more ways to validate the license, kindly visit <%= input[:pastel].blue.underline.blue("www.docs.chef.io") %>.
+    paths: [exit]
 
   commercial_license_selection:
     messages: ["Get in touch with the Sales Team by filling out the form available at <%= input[:pastel].blue.underline.blue(\"https://www.chef.io/contact-us\") %>\n",
