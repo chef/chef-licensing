@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.6.0 -->
-## [0.6.0](https://github.com/chef/chef-licensing/tree/0.6.0) (2023-09-05)
+<!-- latest_release 0.7.0 -->
+## [0.7.0](https://github.com/chef/chef-licensing/tree/0.7.0) (2023-09-05)
 
 #### Merged Pull Requests
-- CHEF-5997 &amp; CHEF-5919: Replace license generation UI with link to web form [#161](https://github.com/chef/chef-licensing/pull/161) ([ahasunos](https://github.com/ahasunos))
+- CHEF-5785  Apply Apache v2.0 License [#163](https://github.com/chef/chef-licensing/pull/163) ([clintoncwolfe](https://github.com/clintoncwolfe))
 <!-- latest_release -->
 
 <!-- release_rollup since=0.4.44 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-5785  Apply Apache v2.0 License [#163](https://github.com/chef/chef-licensing/pull/163) ([clintoncwolfe](https://github.com/clintoncwolfe)) <!-- 0.7.0 -->
 - CHEF-5997 &amp; CHEF-5919: Replace license generation UI with link to web form [#161](https://github.com/chef/chef-licensing/pull/161) ([ahasunos](https://github.com/ahasunos)) <!-- 0.6.0 -->
 - Local licensing mode - Error handling for license expiration check [#162](https://github.com/chef/chef-licensing/pull/162) ([Nik08](https://github.com/Nik08)) <!-- 0.5.5 -->
 - CHEF-5918: License Generation Flow - Remove the form asking for details while generating free and trial license [#158](https://github.com/chef/chef-licensing/pull/158) ([ahasunos](https://github.com/ahasunos)) <!-- 0.5.4 -->
