@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.7.1 -->
-## [0.7.1](https://github.com/chef/chef-licensing/tree/0.7.1) (2023-09-05)
+<!-- latest_release 0.7.2 -->
+## [0.7.2](https://github.com/chef/chef-licensing/tree/0.7.2) (2023-09-05)
 
 #### Merged Pull Requests
-- CHEF-5992 Updated support link for commercial license [#164](https://github.com/chef/chef-licensing/pull/164) ([Nik08](https://github.com/Nik08))
+- Update help message from validate license to enter license [#165](https://github.com/chef/chef-licensing/pull/165) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup since=0.4.44 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update help message from validate license to enter license [#165](https://github.com/chef/chef-licensing/pull/165) ([ahasunos](https://github.com/ahasunos)) <!-- 0.7.2 -->
 - CHEF-5992 Updated support link for commercial license [#164](https://github.com/chef/chef-licensing/pull/164) ([Nik08](https://github.com/Nik08)) <!-- 0.7.1 -->
 - CHEF-5785  Apply Apache v2.0 License [#163](https://github.com/chef/chef-licensing/pull/163) ([clintoncwolfe](https://github.com/clintoncwolfe)) <!-- 0.7.0 -->
 - CHEF-5997 &amp; CHEF-5919: Replace license generation UI with link to web form [#161](https://github.com/chef/chef-licensing/pull/161) ([ahasunos](https://github.com/ahasunos)) <!-- 0.6.0 -->
