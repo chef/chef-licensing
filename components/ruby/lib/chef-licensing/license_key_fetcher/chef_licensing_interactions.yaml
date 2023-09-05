@@ -319,8 +319,8 @@ interactions:
   # TODO: Update the link for other ways to validate the license document.
   validate_license_later_message:
     messages: |
-      You can validate the license later on by selecting <%= input[:pastel].bold("'I already have a license ID'") %> when prompted for license.
-      To learn about more ways to validate the license, kindly visit <%= input[:pastel].blue.underline.blue("www.docs.chef.io") %>.
+      You can enter the license later on by selecting <%= input[:pastel].bold("'I already have a license ID'") %> when prompted for license.
+      To learn about more ways to enter the license, kindly visit <%= input[:pastel].blue.underline.blue("www.docs.chef.io") %>.
     paths: [exit]
 
   commercial_license_selection:
