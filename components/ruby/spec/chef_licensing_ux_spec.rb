@@ -271,7 +271,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       expect(prompt.output.string).to include("Select the type of license below and then enter user details")
       expect(prompt.output.string).to include("Quit and validate license later")
       expect(prompt.output.string).to include("You can validate the license later on by selecting")
-      expect(prompt.output.string).to include("License can also be validated by running")
+      expect(prompt.output.string).to include("To learn about more ways to validate the license, kindly visit")
     end
   end
 
@@ -491,7 +491,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       expect(prompt.output.string).to include("No. of units: Unlimited targets")
       expect(prompt.output.string).to include("Quit and validate license later")
       expect(prompt.output.string).to include("You can validate the license later on by selecting")
-      expect(prompt.output.string).to include("License can also be validated by running")
+      expect(prompt.output.string).to include("To learn about more ways to validate the license, kindly visit")
     end
   end
 

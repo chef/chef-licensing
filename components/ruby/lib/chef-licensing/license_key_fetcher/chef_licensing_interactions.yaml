@@ -316,10 +316,11 @@ interactions:
       "Validate license now": ask_for_license_id
       "Quit and validate license later": validate_license_later_message
 
+  # TODO: Update the link for other ways to validate the license document.
   validate_license_later_message:
     messages: |
       You can validate the license later on by selecting <%= input[:pastel].bold("'I already have a license ID'") %> when prompted for license.
-      License can also be validated by running <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add") %> command and then selecting <%= input[:pastel].bold("'Validate a generated license ID option'") %>.
+      To learn about more ways to validate the license, kindly visit <%= input[:pastel].blue.underline.blue("www.docs.chef.io") %>.
     paths: [exit]
 
   commercial_license_selection:
