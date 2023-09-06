@@ -74,7 +74,7 @@ module ChefLicensing
 
       def clear_cache(endpoint, params = {})
         logger.debug("Clearing cache for #{endpoint} with params #{params}")
-        cache_key = construct_cache_key(endpoint, params)
+        cache_key = @cache_manager.construct_cache_key(endpoint, params)
         @cache_manager.delete(cache_key)
       end
 
@@ -84,7 +84,7 @@ module ChefLicensing
 
       # a common method to handle the get API calls
       def invoke_get_api(endpoint, params = {})
-        if self.class::API_FALLBACK_ENDPOINTS.include?(endpoint)
+        if self.class::API_FALLBACK_ENDPOINTS.include?(endpoint) && ChefLicensing::Config.cache_enabled?
           perform_api_fallback_operation(endpoint, params)
         elsif self.class::CACHE_FIRST_ENDPOINTS.include?(endpoint) && ChefLicensing::Config.cache_enabled?
           perform_cache_first_operation(endpoint, params)
@@ -104,15 +104,15 @@ module ChefLicensing
       def perform_cache_first_operation(endpoint, params = {})
         # Here, we do not iterate over multiple license server urls because
         # perform_api_fallback_operation will take care of that and update the license server url in config
-        cache_key = construct_cache_key(endpoint, params)
+        cache_key = @cache_manager.construct_cache_key(endpoint, params)
         logger.debug "Fetching data from cache for #{cache_key}"
         @cache_manager.fetch(cache_key) do
           logger.debug "Cache not found for #{cache_key}"
           logger.debug "Fetching data from server for #{cache_key}"
           response = invoke_api(ChefLicensing::Config.license_server_url.split(","), endpoint, :get, nil, params)
-          ttl_for_cache = get_ttl_for_cache(response.body) # we receive cache expiration (and other cache info) from the response in the body
+          # ttl_for_cache = @cache_manager.get_ttl_for_cache(response.body) # we receive cache expiration (and other cache info) from the response in the body
           logger.debug "Storing data in cache for #{cache_key}"
-          @cache_manager.store(cache_key, response.body, ttl_for_cache) if response.success? && response&.body&.status_code == 200
+          @cache_manager.store(cache_key, response.body) if response.success? && response&.body&.status_code == 200
           response.body
         end
       end
@@ -120,11 +120,11 @@ module ChefLicensing
       # Try to fetch data from the server first and if it fails, fallback to application-cache
       def perform_api_fallback_operation(endpoint, params = {})
         response = invoke_api(ChefLicensing::Config.license_server_url.split(","), endpoint, :get, nil, params)
-        cache_key = construct_cache_key(endpoint, params)
+        cache_key = @cache_manager.construct_cache_key(endpoint, params)
         logger.debug "Storing data in cache for #{cache_key}"
         # TODO: We don't receive cache info in the response body for listLicenses endpoint
         # so temporarily we are hardcoding the ttl to 46108 seconds (12 hours); check with the server team
-        @cache_manager.store(cache_key, response.body, get_ttl_for_cache(response.body) || 46108) if response&.body&.status_code == 200 || response&.body&.status_code == 404
+        @cache_manager.store(cache_key, response.body, 46108) if response&.body&.status_code == 200 || response&.body&.status_code == 404
         response.body
       rescue RestfulClientConnectionError => e
         logger.debug "Restful Client Connection Error #{e.message}"
@@ -138,7 +138,7 @@ module ChefLicensing
         urls = ChefLicensing::Config.license_server_url.split(",")
         response = nil
         urls.each do |url|
-          cache_key = construct_cache_key(endpoint, params, url)
+          cache_key = @cache_manager.construct_cache_key(endpoint, params, url)
           logger.debug "Checking cache for #{cache_key}"
           if is_cached?(cache_key)
             logger.debug "Cache found for #{cache_key}"
@@ -245,47 +245,6 @@ module ChefLicensing
         EOM
 
         raise RestfulClientConnectionError, error_message
-      end
-
-      def construct_cache_key(endpoint, params = {}, license_server_url = ChefLicensing::Config.license_server_url)
-        string_to_hash = "#{license_server_url}_#{endpoint}"
-
-        if params[:licenseId]
-          license_id = params[:licenseId]
-
-          # license_id is a comma separated string
-          # we split it, sort it and join it back to make sure the cache key is consistent
-          # for the same license ids in different order
-          license_id = license_id.split(",").sort.join("")
-          string_to_hash += "_#{license_id}"
-        end
-
-        if params[:entitlementId]
-          string_to_hash += "_#{params[:entitlementId]}"
-        end
-
-        Digest::SHA256.hexdigest(string_to_hash)
-      end
-
-      def get_ttl_for_cache(response_data)
-        if response_data.respond_to?(:data) && response_data.data.respond_to?(:cache)
-          fetch_cache_expiration_from_cache_control(response_data.data.cache) || fetch_cache_expiration_from_expires(response_data.data.cache)
-        end
-      end
-
-      def fetch_cache_expiration_from_cache_control(cache_info)
-        cache_info.cacheControl.match(/max-age:(\d+)/)[1].to_i if cache_info.respond_to?(:cacheControl)
-      end
-
-      def fetch_cache_expiration_from_expires(cache_info)
-        convert_timestamp_to_time_in_seconds(cache_info.expires) if cache_info.respond_to?(:expires)
-      end
-
-      def convert_timestamp_to_time_in_seconds(timestamp)
-        Time.zone = "UTC"
-        expires_at = Time.zone.parse(timestamp)
-        current_time = Time.zone.now
-        (expires_at - current_time).to_i
       end
     end
   end
