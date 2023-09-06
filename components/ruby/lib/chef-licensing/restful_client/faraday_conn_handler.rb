@@ -32,6 +32,8 @@ module ChefLicensing
 
       private
 
+      attr_reader :logger
+
       def get_connection(url = nil)
         store = ::ActiveSupport::Cache.lookup_store(:file_store, Dir.tmpdir)
         Faraday.new(url: url) do |config|

@@ -16,41 +16,41 @@ module ChefLicensing
       end
 
       # No application-level caching
-      def perform_default_get_operation(endpoint, params = {})
+      def fetch_from_server(endpoint, params = {})
         logger.debug "Fetching data from server for #{endpoint}"
-        response = invoke_api(ChefLicensing::Config.license_server_url.split(","), endpoint, :get, nil, params)
+        response = invoke_api(endpoint, :get, nil, params)
         response.body
       end
 
-      def perform_default_post_operation(endpoint, payload = {}, headers = {})
-        response = invoke_api(ChefLicensing::Config.license_server_url.split(","), endpoint, :post, payload, nil, headers)
+      def post_to_server(endpoint, payload = {}, headers = {})
+        response = invoke_api(endpoint, :post, payload, nil, headers)
         raise RestfulClientError, format_error_from(response) unless response.success?
 
         response.body
       end
 
       # Try to fetch data from application-cache first and if it fails, fallback to server
-      def perform_cache_first_get_operation(endpoint, params = {})
-        # Here, we do not iterate over multiple license server urls because
-        # perform_api_fallback_operation will take care of that and update the license server url in config
-        cache_key = @cache_manager.construct_cache_key(endpoint, params)
-        logger.debug "Fetching data from cache for #{cache_key}"
-        @cache_manager.fetch(cache_key) do
-          logger.debug "Cache not found for #{cache_key}"
-          logger.debug "Fetching data from server for #{cache_key}"
-          response = invoke_api(ChefLicensing::Config.license_server_url.split(","), endpoint, :get, nil, params)
-          # ttl_for_cache = @cache_manager.get_ttl_for_cache(response.body) # we receive cache expiration (and other cache info) from the response in the body
+      def fetch_from_cache_or_server(endpoint, params = {})
+        cached_response = fetch_cached_response(endpoint, params)
+        if cached_response.nil?
+          logger.debug "Cache not found for #{endpoint}"
+          logger.debug "Fetching data from server for #{endpoint}"
+          response = invoke_api(endpoint, :get, nil, params)
+          cache_key = @cache_manager.construct_cache_key(endpoint, params)
           logger.debug "Storing data in cache for #{cache_key}"
           @cache_manager.store(cache_key, response.body) if response.success? && response&.body&.status_code == 200
           response.body
+        else
+          logger.debug "Cache found for #{endpoint}"
+          cached_response
         end
       end
 
       # Try to fetch data from the server first and if it fails, fallback to application-cache
-      def perform_api_first_get_operation(endpoint, params = {})
-        response = invoke_api(ChefLicensing::Config.license_server_url.split(","), endpoint, :get, nil, params)
+      def fetch_from_server_or_cache(endpoint, params = {})
+        response = invoke_api(endpoint, :get, nil, params)
         cache_key = @cache_manager.construct_cache_key(endpoint, params)
-        logger.debug "Storing data in cache for #{cache_key}"
+        logger.debug "Storing cache for #{endpoint}"
         # TODO: We don't receive cache info in the response body for listLicenses endpoint
         # so temporarily we are hardcoding the ttl to 46108 seconds (12 hours); check with the server team
         @cache_manager.store(cache_key, response.body, 46108) if response&.body&.status_code == 200 || response&.body&.status_code == 404
@@ -58,8 +58,8 @@ module ChefLicensing
       rescue RestfulClientConnectionError => e
         logger.debug "Restful Client Connection Error #{e.message}"
         logger.debug "Falling back to cache for #{endpoint}"
-        cached_response = fetch_cache_with_fallback(endpoint, params)
-        raise_restful_client_conn_error(ChefLicensing::Config.license_server_url.split(",")) if cached_response.nil?
+        cached_response = fetch_cached_response(endpoint, params)
+        raise_restful_client_conn_error if cached_response.nil?
         cached_response
       end
 
@@ -67,14 +67,14 @@ module ChefLicensing
 
       attr_reader :cache_manager, :logger
 
-      def fetch_cache_with_fallback(endpoint, params = {})
-        urls = ChefLicensing::Config.license_server_url.split(",")
+      def fetch_cached_response(endpoint, params = {})
+        urls = ChefLicensing::Config.license_server_url.split(",").first(REQUEST_LIMIT)
         response = nil
         urls.each do |url|
           cache_key = @cache_manager.construct_cache_key(endpoint, params, url)
           logger.debug "Checking cache for #{cache_key}"
-          if is_cached?(cache_key)
-            logger.debug "Cache found for #{cache_key}"
+          if @cache_manager.is_cached?(cache_key)
+            logger.debug "Fetching data from cache for #{cache_key}"
             ChefLicensing::Config.license_server_url = url
             response = @cache_manager.fetch(cache_key)
             break
@@ -83,17 +83,15 @@ module ChefLicensing
         response
       end
 
-      def invoke_api(urls, endpoint, http_method, payload = nil, params = {}, headers = {})
+      def invoke_api(endpoint, http_method, payload = nil, params = {}, headers = {})
         # get the connection from faraday connection handler object
         handle_connection = http_method == :get ? @faraday_conn_handler.method(:handle_get_connection) : @faraday_conn_handler.method(:handle_post_connection)
         response = nil
-        attempted_urls = []
+        urls = ChefLicensing::Config.license_server_url.split(",")
 
         logger.warn "Only the first #{REQUEST_LIMIT} urls will be tried." if urls.size > REQUEST_LIMIT
-        urls.each_with_index do |url, i|
+        urls.first(REQUEST_LIMIT).each do |url|
           url = url.strip
-          attempted_urls << url
-          break if i == REQUEST_LIMIT - 1
 
           logger.debug "Trying to connect to #{url}"
           handle_connection.call(url) do |connection|
@@ -114,7 +112,7 @@ module ChefLicensing
           logger.warn "Invalid URI #{url}"
         end
 
-        raise_restful_client_conn_error(attempted_urls) if response.nil?
+        raise_restful_client_conn_error if response.nil?
         response
       end
 
@@ -125,7 +123,8 @@ module ChefLicensing
         error_details
       end
 
-      def raise_restful_client_conn_error(urls)
+      def raise_restful_client_conn_error
+        urls = ChefLicensing::Config.license_server_url.split(",").first(REQUEST_LIMIT)
         error_message = <<~EOM
           Unable to connect to the licensing server. #{ChefLicensing::Config.chef_product_name} requires server communication to operate.
           The following URL(s) were tried:\n#{

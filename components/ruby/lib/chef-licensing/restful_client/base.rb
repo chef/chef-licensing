@@ -15,10 +15,14 @@ module ChefLicensing
         ENTITLEMENT_BY_ID: "license-service/entitlementbyid",
       }.freeze
 
+      # Cache first endpoints are the endpoints where we want to fetch data from cache first
+      # and if it fails, fallback to server
       CACHE_FIRST_ENDPOINTS = [
       ].freeze
 
-      API_FALLBACK_ENDPOINTS = [
+      # API first endpoints are the endpoints where we want to fetch data from server first
+      # and if it fails, fallback to cache
+      API_FIRST_ENDPOINTS = [
       ].freeze
 
       CURRENT_ENDPOINT_VERSION = 2
@@ -75,18 +79,18 @@ module ChefLicensing
 
       # a common method to handle the get API calls
       def invoke_get_api(endpoint, params = {})
-        if self.class::API_FALLBACK_ENDPOINTS.include?(endpoint) && ChefLicensing::Config.cache_enabled?
-          @api_gateway.perform_api_first_get_operation(endpoint, params)
+        if self.class::API_FIRST_ENDPOINTS.include?(endpoint) && ChefLicensing::Config.cache_enabled?
+          @api_gateway.fetch_from_server_or_cache(endpoint, params)
         elsif self.class::CACHE_FIRST_ENDPOINTS.include?(endpoint) && ChefLicensing::Config.cache_enabled?
-          @api_gateway.perform_cache_first_get_operation(endpoint, params)
+          @api_gateway.fetch_from_cache_or_server(endpoint, params)
         else
-          @api_gateway.perform_default_get_operation(endpoint, params)
+          @api_gateway.fetch_from_server(endpoint, params)
         end
       end
 
       # a common method to handle the post API calls
       def invoke_post_api(endpoint, payload, headers = {})
-        @api_gateway.perform_default_post_operation(endpoint, payload, headers)
+        @api_gateway.post_to_server(endpoint, payload, headers)
       end
     end
   end

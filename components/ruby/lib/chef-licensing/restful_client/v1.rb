@@ -15,7 +15,7 @@ module ChefLicensing
         END_POINTS[:CLIENT],
       ].freeze
 
-      API_FALLBACK_ENDPOINTS = [
+      API_FIRST_ENDPOINTS = [
         END_POINTS[:LIST_LICENSES],
       ].freeze
     end

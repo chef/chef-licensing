@@ -205,7 +205,7 @@ RSpec.describe ChefLicensing::RestfulClient::V1 do
       it "invokes the endpoint and caches the response" do
         # it returns the json response as an object of OpenStruct, hence checking for truthy
         expect(base_obj.client(license_keys: license_keys, entitlement_id: ChefLicensing::Config.chef_entitlement_id).data).to be_truthy
-        expect(output.string).to include("Fetching data from cache")
+        expect(output.string).not_to include("Fetching data from cache")
         expect(output.string).to include("Cache not found")
         expect(output.string).to include("Fetching data from server")
         expect(output.string).to include("Storing data in cache")
