@@ -1,6 +1,8 @@
 require "active_support/cache"
 require "tmpdir" unless defined?(Dir.mktmpdir)
 require_relative "../config"
+require "digest" unless defined?(Digest)
+require "active_support/time"
 
 module ChefLicensing
   module RestfulClient
