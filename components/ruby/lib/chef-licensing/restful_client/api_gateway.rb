@@ -63,6 +63,17 @@ module ChefLicensing
         cached_response
       end
 
+      def clear_cached_response(endpoint, params = {})
+        urls = ChefLicensing::Config.license_server_url.split(",").first(REQUEST_LIMIT)
+        urls.each do |url|
+          cache_key = @cache_manager.construct_cache_key(endpoint, params, url)
+          if @cache_manager.is_cached?(cache_key)
+            logger.debug "Clearing cache for #{cache_key}"
+            @cache_manager.delete(cache_key)
+          end
+        end
+      end
+
       private
 
       attr_reader :cache_manager, :logger

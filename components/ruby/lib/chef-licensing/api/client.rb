@@ -36,7 +36,7 @@ module ChefLicensing
       end
 
       def clear_client_cache
-        restful_client.clear_cache(ChefLicensing::RestfulClient::V1::END_POINTS[:CLIENT], { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
+        restful_client.clear_cached_response(ChefLicensing::RestfulClient::V1::END_POINTS[:CLIENT], { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
       end
 
       private

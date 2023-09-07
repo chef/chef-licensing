@@ -220,7 +220,7 @@ RSpec.describe ChefLicensing::RestfulClient::V1 do
       end
 
       it "clears the cache" do
-        expect(base_obj.clear_cache(ChefLicensing::RestfulClient::V1::END_POINTS[:CLIENT], { licenseId: license_keys, entitlementId: ChefLicensing::Config.chef_entitlement_id })).to be_truthy
+        expect(base_obj.clear_cached_response(ChefLicensing::RestfulClient::V1::END_POINTS[:CLIENT], { licenseId: license_keys, entitlementId: ChefLicensing::Config.chef_entitlement_id })).to be_truthy
         expect(output.string).to include("Clearing cache for #{ChefLicensing::RestfulClient::V1::END_POINTS[:CLIENT]}")
         expect(output.string).to include("CacheManager: Deleting")
       end

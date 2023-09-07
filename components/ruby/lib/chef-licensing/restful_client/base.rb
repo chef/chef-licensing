@@ -31,8 +31,7 @@ module ChefLicensing
         raise MissingAPICredentialsError, "Missing credential in config: Set in block chef_license_server or use environment variable CHEF_LICENSE_SERVER or pass through argument --chef-license-server" if ChefLicensing::Config.license_server_url.nil?
 
         @logger = ChefLicensing::Config.logger
-        @cache_manager = opts[:cache_manager] || ChefLicensing::RestfulClient::CacheManager.new
-        @api_gateway = ChefLicensing::RestfulClient::ApiGateway.new(opts)
+        @api_gateway = opts[:api_gateway] || ChefLicensing::RestfulClient::ApiGateway.new(opts)
       end
 
       def validate(license)
@@ -67,10 +66,9 @@ module ChefLicensing
         invoke_get_api(self.class::END_POINTS[:LIST_LICENSES])
       end
 
-      def clear_cache(endpoint, params = {})
+      def clear_cached_response(endpoint, params = {})
         logger.debug("Clearing cache for #{endpoint} with params #{params}")
-        cache_key = @cache_manager.construct_cache_key(endpoint, params)
-        @cache_manager.delete(cache_key)
+        @api_gateway.clear_cached_response(endpoint, params)
       end
 
       private
