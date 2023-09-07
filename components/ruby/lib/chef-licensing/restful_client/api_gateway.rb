@@ -84,8 +84,6 @@ module ChefLicensing
       end
 
       def invoke_api(endpoint, http_method, payload = nil, params = {}, headers = {})
-        # get the connection from faraday connection handler object
-        handle_connection = http_method == :get ? @faraday_conn_handler.method(:handle_get_connection) : @faraday_conn_handler.method(:handle_post_connection)
         response = nil
         urls = ChefLicensing::Config.license_server_url.split(",")
 
@@ -94,13 +92,15 @@ module ChefLicensing
           url = url.strip
 
           logger.debug "Trying to connect to #{url}"
-          handle_connection.call(url) do |connection|
-            response = connection.send(http_method, endpoint) do |request|
+
+          response = @faraday_conn_handler.handle_connection(http_method, url) do |connection|
+            connection.send(http_method, endpoint) do |request|
               request.body = payload.to_json if payload
               request.params = params if params
               request.headers = headers if headers
             end
           end
+
           # At this point, we have a successful connection
           # Update the value of license server url in config
           ChefLicensing::Config.license_server_url = url
