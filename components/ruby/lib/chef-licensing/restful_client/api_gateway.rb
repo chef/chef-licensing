@@ -37,7 +37,7 @@ module ChefLicensing
           logger.debug "Fetching data from server for #{endpoint}"
           response = invoke_api(endpoint, :get, nil, params)
           cache_key = @cache_manager.construct_cache_key(endpoint, params)
-          logger.debug "Storing data in cache for #{cache_key}"
+          logger.debug "Storing data in cache for #{endpoint} against key #{cache_key}"
           @cache_manager.store(cache_key, response.body) if response.success? && response&.body&.status_code == 200
           response.body
         else
@@ -48,9 +48,10 @@ module ChefLicensing
 
       # Try to fetch data from the server first and if it fails, fallback to application-cache
       def fetch_from_server_or_cache(endpoint, params = {})
+        logger.debug "Fetching data from server for #{endpoint}"
         response = invoke_api(endpoint, :get, nil, params)
         cache_key = @cache_manager.construct_cache_key(endpoint, params)
-        logger.debug "Storing cache for #{endpoint}"
+        logger.debug "Storing cache for #{endpoint} with key #{cache_key}"
         # TODO: We don't receive cache info in the response body for listLicenses endpoint
         # so temporarily we are hardcoding the ttl to 46108 seconds (12 hours); check with the server team
         @cache_manager.store(cache_key, response.body, 46108) if response&.body&.status_code == 200 || response&.body&.status_code == 404
@@ -68,7 +69,7 @@ module ChefLicensing
         urls.each do |url|
           cache_key = @cache_manager.construct_cache_key(endpoint, params, url)
           if @cache_manager.is_cached?(cache_key)
-            logger.debug "Clearing cache for #{cache_key}"
+            logger.debug "Clearing cache for #{endpoint} with key #{cache_key}"
             @cache_manager.delete(cache_key)
           end
         end
