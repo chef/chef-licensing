@@ -83,19 +83,24 @@ RSpec.describe ChefLicensing::RestfulClient::ApiGateway do
           expect(output.string).to_not include("Falling back to cache for dummy_endpoint")
         end
 
-        # TODO: Fix this test case
         # make the server unreachable
-        # before do
-        #   stub_request(:get, "#{ChefLicensing::Config.license_server_url}/dummy_endpoint_2")
-        #     .with(query: {})
-        #     .to_raise(ChefLicensing::RestfulClientConnectionError)
-        # end
+        before do
+          stub_request(:get, "#{ChefLicensing::Config.license_server_url}/dummy_endpoint_2")
+            .with(query: {})
+            .to_raise(ChefLicensing::RestfulClientConnectionError)
+        end
 
-        # it "fetches from the cache when the server is unreachable" do
-        #   expect(api_gateway.fetch_from_server_or_cache("dummy_endpoint_2")).to be_truthy
-        #   expect(output.string).to include("Fetching data from server for dummy_endpoin_2t")
-        #   expect(output.string).to include("Falling back to cache for dummy_endpoint_2")
-        # end
+        # make a dummy cache entry
+        before do
+          cache_key = cache_manager.construct_cache_key("dummy_endpoint_2", {})
+          cache_manager.store(cache_key, "data")
+        end
+
+        it "fetches from the cache when the server is unreachable" do
+          expect(api_gateway.fetch_from_server_or_cache("dummy_endpoint_2")).to be_truthy
+          expect(output.string).to include("Fetching data from server for dummy_endpoint_2")
+          expect(output.string).to include("Falling back to cache for dummy_endpoint_2")
+        end
       end
 
       describe "#post_to_server" do
