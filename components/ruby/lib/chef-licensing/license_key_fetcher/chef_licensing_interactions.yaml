@@ -304,7 +304,7 @@ interactions:
   # Note: The below link is specific to InSpec; as per PO there will be different link for other products.
   #       We need to update the link for other products once we have the link or update to a common link.
   free_trial_license_selection:
-    messages: ["<%= input[:pastel].yellow(\"!\") %> Kindly complete the user registration at <%= input[:pastel].blue.underline.blue(\"https://www.chef.io/licensing/inspec/license-genertation-free-trial\") %>\nOnce you submit the details, you will receive the license ID on the email id you provided.\n\nSelect an option",
+    messages: ["<%= input[:pastel].yellow(\"!\") %> Kindly complete the user registration at <%= input[:pastel].blue.underline.blue(\"https://www.chef.io/license-generation-free-trial\") %>\nOnce you submit the details, you will receive the license ID on the email id you provided.\n\nSelect an option",
       [
       Validate license now,
       Quit and validate license later
