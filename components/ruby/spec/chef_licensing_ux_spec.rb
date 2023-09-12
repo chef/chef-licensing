@@ -380,7 +380,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
         expect(tui_engine.traversed_interaction).to eq(expected_flow_for_license_restriction)
         expect(prompt.output.string).to include("✖ [Error] License validation failed")
-        expect(prompt.output.string).to include("A Free License already exists with following details:")
+        expect(prompt.output.string).to include("A Free Tier License already exists with following details:")
         expect(prompt.output.string).to include("Please generate a Trial or Commercial License by running")
       end
 
@@ -688,7 +688,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       expect(tui_engine.traversed_interaction).to eq(%i{prompt_license_expired fetch_license_id})
       expect(prompt.output.string).to include("License Expired")
       expect(prompt.output.string).to include("Get a Commercial License to receive bug fixes, updates")
-      expect(prompt.output.string).to include("Get a Free License to scan limited targets.")
+      expect(prompt.output.string).to include("Get a Free Tier License to scan limited targets.")
       expect(prompt.output.string).to include("license add")
     end
 
@@ -705,7 +705,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       expect(tui_engine.traversed_interaction).to eq(%i{prompt_license_expired_local_mode fetch_license_id})
       expect(prompt.output.string).to include("License Expired")
       expect(prompt.output.string).to include("Get a Commercial License to receive bug fixes, updates")
-      expect(prompt.output.string).to include("Get a Free License to scan limited targets.")
+      expect(prompt.output.string).to include("Get a Free Tier License to scan limited targets.")
       expect(prompt.output.string).to_not include("license add")
     end
 

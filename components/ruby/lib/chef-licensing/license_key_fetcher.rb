@@ -286,7 +286,7 @@ module ChefLicensing
     def prompt_license_addition_restricted(license_type, existing_license_keys_in_file)
       logger.debug "License Key fetcher - prompting license addition restriction"
       # For trial license
-      # TODO for free license
+      # TODO for Free Tier License
       config[:start_interaction] = :prompt_license_addition_restriction
       prompt_fetcher.config = config
       # Existing license keys are needed to show details of existing license of license type which is restricted.
@@ -297,7 +297,7 @@ module ChefLicensing
     def unrestricted_license_added?(new_keys, license_type)
       if license_restricted?(license_type)
         # Existing license keys of same license type are fetched to compare if old license key or a new one is added.
-        # However, if user is trying to add free license, and user has active trial license, we fetch the trial license key
+        # However, if user is trying to add Free Tier License, and user has active trial license, we fetch the trial license key
         if license_type == :free && file_fetcher.user_has_active_trial_license?
           existing_license_keys_in_file = file_fetcher.fetch_license_keys_based_on_type(:trial)
         else

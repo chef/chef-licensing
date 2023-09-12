@@ -46,7 +46,7 @@ interactions:
     paths: [add_license_info_in_restriction_flow]
 
   free_license_already_exist_message:
-    messages: "A Free License already exists with following details: \n"
+    messages: "A Free Tier License already exists with following details: \n"
     prompt_type: "say"
     paths: [add_license_info_in_restriction_flow]
 
@@ -92,7 +92,7 @@ interactions:
 
         Get a Commercial License to receive bug fixes, updates
         and new features.
-        Get a Free License to scan limited <%= input[:unit_measure] %>.
+        Get a Free Tier License to scan limited <%= input[:unit_measure] %>.
 
         To get a new license, run <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%>
         and select a license type.
@@ -107,7 +107,7 @@ interactions:
 
         Get a Commercial License to receive bug fixes, updates
         and new features.
-        Get a Free License to scan limited <%= input[:unit_measure] %>.
+        Get a Free Tier License to scan limited <%= input[:unit_measure] %>.
       ------------------------------------------------------------
     prompt_type: "say"
     paths: [fetch_license_id]
@@ -257,14 +257,14 @@ interactions:
     prompt_type: "select"
     messages: ["Select the type of license below and then enter user details\n" ,
       [
-      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 <%= input[:unit_measure] %>\n",
+      "1. Free Tier License\n     Validity: Unlimited\n     No. of units: 10 <%= input[:unit_measure] %>\n",
       "2. Commercial License\n",
       "3. Quit license generation"
       ]]
     paths: [free_trial_license_selection, commercial_license_selection, exit]
     response_path_map:
-      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 nodes\n": free_trial_license_selection
-      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 targets\n": free_trial_license_selection
+      "1. Free Tier License\n     Validity: Unlimited\n     No. of units: 10 nodes\n": free_trial_license_selection
+      "1. Free Tier License\n     Validity: Unlimited\n     No. of units: 10 targets\n": free_trial_license_selection
       "2. Commercial License\n": commercial_license_selection
       "3. Quit license generation": exit
 
@@ -287,15 +287,15 @@ interactions:
     prompt_type: "select"
     messages: ["Select the type of license below and then enter user details\n" ,
       [
-      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 <%= input[:unit_measure] %>\n",
+      "1. Free Tier License\n     Validity: Unlimited\n     No. of units: 10 <%= input[:unit_measure] %>\n",
       "2. Trial License\n     Validity: 30 Days\n     No. of units: Unlimited <%= input[:unit_measure] %>\n",
       "3. Commercial License\n",
       "4. Quit license generation"
       ]]
     paths: [free_trial_license_selection, commercial_license_selection, exit]
     response_path_map:
-      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 nodes\n": free_trial_license_selection
-      "1. Free License\n     Validity: Unlimited\n     No. of units: 10 targets\n": free_trial_license_selection
+      "1. Free Tier License\n     Validity: Unlimited\n     No. of units: 10 nodes\n": free_trial_license_selection
+      "1. Free Tier License\n     Validity: Unlimited\n     No. of units: 10 targets\n": free_trial_license_selection
       "2. Trial License\n     Validity: 30 Days\n     No. of units: Unlimited nodes\n": free_trial_license_selection
       "2. Trial License\n     Validity: 30 Days\n     No. of units: Unlimited targets\n": free_trial_license_selection
       "3. Commercial License\n": commercial_license_selection

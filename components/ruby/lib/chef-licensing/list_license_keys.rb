@@ -57,7 +57,7 @@ module ChefLicensing
     def display_overview
       output.puts "------------------------------------------------------------"
       licenses_metadata.each do |license|
-        # Sets the validity text for a free license as "Unlimited" and displays the number of days for others.
+        # Sets the validity text for a Free Tier License as "Unlimited" and displays the number of days for others.
         validity = if license.license_type == "free"
                      "Unlimited"
                    else
