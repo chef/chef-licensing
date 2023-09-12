@@ -28,8 +28,11 @@ module ChefLicensing
 
       licenses_metadata.each do |license|
         puts_bold "License Key     : #{license.id}"
+        # Note: The license type is returned as "free" for Free Tier Licenses from the server.
+        # This is capitalized to "Free Tier" for display purposes as recommended by the product team.
+        license_type = license.license_type == "free" ? "Free Tier" : license.license_type.capitalize
         output.puts <<~LICENSE
-          Type            : #{license.license_type}
+          Type            : #{license_type}
           Status          : #{license.status}
           Expiration Date : #{license.expiration_date}
 
@@ -57,7 +60,10 @@ module ChefLicensing
     def display_overview
       output.puts "------------------------------------------------------------"
       licenses_metadata.each do |license|
-        # Sets the validity text for a free license as "Unlimited" and displays the number of days for others.
+        # Note: The license type is returned as "free" for Free Tier Licenses from the server.
+        # This is capitalized to "Free Tier" for display purposes as recommended by the product team.
+        license_type = license.license_type == "free" ? "Free Tier" : license.license_type.capitalize
+        # Sets the validity text for a Free Tier License as "Unlimited" and displays the number of days for others.
         validity = if license.license_type == "free"
                      "Unlimited"
                    else
@@ -72,7 +78,7 @@ module ChefLicensing
             #{pastel.bold("License Details")}
               Asset Name       : #{license.limits.first.software}
               License ID       : #{license.id}
-              Type             : #{license.license_type.capitalize}
+              Type             : #{license_type}
               Status           : #{license.status.capitalize}
               Validity         : #{validity}
               No. Of Units     : #{num_of_units} #{unit_measure.capitalize.pluralize(num_of_units)}

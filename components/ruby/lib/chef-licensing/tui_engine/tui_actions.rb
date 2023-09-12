@@ -45,7 +45,7 @@ module ChefLicensing
         self.license_type = get_license_type
         if license_restricted?(license_type)
           # Existing license keys needs to be fetcher to show details of existing license of license type which is restricted.
-          # However, if user is trying to add free license, and user has active trial license, we fetch the trial license key
+          # However, if user is trying to add Free Tier License, and user has active trial license, we fetch the trial license key
           if license_type == :free && LicenseKeyFetcher::File.user_has_active_trial_license?(@opts)
             existing_license_keys_in_file = LicenseKeyFetcher::File.fetch_license_keys_based_on_type(:trial, @opts)
           else
