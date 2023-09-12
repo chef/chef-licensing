@@ -672,7 +672,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect(tui_engine.traversed_interaction).to eq(expected_flow_for_license_restriction)
         expect(prompt.output.string).to include("✖ [Error] License validation failed")
         expect(prompt.output.string).to include("A Trial License already exists with following details:")
-        expect(prompt.output.string).to include("Please generate a Free or Commercial License by running")
+        expect(prompt.output.string).to include("Please generate a Free Tier or Commercial License by running")
       end
     end
   end

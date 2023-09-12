@@ -7,7 +7,7 @@ interactions:
         License ID Validation
 
         To continue using Chef <%= input[:chef_product_name] %>, a license ID is required.
-        (Free, Trial, or Commercial)
+        (Free Tier, Trial, or Commercial)
 
         If you generated a license previously, you might
         have received it in an email.
@@ -70,7 +70,7 @@ interactions:
   trial_restriction_message:
     prompt_type: "say"
     messages:
-      Please generate a Free or Commercial License by running <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%>.
+      Please generate a Free Tier or Commercial License by running <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%>.
     paths: [exit_with_message]
 
   free_restriction_message:
