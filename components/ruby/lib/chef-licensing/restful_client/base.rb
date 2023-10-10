@@ -131,6 +131,10 @@ module ChefLicensing
       end
 
       def get_connection(url = nil)
+        # Support for config.active_support.cache_format_version 6.1 is deprecated
+        # below line configures the cache format version to 7.0 to get rid of the deprication warning messages
+        # TODO: remove explicit assignment to version 7.0 once the deprecation is removed from ActiveSupport.
+        ::ActiveSupport::Cache.format_version = 7.0
         store = ::ActiveSupport::Cache.lookup_store(:file_store, Dir.tmpdir)
         Faraday.new(url: url) do |config|
           config.request :json
