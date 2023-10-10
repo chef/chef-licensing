@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 0.7.4 -->
-## [0.7.4](https://github.com/chef/chef-licensing/tree/0.7.4) (2023-09-12)
+<!-- latest_release 0.7.5 -->
+## [0.7.5](https://github.com/chef/chef-licensing/tree/0.7.5) (2023-10-10)
 
 #### Merged Pull Requests
-- CHEF-6348: Update term &quot;Free License&quot; to &quot;Free Tier License&quot; [#167](https://github.com/chef/chef-licensing/pull/167) ([ahasunos](https://github.com/ahasunos))
+- Add constraint to ActiveSupport gem to use version lower than 7.1 [#169](https://github.com/chef/chef-licensing/pull/169) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup since=0.4.44 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Add constraint to ActiveSupport gem to use version lower than 7.1 [#169](https://github.com/chef/chef-licensing/pull/169) ([ahasunos](https://github.com/ahasunos)) <!-- 0.7.5 -->
 - CHEF-6348: Update term &quot;Free License&quot; to &quot;Free Tier License&quot; [#167](https://github.com/chef/chef-licensing/pull/167) ([ahasunos](https://github.com/ahasunos)) <!-- 0.7.4 -->
 - CHEF-6310: Update license generation link for free &amp; trial license [#166](https://github.com/chef/chef-licensing/pull/166) ([ahasunos](https://github.com/ahasunos)) <!-- 0.7.3 -->
 - Update help message from validate license to enter license [#165](https://github.com/chef/chef-licensing/pull/165) ([ahasunos](https://github.com/ahasunos)) <!-- 0.7.2 -->
