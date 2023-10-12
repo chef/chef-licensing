@@ -1,6 +1,6 @@
 # Chef Licensing
 
-Chef Licensing is a Ruby library for managing the licensing of Chef products. It provides the support to generate and validate license keys, as well as track entitlements associated with the licenses. 
+Chef Licensing is a Ruby library for managing the licensing of Chef products. It provides the support to generate and validate license keys, as well as track entitlements associated with the licenses.
 
 ## Table of Contents
 
@@ -15,7 +15,7 @@ Chef Licensing is a Ruby library for managing the licensing of Chef products. It
 ## System Prerequisites
 
 Usage of this library assumes the system to meet the following requirements:
-- **Ruby**: This library requires Ruby version >= 3.1. If you do not have Ruby installed, you can download it from the official Ruby website or use a package manager for the same.
+- **Ruby**: This library requires Ruby version >= 3.0.3. If you do not have Ruby installed, you can download it from the official Ruby website or use a package manager for the same.
 - **Bundler**: This project uses Bundler to manage dependencies. If you do not have Bundler installed, you can install it by running the following command in your terminal:
   ```
   gem install bundler
@@ -163,7 +163,7 @@ Usage Status  : Active
 Usage Limit   : 2
 Usage Measure : 2
 Used          : 2
-Software      : 
+Software      :
 +----------------------------------------------+
 ```
 
@@ -237,7 +237,7 @@ ChefLicensing::LicenseKeyValidator.validate!("LICENSE_KEY")
 ```
 #### Response
 
-If the license validation process is successful, it returns true or false to indicate the validity of the license. 
+If the license validation process is successful, it returns true or false to indicate the validity of the license.
 
 However, if an error occurs during the validation process, the `ChefLicensing::InvalidLicense` class raises an exception message.
 
@@ -489,7 +489,7 @@ where the different keys in an interaction file are:
 
 3. `messages`:  `messages` key contains the texts to be displayed to the user at each interaction. `messages` can receive texts as an array or a string.
 
-   For general purpose display, texts can be provided as string. 
+   For general purpose display, texts can be provided as string.
 
    - Example: `messages: "This is the text to be displayed"`
 
@@ -500,7 +500,7 @@ where the different keys in an interaction file are:
    However, we need to provided the texts as an array or arrays when the provided text is to be displayed as menu. The format to be followed is as: `[header, [choices]]`
 
    - Example: `messages: ["The header of the menu", ["Option 1", "Option 2"]]`
-   
+
 4. `prompt_type`: `prompt_type` key defines the type of prompt for an interaction. The supported prompt types are:
 
    - `say`: displays the message, returns nil
@@ -637,7 +637,7 @@ The different ways how we can define an interaction is shown below.
    In case of multiple starting interaction ids, interaction is run by passing selected starting interaction id.
 
 #### Troubleshooting
-- Do not have response_path_map based on the response from prompts and action together in a single interaction, this could lead to ambiguity. So, atomize the interaction to either: 
+- Do not have response_path_map based on the response from prompts and action together in a single interaction, this could lead to ambiguity. So, atomize the interaction to either:
   - display message,
   - take inputs from user, or
   - to perform an action item
