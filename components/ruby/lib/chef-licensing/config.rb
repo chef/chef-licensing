@@ -13,7 +13,7 @@ require_relative "licensing_service/local"
 module ChefLicensing
   class Config
     class << self
-      attr_writer :license_server_url, :logger, :output, :license_server_url_check_in_file
+      attr_writer :license_server_url, :logger, :output, :license_server_url_check_in_file, :cache_enabled
 
       # is_local_license_service is used by context class
       attr_accessor :is_local_license_service, :chef_entitlement_id, :chef_product_name, :chef_executable_name
@@ -26,6 +26,12 @@ module ChefLicensing
         @license_server_url = ChefLicensing::LicenseKeyFetcher::File.fetch_or_persist_url(@license_server_url, license_server_url_from_system, opts)
         @license_server_url_check_in_file = true
         @license_server_url
+      end
+
+      def cache_enabled?
+        # return cache_enabled if cache_enabled is set, otherwise return true
+        # useful for testing purposes or when we want to disable cache for some reason
+        @cache_enabled.nil? ? true : @cache_enabled
       end
 
       def logger
