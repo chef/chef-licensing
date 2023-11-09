@@ -1,34 +1,32 @@
 # Changelog
 
-<!-- latest_release 0.7.5 -->
-## [0.7.5](https://github.com/chef/chef-licensing/tree/0.7.5) (2023-10-10)
-
-#### Merged Pull Requests
-- Add constraint to ActiveSupport gem to use version lower than 7.1 [#169](https://github.com/chef/chef-licensing/pull/169) ([ahasunos](https://github.com/ahasunos))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=0.4.44 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Add constraint to ActiveSupport gem to use version lower than 7.1 [#169](https://github.com/chef/chef-licensing/pull/169) ([ahasunos](https://github.com/ahasunos)) <!-- 0.7.5 -->
-- CHEF-6348: Update term &quot;Free License&quot; to &quot;Free Tier License&quot; [#167](https://github.com/chef/chef-licensing/pull/167) ([ahasunos](https://github.com/ahasunos)) <!-- 0.7.4 -->
-- CHEF-6310: Update license generation link for free &amp; trial license [#166](https://github.com/chef/chef-licensing/pull/166) ([ahasunos](https://github.com/ahasunos)) <!-- 0.7.3 -->
-- Update help message from validate license to enter license [#165](https://github.com/chef/chef-licensing/pull/165) ([ahasunos](https://github.com/ahasunos)) <!-- 0.7.2 -->
-- CHEF-5992 Updated support link for commercial license [#164](https://github.com/chef/chef-licensing/pull/164) ([Nik08](https://github.com/Nik08)) <!-- 0.7.1 -->
-- CHEF-5785  Apply Apache v2.0 License [#163](https://github.com/chef/chef-licensing/pull/163) ([clintoncwolfe](https://github.com/clintoncwolfe)) <!-- 0.7.0 -->
-- CHEF-5997 &amp; CHEF-5919: Replace license generation UI with link to web form [#161](https://github.com/chef/chef-licensing/pull/161) ([ahasunos](https://github.com/ahasunos)) <!-- 0.6.0 -->
-- Local licensing mode - Error handling for license expiration check [#162](https://github.com/chef/chef-licensing/pull/162) ([Nik08](https://github.com/Nik08)) <!-- 0.5.5 -->
-- CHEF-5918: License Generation Flow - Remove the form asking for details while generating free and trial license [#158](https://github.com/chef/chef-licensing/pull/158) ([ahasunos](https://github.com/ahasunos)) <!-- 0.5.4 -->
-- CHEF-3841: Handle different versions of `licenses.yaml` file [Backward Compatibility Support] [#150](https://github.com/chef/chef-licensing/pull/150) ([ahasunos](https://github.com/ahasunos)) <!-- 0.5.3 -->
-- Update regex for company name validation [#152](https://github.com/chef/chef-licensing/pull/152) ([ahasunos](https://github.com/ahasunos)) <!-- 0.5.2 -->
-- CHEF-5063: Add GDPR notice before asking user details [#151](https://github.com/chef/chef-licensing/pull/151) ([ahasunos](https://github.com/ahasunos)) <!-- 0.5.1 -->
-- CHEF-4087: Feature support multiple license server URLs  [#145](https://github.com/chef/chef-licensing/pull/145) ([ahasunos](https://github.com/ahasunos)) <!-- 0.5.0 -->
-- CHEF-3900 Text changes for email address form for trial generation [#149](https://github.com/chef/chef-licensing/pull/149) ([Nik08](https://github.com/Nik08)) <!-- 0.4.46 -->
-- CHEF-3843: Update exception class for invalid file format version of licenses.yaml [#148](https://github.com/chef/chef-licensing/pull/148) ([ahasunos](https://github.com/ahasunos)) <!-- 0.4.45 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [0.7.5](https://github.com/chef/chef-licensing/tree/0.7.5) (2023-11-09)
+
+#### Merged Pull Requests
+- CHEF-3843: Update exception class for invalid file format version of licenses.yaml [#148](https://github.com/chef/chef-licensing/pull/148) ([ahasunos](https://github.com/ahasunos))
+- CHEF-3900 Text changes for email address form for trial generation [#149](https://github.com/chef/chef-licensing/pull/149) ([Nik08](https://github.com/Nik08))
+- CHEF-4087: Feature support multiple license server URLs  [#145](https://github.com/chef/chef-licensing/pull/145) ([ahasunos](https://github.com/ahasunos))
+- CHEF-5063: Add GDPR notice before asking user details [#151](https://github.com/chef/chef-licensing/pull/151) ([ahasunos](https://github.com/ahasunos))
+- Update regex for company name validation [#152](https://github.com/chef/chef-licensing/pull/152) ([ahasunos](https://github.com/ahasunos))
+- CHEF-3841: Handle different versions of `licenses.yaml` file [Backward Compatibility Support] [#150](https://github.com/chef/chef-licensing/pull/150) ([ahasunos](https://github.com/ahasunos))
+- CHEF-5918: License Generation Flow - Remove the form asking for details while generating free and trial license [#158](https://github.com/chef/chef-licensing/pull/158) ([ahasunos](https://github.com/ahasunos))
+- Local licensing mode - Error handling for license expiration check [#162](https://github.com/chef/chef-licensing/pull/162) ([Nik08](https://github.com/Nik08))
+- CHEF-5997 &amp; CHEF-5919: Replace license generation UI with link to web form [#161](https://github.com/chef/chef-licensing/pull/161) ([ahasunos](https://github.com/ahasunos))
+- CHEF-5785  Apply Apache v2.0 License [#163](https://github.com/chef/chef-licensing/pull/163) ([clintoncwolfe](https://github.com/clintoncwolfe))
+- CHEF-5992 Updated support link for commercial license [#164](https://github.com/chef/chef-licensing/pull/164) ([Nik08](https://github.com/Nik08))
+- Update help message from validate license to enter license [#165](https://github.com/chef/chef-licensing/pull/165) ([ahasunos](https://github.com/ahasunos))
+- CHEF-6310: Update license generation link for free &amp; trial license [#166](https://github.com/chef/chef-licensing/pull/166) ([ahasunos](https://github.com/ahasunos))
+- CHEF-6348: Update term &quot;Free License&quot; to &quot;Free Tier License&quot; [#167](https://github.com/chef/chef-licensing/pull/167) ([ahasunos](https://github.com/ahasunos))
+- Add constraint to ActiveSupport gem to use version lower than 7.1 [#169](https://github.com/chef/chef-licensing/pull/169) ([ahasunos](https://github.com/ahasunos))
+<!-- latest_stable_release -->
+
 ## [0.4.44](https://github.com/chef/chef-licensing/tree/0.4.44) (2023-07-12)
 
 #### Merged Pull Requests
@@ -145,4 +143,3 @@
 - CHEF-3829: Clarify error message when license server is unreachable [#144](https://github.com/chef/chef-licensing/pull/144) ([ahasunos](https://github.com/ahasunos))
 - Set License ID string in gemspec to select LICENSE file [#146](https://github.com/chef/chef-licensing/pull/146) ([clintoncwolfe](https://github.com/clintoncwolfe))
 - CHEF-4068: Modify expeditor config to publish to rubygems on promote [#147](https://github.com/chef/chef-licensing/pull/147) ([ahasunos](https://github.com/ahasunos))
-<!-- latest_stable_release -->
