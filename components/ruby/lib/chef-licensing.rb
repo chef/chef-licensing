@@ -33,6 +33,8 @@ module ChefLicensing
     end
 
     def check_software_entitlement!
+      raise LicenseKeyFetcher::LicenseKeyNotFetchedError.new("Unable to obtain a License Key.") if license_keys.empty?
+
       # If API call is not breaking that means license is entitled.
       client(license_keys: license_keys)
       true
