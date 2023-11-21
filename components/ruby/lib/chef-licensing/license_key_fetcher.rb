@@ -74,7 +74,7 @@ module ChefLicensing
         # Client API possible errors will be handled in software entitlement check call (made after this)
         # client_api_call_error is set to true when there is an error in licenses_active? call
         if licenses_active? || client_api_call_error
-          return @license_keys
+          return fetch_license
         else
           # Prompts if the keys are expired or expiring
           if config[:output].isatty
@@ -88,7 +88,7 @@ module ChefLicensing
       # Scenario: When a user is prompted for license expiry and license is not yet renewed
       if %i{prompt_license_about_to_expire prompt_license_expired_local_mode}.include?(config[:start_interaction])
         # Not blocking any license type in case of expiry
-        return @license_keys
+        return fetch_license
       end
 
       # Otherwise nothing was able to fetch a license. Throw an exception.
@@ -103,7 +103,7 @@ module ChefLicensing
       if license_type && !unrestricted_license_added?(new_keys, license_type)
         # break the flow after the prompt if there is a restriction in adding license
         # and return the license keys persisted in the file or @license_keys if any
-        return license_keys
+        return fetch_license
       end
 
       logger.debug "License Key fetcher examining ENV checks"
@@ -112,14 +112,14 @@ module ChefLicensing
       if license_type && !unrestricted_license_added?(new_keys, license_type)
         # break the flow after the prompt if there is a restriction in adding license
         # and return the license keys persisted in the file or @license_keys if any
-        return license_keys
+        return fetch_license
       end
 
       # Return keys if license keys are active and not expired or expiring
       # Return keys if there is any error in /client API call, and do not block the flow.
       # Client API possible errors will be handled in software entitlement check call (made after this)
       # client_api_call_error is set to true when there is an error in licenses_active? call
-      return @license_keys if (!@license_keys.empty? && licenses_active?) || client_api_call_error
+      return fetch_license if (!@license_keys.empty? && licenses_active?) || client_api_call_error
 
       # Lowest priority is to interactively prompt if we have a TTY
       if config[:output].isatty
@@ -131,19 +131,28 @@ module ChefLicensing
           # If license type is not selected using TUI, assign it using API call to fetch type.
           prompt_fetcher.license_type ||= get_license_type(new_keys.first)
           persist_and_concat(new_keys, prompt_fetcher.license_type)
-          return license_keys
+          return fetch_license
         end
       end
 
       # Scenario: When a user is prompted for license expiry and license is not yet renewed
       if new_keys.empty? && %i{prompt_license_about_to_expire prompt_license_expired}.include?(config[:start_interaction])
         # Not blocking any license type in case of expiry
-        return @license_keys
+        return fetch_license
       end
 
       # Otherwise nothing was able to fetch a license. Throw an exception.
       logger.debug "License Key fetcher - no license Key able to be fetched."
       raise LicenseKeyNotFetchedError.new("Unable to obtain a License Key.")
+    end
+
+    def fetch_license
+      unless @license_keys.empty?
+        self.license ||= ChefLicensing.client(license_keys: [@license_keys])
+        [license]
+      else
+        []
+      end
     end
 
     def add_license
