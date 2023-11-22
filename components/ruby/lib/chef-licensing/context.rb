@@ -25,9 +25,20 @@ module ChefLicensing
         current_context(options).license_keys
       end
 
+      # Return license context object via current context
+      def license(options = {})
+        current_context(options).license
+      end
+
+      # Set license context object via current context
+      # Example: ChefLicensing::Context.license = license_context_object
+      def license=(license)
+        current_context.license = license
+      end
+
       private
 
-      def current_context(options)
+      def current_context(options = {})
         return @current_context if @current_context
 
         @current_context = context_based_on_state(options)
@@ -63,12 +74,36 @@ module ChefLicensing
       @state.license_keys
     end
 
+    # Get license context from local or global state
+    def license
+      @state.license
+    end
+
+    # Set license context from local or global state
+    def license=(license)
+      @state.license = license
+    end
+
     class State
       attr_accessor :context, :options
 
       # @abstract
       def license_keys
         raise NotImplementedError, "#{self.class} has not implemented method '#{__method__}'"
+      end
+
+      # Get license context in local or global state
+      def license
+        if @license_keys.empty?
+          @license ||= nil
+        else
+          @license ||= ChefLicensing.client(license_keys: @license_keys)
+        end
+      end
+
+      # Set license context in local or global state
+      def license=(license)
+        @license ||= license
       end
     end
 

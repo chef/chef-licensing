@@ -215,6 +215,10 @@ module ChefLicensing
       # This call returns a license based on client logic
       # This API call is only made when multiple license keys are present or if client call was never done
       self.license = ChefLicensing.client(license_keys: @license_keys) if !license || @license_keys.count > 1
+
+      # Cache license context
+      ChefLicensing::Context.license = license
+
       # Intentional lag of 2 seconds when license is expiring or expired
       sleep 2 if license.expiring_or_expired?
       spinner.success # Stop the spinner
