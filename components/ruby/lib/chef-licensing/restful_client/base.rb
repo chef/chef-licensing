@@ -7,6 +7,7 @@ require_relative "../exceptions/restful_client_connection_error"
 require_relative "../exceptions/missing_api_credentials_error"
 require_relative "../config"
 require_relative "middleware/exceptions_handler"
+require_relative "middleware/content_type_validator"
 
 module ChefLicensing
   module RestfulClient
@@ -137,6 +138,7 @@ module ChefLicensing
           config.response :json, parser_options: { object_class: OpenStruct }
           config.use Faraday::HttpCache, shared_cache: false, logger: logger, store: store
           config.use Middleware::ExceptionsHandler
+          config.use Middleware::ContentTypeValidator
           config.adapter Faraday.default_adapter
         end
       end
