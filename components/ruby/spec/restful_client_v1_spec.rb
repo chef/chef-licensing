@@ -168,4 +168,29 @@ RSpec.describe ChefLicensing::RestfulClient::V1 do
       expect(output.string).to include("Connection failed to http://localhost-2-license-server/License")
     end
   end
+
+  context "when the server returns with non json content type" do
+    before do
+      ChefLicensing.configure do |config|
+        config.logger = logger
+        config.output = output
+        config.license_server_url = "http://globalhost-license-server/License"
+        config.license_server_url_check_in_file = true
+        config.chef_product_name = "inspec"
+        config.chef_entitlement_id = "3ff52c37-e41f-4f6c-ad4d-365192205968"
+      end
+    end
+
+    before do
+      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+        .with(query: { licenseId: free_license_key, version: 2 })
+        .to_return(body: "Seems our server's feeling chatty in HTML or there's a firewall playing gatekeeper!", headers: { content_type: "text/html" })
+    end
+
+    let(:base_obj) { described_class.new }
+
+    it "raises an error with the server response" do
+      expect { base_obj.validate(free_license_key) }.to raise_error(ChefLicensing::UnsupportedContentType, %r{Expected 'application/json' content-type, but received 'text/html' from the licensing server})
+    end
+  end
 end
