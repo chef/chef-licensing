@@ -85,9 +85,10 @@ module ChefLicensing
         end
       end
 
-      # Scenario: When a user is prompted for license expiry and license is not yet renewed
-      if %i{prompt_license_about_to_expire prompt_license_expired_local_mode}.include?(config[:start_interaction])
-        # Not blocking any license type in case of expiry
+      # Scenario: When a user is prompted with license about to expire message and license is not yet renewed
+      # Scenario: When a user is prompted with license expired message in grace period and license is not yet renewed
+      if license && !license.expired?
+        # Not blocking any license type in case of license about to expire and grace scenario only
         return @license_keys
       end
 
@@ -131,13 +132,14 @@ module ChefLicensing
           # If license type is not selected using TUI, assign it using API call to fetch type.
           prompt_fetcher.license_type ||= get_license_type(new_keys.first)
           persist_and_concat(new_keys, prompt_fetcher.license_type)
-          return license_keys
+          return license_keys unless license&.expired?
         end
       end
 
-      # Scenario: When a user is prompted for license expiry and license is not yet renewed
-      if new_keys.empty? && %i{prompt_license_about_to_expire prompt_license_expired}.include?(config[:start_interaction])
-        # Not blocking any license type in case of expiry
+      if new_keys.empty? && (license && !license.expired?)
+        # Scenario: When a user is prompted with license about to expire message and license is not yet renewed
+        # Scenario: When a user is prompted with license expired message in grace period and license is not yet renewed
+        # Not blocking any license type in case of license about to expire and grace scenario only
         return @license_keys
       end
 
