@@ -334,6 +334,17 @@ interactions:
     action: fetch_license_id
     paths: [exit]
 
+  prompt_license_exhausted:
+    messages: |
+      ------------------------------------------------------------
+        We hope you've been enjoying our Chef <%= input[:chef_product_name] %>!
+        However, it seems like you've exceeded your entitled usage limit on targets.
+        Reach out to our support team at <%= input[:pastel].underline.green("https://www.chef.io/contact-us")%>
+        for upgrading your targets limit to continue enjoying Chef <%= input[:chef_product_name] %>
+      ------------------------------------------------------------
+    prompt_type: "say"
+    paths: [fetch_license_id]
+
   exit:
     messages: ""
 
