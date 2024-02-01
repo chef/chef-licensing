@@ -230,6 +230,10 @@ module ChefLicensing
         config[:start_interaction] = :prompt_license_about_to_expire
         prompt_fetcher.config = config
         false
+      elsif license.limit_exhausted?
+        config[:start_interaction] = :prompt_license_exhausted
+        prompt_fetcher.config = config
+        false
       else
         true
       end
