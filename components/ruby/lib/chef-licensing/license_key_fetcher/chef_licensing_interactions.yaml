@@ -337,8 +337,8 @@ interactions:
   prompt_license_exhausted:
     messages: |
       ------------------------------------------------------------
-        We hope you've been enjoying our Chef <%= input[:chef_product_name] %>!
-        However, it seems like you've exceeded your entitled usage limit on targets.
+        We hope you've been enjoying Chef <%= input[:chef_product_name] %>!
+        However, it appears that you have exceeded your entitled usage limit on targets.
         Reach out to our support team at <%= input[:pastel].underline.green("https://www.chef.io/contact-us")%>
         for upgrading your targets limit to continue enjoying Chef <%= input[:chef_product_name] %>
       ------------------------------------------------------------
