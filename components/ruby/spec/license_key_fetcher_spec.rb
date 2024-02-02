@@ -896,4 +896,55 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       end
     end
   end
+
+  describe "license is exhausted" do
+    before do
+      ChefLicensing.configure do |config|
+        config.is_local_license_service = nil
+      end
+      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
+        .to_return(body: { data: [], status_code: 404 }.to_json,
+                  headers: { content_type: "application/json" })
+      ChefLicensing::Context.current_context = nil
+    end
+
+    let(:argv) { ["--chef-license-key=HA0D5BABCDEFG7X2E8SXYZ4MV4"] }
+    let(:env) { {} }
+
+    let(:license_keys) {
+      %w{HA0D5BABCDEFG7X2E8SXYZ4MV4}
+    }
+    let(:exhausted_commercial_client_api_data) { JSON.parse(File.read("spec/fixtures/api_response_data/exhausted_commercial_client_api_response.json")) }
+
+    context "when the license key is a commercial license" do
+      Dir.mktmpdir do |tmpdir|
+        let(:opts) {
+          {
+            logger: logger,
+            argv: argv,
+            env: env,
+            output: output,
+            dir: tmpdir,
+          }
+        }
+
+        let(:license_key_fetcher) { described_class.new(opts) }
+        before do
+          stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+            .with(query: { licenseId: license_keys.first, version: api_version })
+            .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+                       headers: { content_type: "application/json" })
+          stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+            .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
+            .to_return(body: { data: exhausted_commercial_client_api_data, status_code: 200 }.to_json,
+                       headers: { content_type: "application/json" })
+        end
+
+        it "nags that it is about to expire" do
+          license_key_fetcher.fetch_and_persist
+          expect(license_key_fetcher.config[:start_interaction]).to eq(:prompt_commercial_license_exhausted)
+        end
+      end
+    end
+  end
 end
