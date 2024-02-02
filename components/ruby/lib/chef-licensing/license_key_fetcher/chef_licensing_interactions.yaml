@@ -195,12 +195,13 @@ interactions:
 
   validate_license_expiration:
     action: license_expiration_status?
-    paths: [validation_success, prompt_license_about_to_expire, prompt_license_expired, prompt_license_expired_local_mode]
+    paths: [validation_success, prompt_license_about_to_expire, prompt_license_expired, prompt_license_expired_local_mode, prompt_commercial_license_exhausted]
     response_path_map:
       "active": validation_success
       "about_to_expire": prompt_license_about_to_expire
       "expired": prompt_license_expired
       "expired_in_local_mode": prompt_license_expired_local_mode
+      "exhausted_commercial_license": prompt_commercial_license_exhausted
 
   validation_success:
     messages: "✔ [Success] License validated successfully."
@@ -334,7 +335,7 @@ interactions:
     action: fetch_license_id
     paths: [exit]
 
-  prompt_license_exhausted:
+  prompt_commercial_license_exhausted:
     messages: |
       ------------------------------------------------------------
         We hope you've been enjoying Chef <%= input[:chef_product_name] %>!

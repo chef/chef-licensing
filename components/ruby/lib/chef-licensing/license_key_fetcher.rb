@@ -86,8 +86,8 @@ module ChefLicensing
       end
 
       # Scenario: When a user is prompted for license expiry and license is not yet renewed
-      if %i{prompt_license_about_to_expire prompt_license_expired_local_mode prompt_license_exhausted}.include?(config[:start_interaction])
-        # Not blocking any license type in case of expiry
+      if %i{prompt_license_about_to_expire prompt_license_expired_local_mode prompt_commercial_license_exhausted}.include?(config[:start_interaction])
+        # Not blocking any license type in case of expiry or for commercial license exhaustion
         return @license_keys
       end
 
@@ -136,8 +136,8 @@ module ChefLicensing
       end
 
       # Scenario: When a user is prompted for license expiry and license is not yet renewed
-      if new_keys.empty? && %i{prompt_license_about_to_expire prompt_license_expired prompt_license_exhausted}.include?(config[:start_interaction])
-        # Not blocking any license type in case of expiry
+      if new_keys.empty? && %i{prompt_license_about_to_expire prompt_license_expired prompt_commercial_license_exhausted}.include?(config[:start_interaction])
+        # Not blocking any license type in case of expiry or for commercial license exhaustion
         return @license_keys
       end
 
@@ -230,8 +230,8 @@ module ChefLicensing
         config[:start_interaction] = :prompt_license_about_to_expire
         prompt_fetcher.config = config
         false
-      elsif license.exhausted?
-        config[:start_interaction] = :prompt_license_exhausted
+      elsif license.exhausted? && license.license_type == "commercial"
+        config[:start_interaction] = :prompt_commercial_license_exhausted
         prompt_fetcher.config = config
         false
       else
