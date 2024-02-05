@@ -24,7 +24,6 @@ RSpec.describe ChefLicensing::TUIEngine do
   let(:exhausted_commercial_license) { "HA0D5BABCDEFG7X2E8SXYZ4MV4" }
   let(:exhausted_commercial_client_api_data) { JSON.parse(File.read("spec/fixtures/api_response_data/exhausted_commercial_client_api_response.json")) }
 
-
   # escape sequences for arrow keys
   let(:simulate_up_arrow) { "\e[A" }
   let(:simulate_down_arrow) { "\e[B" }
