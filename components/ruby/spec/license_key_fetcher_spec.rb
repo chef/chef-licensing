@@ -942,7 +942,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
 
         it "nags that it is about to expire" do
           license_key_fetcher.fetch_and_persist
-          expect(license_key_fetcher.config[:start_interaction]).to eq(:prompt_commercial_license_exhausted)
+          expect(license_key_fetcher.config[:start_interaction]).to eq(:prompt_license_exhausted)
         end
       end
     end
