@@ -909,12 +909,17 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
     end
 
     let(:argv) { ["--chef-license-key=HA0D5BABCDEFG7X2E8SXYZ4MV4"] }
+    let(:argv_free) { ["--chef-license-key=free-11eef3a8-1234-4b4c-567d-dd8c1234567d-890"] }
     let(:env) { {} }
 
     let(:license_keys) {
       %w{HA0D5BABCDEFG7X2E8SXYZ4MV4}
     }
+    let(:free_license_keys) {
+      %w{free-11eef3a8-1234-4b4c-567d-dd8c1234567d-890}
+    }
     let(:exhausted_commercial_client_api_data) { JSON.parse(File.read("spec/fixtures/api_response_data/exhausted_commercial_client_api_response.json")) }
+    let(:exhausted_free_client_api_data) { JSON.parse(File.read("spec/fixtures/api_response_data/exhausted_free_client_api_response.json")) }
 
     context "when the license key is a commercial license" do
       Dir.mktmpdir do |tmpdir|
@@ -943,6 +948,36 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
         it "nags that it is about to expire" do
           license_key_fetcher.fetch_and_persist
           expect(license_key_fetcher.config[:start_interaction]).to eq(:prompt_license_exhausted)
+        end
+      end
+    end
+
+    context "when the license key is a free license" do
+      Dir.mktmpdir do |tmpdir|
+        let(:opts) {
+          {
+            logger: logger,
+            argv: argv_free,
+            env: env,
+            output: output,
+            dir: tmpdir,
+          }
+        }
+
+        let(:license_key_fetcher) { described_class.new(opts) }
+        before do
+          stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+            .with(query: { licenseId: free_license_keys.first, version: api_version })
+            .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+                       headers: { content_type: "application/json" })
+          stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+            .with(query: { licenseId: free_license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
+            .to_return(body: { data: exhausted_free_client_api_data, status_code: 200 }.to_json,
+                       headers: { content_type: "application/json" })
+        end
+
+        it "nags that it is about to expire and raises an exception" do
+          expect { license_key_fetcher.fetch_and_persist }.to raise_error(ChefLicensing::LicenseKeyFetcher::LicenseKeyNotFetchedError, /Unable to obtain a License Key./)
         end
       end
     end
