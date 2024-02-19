@@ -195,12 +195,13 @@ interactions:
 
   validate_license_expiration:
     action: license_expiration_status?
-    paths: [validation_success, prompt_license_about_to_expire, prompt_license_expired, prompt_license_expired_local_mode]
+    paths: [validation_success, prompt_license_about_to_expire, prompt_license_expired, prompt_license_expired_local_mode, prompt_license_exhausted]
     response_path_map:
       "active": validation_success
       "about_to_expire": prompt_license_about_to_expire
       "expired": prompt_license_expired
       "expired_in_local_mode": prompt_license_expired_local_mode
+      "exhausted_commercial_license": prompt_license_exhausted
 
   validation_success:
     messages: "✔ [Success] License validated successfully."
@@ -333,6 +334,20 @@ interactions:
   fetch_license_id:
     action: fetch_license_id
     paths: [exit]
+
+  prompt_license_exhausted:
+    messages: |
+      ------------------------------------------------------------
+        <%= input[:pastel].yellow("! [WARNING]")%> <%= input[:license_type].capitalize %> License Exhausted
+
+        We hope you've been enjoying Chef <%= input[:chef_product_name] %>!
+        However, it appears that you have exceeded your entitled usage limit on <%= input[:unit_measure] %>.
+
+        Reach out to our support team at <%= input[:pastel].underline.green("https://www.chef.io/contact-us")%>
+        for upgrading your <%= input[:unit_measure] %> limit to continue enjoying Chef <%= input[:chef_product_name] %>
+      ------------------------------------------------------------
+    prompt_type: "say"
+    paths: [fetch_license_id]
 
   exit:
     messages: ""

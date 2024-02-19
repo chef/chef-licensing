@@ -133,6 +133,10 @@ module ChefLicensing
       status.eql?("Expired")
     end
 
+    def exhausted?
+      status.eql?("Exhausted")
+    end
+
     def active?
       status.eql?("Active")
     end
