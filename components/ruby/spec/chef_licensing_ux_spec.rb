@@ -23,6 +23,8 @@ RSpec.describe ChefLicensing::TUIEngine do
   let(:valid_free_license_key_2) { "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-112" }
   let(:exhausted_commercial_license) { "HA0D5BABCDEFG7X2E8SXYZ4MV4" }
   let(:exhausted_commercial_client_api_data) { JSON.parse(File.read("spec/fixtures/api_response_data/exhausted_commercial_client_api_response.json")) }
+  let(:exhausted_free_license) { "free-11eef3a8-1234-4b4c-567d-dd8c1234567d-890" }
+  let(:exhausted_free_client_api_data) { JSON.parse(File.read("spec/fixtures/api_response_data/exhausted_free_client_api_response.json")) }
 
   # escape sequences for arrow keys
   let(:simulate_up_arrow) { "\e[A" }
@@ -177,6 +179,16 @@ RSpec.describe ChefLicensing::TUIEngine do
     stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
       .with(query: { licenseId: exhausted_commercial_license, entitlementId: ChefLicensing::Config.chef_entitlement_id })
       .to_return(body: { data: exhausted_commercial_client_api_data, status_code: 200 }.to_json,
+                  headers: { content_type: "application/json" })
+
+    stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+      .with(query: { licenseId: exhausted_free_license, version: 2 })
+      .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+                headers: { content_type: "application/json" })
+
+    stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+      .with(query: { licenseId: exhausted_free_license, entitlementId: ChefLicensing::Config.chef_entitlement_id })
+      .to_return(body: { data: exhausted_free_client_api_data, status_code: 200 }.to_json,
                   headers: { content_type: "application/json" })
 
   end
@@ -897,8 +909,29 @@ RSpec.describe ChefLicensing::TUIEngine do
 
     it "exits successfully traversing through the interactions in expected order" do
       expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
-      expect(tui_engine.traversed_interaction).to eq(%i{start ask_if_user_has_license_id ask_for_license_id validate_license_id_pattern validate_license_id_with_api validate_license_restriction validate_license_expiration prompt_license_exhausted fetch_license_id})
+      expect(tui_engine.traversed_interaction).to eq(%i{start ask_if_user_has_license_id ask_for_license_id validate_license_id_pattern validate_license_id_with_api validate_license_restriction validate_license_expiration prompt_license_exhausted is_run_allowed_on_license_exhausted fetch_license_id})
       expect(prompt.output.string).to include("Commercial License Exhausted")
+      expect(prompt.output.string).to include("We hope you've been enjoying Chef")
+      expect(prompt.output.string).to include("However, it appears that you have exceeded your entitled usage limit")
+    end
+  end
+
+  context "free license entry ux with exhausted limit" do
+    let(:start_interaction) { :start }
+
+    before do
+      prompt.input << "\n"
+      prompt.input << exhausted_free_license
+      prompt.input << "\n"
+      prompt.input.rewind
+    end
+
+    let(:tui_engine) { described_class.new(opts) }
+
+    it "exits successfully traversing through the interactions in expected order" do
+      expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
+      expect(tui_engine.traversed_interaction).to eq(%i{start ask_if_user_has_license_id ask_for_license_id validate_license_id_pattern validate_license_id_with_api validate_license_restriction validate_license_expiration prompt_license_exhausted is_run_allowed_on_license_exhausted})
+      expect(prompt.output.string).to include("Free License Exhausted")
       expect(prompt.output.string).to include("We hope you've been enjoying Chef")
       expect(prompt.output.string).to include("However, it appears that you have exceeded your entitled usage limit")
     end

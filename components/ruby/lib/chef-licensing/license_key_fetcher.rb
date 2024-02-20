@@ -88,7 +88,13 @@ module ChefLicensing
       # Scenario: When a user is prompted for license expiry and license is not yet renewed
       if %i{prompt_license_about_to_expire prompt_license_expired_local_mode prompt_license_exhausted}.include?(config[:start_interaction])
         # Not blocking any license type in case of expiry or for commercial license exhaustion
-        return @license_keys
+        if config[:start_interaction] == :prompt_license_exhausted
+          # If user has exhausted commercial license, we are not blocking
+          # we are blocking only when user has exhausted free license, hence LicenseKeyNotFetchedError is raised for free license
+          return @license_keys if license.license_type.downcase == "commercial"
+        else
+          return @license_keys
+        end
       end
 
       # Otherwise nothing was able to fetch a license. Throw an exception.
@@ -138,7 +144,13 @@ module ChefLicensing
       # Scenario: When a user is prompted for license expiry and license is not yet renewed
       if new_keys.empty? && %i{prompt_license_about_to_expire prompt_license_expired prompt_license_exhausted}.include?(config[:start_interaction])
         # Not blocking any license type in case of expiry or for commercial license exhaustion
-        return @license_keys
+        if config[:start_interaction] == :prompt_license_exhausted
+          # If user has exhausted commercial license, we are not blocking
+          # we are blocking only when user has exhausted free license, hence LicenseKeyNotFetchedError is raised for free license
+          return @license_keys if license.license_type.downcase == "commercial"
+        else
+          return @license_keys
+        end
       end
 
       # Otherwise nothing was able to fetch a license. Throw an exception.
@@ -230,7 +242,7 @@ module ChefLicensing
         config[:start_interaction] = :prompt_license_about_to_expire
         prompt_fetcher.config = config
         false
-      elsif license.exhausted? && license.license_type.downcase == "commercial"
+      elsif license.exhausted? && (license.license_type.downcase == "commercial" || license.license_type.downcase == "free")
         config[:start_interaction] = :prompt_license_exhausted
         prompt_fetcher.config = config
         false

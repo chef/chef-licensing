@@ -201,7 +201,7 @@ interactions:
       "about_to_expire": prompt_license_about_to_expire
       "expired": prompt_license_expired
       "expired_in_local_mode": prompt_license_expired_local_mode
-      "exhausted_commercial_license": prompt_license_exhausted
+      "exhausted_license": prompt_license_exhausted
 
   validation_success:
     messages: "✔ [Success] License validated successfully."
@@ -347,7 +347,14 @@ interactions:
         for upgrading your <%= input[:unit_measure] %> limit to continue enjoying Chef <%= input[:chef_product_name] %>
       ------------------------------------------------------------
     prompt_type: "say"
-    paths: [fetch_license_id]
+    paths: [is_run_allowed_on_license_exhausted]
+
+  is_run_allowed_on_license_exhausted:
+    action: is_run_allowed_on_license_exhausted?
+    response_path_map:
+      "true": fetch_license_id
+      "false": exit
+    paths: [fetch_license_id, exit]
 
   exit:
     messages: ""

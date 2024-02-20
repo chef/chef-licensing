@@ -66,12 +66,16 @@ module ChefLicensing
           input[:license_expiration_date] = Date.parse(license.expiration_date).strftime("%a, %d %b %Y")
           input[:number_of_days_in_expiration] = license.number_of_days_in_expiration
           "about_to_expire"
-        elsif license.exhausted? && license.license_type.downcase == "commercial"
+        elsif license.exhausted? && (license.license_type.downcase == "commercial" || license.license_type.downcase == "free")
           input[:license_type] = license.license_type
-          "exhausted_commercial_license"
+          "exhausted_license"
         else
           "active"
         end
+      end
+
+      def is_run_allowed_on_license_exhausted?(input)
+        input[:license_type].downcase == "commercial"
       end
 
       def fetch_license_id(input)
