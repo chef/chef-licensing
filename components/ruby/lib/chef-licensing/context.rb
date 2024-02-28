@@ -94,10 +94,10 @@ module ChefLicensing
 
       # Get license context in local or global state
       def license
-        if @license_keys.empty?
+        if license_keys.empty?
           @license ||= nil
         else
-          @license ||= ChefLicensing.client(license_keys: @license_keys)
+          @license ||= ChefLicensing.client(license_keys: license_keys)
         end
       end
 
