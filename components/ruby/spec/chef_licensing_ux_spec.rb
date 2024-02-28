@@ -367,6 +367,10 @@ RSpec.describe ChefLicensing::TUIEngine do
       let(:tui_engine) { described_class.new(opts) }
 
       before do
+        ChefLicensing.configure do |config|
+          config.is_local_license_service = nil
+        end
+        ChefLicensing::Context.current_context = nil
         license_key_fetcher.fetch_and_persist
       end
 
