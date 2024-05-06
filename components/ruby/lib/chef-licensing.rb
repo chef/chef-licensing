@@ -8,6 +8,7 @@ require "chef-licensing/exceptions/software_not_entitled"
 require "chef-licensing/exceptions/client_error"
 require "chef-licensing/api/client"
 require "chef-licensing/license_key_fetcher/prompt"
+require "chef-licensing/context"
 
 module ChefLicensing
   class << self
@@ -65,6 +66,10 @@ module ChefLicensing
 
     def add_license
       ChefLicensing::LicenseKeyFetcher.add_license
+    end
+
+    def license_context
+      ChefLicensing::Context.license
     end
   end
 end
