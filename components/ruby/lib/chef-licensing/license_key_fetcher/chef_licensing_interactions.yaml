@@ -341,10 +341,10 @@ interactions:
         <%= input[:pastel].yellow("! [WARNING]")%> <%= input[:license_type].capitalize %> License Exhausted
 
         We hope you've been enjoying Chef <%= input[:chef_product_name] %>!
-        However, it appears that you have exceeded your entitled usage limit on <%= input[:unit_measure] %>.
+        However, it seems like you have exceeded your entitled usage limit on <%= input[:unit_measure] %>.
 
-        Reach out to our support team at <%= input[:pastel].underline.green("https://www.chef.io/contact-us")%>
-        for upgrading your <%= input[:unit_measure] %> limit to continue enjoying Chef <%= input[:chef_product_name] %>
+        Reach out to our sales team at <%= input[:pastel].underline.green("chef-sales@progress.com")%>
+        to move to commercial-tier.
       ------------------------------------------------------------
     prompt_type: "say"
     paths: [is_run_allowed_on_license_exhausted]
