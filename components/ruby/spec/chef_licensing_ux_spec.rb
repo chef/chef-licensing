@@ -216,6 +216,8 @@ RSpec.describe ChefLicensing::TUIEngine do
       expect(prompt.output.string).to include("I already have a license ID")
       expect(prompt.output.string).to include("Please enter your license ID:")
       expect(prompt.output.string).to include("License validated successfully")
+      expect(prompt.output.string).to include("Non-Commercial License")
+      expect(prompt.output.string).to include("If you are using it for commercial purposes, please reach")
     end
   end
 
@@ -237,6 +239,8 @@ RSpec.describe ChefLicensing::TUIEngine do
       expect(prompt.output.string).to include("I already have a license ID")
       expect(prompt.output.string).to include("Please enter your license ID:")
       expect(prompt.output.string).to include("License validated successfully")
+      expect(prompt.output.string).to include("Non-Commercial License")
+      expect(prompt.output.string).to include("If you are using it for commercial purposes, please reach")
     end
   end
 
@@ -261,6 +265,8 @@ RSpec.describe ChefLicensing::TUIEngine do
       expect(prompt.output.string).to include("Please enter your license ID:")
       expect(output.string).to include("Malformed License Key passed on command line - should be ")
       expect(prompt.output.string).to include("License validated successfully")
+      expect(prompt.output.string).to include("Non-Commercial License")
+      expect(prompt.output.string).to include("If you are using it for commercial purposes, please reach")
     end
   end
 
@@ -741,6 +747,8 @@ RSpec.describe ChefLicensing::TUIEngine do
       expect(prompt.output.string).to include("Get a Commercial License to receive bug fixes, updates")
       expect(prompt.output.string).to include("Get a Free Tier License to scan limited targets.")
       expect(prompt.output.string).to_not include("license add")
+      expect(prompt.output.string).to include("Non-Commercial License")
+      expect(prompt.output.string).to include("If you are using it for commercial purposes, please reach")
     end
 
   end
@@ -756,6 +764,8 @@ RSpec.describe ChefLicensing::TUIEngine do
       expect(tui_engine.traversed_interaction).to eq(%i{prompt_license_about_to_expire fetch_license_id is_commercial_license warn_non_commercial_license})
       expect(prompt.output.string).to include("Your license is about to expire in")
       expect(prompt.output.string).to include("To avoid service disruptions, get a Commercial License")
+      expect(prompt.output.string).to include("Non-Commercial License")
+      expect(prompt.output.string).to include("If you are using it for commercial purposes, please reach")
     end
   end
 
@@ -851,6 +861,8 @@ RSpec.describe ChefLicensing::TUIEngine do
       expect(prompt.output.string).to include("Validate a generated license ID")
       expect(prompt.output.string).to include("Please enter your license ID:")
       expect(prompt.output.string).to include("License validated successfully")
+      expect(prompt.output.string).to include("Non-Commercial License")
+      expect(prompt.output.string).to include("If you are using it for commercial purposes, please reach")
     end
   end
 
