@@ -916,7 +916,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       expect(tui_engine.traversed_interaction).to eq(%i{start ask_if_user_has_license_id ask_for_license_id validate_license_id_pattern validate_license_id_with_api validate_license_restriction validate_license_expiration prompt_license_exhausted is_run_allowed_on_license_exhausted fetch_license_id})
       expect(prompt.output.string).to include("Commercial License Exhausted")
       expect(prompt.output.string).to include("We hope you've been enjoying Chef")
-      expect(prompt.output.string).to include("However, it appears that you have exceeded your entitled usage limit")
+      expect(prompt.output.string).to include("However, it seems like you have exceeded your entitled usage limit")
     end
   end
 
@@ -937,7 +937,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       expect(tui_engine.traversed_interaction).to eq(%i{start ask_if_user_has_license_id ask_for_license_id validate_license_id_pattern validate_license_id_with_api validate_license_restriction validate_license_expiration prompt_license_exhausted is_run_allowed_on_license_exhausted})
       expect(prompt.output.string).to include("Free License Exhausted")
       expect(prompt.output.string).to include("We hope you've been enjoying Chef")
-      expect(prompt.output.string).to include("However, it appears that you have exceeded your entitled usage limit")
+      expect(prompt.output.string).to include("However, it seems like you have exceeded your entitled usage limit")
     end
   end
 end
