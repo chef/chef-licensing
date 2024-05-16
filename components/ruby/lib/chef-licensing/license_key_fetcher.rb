@@ -88,8 +88,8 @@ module ChefLicensing
       # Scenario: When a user is prompted with license about to expire message and license is not yet renewed
       # Scenario: When a user is prompted with license expired message in grace period and license is not yet renewed
       if license && !license.expired?
-        # Not blocking any license type in case of license about to expire and grace scenario only
-        return @license_keys
+        # Return license keys unless it is a free license that has been exhausted
+        return @license_keys unless license.exhausted? && license.license_type.downcase == "free"
       end
 
       # Otherwise nothing was able to fetch a license. Throw an exception.
