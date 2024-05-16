@@ -73,7 +73,7 @@ module ChefLicensing
         # Licenses expiration check
         # Client API possible errors will be handled in software entitlement check call (made after this)
         # client_api_call_error is set to true when there is an error in licenses_active? call
-        if licenses_active? || client_api_call_error || client_api_call_error
+        if licenses_active? || client_api_call_error
           return @license_keys
         else
           # Prompts if the keys are expired or expiring
@@ -140,7 +140,8 @@ module ChefLicensing
         # Scenario: When a user is prompted with license about to expire message and license is not yet renewed
         # Scenario: When a user is prompted with license expired message in grace period and license is not yet renewed
         # Not blocking any license type in case of license about to expire and grace scenario only
-        return @license_keys
+        # Return license keys unless it is a free license that has been exhausted
+        return @license_keys unless license.exhausted? && license.license_type.downcase == "free"
       end
 
       # Otherwise nothing was able to fetch a license. Throw an exception.
