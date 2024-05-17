@@ -90,9 +90,11 @@ interactions:
       ------------------------------------------------------------
         <%= input[:pastel].yellow("! [WARNING]")%> <%= input[:license_type] %> License Expired
 
-        Get a Commercial License to receive bug fixes, updates
-        and new features.
-        Get a Free Tier License to scan limited <%= input[:unit_measure] %>.
+        We hope you've been enjoying Chef <%= input[:chef_product_name] %>!
+        However, it seems like your license has expired.
+
+        Reach out to our sales team at <%= input[:pastel].underline.green("chef-sales@progress.com")%>
+        to move to commercial tier.
 
         To get a new license, run <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%>
         and select a license type.
@@ -105,9 +107,11 @@ interactions:
       ------------------------------------------------------------
         <%= input[:pastel].yellow("! [WARNING]")%> <%= input[:license_type] %> License Expired
 
-        Get a Commercial License to receive bug fixes, updates
-        and new features.
-        Get a Free Tier License to scan limited <%= input[:unit_measure] %>.
+        We hope you've been enjoying Chef <%= input[:chef_product_name] %>!
+        However, it seems like your license has expired.
+
+        Reach out to our sales team at <%= input[:pastel].underline.green("chef-sales@progress.com")%>
+        to move to commercial tier.
       ------------------------------------------------------------
     prompt_type: "say"
     paths: [fetch_license_id]
