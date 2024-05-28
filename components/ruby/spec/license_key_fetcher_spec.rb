@@ -830,7 +830,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
 
         it "does not nags that it is about to expire" do
           license_key_fetcher.fetch_and_persist
-          expect(license_key_fetcher.config[:start_interaction]).to eq(nil)
+          expect(license_key_fetcher.config[:start_interaction]).to eq(:warn_non_commercial_license)
         end
       end
     end

@@ -125,7 +125,7 @@ module ChefLicensing
       # Return keys if there is any error in /client API call, and do not block the flow.
       # Client API possible errors will be handled in software entitlement check call (made after this)
       # client_api_call_error is set to true when there is an error in licenses_active? call
-      return @license_keys if (!@license_keys.empty? && licenses_active?) || client_api_call_error
+      return @license_keys if (!@license_keys.empty? && licenses_active? && ChefLicensing::Context.license.license_type.downcase == "commercial") || client_api_call_error
 
       # Lowest priority is to interactively prompt if we have a TTY
       if config[:output].isatty
@@ -141,9 +141,9 @@ module ChefLicensing
         end
       end
 
-      # Scenario: When a user is prompted for license expiry and license is not yet renewed
-      if new_keys.empty? && %i{prompt_license_about_to_expire prompt_license_expired prompt_license_exhausted}.include?(config[:start_interaction])
-        # Not blocking any license type in case of expiry or for commercial license exhaustion
+      # Scenario: When a user is prompted for license expiry or non-commercial usage warning and license is not yet renewed
+      if new_keys.empty? && %i{warn_non_commercial_license prompt_license_about_to_expire prompt_license_expired prompt_license_exhausted}.include?(config[:start_interaction])
+        # Not blocking any license type in case of expiry, non-commercial usage or for commercial license exhaustion
         if config[:start_interaction] == :prompt_license_exhausted
           # If user has exhausted commercial license, we are not blocking
           # we are blocking only when user has exhausted free license, hence LicenseKeyNotFetchedError is raised for free license
@@ -210,6 +210,7 @@ module ChefLicensing
         extra_info[:license_type] = license.license_type.capitalize
         extra_info[:number_of_days_in_expiration] = license.number_of_days_in_expiration
         extra_info[:license_expiration_date] = Date.parse(license.expiration_date).strftime("%a, %d %b %Y")
+        extra_info[:is_commercial] = license.license_type.downcase == "commercial"
       end
 
       unless info.empty? # ability to add info hash through arguments
@@ -230,7 +231,6 @@ module ChefLicensing
 
       # Cache license context
       ChefLicensing::Context.license = license
-
       # Intentional lag of 2 seconds when license is expiring or expired
       sleep 2 if license.expiring_or_expired?
       spinner.success # Stop the spinner
@@ -251,6 +251,8 @@ module ChefLicensing
         prompt_fetcher.config = config
         false
       else
+        # If license is not expired or expiring, return true. But if the license is not commercial, warn the user.
+        config[:start_interaction] = :warn_non_commercial_license unless license.license_type.downcase == "commercial"
         true
       end
     rescue ChefLicensing::ClientError => e

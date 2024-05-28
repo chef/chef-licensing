@@ -43,6 +43,9 @@ module ChefLicensing
       def is_license_allowed?(input)
         client_api_call(license_id)
         self.license_type = get_license_type
+        # When user enters the license via TUI, we need to check if the license type is commercial to display warnings.
+        input[:is_commercial] = license_type == :commercial ? true : false
+        input[:license_type] = license_type
         if license_restricted?(license_type)
           # Existing license keys needs to be fetcher to show details of existing license of license type which is restricted.
           # However, if user is trying to add Free Tier License, and user has active trial license, we fetch the trial license key
@@ -80,6 +83,10 @@ module ChefLicensing
 
       def fetch_license_id(input)
         license_id
+      end
+
+      def is_commercial_license?(input)
+        input[:is_commercial]
       end
 
       def fetch_invalid_license_msg(input)

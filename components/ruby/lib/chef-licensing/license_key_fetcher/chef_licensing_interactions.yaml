@@ -337,6 +337,27 @@ interactions:
 
   fetch_license_id:
     action: fetch_license_id
+    paths: [is_commercial_license]
+
+  is_commercial_license:
+    action: is_commercial_license?
+    response_path_map:
+      "true": exit
+      "false": warn_non_commercial_license
+    paths: [warn_non_commercial_license, exit]
+
+  warn_non_commercial_license:
+    messages: |
+      ------------------------------------------------------------
+        <%= input[:pastel].yellow("! [WARNING]")%> Non-Commercial License
+
+        This is a <%= input[:license_type].downcase %> product - not meant for commercial usage.
+
+        If you are using it for commercial purposes, please reach
+        out to our sales team at <%= input[:pastel].underline.green("chef-sales@progress.com")%> to get
+        commercial license to be compliant with Progress Chef MLSA.
+      ------------------------------------------------------------
+    prompt_type: "say"
     paths: [exit]
 
   prompt_license_exhausted:

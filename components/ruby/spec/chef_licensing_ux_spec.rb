@@ -45,6 +45,8 @@ RSpec.describe ChefLicensing::TUIEngine do
     {
       chef_product_name: ChefLicensing::Config.chef_product_name&.capitalize,
       unit_measure: "targets",
+      is_commercial: false,
+      license_type: "trial",
     }
   }
 
@@ -210,10 +212,12 @@ RSpec.describe ChefLicensing::TUIEngine do
 
     it "exits successfully traversing through the interactions in expected order" do
       expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
-      expect(tui_engine.traversed_interaction).to eq(%i{start ask_if_user_has_license_id ask_for_license_id validate_license_id_pattern validate_license_id_with_api validate_license_restriction validate_license_expiration validation_success display_license_info fetch_license_id})
+      expect(tui_engine.traversed_interaction).to eq(%i{start ask_if_user_has_license_id ask_for_license_id validate_license_id_pattern validate_license_id_with_api validate_license_restriction validate_license_expiration validation_success display_license_info fetch_license_id is_commercial_license warn_non_commercial_license})
       expect(prompt.output.string).to include("I already have a license ID")
       expect(prompt.output.string).to include("Please enter your license ID:")
       expect(prompt.output.string).to include("License validated successfully")
+      expect(prompt.output.string).to include("Non-Commercial License")
+      expect(prompt.output.string).to include("If you are using it for commercial purposes, please reach")
     end
   end
 
@@ -231,10 +235,12 @@ RSpec.describe ChefLicensing::TUIEngine do
 
     it "exits successfully traversing through the interactions in expected order" do
       expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
-      expect(tui_engine.traversed_interaction).to eq(%i{start ask_if_user_has_license_id ask_for_license_id validate_license_id_pattern validate_license_id_with_api validate_license_restriction validate_license_expiration validation_success display_license_info fetch_license_id})
+      expect(tui_engine.traversed_interaction).to eq(%i{start ask_if_user_has_license_id ask_for_license_id validate_license_id_pattern validate_license_id_with_api validate_license_restriction validate_license_expiration validation_success display_license_info fetch_license_id is_commercial_license warn_non_commercial_license})
       expect(prompt.output.string).to include("I already have a license ID")
       expect(prompt.output.string).to include("Please enter your license ID:")
       expect(prompt.output.string).to include("License validated successfully")
+      expect(prompt.output.string).to include("Non-Commercial License")
+      expect(prompt.output.string).to include("If you are using it for commercial purposes, please reach")
     end
   end
 
@@ -254,11 +260,13 @@ RSpec.describe ChefLicensing::TUIEngine do
 
     it "exits successfully traversing through the interactions in expected order" do
       expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
-      expect(tui_engine.traversed_interaction).to eq(%i{start ask_if_user_has_license_id ask_for_license_id validate_license_id_pattern ask_for_license_id validate_license_id_pattern validate_license_id_with_api validate_license_restriction validate_license_expiration validation_success display_license_info fetch_license_id})
+      expect(tui_engine.traversed_interaction).to eq(%i{start ask_if_user_has_license_id ask_for_license_id validate_license_id_pattern ask_for_license_id validate_license_id_pattern validate_license_id_with_api validate_license_restriction validate_license_expiration validation_success display_license_info fetch_license_id is_commercial_license warn_non_commercial_license})
       expect(prompt.output.string).to include("I already have a license ID")
       expect(prompt.output.string).to include("Please enter your license ID:")
       expect(output.string).to include("Malformed License Key passed on command line - should be ")
       expect(prompt.output.string).to include("License validated successfully")
+      expect(prompt.output.string).to include("Non-Commercial License")
+      expect(prompt.output.string).to include("If you are using it for commercial purposes, please reach")
     end
   end
 
@@ -328,6 +336,8 @@ RSpec.describe ChefLicensing::TUIEngine do
         validation_success
         display_license_info
         fetch_license_id
+        is_commercial_license
+        warn_non_commercial_license
       }
     }
 
@@ -554,6 +564,8 @@ RSpec.describe ChefLicensing::TUIEngine do
         validation_success
         display_license_info
         fetch_license_id
+        is_commercial_license
+        warn_non_commercial_license
       }
     }
 
@@ -713,7 +725,7 @@ RSpec.describe ChefLicensing::TUIEngine do
     it "shows the error message for expired license" do
       expect { tui_engine.append_info_to_input(additional_info_for_tui_engine) }.to_not raise_error
       expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
-      expect(tui_engine.traversed_interaction).to eq(%i{prompt_license_expired fetch_license_id})
+      expect(tui_engine.traversed_interaction).to eq(%i{prompt_license_expired fetch_license_id is_commercial_license warn_non_commercial_license})
       expect(prompt.output.string).to include("License Expired")
       expect(prompt.output.string).to include("We hope you've been enjoying Chef Inspec!")
       expect(prompt.output.string).to include("However, it seems like your license has expired.")
@@ -731,12 +743,14 @@ RSpec.describe ChefLicensing::TUIEngine do
     it "shows the error message for expired license" do
       expect { tui_engine.append_info_to_input(additional_info_for_tui_engine) }.to_not raise_error
       expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
-      expect(tui_engine.traversed_interaction).to eq(%i{prompt_license_expired_local_mode fetch_license_id})
+      expect(tui_engine.traversed_interaction).to eq(%i{prompt_license_expired_local_mode fetch_license_id is_commercial_license warn_non_commercial_license})
       expect(prompt.output.string).to include("License Expired")
       expect(prompt.output.string).to include("We hope you've been enjoying Chef Inspec!")
       expect(prompt.output.string).to include("However, it seems like your license has expired.")
       expect(prompt.output.string).to include("Reach out to our sales team at")
       expect(prompt.output.string).to_not include("license add")
+      expect(prompt.output.string).to include("Non-Commercial License")
+      expect(prompt.output.string).to include("If you are using it for commercial purposes, please reach")
     end
 
   end
@@ -747,10 +761,13 @@ RSpec.describe ChefLicensing::TUIEngine do
     let(:tui_engine) { described_class.new(opts) }
 
     it "shows the warning message for about to expire license" do
+      expect { tui_engine.append_info_to_input(additional_info_for_tui_engine) }.to_not raise_error
       expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
-      expect(tui_engine.traversed_interaction).to eq(%i{prompt_license_about_to_expire fetch_license_id})
+      expect(tui_engine.traversed_interaction).to eq(%i{prompt_license_about_to_expire fetch_license_id is_commercial_license warn_non_commercial_license})
       expect(prompt.output.string).to include("Your license is about to expire in")
       expect(prompt.output.string).to include("To avoid service disruptions, get a Commercial License")
+      expect(prompt.output.string).to include("Non-Commercial License")
+      expect(prompt.output.string).to include("If you are using it for commercial purposes, please reach")
     end
   end
 
@@ -842,10 +859,12 @@ RSpec.describe ChefLicensing::TUIEngine do
 
     it "exits successfully traversing through the interactions in expected order" do
       expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
-      expect(tui_engine.traversed_interaction).to eq(%i{add_license_all ask_if_user_has_license_id_for_license_addition ask_for_license_id validate_license_id_pattern validate_license_id_with_api validate_license_restriction validate_license_expiration validation_success display_license_info fetch_license_id})
+      expect(tui_engine.traversed_interaction).to eq(%i{add_license_all ask_if_user_has_license_id_for_license_addition ask_for_license_id validate_license_id_pattern validate_license_id_with_api validate_license_restriction validate_license_expiration validation_success display_license_info fetch_license_id is_commercial_license warn_non_commercial_license})
       expect(prompt.output.string).to include("Validate a generated license ID")
       expect(prompt.output.string).to include("Please enter your license ID:")
       expect(prompt.output.string).to include("License validated successfully")
+      expect(prompt.output.string).to include("Non-Commercial License")
+      expect(prompt.output.string).to include("If you are using it for commercial purposes, please reach")
     end
   end
 
@@ -915,7 +934,7 @@ RSpec.describe ChefLicensing::TUIEngine do
 
     it "exits successfully traversing through the interactions in expected order" do
       expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
-      expect(tui_engine.traversed_interaction).to eq(%i{start ask_if_user_has_license_id ask_for_license_id validate_license_id_pattern validate_license_id_with_api validate_license_restriction validate_license_expiration prompt_license_exhausted is_run_allowed_on_license_exhausted fetch_license_id})
+      expect(tui_engine.traversed_interaction).to eq(%i{start ask_if_user_has_license_id ask_for_license_id validate_license_id_pattern validate_license_id_with_api validate_license_restriction validate_license_expiration prompt_license_exhausted is_run_allowed_on_license_exhausted fetch_license_id is_commercial_license})
       expect(prompt.output.string).to include("Commercial License Exhausted")
       expect(prompt.output.string).to include("We hope you've been enjoying Chef")
       expect(prompt.output.string).to include("However, it seems like you have exceeded your entitled usage limit")
