@@ -835,7 +835,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       end
     end
 
-    context "when the license key is expired and no day left, lesser than a min threshold of 1 day" do
+    context "when the license key is expired, it raises error and blocks execution" do
 
       let(:client_data_expired) {
         {
@@ -887,12 +887,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
                        headers: { content_type: "application/json" })
         end
 
-        it "does not nags that it is about to expire but that it is expired" do
-          license_key_fetcher.fetch_and_persist
-          expect(license_key_fetcher.config[:start_interaction]).to_not eq(:prompt_license_about_to_expire)
-          expect(license_key_fetcher.config[:start_interaction]).to_not eq(nil)
-          expect(license_key_fetcher.config[:start_interaction]).to eq(:prompt_license_expired)
-        end
+        it { expect { license_key_fetcher.fetch_and_persist }.to raise_error(ChefLicensing::LicenseKeyFetcher::LicenseKeyNotFetchedError) }
       end
     end
   end
