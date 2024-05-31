@@ -85,11 +85,10 @@ module ChefLicensing
         end
       end
 
-      # Scenario: When a user is prompted with license about to expire message and license is not yet renewed
-      # Scenario: When a user is prompted with license expired message in grace period and license is not yet renewed
-      if license && !license.expired?
-        # Return license keys unless it is a free license that has been exhausted
-        return @license_keys unless license.exhausted? && license.license_type.downcase == "free"
+      # Expired trial licenses and exhausted free licenses will be blocked
+      # Not blocking commercial licenses
+      if license && ((!license.expired? && !license.exhausted?) || (license.license_type.downcase == "commercial"))
+        return @license_keys
       end
 
       # Otherwise nothing was able to fetch a license. Throw an exception.
@@ -132,16 +131,20 @@ module ChefLicensing
           # If license type is not selected using TUI, assign it using API call to fetch type.
           prompt_fetcher.license_type ||= get_license_type(new_keys.first)
           persist_and_concat(new_keys, prompt_fetcher.license_type)
-          return license_keys unless license&.expired?
+          license ||= ChefLicensing::Context.license
+          # Expired trial licenses and exhausted free licenses will be blocked
+          # Not blocking commercial licenses
+          if (!license&.expired? && !license&.exhausted?) || (license&.license_type&.downcase == "commercial")
+            return license_keys
+          end
         end
       end
 
-      if new_keys.empty? && (license && !license.expired?)
-        # Scenario: When a user is prompted with license about to expire message and license is not yet renewed
-        # Scenario: When a user is prompted with license expired message in grace period and license is not yet renewed
-        # Not blocking any license type in case of license about to expire and grace scenario only
-        # Return license keys unless it is a free license that has been exhausted
-        return @license_keys unless license.exhausted? && license.license_type.downcase == "free"
+      # Expired trial licenses and exhausted free licenses will be blocked
+      # Not blocking commercial licenses
+      license ||= ChefLicensing::Context.license
+      if new_keys.empty? && license && ((!license.expired? && !license.exhausted?) || (license.license_type.downcase == "commercial"))
+        return @license_keys
       end
 
       # Otherwise nothing was able to fetch a license. Throw an exception.
