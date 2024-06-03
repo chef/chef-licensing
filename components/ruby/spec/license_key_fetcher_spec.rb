@@ -835,59 +835,160 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       end
     end
 
-    context "when the license key is expired, it raises error and blocks execution" do
+    context "when the license key is expired" do
 
-      let(:client_data_expired) {
-        {
-          "client" => {
-            "license" => "Trial",
-            "status" => "Expired",
-            "changesTo" => "Expired",
-            "changesOn" => "#{Date.today}",
-            "changesIn" => "0",
-            "usage" => "Active",
-            "used" => 2,
-            "limit" => 2,
-            "measure" => 2,
-          },
-          "assets" => [ { "id" => "assetguid1", "name" => "Test Asset 1" }, { "id" => "assetguid2", "name" => "Test Asset 2" } ],
-          "features" => [ { "id" => "featureguid1", "name" => "Test Feature 1" }, { "id" => "featureguid2", "name" => "Test Feature 2" } ],
-          "entitlement" => {
-            "id" => "3ff52c37-e41f-4f6c-ad4d-365192205968",
-            "name" => "Inspec",
-            "start" => "2022-11-01",
-            "end" => "2024-11-01",
-            "licenses" => 2,
-            "limits" => [ { "measure" => "nodes", "amount" => 2 } ],
-            "entitled" => false,
-          },
-        }
-      }
-
-      Dir.mktmpdir do |tmpdir|
-        let(:opts) {
+      context "and is a trial license, it raises error and blocks execution" do
+        let(:client_data_expired) {
           {
-            logger: logger,
-            argv: argv,
-            env: env,
-            output: output,
-            dir: tmpdir,
+            "client" => {
+              "license" => "Trial",
+              "status" => "Expired",
+              "changesTo" => "Expired",
+              "changesOn" => "#{Date.today}",
+              "changesIn" => "0",
+              "usage" => "Active",
+              "used" => 2,
+              "limit" => 2,
+              "measure" => 2,
+            },
+            "assets" => [ { "id" => "assetguid1", "name" => "Test Asset 1" }, { "id" => "assetguid2", "name" => "Test Asset 2" } ],
+            "features" => [ { "id" => "featureguid1", "name" => "Test Feature 1" }, { "id" => "featureguid2", "name" => "Test Feature 2" } ],
+            "entitlement" => {
+              "id" => "3ff52c37-e41f-4f6c-ad4d-365192205968",
+              "name" => "Inspec",
+              "start" => "2022-11-01",
+              "end" => "2024-11-01",
+              "licenses" => 2,
+              "limits" => [ { "measure" => "nodes", "amount" => 2 } ],
+              "entitled" => false,
+            },
           }
         }
 
-        let(:license_key_fetcher) { described_class.new(opts) }
-        before do
-          stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
-            .with(query: { licenseId: license_keys.first, version: api_version })
-            .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
-                       headers: { content_type: "application/json" })
-          stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
-            .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
-            .to_return(body: { data: client_data_expired, status_code: 200 }.to_json,
-                       headers: { content_type: "application/json" })
+        Dir.mktmpdir do |tmpdir|
+          let(:opts) {
+            {
+              logger: logger,
+              argv: argv,
+              env: env,
+              output: output,
+              dir: tmpdir,
+            }
+          }
+
+          let(:license_key_fetcher) { described_class.new(opts) }
+          before do
+            stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+              .with(query: { licenseId: license_keys.first, version: api_version })
+              .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+                        headers: { content_type: "application/json" })
+            stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+              .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
+              .to_return(body: { data: client_data_expired, status_code: 200 }.to_json,
+                        headers: { content_type: "application/json" })
+          end
+
+          it { expect { license_key_fetcher.fetch_and_persist }.to raise_error(ChefLicensing::LicenseKeyFetcher::LicenseKeyNotFetchedError) }
+        end
+      end
+
+      context "and is a commercial license, it does not block the execution" do
+        let(:license_keys) {
+          %w{HA0D5BABCDEFG7X2E8SXYZ4MV4}
+        }
+        let(:client_data_expired) {
+          {
+            "client" => {
+              "license" => "Commercial",
+              "status" => "Expired",
+              "changesTo" => "Expired",
+              "changesOn" => "#{Date.today}",
+              "changesIn" => "0",
+              "usage" => "Active",
+              "used" => 2,
+              "limit" => 2,
+              "measure" => 2,
+            },
+            "assets" => [ { "id" => "assetguid1", "name" => "Test Asset 1" }, { "id" => "assetguid2", "name" => "Test Asset 2" } ],
+            "features" => [ { "id" => "featureguid1", "name" => "Test Feature 1" }, { "id" => "featureguid2", "name" => "Test Feature 2" } ],
+            "entitlement" => {
+              "id" => "3ff52c37-e41f-4f6c-ad4d-365192205968",
+              "name" => "Inspec",
+              "start" => "2022-11-01",
+              "end" => "2024-11-01",
+              "licenses" => 2,
+              "limits" => [ { "measure" => "nodes", "amount" => 2 } ],
+              "entitled" => false,
+            },
+          }
+        }
+
+        context "in global mode" do
+          let(:argv) { ["--chef-license-key=HA0D5BABCDEFG7X2E8SXYZ4MV4"] }
+          Dir.mktmpdir do |tmpdir|
+            let(:opts) {
+              {
+                logger: logger,
+                argv: argv,
+                env: env,
+                output: output,
+                dir: tmpdir,
+              }
+            }
+
+            let(:license_key_fetcher) { described_class.new(opts) }
+            before do
+              stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+                .with(query: { licenseId: license_keys.first, version: api_version })
+                .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+                          headers: { content_type: "application/json" })
+              stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+                .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
+                .to_return(body: { data: client_data_expired, status_code: 200 }.to_json,
+                          headers: { content_type: "application/json" })
+            end
+
+            it { expect(license_key_fetcher.fetch_and_persist).to eq(["HA0D5BABCDEFG7X2E8SXYZ4MV4"]) }
+          end
         end
 
-        it { expect { license_key_fetcher.fetch_and_persist }.to raise_error(ChefLicensing::LicenseKeyFetcher::LicenseKeyNotFetchedError) }
+        context "in local mode" do
+          let(:argv) { [] }
+          let(:env) { [] }
+          Dir.mktmpdir do |tmpdir|
+            let(:opts) {
+              {
+                logger: logger,
+                argv: argv,
+                env: env,
+                output: output,
+                dir: tmpdir,
+              }
+            }
+
+            let(:license_key_fetcher) { described_class.new(opts) }
+            before do
+              ChefLicensing.configure do |config|
+                config.is_local_license_service = nil
+                config.license_server_url = "http://localhost-license-server/License"
+              end
+              ChefLicensing::Context.current_context = nil
+              stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
+                .to_return(body: { data: ["HA0D5BABCDEFG7X2E8SXYZ4MV4"], status_code: 200 }.to_json,
+                headers: { content_type: "application/json" })
+              stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+                .with(query: { licenseId: license_keys.first, version: api_version })
+                .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+                headers: { content_type: "application/json" })
+              stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+                .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
+                .to_return(body: { data: client_data_expired, status_code: 200 }.to_json,
+                headers: { content_type: "application/json" })
+            end
+
+            it { expect(license_key_fetcher.fetch_and_persist).to eq(["HA0D5BABCDEFG7X2E8SXYZ4MV4"]) }
+          end
+        end
       end
     end
   end
