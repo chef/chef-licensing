@@ -15,7 +15,7 @@ Chef Licensing is a Ruby library for managing the licensing of Chef products. It
 ## System Prerequisites
 
 Usage of this library assumes the system to meet the following requirements:
-- **Ruby**: This library requires Ruby version >= 3.0.3. If you do not have Ruby installed, you can download it from the official Ruby website or use a package manager for the same.
+- **Ruby**: This library requires Ruby version >= 3.1.0 . If you do not have Ruby installed, you can download it from the official Ruby website or use a package manager for the same.
 - **Bundler**: This project uses Bundler to manage dependencies. If you do not have Bundler installed, you can install it by running the following command in your terminal:
   ```
   gem install bundler

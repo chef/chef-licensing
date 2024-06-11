@@ -18,16 +18,7 @@ steps:
   expeditor:
     executor:
       docker:
-        image: ruby:3.0
-
-- label: run-specs-ruby-3.0
-  command:
-    - cd /workdir/components/ruby
-    - ../../.expeditor/run_linux_tests.sh "rake spec"
-  expeditor:
-    executor:
-      docker:
-        image: ruby:3.0
+        image: ruby:3.1-bullseye
 
 - label: run-specs-ruby-3.1
   command:
