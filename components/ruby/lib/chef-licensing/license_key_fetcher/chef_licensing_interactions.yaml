@@ -69,20 +69,20 @@ interactions:
 
   trial_restriction_message:
     prompt_type: "say"
-    messages:
-      Please generate a Free Tier or Commercial License by running <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%>.
+    messages: |
+      Please generate a Free Tier or Commercial License by running <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} #{ChefLicensing::Config.license_add_command}")%>.
     paths: [exit_with_message]
 
   free_restriction_message:
     prompt_type: "say"
-    messages:
-      Please generate a Trial or Commercial License by running <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%>.
+    messages: |
+      Please generate a Trial or Commercial License by running <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} #{ChefLicensing::Config.license_add_command}")%>.
     paths: [exit_with_message]
 
   only_commercial_allowed_message:
     prompt_type: "say"
-    messages:
-      Please generate a Commercial License by running <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%>.
+    messages: |
+      Please generate a Commercial License by running <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} #{ChefLicensing::Config.license_add_command}")%>.
     paths: [exit_with_message]
 
   prompt_license_expired:
@@ -96,7 +96,7 @@ interactions:
         Reach out to our sales team at <%= input[:pastel].underline.green("chef-sales@progress.com")%>
         to move to commercial tier.
 
-        To get a new license, run <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} license add")%>
+        To get a new license, run <%= input[:pastel].bold("#{ChefLicensing::Config.chef_executable_name} #{ChefLicensing::Config.license_add_command}") %>
         and select a license type.
       ------------------------------------------------------------
     prompt_type: "say"
