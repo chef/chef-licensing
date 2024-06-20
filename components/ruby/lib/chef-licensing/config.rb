@@ -13,7 +13,7 @@ require_relative "licensing_service/local"
 module ChefLicensing
   class Config
     class << self
-      attr_writer :license_server_url, :logger, :output, :license_server_url_check_in_file
+      attr_writer :license_server_url, :logger, :output, :license_server_url_check_in_file, :license_add_command, :license_list_command
 
       # is_local_license_service is used by context class
       attr_accessor :is_local_license_service, :chef_entitlement_id, :chef_product_name, :chef_executable_name
@@ -38,6 +38,14 @@ module ChefLicensing
 
       def output
         @output ||= STDOUT
+      end
+
+      def license_add_command
+        @license_add_command ||= "license add"
+      end
+
+      def license_list_command
+        @license_list_command ||= "license list"
       end
     end
   end
