@@ -267,6 +267,163 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       end
     end
 
+    context "the license is set via config" do
+      let(:license_keys) { ["tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"] }
+      let(:argv) { [] }
+      let(:env) { {} }
+      before do
+        ChefLicensing.configure do |config|
+          config.chef_license_key = "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"
+        end
+        ChefLicensing::Context.current_context = nil
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
+          .to_return(body: { data: [], status_code: 404 }.to_json,
+                    headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", version: api_version })
+          .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+                    headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
+                  headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+          .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
+                      headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: describe_api_data, status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+      end
+      Dir.mktmpdir do |tmpdir|
+        let(:opts) {
+          {
+            logger: logger,
+            argv: argv,
+            env: env,
+            output: output,
+            dir: tmpdir,
+          }
+        }
+
+        let(:license_key_fetcher) { described_class.new(opts) }
+        it "returns license key set using config" do
+          expect(license_key_fetcher.fetch_and_persist).to eq(["tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"])
+        end
+      end
+    end
+
+    context "the license is set via env and config" do
+      let(:argv) { [] }
+      let(:env) { { "CHEF_LICENSE_KEY" => "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111" } }
+      let(:license_keys) {
+        %w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150 free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111}
+      }
+      before do
+        ChefLicensing.configure do |config|
+          config.is_local_license_service = nil
+          config.chef_license_key = "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"
+        end
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", version: api_version })
+          .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+                     headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+          .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111", version: api_version })
+          .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+                  headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
+                  headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+          .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
+                  headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+          .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
+                     headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: describe_api_data, status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+      end
+
+      Dir.mktmpdir do |tmpdir|
+        let(:opts) {
+          {
+            logger: logger,
+            argv: argv,
+            env: env,
+            output: output,
+            dir: tmpdir,
+          }
+        }
+
+        let(:license_key_fetcher) { described_class.new(opts) }
+        it "returns only trial set in config and not free due to active trial restriction" do
+          expect(license_key_fetcher.fetch_and_persist).to eq(%w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150})
+        end
+      end
+    end
+
+    context "the license is set via argument and config" do
+      let(:env) { {} }
+      let(:argv) { ["--chef-license-key=free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111"] }
+      let(:license_keys) {
+        %w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150 free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111}
+      }
+      before do
+        ChefLicensing.configure do |config|
+          config.is_local_license_service = nil
+          config.chef_license_key = "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"
+        end
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", version: api_version })
+          .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+                     headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+          .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111", version: api_version })
+          .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+                  headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
+                  headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+          .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
+                  headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+          .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
+                     headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: describe_api_data, status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+      end
+
+      Dir.mktmpdir do |tmpdir|
+        let(:opts) {
+          {
+            logger: logger,
+            argv: argv,
+            env: env,
+            output: output,
+            dir: tmpdir,
+          }
+        }
+
+        let(:license_key_fetcher) { described_class.new(opts) }
+        it "returns only trial set in config and not free due to active trial restriction" do
+          expect(license_key_fetcher.fetch_and_persist).to eq(%w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150})
+        end
+      end
+    end
+
     context "multiple free licenses are restricted and can only add one free license in file" do
       let(:argv) { ["--chef-license-key=free-c0832d2d-1111-1ec1-b1e5-011d182dc341-112"] }
 
@@ -343,6 +500,9 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       }
 
       before do
+        ChefLicensing.configure do |config|
+          config.chef_license_key = nil
+        end
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
           .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111", version: api_version })
           .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
