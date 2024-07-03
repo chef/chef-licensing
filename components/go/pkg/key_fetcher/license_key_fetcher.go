@@ -3,8 +3,8 @@ package keyfetcher
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
-	"strings"
 
 	"github.com/chef/chef-licensing/components/go/pkg/api"
 )
@@ -36,8 +36,8 @@ func GlobalFetchAndPersist() []string {
 	// Client API possible errors will be handled in software entitlement check call (made after this)
 	// client_api_call_error is set to true when there is an error in licenses_active? call
 	isActive, startID := isLicenseActive(getLicenseKeys())
-	licenseTypeFile := strings.ToLower(FetchLicenseTypeBasedOnKey(getLicenseKeys()))
-	if len(getLicenseKeys()) > 0 && isActive && licenseTypeFile == "commercial" {
+	fileClient, _ := api.GetClient().GetLicenseClient(getLicenseKeys(), true)
+	if len(getLicenseKeys()) > 0 && isActive && fileClient.IsCommercial() {
 		return getLicenseKeys()
 	}
 
@@ -48,15 +48,14 @@ func GlobalFetchAndPersist() []string {
 		if (!licenseClient.IsExpired() && !licenseClient.IsExhausted()) || licenseClient.IsCommercial() {
 			fmt.Println("License Key:", licenseKeys[0])
 			return licenseKeys
-		} else {
-			fmt.Println("Unable to obtain a License Key")
-			os.Exit(1)
 		}
-	} else {
-		fmt.Println("Unable to obtain a License Key")
-		os.Exit(1)
 	}
 
+	if len(newKeys) == 0 && fileClient != nil && ((!fileClient.IsExpired() && !fileClient.IsExhausted()) || fileClient.IsCommercial()) {
+		return licenseKeys
+	}
+
+	log.Fatal("Unable to obtain a License Key.")
 	return licenseKeys
 }
 
