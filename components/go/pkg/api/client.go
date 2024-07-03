@@ -83,7 +83,7 @@ func (client LicenseClient) ExpirationInDays() int {
 
 func (client LicenseClient) IsAboutToExpire() (out bool) {
 	expiration := client.ExpirationInDays()
-	return client.Status == "Active" && client.ChangesTo == "Expired" && expiration >= 1 && expiration <= 342
+	return client.Status == "Active" && client.ChangesTo == "Expired" && expiration >= 1 && expiration <= 7
 }
 
 func (client LicenseClient) IsExpiringOrExpired() bool {
