@@ -56,12 +56,12 @@ func (ad ActionDetail) TimeoutSelect() string {
 	select {
 	case <-done:
 		if err == nil {
-			fmt.Println("Selected option: ", val)
+			log.Println("Selected option: ", val)
 			return ad.ResponsePathMap[val]
 		}
 	case <-timeoutContext.Done():
-		fmt.Println(printInColor("red", "Prompt timed out. Use non-interactive flags or enter an answer within 60 seconds.", false, true))
-		fmt.Println("Timeout!")
+		log.Println(printInColor("red", "Prompt timed out. Use non-interactive flags or enter an answer within 60 seconds.", false, true))
+		log.Println("Timeout!")
 		os.Exit(1)
 	}
 	return ""

@@ -32,7 +32,7 @@ func (c *APIClient) BaseURL() string {
 // 	cfg := config.GetConfig()
 // 	conf := pconfig.DefaultHttpConfig(cfg.LicenseServerURL)
 // 	logger, err := plogger.NewLogger(plogger.LoggerConfig{LogLevel: "debug", LogToStdout: true})
-// 	fmt.Println("Loggflaslfjalskfjlaksfjlkj")
+// 	log.Println("Loggflaslfjalskfjlaksfjlkj")
 // 	logger.Warn("Test log")
 // 	if err != nil {
 // 		log.Fatal("Unable to create a logger", err)

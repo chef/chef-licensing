@@ -42,7 +42,7 @@ func StartInteractions(startID string) (keys []string) {
 		keys = append(keys, lastUserInput)
 	}
 
-	// fmt.Println("Completed", performedInteractions)
+	// log.Println("Completed", performedInteractions)
 	return
 }
 
@@ -130,7 +130,7 @@ func renderMessages(messages []string) {
 		if err != nil {
 			log.Fatalf("error parsing template: %v", err)
 		}
-		fmt.Println("")
+		fmt.Printf("\n")
 
 		err = tmpl.Execute(os.Stdout, PromptInput)
 		if err != nil {
