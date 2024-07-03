@@ -127,3 +127,15 @@ func saveLicenseFile(content *LicenseFileData) {
 		log.Fatalf("error: %v", err)
 	}
 }
+
+func FetchLicenseTypeBasedOnKey(license_keys []string) string {
+	content := readLicenseKeyFile()
+	var licenseType string
+	for _, key := range content.Licenses {
+		if key.LicenseKey == license_keys[0] {
+			licenseType = key.LicenseType
+		}
+
+	}
+	return licenseType
+}
