@@ -66,14 +66,24 @@ func (client LicenseClient) IsCommercial() bool {
 	return client.LicenseType == "commercial"
 }
 
-func (client LicenseClient) IsAboutToExpire() (out bool) {
+func (client LicenseClient) LicenseExpirationDate() time.Time {
 	expiresOn, err := time.Parse(time.RFC3339, client.ChangesOn)
 	if err != nil {
 		log.Fatal("Unknown expiration time received from the server: ", err)
 	}
 
-	expirationIn := int(time.Until(expiresOn).Hours() / 24)
-	return client.Status == "Active" && client.ChangesTo == "Expired" && expirationIn >= 1 && expirationIn <= 7
+	return expiresOn
+}
+
+func (client LicenseClient) ExpirationInDays() int {
+
+	expirationIn := int(time.Until(client.LicenseExpirationDate()).Hours() / 24)
+	return expirationIn
+}
+
+func (client LicenseClient) IsAboutToExpire() (out bool) {
+	expiration := client.ExpirationInDays()
+	return client.Status == "Active" && client.ChangesTo == "Expired" && expiration >= 1 && expiration <= 342
 }
 
 func (client LicenseClient) IsExpiringOrExpired() bool {

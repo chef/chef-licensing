@@ -224,14 +224,8 @@ func (ad ActionDetail) CheckLicenseExpirationStatus() string {
 	if licenseClient.IsExpired() || licenseClient.HaveGrace() {
 		status = "expired"
 	} else if licenseClient.IsAboutToExpire() {
-		expiresOn, err := time.Parse(time.RFC3339, licenseClient.ChangesOn)
-		if err != nil {
-			log.Fatal("Unknown expiration time received from the server: ", err)
-		}
-
-		expirationIn := int(time.Until(expiresOn).Hours() / 24)
-		PromptInput.LicenseExpirationDate = expiresOn.Format(time.UnixDate)
-		PromptInput.ExpirationInDays = strconv.Itoa(expirationIn)
+		PromptInput.LicenseExpirationDate = licenseClient.LicenseExpirationDate().Format(time.UnixDate)
+		PromptInput.ExpirationInDays = strconv.Itoa(licenseClient.ExpirationInDays())
 		status = "about_to_expire"
 	} else if licenseClient.IsExhausted() && (licenseClient.IsCommercial() || licenseClient.IsFree()) {
 		status = "exhausted_license"

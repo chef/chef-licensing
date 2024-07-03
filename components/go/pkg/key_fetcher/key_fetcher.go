@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"regexp"
+	"strconv"
 	"time"
 
 	"github.com/chef/chef-licensing/components/go/pkg/api"
@@ -50,6 +51,7 @@ func promptLicenseAdditionRestricted(licenseType string, existingLicenseKeysInFi
 }
 
 func isLicenseActive(keys []string) (out bool, promptStartID string) {
+	conf := make(map[string]string)
 	if len(keys) == 0 {
 		return
 	}
@@ -77,6 +79,8 @@ func isLicenseActive(keys []string) (out bool, promptStartID string) {
 	} else if licenseClient.IsAboutToExpire() {
 		promptStartID = "prompt_license_about_to_expire"
 		out = false
+		conf["ExpirationInDays"] = strconv.Itoa(licenseClient.ExpirationInDays())
+		conf["LicenseExpirationDate"] = licenseClient.LicenseExpirationDate().Format(time.UnixDate)
 	} else if licenseClient.IsExhausted() && (licenseClient.IsCommercial() || licenseClient.IsFree()) {
 		promptStartID = "prompt_license_exhausted"
 		out = false
@@ -98,6 +102,12 @@ func isLicenseActive(keys []string) (out bool, promptStartID string) {
 	time.Sleep(2 * time.Second)
 	spinner.Message("Done")
 	_ = spinner.Stop()
+	cacheClientToPromptInput(licenseClient, conf)
 
 	return out, promptStartID
+}
+
+func cacheClientToPromptInput(client *api.LicenseClient, conf map[string]string) {
+	conf["LicenseType"] = client.LicenseType
+	UpdatePromptInputs(conf)
 }
