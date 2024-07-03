@@ -195,11 +195,12 @@ func getLicense() api.LicenseClient {
 		log.Println("Unable to start the spinner")
 	}
 	_ = spinner.Start()
-	spinner.Message("In progress")
+	// spinner.Message("In progress")
+	spinner.Suffix("")
 	client, _ := api.GetClient().GetLicenseClient([]string{PromptInput.LicenseID})
 
-	spinner.StopCharacter("✓")
-	spinner.StopColors("green")
+	// spinner.StopCharacter("✓")
+	// spinner.StopColors("green")
 
 	spinner.Message("Done")
 

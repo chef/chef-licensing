@@ -17,6 +17,7 @@ interactions:
           If you are a commercial user, you can also find it in the
           {{printHyperlink "https://community.progress.com/s/products/chef"}} portal.
         ------------------------------------------------------------
+      - |
     prompt_type: "Say"
     paths: [ask_if_user_has_license_id]
   
@@ -163,7 +164,7 @@ interactions:
     paths: [exit_with_message]
 
   validation_success:
-    messages: ['{{printInColor "green" "✔"}} [Success] License validated successfully.']
+    messages: ['{{printInColor "green" "✔"}} {{printInColor "green" "[Success] License validated successfully."}}']
     prompt_type: "Ok"
     paths: [display_license_info]
 
@@ -188,7 +189,7 @@ interactions:
       ------------------------------------------------------------
         {{printInColor "yellow" "! [WARNING]"}} Non-Commercial License
 
-        This is a {{.LicenseType}} product - not meant for commercial usage.
+        You are using a {{.LicenseType}} version - not meant for commercial usage.
 
         If you are using it for commercial purposes, please reach
         out to our sales team at {{printHyperlink "chef-sales@progress.com"}} to get
@@ -208,7 +209,7 @@ interactions:
     paths: [exit_with_message]
 
   exit_with_message:
-    messages: ["Thank you."]
+    messages: ["Thank you.\n"]
     prompt_type: "Say"
     paths: [exit]
 
@@ -224,7 +225,7 @@ interactions:
           Reach out to our sales team at {{printHyperlink "chef-sales@progress.com"}}
           to move to commercial tier.
 
-          To get a new license, run {{printBoldText .ChefExecutableName "license add"}}
+          To get a new license, run {{printBoldText .ChefExecutableName "chef license add"}}
           and select a license type.
         ------------------------------------------------------------
     prompt_type: "Say"

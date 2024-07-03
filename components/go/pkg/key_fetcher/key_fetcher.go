@@ -86,7 +86,7 @@ func isLicenseActive(keys []string) (out bool, promptStartID string) {
 		out = false
 	} else {
 		// If license is not expired or expiring, return true. But if the license is not commercial, warn the user.
-		if licenseClient.IsCommercial() {
+		if !licenseClient.IsCommercial() {
 			promptStartID = "warn_non_commercial_license"
 		}
 		out = true
