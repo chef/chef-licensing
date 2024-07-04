@@ -2,7 +2,6 @@ package keyfetcher
 
 import (
 	"fmt"
-	"log"
 	"regexp"
 	"strconv"
 	"time"
@@ -42,7 +41,7 @@ func ValidateKeyFormat(key string) (matches bool) {
 }
 
 func promptLicenseAdditionRestricted(licenseType string, existingLicenseKeysInFile []string) {
-	log.Println("License Key fetcher - prompting license addition restriction")
+	// fmt.Printf("License Key fetcher - prompting license addition restriction\n")
 	UpdatePromptInputs(map[string]string{
 		"LicenseID":   existingLicenseKeysInFile[len(existingLicenseKeysInFile)-1],
 		"LicenseType": licenseType,
@@ -58,7 +57,7 @@ func isLicenseActive(keys []string) (out bool, promptStartID string) {
 
 	spinner, err := spinner.GetSpinner()
 	if err != nil {
-		log.Println("Unable to start the spinner")
+		fmt.Printf("Unable to start the spinner\n")
 	}
 	_ = spinner.Start()
 	spinner.Message("In progress")

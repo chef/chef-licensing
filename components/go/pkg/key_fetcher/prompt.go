@@ -42,7 +42,7 @@ func StartInteractions(startID string) (keys []string) {
 		keys = append(keys, lastUserInput)
 	}
 
-	// log.Println("Completed", performedInteractions)
+	// fmt.Println("Completed", performedInteractions)
 	return
 }
 
@@ -76,7 +76,7 @@ func initializePromptInputs() {
 	m := make(map[string]string)
 	conf := config.GetConfig()
 	m["ProductName"] = conf.ProductName
-	m["ExecutableName"] = conf.ExecutableName
+	m["ChefExecutableName"] = conf.ExecutableName
 	if conf.ExecutableName == "chef" {
 		m["UnitMeasure"] = "nodes"
 	} else {
@@ -123,9 +123,10 @@ func renderMessages(messages []string) {
 
 	for _, message := range messages {
 		tmpl, err := template.New("actionMessage").Funcs(template.FuncMap{
-			"printHyperlink": printHyperlink,
-			"printInColor":   printInColor,
-			"printBoldText":  printBoldText,
+			"printHyperlink":         printHyperlink,
+			"printInColor":           printInColor,
+			"printBoldText":          printBoldText,
+			"printLicenseAddCommand": printLicenseAddCommand,
 		}).Parse(message)
 		if err != nil {
 			log.Fatalf("error parsing template: %v", err)
@@ -180,6 +181,10 @@ func printBoldText(text1, text2 string) string {
 	return color.Bold.Sprintf(text1 + " " + text2)
 }
 
+func printLicenseAddCommand() string {
+	return printInColor("", PromptInput.ChefExecutableName+" license add", false, true)
+}
+
 func validateLicenseFormat(key string) error {
 	isValid := ValidateKeyFormat(key)
 	if isValid {
@@ -192,7 +197,7 @@ func validateLicenseFormat(key string) error {
 func getLicense() api.LicenseClient {
 	spinner, err := spinner.GetSpinner()
 	if err != nil {
-		log.Println("Unable to start the spinner")
+		fmt.Printf("Unable to start the spinner\n")
 	}
 	_ = spinner.Start()
 	// spinner.Message("In progress")

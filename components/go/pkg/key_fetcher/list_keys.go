@@ -15,7 +15,7 @@ func PrintLicenseKeyOverview(keys []string) {
 
 	for _, license := range describe.Licenses {
 		validity = calculateValidity(license)
-		log.Println("\n------------------------------------------------------------")
+		color.Printf("\n------------------------------------------------------------\n")
 		color.Bold.Println("License Details")
 		format := "%-15s : %-20s\n"
 		if len(license.Limits) > 0 {

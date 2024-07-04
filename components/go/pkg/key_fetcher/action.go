@@ -56,12 +56,12 @@ func (ad ActionDetail) TimeoutSelect() string {
 	select {
 	case <-done:
 		if err == nil {
-			log.Println("Selected option: ", val)
+			fmt.Printf("Selected option: %s\n", val)
 			return ad.ResponsePathMap[val]
 		}
 	case <-timeoutContext.Done():
-		log.Println(printInColor("red", "Prompt timed out. Use non-interactive flags or enter an answer within 60 seconds.", false, true))
-		log.Println("Timeout!")
+		fmt.Printf(printInColor("red", "Prompt timed out. Use non-interactive flags or enter an answer within 60 seconds.\n", false, true))
+		fmt.Printf("Timeout!\n")
 		os.Exit(1)
 	}
 	return ""
@@ -133,7 +133,7 @@ func (ad ActionDetail) DoesLicenseHaveValidPattern() string {
 func (ad ActionDetail) IsLicenseValidOnServer() string {
 	spinner, err := spinner.GetSpinner()
 	if err != nil {
-		log.Println("Unable to start the spinner")
+		fmt.Printf("Unable to start the spinner\n")
 	}
 	_ = spinner.Start()
 	spinner.Message("In progress")

@@ -2,6 +2,7 @@ package keyfetcher
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 
@@ -45,7 +46,7 @@ func GlobalFetchAndPersist() []string {
 		licenseClient, _ := api.GetClient().GetLicenseClient(newKeys)
 		persistAndConcat(newKeys, licenseClient.LicenseType)
 		if (!licenseClient.IsExpired() && !licenseClient.IsExhausted()) || licenseClient.IsCommercial() {
-			log.Println("License Key:", licenseKeys[0])
+			fmt.Printf("License Key: %s\n", licenseKeys[0])
 			return licenseKeys
 		}
 	}
