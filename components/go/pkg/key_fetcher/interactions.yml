@@ -148,19 +148,19 @@ interactions:
   trial_restriction_message:
     prompt_type: "Say"
     messages:
-      - Please generate a Free Tier or Commercial License by running {{printBoldText .ExecutableName "license add"}}.
+      - Please generate a Free Tier or Commercial License by running {{printLicenseAddCommand}}.
     paths: [exit_with_message]
 
   free_restriction_message:
     prompt_type: "Say"
     messages:
-      - Please generate a Trial or Commercial License by running {{printBoldText .ExecutableName "license add"}}.
+      - Please generate a Trial or Commercial License by running {{printLicenseAddCommand}}.
     paths: [exit_with_message]
 
   only_commercial_allowed_message:
     prompt_type: "Say"
     messages:
-      - Please generate a Commercial License by running {{printBoldText .ExecutableName "license add"}}.
+      - Please generate a Commercial License by running {{printLicenseAddCommand}}.
     paths: [exit_with_message]
 
   validation_success:
@@ -225,7 +225,7 @@ interactions:
           Reach out to our sales team at {{printHyperlink "chef-sales@progress.com"}}
           to move to commercial tier.
 
-          To get a new license, run {{printBoldText .ChefExecutableName "chef license add"}}
+          To get a new license, run {{printLicenseAddCommand}}
           and select a license type.
         ------------------------------------------------------------
     prompt_type: "Say"
