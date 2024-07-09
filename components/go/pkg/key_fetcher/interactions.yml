@@ -26,8 +26,9 @@ interactions:
     options: ["I already have a license ID", "I don't have a license ID and would like to generate a new license ID", "Skip"]
     prompt_type: "TimeoutSelect"
     prompt_attributes:
+      timeout_warning_color: red
       timeout_duration: 60
-      timeout_message: "\nPrompt timed out. Use non-interactive flags or enter an answer within 60 seconds."
+      timeout_message: "Prompt timed out. Use non-interactive flags or enter an answer within 60 seconds.\n"
     paths: [ask_for_license_id, info_of_license_types, skip_message]
     response_path_map:
       "I already have a license ID": ask_for_license_id

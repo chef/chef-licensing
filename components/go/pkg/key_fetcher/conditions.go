@@ -19,7 +19,7 @@ func DoesUserHasActiveTrialLicense() (out bool) {
 	content := *readLicenseKeyFile()
 	for _, license := range content.Licenses {
 		client, _ := api.GetClient().GetLicenseClient([]string{license.LicenseKey})
-		if license.LicenseType == "trial" && client.IsActive() {
+		if license.LicenseType == ":trial" && client.IsActive() {
 			out = true
 		}
 	}
@@ -27,7 +27,7 @@ func DoesUserHasActiveTrialLicense() (out bool) {
 	return
 }
 
-func hasUnrestrictedLicenseAdded(newKeys []string, licenseType string) bool {
+func HasUnrestrictedLicenseAdded(newKeys []string, licenseType string) bool {
 	if IsLicenseRestricted(licenseType) {
 		// Existing license keys of same license type are fetched to compare if old license key or a new one is added.
 		// However, if user is trying to add Free Tier License, and user has active trial license, we fetch the trial license key

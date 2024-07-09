@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"reflect"
 	"strconv"
 	"time"
 
@@ -17,8 +18,10 @@ import (
 )
 
 type PromptAttribute struct {
-	TimeoutDuration int    `yaml:"timeout_duration"`
-	TimeoutMessage  string `yaml:"timeout_message"`
+	TimeoutWarningColor string `yaml:"timeout_warning_color"`
+	TimeoutDuration     int    `yaml:"timeout_duration"`
+	TimeoutMessage      string `yaml:"timeout_message"`
+	TimeoutContinue     bool   `yaml:"timeout_continue"`
 }
 
 type ActionDetail struct {
@@ -34,13 +37,36 @@ type ActionDetail struct {
 
 var lastUserInput string
 
+func (ad ActionDetail) PerformInteraction() (nextID string) {
+	var methodName string
+	if ad.PromptType != "" {
+		methodName = ad.PromptType
+	} else if ad.Action != "" {
+		methodName = ad.Action
+	}
+
+	meth := reflect.ValueOf(ad).MethodByName(methodName)
+	returnVals := meth.Call(nil)
+
+	if len(returnVals) > 0 {
+		if returnValue, ok := returnVals[0].Interface().(string); ok {
+			nextID = returnValue
+		}
+	} else {
+		log.Fatal("Something went wrong with the interactions")
+	}
+
+	return
+}
+
 func (ad ActionDetail) Say() string {
 	renderMessages(ad.Messages)
 	return ad.Paths[0]
 }
 
 func (ad ActionDetail) TimeoutSelect() string {
-	timeoutContext, cancel := context.WithTimeout(context.Background(), time.Second*60)
+	attribute := ad.PromptAttribute
+	timeoutContext, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(attribute.TimeoutDuration))
 	defer cancel()
 
 	done := make(chan struct{})
@@ -60,9 +86,13 @@ func (ad ActionDetail) TimeoutSelect() string {
 			return ad.ResponsePathMap[val]
 		}
 	case <-timeoutContext.Done():
-		fmt.Printf(printInColor("red", "Prompt timed out. Use non-interactive flags or enter an answer within 60 seconds.\n", false, true))
+		fmt.Printf(printInColor(attribute.TimeoutWarningColor, attribute.TimeoutMessage, false, true))
 		fmt.Printf("Timeout!\n")
-		os.Exit(1)
+		if !attribute.TimeoutContinue {
+			os.Exit(1)
+		} else {
+			return ad.ResponsePathMap["Skip"]
+		}
 	}
 	return ""
 }
@@ -80,7 +110,7 @@ func (ad ActionDetail) Ask() string {
 			panic(err)
 		}
 	}
-	lastUserInput = val
+	SetLastUserInput(val)
 	PromptInput.LicenseID = val
 
 	return ad.Paths[0]
@@ -121,7 +151,7 @@ func (ad ActionDetail) Ok() string {
 }
 
 func (ad ActionDetail) DoesLicenseHaveValidPattern() string {
-	isValid := ValidateKeyFormat(lastUserInput)
+	isValid := ValidateKeyFormat(GetLastUserInput())
 	if isValid {
 		return ad.ResponsePathMap["true"]
 	} else {
@@ -137,7 +167,7 @@ func (ad ActionDetail) IsLicenseValidOnServer() string {
 	}
 	_ = spinner.Start()
 	spinner.Message("In progress")
-	isValid, message := api.GetClient().ValidateLicenseAPI(lastUserInput, true)
+	isValid, message := api.GetClient().ValidateLicenseAPI(GetLastUserInput(), true)
 
 	if isValid {
 		spinner.StopCharacter("✓")
@@ -156,14 +186,14 @@ func (ad ActionDetail) IsLicenseValidOnServer() string {
 
 func (ad ActionDetail) FetchInvalidLicenseMessage() string {
 	if PromptInput.FailureMessage == "" {
-		_, message := api.GetClient().ValidateLicenseAPI(lastUserInput, true)
+		_, message := api.GetClient().ValidateLicenseAPI(GetLastUserInput(), true)
 		PromptInput.FailureMessage = message.Error()
 	}
 	return ad.Paths[0]
 }
 
 func (ad ActionDetail) IsLicenseAllowed() string {
-	client, error := api.GetClient().GetLicenseClient([]string{lastUserInput})
+	client, error := api.GetClient().GetLicenseClient([]string{GetLastUserInput()})
 	if error != nil {
 		log.Fatal(error)
 	}
@@ -202,7 +232,7 @@ func (ad ActionDetail) DetermineRestrictionType() string {
 }
 
 func (ad ActionDetail) DisplayLicenseInfo() string {
-	PrintLicenseKeyOverview([]string{lastUserInput})
+	PrintLicenseKeyOverview([]string{GetLastUserInput()})
 	return ad.Paths[0]
 }
 
@@ -267,6 +297,14 @@ func (ad ActionDetail) FilterLicenseTypeOptions() string {
 }
 
 func (ad ActionDetail) SetLicenseInfo() string {
-	lastUserInput = PromptInput.LicenseID
+	SetLastUserInput(PromptInput.LicenseID)
 	return ad.Paths[0]
+}
+
+func SetLastUserInput(val string) {
+	lastUserInput = val
+}
+
+func GetLastUserInput() string {
+	return lastUserInput
 }

@@ -20,7 +20,7 @@ type Entitlement struct {
 	} `json:"period"`
 }
 
-func (c APIClient) GetAllEntitlementsByLisenceID(keys []string) (interface{}, error) {
+func (c APIClient) GetAllEntitlementsByLisenceID(keys []string) (*map[string][]Entitlement, error) {
 	params := struct {
 		Keys []string `json:"licenseIds"`
 	}{
@@ -34,5 +34,5 @@ func (c APIClient) GetAllEntitlementsByLisenceID(keys []string) (interface{}, er
 
 	var data entitlementsResponse
 	c.decodeJSON(resp, &data)
-	return data.Data, nil
+	return &data.Data, nil
 }

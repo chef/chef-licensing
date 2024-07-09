@@ -18,7 +18,7 @@ const (
 
 type APIClient struct {
 	URL        string
-	httpclient *http.Client
+	HTTPClient *http.Client
 	Headers    map[string]string
 }
 
@@ -32,7 +32,7 @@ func (c *APIClient) BaseURL() string {
 // 	cfg := config.GetConfig()
 // 	conf := pconfig.DefaultHttpConfig(cfg.LicenseServerURL)
 // 	logger, err := plogger.NewLogger(plogger.LoggerConfig{LogLevel: "debug", LogToStdout: true})
-// 	log.Println("Loggflaslfjalskfjlaksfjlkj")
+// 	fmt.Println("Loggflaslfjalskfjlaksfjlkj")
 // 	logger.Warn("Test log")
 // 	if err != nil {
 // 		log.Fatal("Unable to create a logger", err)
@@ -49,7 +49,7 @@ func NewClient() *APIClient {
 
 	apiClient = &APIClient{
 		URL:        cfg.LicenseServerURL,
-		httpclient: &http.Client{},
+		HTTPClient: &http.Client{},
 		Headers: map[string]string{
 			"Content-Type": "application/json",
 		},
@@ -102,7 +102,6 @@ func (c *APIClient) doPOSTRequest(endpoint string, body interface{}) (*http.Resp
 
 func (c *APIClient) doRequest(method, endpoint string, body io.Reader) (*http.Response, error) {
 	url := c.BaseURL() + endpoint
-
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return nil, err
@@ -111,7 +110,7 @@ func (c *APIClient) doRequest(method, endpoint string, body io.Reader) (*http.Re
 	for key, value := range c.Headers {
 		req.Header.Set(key, value)
 	}
-	return c.httpclient.Do(req)
+	return c.HTTPClient.Do(req)
 }
 
 func (c *APIClient) decodeJSON(resp *http.Response, v interface{}) error {

@@ -1,14 +1,16 @@
 package api
 
-type featureResponse struct {
-	Data struct {
-		Entitled   bool            `json:"entitled"`
-		EntitledBy map[string]bool `json:"entitledBy"`
-	} `json:"data"`
-	StatusCode int `json:"status"`
+type FeatureEntitlement struct {
+	Entitled   bool            `json:"entitled"`
+	EntitledBy map[string]bool `json:"entitledBy"`
 }
 
-func (c APIClient) GetFeatureByName(featureName string, keys []string) (interface{}, error) {
+type featureResponse struct {
+	Data       FeatureEntitlement `json:"data"`
+	StatusCode int                `json:"status"`
+}
+
+func (c APIClient) GetFeatureByName(featureName string, keys []string) (*FeatureEntitlement, error) {
 	params := struct {
 		Keys        []string `json:"licenseIds"`
 		FeatureName string   `json:"featureName"`
@@ -24,10 +26,10 @@ func (c APIClient) GetFeatureByName(featureName string, keys []string) (interfac
 
 	var data featureResponse
 	c.decodeJSON(resp, &data)
-	return data.Data, nil
+	return &data.Data, nil
 }
 
-func (c APIClient) GetFeatureByGUID(featureID string, keys []string) (interface{}, error) {
+func (c APIClient) GetFeatureByGUID(featureID string, keys []string) (*FeatureEntitlement, error) {
 	params := struct {
 		Keys      []string `json:"licenseIds"`
 		FeatureID string   `json:"featureGuid"`
@@ -43,5 +45,5 @@ func (c APIClient) GetFeatureByGUID(featureID string, keys []string) (interface{
 
 	var data featureResponse
 	c.decodeJSON(resp, &data)
-	return data.Data, nil
+	return &data.Data, nil
 }

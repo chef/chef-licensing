@@ -33,13 +33,13 @@ func StartInteractions(startID string) (keys []string) {
 		}
 		// performedInteractions = append(performedInteractions, currentID)
 		previousID = currentID
-		currentID = performInteraction(action)
+		currentID = action.PerformInteraction()
 	}
 	if currentID != "exit" {
 		log.Fatal("Something went wrong in the flow. The last interaction was " + previousID)
 	}
-	if lastUserInput != "" {
-		keys = append(keys, lastUserInput)
+	if GetLastUserInput() != "" {
+		keys = append(keys, GetLastUserInput())
 	}
 
 	// fmt.Println("Completed", performedInteractions)
@@ -92,28 +92,6 @@ func getIntractions() map[string]ActionDetail {
 		log.Fatal(err)
 	}
 	return intr.Actions
-}
-
-func performInteraction(action ActionDetail) (nextID string) {
-	var methodName string
-	if action.PromptType != "" {
-		methodName = action.PromptType
-	} else if action.Action != "" {
-		methodName = action.Action
-	}
-
-	meth := reflect.ValueOf(action).MethodByName(methodName)
-	returnVals := meth.Call(nil)
-
-	if len(returnVals) > 0 {
-		if returnValue, ok := returnVals[0].Interface().(string); ok {
-			nextID = returnValue
-		}
-	} else {
-		log.Fatal("Something went wrong with the interactions")
-	}
-
-	return
 }
 
 func renderMessages(messages []string) {

@@ -47,7 +47,7 @@ func readLicenseKeyFile() *LicenseFileData {
 		return li
 	}
 
-	data, err := os.ReadFile(filePath)
+	data, err := (*GetFileHandler()).ReadFile(filePath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -122,7 +122,7 @@ func saveLicenseFile(content *LicenseFileData) {
 		log.Fatalf("error: %v", err)
 	}
 
-	err = os.WriteFile(filepath, data, 0644)
+	err = (*GetFileHandler()).WriteFile(filepath, data, 0644)
 	if err != nil {
 		log.Fatalf("error: %v", err)
 	}

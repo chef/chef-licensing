@@ -19,14 +19,14 @@ func GlobalFetchAndPersist() []string {
 
 	newKeys := []string{fetchFromArg()}
 	licenseType := validateAndFetchLicenseType(newKeys[0])
-	if licenseType != "" && !hasUnrestrictedLicenseAdded(newKeys, licenseType) {
+	if licenseType != "" && !HasUnrestrictedLicenseAdded(newKeys, licenseType) {
 		appendLicenseKey(newKeys[0])
 		return licenseKeys
 	}
 
 	newKeys = []string{fetchFromEnv()}
 	licenseType = validateAndFetchLicenseType(newKeys[0])
-	if licenseType != "" && !hasUnrestrictedLicenseAdded(newKeys, licenseType) {
+	if licenseType != "" && !HasUnrestrictedLicenseAdded(newKeys, licenseType) {
 		appendLicenseKey(newKeys[0])
 		return licenseKeys
 	}
