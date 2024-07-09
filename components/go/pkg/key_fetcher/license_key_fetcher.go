@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/chef/chef-licensing/components/go/pkg/api"
 )
@@ -73,10 +74,40 @@ func appendLicenseKey(key string) {
 }
 
 func fetchFromArg() string {
-	licenseKey := flag.String("chef-license-key", "", "Chef license key")
+	var licenseKey string
+	flag.StringVar(&licenseKey, "chef-license-key", "", "Chef license key")
 
 	flag.Parse()
-	return *licenseKey
+	args := flag.Args()
+	if len(args) == 0 {
+		return licenseKey
+	} else {
+		licenseKey = getFlagArgs(args)
+		return licenseKey
+	}
+}
+
+func getFlagArgs(args []string) string {
+	var licensekey string
+	for i := 0; i < len(args); i++ {
+		if args[i] == "--chef-license-key" {
+			if len(args) > i+1 {
+				licensekey = args[i+1]
+			} else {
+				licensekey = ""
+			}
+		} else {
+			checkFlag := strings.Split(args[i], "=")
+			if checkFlag[0] == "--chef-license-key" {
+				if len(checkFlag) > 0 {
+					licensekey = checkFlag[1]
+				} else {
+					licensekey = ""
+				}
+			}
+		}
+	}
+	return licensekey
 }
 
 func fetchFromEnv() string {
