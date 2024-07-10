@@ -42,7 +42,7 @@ steps:
 - label: run-go-tests-1.22.4-ubuntu
   commands:
     - cd /workdir/components/go
-    - go get .
+    # - go get .
     - go mod tidy
     - go test ./...
   expeditor:
