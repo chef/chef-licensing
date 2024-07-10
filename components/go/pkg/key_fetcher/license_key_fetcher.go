@@ -93,17 +93,20 @@ func getFlagArgs(args []string) string {
 		if args[i] == "--chef-license-key" {
 			if len(args) > i+1 {
 				licensekey = args[i+1]
+				os.Args = append(os.Args[:i+1], os.Args[i+3:]...)
 			} else {
 				licensekey = ""
+				os.Args = append(os.Args[:i+1], os.Args[i+2:]...)
 			}
-		} else {
+		} else if strings.Contains(args[i], "--chef-license-key=") {
 			checkFlag := strings.Split(args[i], "=")
 			if checkFlag[0] == "--chef-license-key" {
-				if len(checkFlag) > 0 {
+				if len(checkFlag[1]) > 0 {
 					licensekey = checkFlag[1]
 				} else {
 					licensekey = ""
 				}
+				os.Args = append(os.Args[:i+1], os.Args[i+2:]...)
 			}
 		}
 	}
