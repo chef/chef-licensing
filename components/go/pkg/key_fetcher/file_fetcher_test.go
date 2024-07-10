@@ -15,6 +15,7 @@ func TestFetchLicenseKeysBasedOnType(t *testing.T) {
 	out := keyfetcher.FetchLicenseKeysBasedOnType(":trial")
 	if len(out) == 0 {
 		t.Log(out)
+		t.Log(keyfetcher.GetFileHandler())
 		t.Errorf("expected to return licenses, got %v", out)
 		return
 	}
