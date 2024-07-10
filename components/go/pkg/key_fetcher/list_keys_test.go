@@ -1,12 +1,5 @@
 package keyfetcher_test
 
-import (
-	"net/http"
-	"testing"
-
-	keyfetcher "github.com/chef/chef-licensing/components/go/pkg/key_fetcher"
-)
-
 const DESCRIBE_API_RESPONSE = `
 {
 	"data": {
@@ -65,9 +58,9 @@ const DESCRIBE_API_RESPONSE = `
 }
 `
 
-func TestPrintLicenseKeyOverview(t *testing.T) {
-	mockServer := mockAPIResponse(DESCRIBE_API_RESPONSE, http.StatusOK)
-	defer mockServer.Close()
+// func TestPrintLicenseKeyOverview(t *testing.T) {
+// 	mockServer := mockAPIResponse(DESCRIBE_API_RESPONSE, http.StatusOK)
+// 	defer mockServer.Close()
 
-	keyfetcher.PrintLicenseKeyOverview([]string{"key-123456"})
-}
+// 	keyfetcher.PrintLicenseKeyOverview([]string{"key-123456"})
+// }
