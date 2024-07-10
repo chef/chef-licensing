@@ -13,6 +13,11 @@ func TestFetchLicenseKeysBasedOnType(t *testing.T) {
 	})
 
 	out := keyfetcher.FetchLicenseKeysBasedOnType(":trial")
+	if len(out) == 0 {
+		t.Log(out)
+		t.Errorf("expected to return licenses, got %v", out)
+		return
+	}
 	if out[0] != "tmns-123456" {
 		t.Errorf("expected to return the %v, got %v", "tmns-123456", out)
 	}
