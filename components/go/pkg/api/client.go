@@ -76,7 +76,6 @@ func (client LicenseClient) LicenseExpirationDate() time.Time {
 }
 
 func (client LicenseClient) ExpirationInDays() int {
-
 	expirationIn := int(time.Until(client.LicenseExpirationDate()).Hours() / 24)
 	return expirationIn
 }
@@ -128,7 +127,7 @@ func parseClientResponse(body []byte) (*LicenseClient, error) {
 		return nil, errors.New(invalidResp.Message)
 
 	}
-	return nil, nil
+	return nil, errors.New("Unable to parse the license client response")
 }
 
 func getResponseBody(resp *http.Response) []byte {

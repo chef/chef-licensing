@@ -60,10 +60,9 @@ func NewClient() *APIClient {
 func GetClient() *APIClient {
 	if apiClient == nil {
 		apiClient = NewClient()
-		return apiClient
-	} else {
-		return apiClient
 	}
+
+	return apiClient
 }
 
 func (c *APIClient) SetHeader(key, value string) {
@@ -95,7 +94,6 @@ func (c *APIClient) doPOSTRequest(endpoint string, body interface{}) (*http.Resp
 		if err != nil {
 			return nil, err
 		}
-
 	}
 	return c.doRequest("POST", endpoint, reqBody)
 }
