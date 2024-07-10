@@ -316,16 +316,21 @@ module ChefLicensing
         # However, if user is trying to add Free Tier License, and user has active trial license, we fetch the trial license key
         if license_type == :free && file_fetcher.user_has_active_trial_license?
           existing_license_keys_in_file = file_fetcher.fetch_license_keys_based_on_type(:trial)
-        else
+        elsif file_fetcher.user_has_active_license?
+          # Handling license addition restriction scenarios only if the current license is an active license
           existing_license_keys_in_file = file_fetcher.fetch_license_keys_based_on_type(license_type)
         end
         # Only prompt when a new trial license is added
-        unless existing_license_keys_in_file.last == new_keys.first
-          # prompt the message that this addition of license is restricted.
-          prompt_license_addition_restricted(license_type, existing_license_keys_in_file)
-          return false
+        if existing_license_keys_in_file
+          unless existing_license_keys_in_file.last == new_keys.first
+            # prompt the message that this addition of license is restricted.
+            prompt_license_addition_restricted(license_type, existing_license_keys_in_file)
+            return false
+          end
         end
-        true # license type is restricted but not the key since it is the same key hence returning true
+        # license addition should be restricted but it it not because the key is same as that of one user is trying to add
+        # license addition should be restricted but it it not because the license is expired and warning wont be handled by this restriction
+        true
       else
         persist_and_concat(new_keys, license_type)
         true
