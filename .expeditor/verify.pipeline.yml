@@ -42,7 +42,9 @@ steps:
 - label: run-go-tests-1.22.4-ubuntu
   commands:
     - cd /workdir/components/go
-    - ../../.expeditor/run_go_tests.sh
+    - get get .
+    - go mod tidy
+    - go test ./...
   expeditor:
     executor:
       docker:
