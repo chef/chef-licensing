@@ -290,8 +290,8 @@ module ChefLicensing
     end
 
     def get_license_type(license_key)
-      self.license = ChefLicensing.client(license_keys: [license_key])
-      license.license_type.downcase.to_sym
+      license_obj = ChefLicensing.client(license_keys: [license_key])
+      license_obj.license_type.downcase.to_sym
     end
 
     def license_restricted?(license_type)
