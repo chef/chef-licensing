@@ -328,8 +328,8 @@ module ChefLicensing
             return false
           end
         end
-        # license addition should be restricted but it it not because the key is same as that of one user is trying to add
-        # license addition should be restricted but it it not because the license is expired and warning wont be handled by this restriction
+        # license addition should be restricted but it is not because the key is same as that of one user is trying to add
+        # license addition should be restricted but it is not because the license is expired and warning wont be handled by this restriction
         true
       else
         persist_and_concat(new_keys, license_type)
