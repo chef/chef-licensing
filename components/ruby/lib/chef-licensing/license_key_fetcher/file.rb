@@ -69,7 +69,8 @@ module ChefLicensing
 
       def user_has_active_license?
         return false unless contents&.key?(:licenses)
-        return ChefLicensing.client(license_keys: [contents[:licenses].last[:license_key]]).active?
+
+        ChefLicensing.client(license_keys: [contents[:licenses].last[:license_key]]).active?
       end
 
       def fetch_allowed_license_types_for_addition
