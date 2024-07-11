@@ -1,6 +1,6 @@
 module github.com/chef/chef-licensing/components/go
 
-go 1.22.4
+go 1.21.5
 
 require (
 	github.com/cqroot/prompt v0.9.3
