@@ -10,10 +10,9 @@ import (
 )
 
 func PrintLicenseKeyOverview(keys []string) {
-	describe, err := api.GetClient().GetLicenseDescribe(keys)
+	describe, _ := api.GetClient().GetLicenseDescribe(keys)
 	var validity string
 
-	fmt.Println(describe, err)
 	for _, license := range describe.Licenses {
 		validity = calculateValidity(license)
 		color.Printf("\n------------------------------------------------------------\n")
