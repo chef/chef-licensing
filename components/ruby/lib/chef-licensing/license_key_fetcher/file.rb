@@ -67,10 +67,13 @@ module ChefLicensing
         @active_trial_status
       end
 
-      def user_has_active_license?
+      def user_has_active_trial_or_free_license?
+        read_license_key_file
         return false unless contents&.key?(:licenses)
 
-        ChefLicensing.client(license_keys: [contents[:licenses].last[:license_key]]).active?
+        all_license_keys = contents[:licenses].collect { |license| license[:license_key] }
+        license_obj = ChefLicensing.client(license_keys: all_license_keys)
+        (%w{trial free}.include? license_obj.license_type&.downcase) && license_obj.active?
       end
 
       def fetch_allowed_license_types_for_addition

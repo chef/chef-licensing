@@ -6,7 +6,7 @@
     "cacheControl": "private,max-age:42460"
   },
   "client": {
-    "license": "Trial",
+    "license": "trial",
     "status": "Active",
     "changesTo": "Grace",
     "changesOn": "2024-11-01",

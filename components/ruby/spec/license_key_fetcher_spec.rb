@@ -12,6 +12,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
 
   let(:describe_api_data) { JSON.parse(File.read("spec/fixtures/api_response_data/valid_describe_api_response.json")) }
   let(:client_api_data) { JSON.parse(File.read("spec/fixtures/api_response_data/valid_client_api_response.json")) }
+  let(:client_api_free_license_data) { JSON.parse(File.read("spec/fixtures/api_response_data/valid_client_api_response_free_license.json")) }
 
   before do
     ChefLicensing.configure do |config|
@@ -201,7 +202,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
                     headers: { content_type: "application/json" })
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
           .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111", entitlementId: ChefLicensing::Config.chef_entitlement_id })
-          .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
+          .to_return(body: { data: client_api_free_license_data, status_code: 200 }.to_json,
                   headers: { content_type: "application/json" })
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
           .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
@@ -237,7 +238,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
                   headers: { content_type: "application/json" })
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
           .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111", entitlementId: ChefLicensing::Config.chef_entitlement_id })
-          .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
+          .to_return(body: { data: client_api_free_license_data, status_code: 200 }.to_json,
                   headers: { content_type: "application/json" })
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
           .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
@@ -353,11 +354,11 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
                 headers: { content_type: "application/json" })
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
           .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111", entitlementId: ChefLicensing::Config.chef_entitlement_id })
-          .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
+          .to_return(body: { data: client_api_free_license_data, status_code: 200 }.to_json,
                   headers: { content_type: "application/json" })
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
           .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-112", entitlementId: ChefLicensing::Config.chef_entitlement_id })
-          .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
+          .to_return(body: { data: client_api_free_license_data, status_code: 200 }.to_json,
                 headers: { content_type: "application/json" })
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
           .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-112", entitlementId: ChefLicensing::Config.chef_entitlement_id })

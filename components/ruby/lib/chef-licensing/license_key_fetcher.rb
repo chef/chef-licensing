@@ -316,10 +316,11 @@ module ChefLicensing
         # However, if user is trying to add Free Tier License, and user has active trial license, we fetch the trial license key
         if license_type == :free && file_fetcher.user_has_active_trial_license?
           existing_license_keys_in_file = file_fetcher.fetch_license_keys_based_on_type(:trial)
-        elsif file_fetcher.user_has_active_license?
+        elsif file_fetcher.user_has_active_trial_or_free_license?
           # Handling license addition restriction scenarios only if the current license is an active license
           existing_license_keys_in_file = file_fetcher.fetch_license_keys_based_on_type(license_type)
         end
+
         # Only prompt when a new trial license is added
         if existing_license_keys_in_file
           unless existing_license_keys_in_file.last == new_keys.first
