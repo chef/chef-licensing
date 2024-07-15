@@ -173,7 +173,7 @@ func validateLicenseFormat(key string) error {
 }
 
 func getLicense() api.LicenseClient {
-	spinner, err := spinner.GetSpinner()
+	spinner, err := spinner.GetSpinner("License Validation")
 	if err != nil {
 		fmt.Printf("Unable to start the spinner\n")
 	}

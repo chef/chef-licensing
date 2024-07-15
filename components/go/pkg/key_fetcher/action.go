@@ -161,12 +161,12 @@ func (ad ActionDetail) DoesLicenseHaveValidPattern() string {
 }
 
 func (ad ActionDetail) IsLicenseValidOnServer() string {
-	spinner, err := spinner.GetSpinner()
+	spinner, err := spinner.GetSpinner("License Validation")
 	if err != nil {
 		fmt.Printf("Unable to start the spinner\n")
 	}
 	_ = spinner.Start()
-	spinner.Message("In progress")
+	spinner.Message("In Progress")
 	isValid, message := api.GetClient().ValidateLicenseAPI(GetLastUserInput(), true)
 
 	if isValid {

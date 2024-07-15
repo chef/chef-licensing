@@ -6,11 +6,11 @@ import (
 	"github.com/theckman/yacspin"
 )
 
-func GetSpinner() (*yacspin.Spinner, error) {
+func GetSpinner(suffix string) (*yacspin.Spinner, error) {
 	SpinnerConfig := yacspin.Config{
 		Frequency:       100 * time.Millisecond,
 		CharSet:         yacspin.CharSets[59],
-		Suffix:          "License Validation",
+		Suffix:          suffix,
 		SuffixAutoColon: true,
 	}
 
