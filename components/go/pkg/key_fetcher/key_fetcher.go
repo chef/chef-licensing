@@ -55,12 +55,11 @@ func isLicenseActive(keys []string) (out bool, promptStartID string) {
 		return
 	}
 
-	spinner, err := spinner.GetSpinner("License Validation")
+	spn, err := spinner.GetSpinner("License Validation")
 	if err != nil {
 		fmt.Printf("Unable to start the spinner\n")
 	}
-	_ = spinner.Start()
-	spinner.Message("In Progress")
+	spinner.StartSpinner(spn, "In Progress")
 
 	licenseClient, _ := api.GetClient().GetLicenseClient(keys)
 	if licenseClient == nil {
@@ -90,9 +89,7 @@ func isLicenseActive(keys []string) (out bool, promptStartID string) {
 		}
 		out = true
 	}
-	spinner.Prefix("")
-	spinner.StopCharacter("")
-	_ = spinner.Stop()
+	spinner.StopSpinner(spn, "", "", "")
 	cacheClientToPromptInput(licenseClient, conf)
 
 	return out, promptStartID
