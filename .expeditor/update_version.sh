@@ -6,12 +6,7 @@
 
 set -evx
 
-sed -i -r "s/^(\s*)VERSION = \".+\"/\1VERSION = \"$(cat VERSION)\"/" components/ruby/lib/chef-licensing/version.rb
-cd components/ruby
-bundle install
-bundle update chef-licensing
-cd ../..
-#sed -i -r "s/^pkg_version=.+\$/\pkg_version=$(cat VERSION)/" components/golang/habitat/plan.sh
+sed -i -r "s/VERSION = \".*\"/VERSION = \"$(cat VERSION)\"/" components/ruby/lib/chef-licensing/version.rb
 
 # Once Expeditor finshes executing this script, it will commit the changes and push
 # the commit as a new tag corresponding to the value in the VERSION file.
