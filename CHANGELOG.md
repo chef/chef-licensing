@@ -1,9 +1,17 @@
 # Changelog
 
-<!-- latest_release -->
+<!-- latest_release 1.0.0 -->
+## [1.0.0](https://github.com/chef/chef-licensing/tree/1.0.0) (2024-07-16)
+
+#### Merged Pull Requests
+- Fix version bumping [#188](https://github.com/chef/chef-licensing/pull/188) ([Vasu1105](https://github.com/Vasu1105))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=0.7.5 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Fix version bumping [#188](https://github.com/chef/chef-licensing/pull/188) ([Vasu1105](https://github.com/Vasu1105)) <!-- 1.0.0 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
