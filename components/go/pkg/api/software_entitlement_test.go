@@ -32,7 +32,7 @@ const SOFTWARE_ENTITLEMENT_VALID_RESPONSE = `
 `
 
 func TestGetAllEntitlementsByLisenceID(t *testing.T) {
-	mockServer := MockAPIResponse(FEATURE_VALID_RESPONSE, http.StatusOK)
+	mockServer := MockAPIResponse(SOFTWARE_ENTITLEMENT_VALID_RESPONSE, http.StatusOK)
 	defer mockServer.Close()
 
 	apiClient := api.NewClient()
