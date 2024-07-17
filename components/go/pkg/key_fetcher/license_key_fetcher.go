@@ -53,6 +53,8 @@ func GlobalFetchAndPersist() []string {
 				return licenseKeys
 			}
 		}
+	} else {
+		newKeys = []string{}
 	}
 
 	if len(newKeys) == 0 && fileClient != nil && ((!fileClient.IsExpired() && !fileClient.IsExhausted()) || fileClient.IsCommercial()) {
