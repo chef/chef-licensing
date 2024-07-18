@@ -5,13 +5,42 @@
 
 #### Merged Pull Requests
 - Fix version bumping [#188](https://github.com/chef/chef-licensing/pull/188) ([Vasu1105](https://github.com/Vasu1105))
+- CHEF-14142 Hard enforcement fix: Adding the same type of license [#187](https://github.com/chef/chef-licensing/pull/187)([Nik08](https://github.com/Nik08))
+- CHEF-12730: make license list & license add cmds as dynamic text [#185](https://github.com/chef/chef-licensing/pull/185)([ahasunos](https://github.com/ahasunos))
+- Update non-commercial warning message [#184](https://github.com/chef/chef-licensing/pull/184)([ahasunos](https://github.com/ahasunos))
+- CHEF-13232: Remove ruby 3.0 support from chef-licensing [#183](https://github.com/chef/chef-licensing/pull/183)([Vasu1105](https://github.com/Vasu1105))
+- Hard enforcement changes revoked for commercial licenses [#181](https://github.com/chef/chef-licensing/pull/181)([Nik08](https://github.com/Nik08))
+- CHEF-4150 Hard enforcement enabled - when license expired [#160](https://github.com/chef/chef-licensing/pull/160)([Nik08](https://github.com/Nik08))
+- CHEF-10498: Add method to invoke warn message for non-commercial users [#175](https://github.com/chef/chef-licensing/pull/175)([ahasunos](https://github.com/ahasunos))
+- CHEF-10500: Update message for trial license users upon expiry [#178](https://github.com/chef/chef-licensing/pull/178)([ahasunos](https://github.com/ahasunos))
+- CHEF-10499: Update message for free-tier license users upon over usage [#179](https://github.com/chef/chef-licensing/pull/179)([ahasunos](https://github.com/ahasunos))
+- CHEF-7258 License context caching and fetching [#171](https://github.com/chef/chef-licensing/pull/171) ([Nik08](https://github.com/Nik08))
+- CHEF-11234: Update ruby base image to bullseye [#176](https://github.com/chef/chef-licensing/pull/176) ([ahasunos](https://github.com/ahasunos))
+- CHEF-4924: Show a license enforcement message on exceeding target limit for free license [#174](https://github.com/chef/chef-licensing/pull/174) ([ahasunos](https://github.com/ahasunos))
+- CHEF-4925: Show a license enforcement message on exceeding target limit for commercial license [#173](https://github.com/chef/chef-licensing/pull/173) ([ahasunos](https://github.com/ahasunos))
+- CHEF-8798: Validate server's response content-type to ensure functionality or display appropriate error messages [#172](https://github.com/chef/chef-licensing/pull/172) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup since=0.7.5 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
-- Fix version bumping [#188](https://github.com/chef/chef-licensing/pull/188) ([Vasu1105](https://github.com/Vasu1105)) <!-- 1.0.0 -->
+- Fix version bumping [#188](https://github.com/chef/chef-licensing/pull/188) ([Vasu1105](https://github.com/Vasu1105))
+- CHEF-14142 Hard enforcement fix: Adding the same type of license [#187](https://github.com/chef/chef-licensing/pull/187)([Nik08](https://github.com/Nik08))
+- CHEF-12730: make license list & license add cmds as dynamic text [#185](https://github.com/chef/chef-licensing/pull/185)([ahasunos](https://github.com/ahasunos))
+- Update non-commercial warning message [#184](https://github.com/chef/chef-licensing/pull/184)([ahasunos](https://github.com/ahasunos))
+- CHEF-13232: Remove ruby 3.0 support from chef-licensing [#183](https://github.com/chef/chef-licensing/pull/183)([Vasu1105](https://github.com/Vasu1105))
+- Hard enforcement changes revoked for commercial licenses [#181](https://github.com/chef/chef-licensing/pull/181)([Nik08](https://github.com/Nik08))
+- CHEF-4150 Hard enforcement enabled - when license expired [#160](https://github.com/chef/chef-licensing/pull/160)([Nik08](https://github.com/Nik08))
+- CHEF-10498: Add method to invoke warn message for non-commercial users [#175](https://github.com/chef/chef-licensing/pull/175)([ahasunos](https://github.com/ahasunos))
+- CHEF-10500: Update message for trial license users upon expiry [#178](https://github.com/chef/chef-licensing/pull/178)([ahasunos](https://github.com/ahasunos))
+- CHEF-10499: Update message for free-tier license users upon over usage [#179](https://github.com/chef/chef-licensing/pull/179)([ahasunos](https://github.com/ahasunos))
+- CHEF-7258 License context caching and fetching [#171](https://github.com/chef/chef-licensing/pull/171) ([Nik08](https://github.com/Nik08))
+- CHEF-11234: Update ruby base image to bullseye [#176](https://github.com/chef/chef-licensing/pull/176) ([ahasunos](https://github.com/ahasunos))
+- CHEF-4924: Show a license enforcement message on exceeding target limit for free license [#174](https://github.com/chef/chef-licensing/pull/174) ([ahasunos](https://github.com/ahasunos))
+- CHEF-4925: Show a license enforcement message on exceeding target limit for commercial license [#173](https://github.com/chef/chef-licensing/pull/173) ([ahasunos](https://github.com/ahasunos))
+- CHEF-8798: Validate server's response content-type to ensure functionality or display appropriate error messages [#172](https://github.com/chef/chef-licensing/pull/172) ([ahasunos](https://github.com/ahasunos))
+<!-- 1.0.0 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
