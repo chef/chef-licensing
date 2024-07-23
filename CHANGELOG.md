@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 1.0.1 -->
-## [1.0.1](https://github.com/chef/chef-licensing/tree/1.0.1) (2024-07-22)
+<!-- latest_release 1.0.2 -->
+## [1.0.2](https://github.com/chef/chef-licensing/tree/1.0.2) (2024-07-23)
 
 #### Merged Pull Requests
-- Updates the CHANGELOG file  [#190](https://github.com/chef/chef-licensing/pull/190) ([Vasu1105](https://github.com/Vasu1105))
+- CHEF-14423: Fix LicenseKeyNotFetchedError in non-tty terminal with non-active license key [#191](https://github.com/chef/chef-licensing/pull/191) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
 <!-- release_rollup since=1.0.0 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-14423: Fix LicenseKeyNotFetchedError in non-tty terminal with non-active license key [#191](https://github.com/chef/chef-licensing/pull/191) ([ahasunos](https://github.com/ahasunos)) <!-- 1.0.2 -->
 - Updates the CHANGELOG file  [#190](https://github.com/chef/chef-licensing/pull/190) ([Vasu1105](https://github.com/Vasu1105)) <!-- 1.0.1 -->
 <!-- release_rollup -->
 
