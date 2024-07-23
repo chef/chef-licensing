@@ -1,21 +1,19 @@
 # Changelog
 
-<!-- latest_release 1.0.2 -->
-## [1.0.2](https://github.com/chef/chef-licensing/tree/1.0.2) (2024-07-23)
-
-#### Merged Pull Requests
-- CHEF-14423: Fix LicenseKeyNotFetchedError in non-tty terminal with non-active license key [#191](https://github.com/chef/chef-licensing/pull/191) ([ahasunos](https://github.com/ahasunos))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=1.0.0 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- CHEF-14423: Fix LicenseKeyNotFetchedError in non-tty terminal with non-active license key [#191](https://github.com/chef/chef-licensing/pull/191) ([ahasunos](https://github.com/ahasunos)) <!-- 1.0.2 -->
-- Updates the CHANGELOG file  [#190](https://github.com/chef/chef-licensing/pull/190) ([Vasu1105](https://github.com/Vasu1105)) <!-- 1.0.1 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [1.0.2](https://github.com/chef/chef-licensing/tree/1.0.2) (2024-07-23)
+
+#### Merged Pull Requests
+- Updates the CHANGELOG file  [#190](https://github.com/chef/chef-licensing/pull/190) ([Vasu1105](https://github.com/Vasu1105))
+- CHEF-14423: Fix LicenseKeyNotFetchedError in non-tty terminal with non-active license key [#191](https://github.com/chef/chef-licensing/pull/191) ([ahasunos](https://github.com/ahasunos))
+<!-- latest_stable_release -->
+
 ## [1.0.0](https://github.com/chef/chef-licensing/tree/1.0.0) (2024-07-22)
 
 #### Merged Pull Requests
@@ -34,7 +32,6 @@
 - CHEF-4924: Show a license enforcement message on exceeding target limit for free license [#174](https://github.com/chef/chef-licensing/pull/174) ([ahasunos](https://github.com/ahasunos))
 - CHEF-4925: Show a license enforcement message on exceeding target limit for commercial license [#173](https://github.com/chef/chef-licensing/pull/173) ([ahasunos](https://github.com/ahasunos))
 - CHEF-8798: Validate server's response content-type to ensure functionality or display appropriate error messages [#172](https://github.com/chef/chef-licensing/pull/172) ([ahasunos](https://github.com/ahasunos))
-<!-- latest_stable_release -->
 
 ## [0.7.5](https://github.com/chef/chef-licensing/tree/0.7.5) (2023-11-09)
 
