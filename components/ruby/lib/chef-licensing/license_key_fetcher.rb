@@ -138,6 +138,8 @@ module ChefLicensing
             return license_keys
           end
         end
+      else
+        new_keys = []
       end
 
       # Expired trial licenses and exhausted free licenses will be blocked
