@@ -30,6 +30,14 @@ type LicenseData struct {
 	UpdateTime  string `yaml:":update_time"`
 }
 
+func FetchLicenseKeys() (out []string) {
+	content := readLicenseKeyFile()
+	for _, key := range content.Licenses {
+		out = append(out, key.LicenseKey)
+	}
+	return
+}
+
 func FetchLicenseKeysBasedOnType(licenseType string) (out []string) {
 	content := readLicenseKeyFile()
 	for _, key := range content.Licenses {

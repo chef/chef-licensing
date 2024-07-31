@@ -13,6 +13,38 @@ import (
 
 var licenseKeys []string
 
+func FetchAndPersist() []string {
+	if isLocalServer() {
+		return OnPremFetchAndPersist()
+	} else {
+		return GlobalFetchAndPersist()
+	}
+}
+
+func OnPremFetchAndPersist() []string {
+	newKeys := fetchFromArg()
+	if len(newKeys) > 0 {
+		log.Fatal("'--chef-license-key <value>' option is not supported with airgapped environment. You cannot add license from airgapped environment.")
+	}
+
+	if len(licenseKeys) != 0 {
+		isActive, startID := isLicenseActive(getLicenseKeys())
+		if isActive {
+			return licenseKeys
+		} else if spinner.IsTTY() {
+			fetchInteractively(startID)
+		}
+	}
+
+	licenseClient, _ := api.GetClient().GetLicenseClient(licenseKeys)
+	if licenseClient != nil && (!licenseClient.IsExpired() && !licenseClient.IsExhausted()) || licenseClient.IsCommercial() {
+		return licenseKeys
+	}
+
+	log.Fatal("Unable to obtain a License Key.")
+	return licenseKeys
+}
+
 func GlobalFetchAndPersist() []string {
 	// Load the existing licenseKeys from the license file
 	for _, key := range licenseFileFetch() {
@@ -35,8 +67,6 @@ func GlobalFetchAndPersist() []string {
 
 	// Return keys if license keys are active and not expired or expiring
 	// Return keys if there is any error in /client API call, and do not block the flow.
-	// Client API possible errors will be handled in software entitlement check call (made after this)
-	// client_api_call_error is set to true when there is an error in licenses_active? call
 	isActive, startID := isLicenseActive(getLicenseKeys())
 	fileClient, _ := api.GetClient().GetLicenseClient(getLicenseKeys(), true)
 	if len(getLicenseKeys()) > 0 && isActive && fileClient.IsCommercial() {
@@ -143,4 +173,19 @@ func validateAndFetchLicenseType(keys []string) (licenseType string) {
 	}
 
 	return licenseType
+}
+
+func isLocalServer() bool {
+	keys, err := api.GetClient().ListLicensesAPI()
+	if err != nil && err.Error() == "not found" {
+		return false
+	} else if err != nil {
+		log.Fatal("Something went wrong with the licensing server: ", err)
+	}
+
+	for _, key := range keys {
+		appendLicenseKey(key)
+	}
+
+	return true
 }
