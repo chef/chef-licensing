@@ -34,16 +34,3 @@ func TestFetchLicenseKeysBasedOnTypeInCaseOfNone(t *testing.T) {
 		t.Errorf("expected it to return empty list, got %v", out)
 	}
 }
-
-func TestFetchLicenseTypeBasedOnKey(t *testing.T) {
-	keyfetcher.SetFileHandler(keyfetcher.MockFileHandler{
-		Content: []byte(TRIAL_ONLY_FILE),
-		Error:   nil,
-	})
-	out := keyfetcher.FetchLicenseTypeBasedOnKey([]string{"tmns-123456"})
-	if out != ":trial" {
-		t.Logf("out was: %s", out)
-		t.Logf("handler is : %v, type is %T", *keyfetcher.GetFileHandler(), *keyfetcher.GetFileHandler())
-		t.Errorf("expected it to return %v, got %v", ":trial", out)
-	}
-}

@@ -1,7 +1,6 @@
 package keyfetcher
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -152,7 +151,6 @@ func saveLicenseFile(content *LicenseFileData) {
 func FetchLicenseTypeBasedOnKey(license_keys []string) string {
 	content := readLicenseKeyFile()
 	var licenseType string
-	fmt.Println(content)
 	for _, key := range content.Licenses {
 		if key.LicenseKey == license_keys[0] {
 			licenseType = key.LicenseType
