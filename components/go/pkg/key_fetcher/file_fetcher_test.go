@@ -7,10 +7,11 @@ import (
 )
 
 const trial_license = `
+---
 :licenses:
-- :license_key: tmns-123456
-  :license_type: :trial
-  :update_time: "2024-07-10T00:29:50+05:30"
+  - :license_key: tmns-123456
+    :license_type: :trial
+    :update_time: "2024-07-10T00:29:50+05:30"
 :file_format_version: 4.0.0
 :license_server_url: https://testing.license.chef.co/License
 `
