@@ -51,12 +51,13 @@ func FetchLicenseKeysBasedOnType(licenseType string) (out []string) {
 func readLicenseKeyFile() *LicenseFileData {
 	li := &LicenseFileData{}
 	filePath := licenseFilePath()
-	info, _ := os.Stat(filePath)
-	if info == nil {
+	handler := *GetFileHandler()
+	exists := handler.CheckFilePresence(filePath)
+	if !exists {
 		return li
 	}
 
-	data, err := (*GetFileHandler()).ReadFile(filePath)
+	data, err := handler.ReadFile(filePath)
 	if err != nil {
 		log.Fatal(err)
 	}

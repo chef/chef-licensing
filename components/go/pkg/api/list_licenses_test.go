@@ -1,7 +1,6 @@
 package api_test
 
 import (
-	"fmt"
 	"net/http"
 	"testing"
 
@@ -30,9 +29,12 @@ func TestListLicensesAPISuccess(t *testing.T) {
 	client := api.NewClient()
 
 	resp, err := client.ListLicensesAPI()
-	fmt.Println(resp, err)
-	t.Log(resp, err)
-	t.Error("test")
+	if err != nil {
+		t.Errorf("expected the client to not return error, got %v", err)
+	}
+	if resp[0] != "key-123" {
+		t.Errorf("expected the api to return %v, got %v", "key-123", resp[0])
+	}
 }
 
 func TestListLicensesAPIFailure(t *testing.T) {
@@ -40,8 +42,11 @@ func TestListLicensesAPIFailure(t *testing.T) {
 	defer mockServer.Close()
 
 	client := api.NewClient()
-	resp, err := client.ListLicensesAPI()
-	fmt.Println(resp, err)
-	t.Log(resp, err)
-	t.Error("test")
+	_, err := client.ListLicensesAPI()
+	if err == nil {
+		t.Errorf("expected the api to return error, got none")
+	}
+	if err.Error() != "not found" {
+		t.Errorf("expected the api to return <%v>, got <%v>", "not found", err.Error())
+	}
 }
