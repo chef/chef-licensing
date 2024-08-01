@@ -6,9 +6,18 @@ import (
 	keyfetcher "github.com/chef/chef-licensing/components/go/pkg/key_fetcher"
 )
 
+const trial_license = `
+:licenses:
+- :license_key: tmns-123456
+  :license_type: :trial
+  :update_time: "2024-07-10T00:29:50+05:30"
+:file_format_version: 4.0.0
+:license_server_url: https://testing.license.chef.co/License
+`
+
 func TestFetchLicenseKeysBasedOnType(t *testing.T) {
 	keyfetcher.SetFileHandler(keyfetcher.MockFileHandler{
-		Content: []byte(TRIAL_ONLY_FILE),
+		Content: []byte(trial_license),
 		Error:   nil,
 	})
 
