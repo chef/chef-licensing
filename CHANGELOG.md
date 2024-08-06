@@ -1,9 +1,17 @@
 # Changelog
 
-<!-- latest_release -->
+<!-- latest_release 1.0.3 -->
+## [1.0.3](https://github.com/chef/chef-licensing/tree/1.0.3) (2024-08-06)
+
+#### Merged Pull Requests
+- Improve entitlement error handling during `fetch_and_persist` [#192](https://github.com/chef/chef-licensing/pull/192) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=1.0.2 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Improve entitlement error handling during `fetch_and_persist` [#192](https://github.com/chef/chef-licensing/pull/192) ([ahasunos](https://github.com/ahasunos)) <!-- 1.0.3 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
