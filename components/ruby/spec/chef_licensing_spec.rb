@@ -173,4 +173,40 @@ RSpec.describe ChefLicensing do
       expect(ChefLicensing::Config.logger).to eq(logger)
     end
   end
+
+  describe ".fetch_and_persist" do
+    context "when there is no client error" do
+      let(:license_keys) { %w{license_key1 license_key2} }
+
+      before do
+        allow(ChefLicensing::LicenseKeyFetcher).to receive(:fetch_and_persist).and_return(license_keys)
+      end
+
+      it "fetches and persists the license keys" do
+        expect(ChefLicensing.fetch_and_persist).to eq(license_keys)
+      end
+    end
+
+    context "when there is a client error due to software entitlement" do
+      let(:error_message) { "Software is not entitled." }
+
+      before do
+        allow(ChefLicensing::LicenseKeyFetcher).to receive(:fetch_and_persist).and_raise(ChefLicensing::ClientError, error_message)
+      end
+
+      it "raises a SoftwareNotEntitled exception" do
+        expect { ChefLicensing.fetch_and_persist }.to raise_error(ChefLicensing::SoftwareNotEntitled, error_message)
+      end
+    end
+
+    context "when there is a client error due to unknown reason" do
+      before do
+        allow(ChefLicensing::LicenseKeyFetcher).to receive(:fetch_and_persist).and_raise(ChefLicensing::ClientError, "Some other error")
+      end
+
+      it "raises a ClientError exception" do
+        expect { ChefLicensing.fetch_and_persist }.to raise_error(ChefLicensing::ClientError, "Some other error")
+      end
+    end
+  end
 end

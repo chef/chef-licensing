@@ -54,6 +54,13 @@ module ChefLicensing
     # @note fetch_and_persist is invoked by chef-products to fetch and persist the license keys
     def fetch_and_persist
       ChefLicensing::LicenseKeyFetcher.fetch_and_persist
+    rescue ChefLicensing::ClientError => e
+      # Checking specific text phrase for entitlement error
+      if e.message.match?(/not entitled/)
+        raise(ChefLicensing::SoftwareNotEntitled, "Software is not entitled.")
+      else
+        raise
+      end
     end
 
     def list_license_keys_info(opts = {})
