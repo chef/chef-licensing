@@ -97,6 +97,15 @@ module ChefLicensing
     end
 
     def perform_global_operations
+      logger.debug "License Key fetcher examining config values"
+      new_keys = fetch_license_key_from_config
+      license_type = validate_and_fetch_license_type(new_keys)
+      if license_type && !unrestricted_license_added?(new_keys, license_type)
+        # break the flow after the prompt if there is a restriction in adding license
+        # and return the license keys persisted in the file or @license_keys if any
+        return license_keys
+      end
+
       logger.debug "License Key fetcher examining CLI arg checks"
       new_keys = fetch_license_key_from_arg
       license_type = validate_and_fetch_license_type(new_keys)
@@ -172,11 +181,11 @@ module ChefLicensing
       end
     end
 
-    # Note: Fetching from arg and env as well, to be able to fetch license when disk is non-writable
+    # Note: Fetching from arg, env and config as well, to be able to fetch license when disk is non-writable
     def fetch
       # While using on-prem licensing service, @license_keys have been fetched from API
       # While using global licensing service, @license_keys have been fetched from file
-      (fetch_license_key_from_arg << fetch_license_key_from_env << @license_keys).flatten.uniq
+      (fetch_license_key_from_arg << fetch_license_key_from_env << fetch_license_key_from_config << @license_keys).flatten.uniq
     end
 
     def self.fetch_and_persist(opts = {})
@@ -277,6 +286,11 @@ module ChefLicensing
 
     def fetch_license_key_from_env
       new_key = @env_fetcher.fetch_value("CHEF_LICENSE_KEY")
+      validate_license_key_format(new_key)
+    end
+
+    def fetch_license_key_from_config
+      new_key = ChefLicensing::Config.chef_license_key
       validate_license_key_format(new_key)
     end
 
