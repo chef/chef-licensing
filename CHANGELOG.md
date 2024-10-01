@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 1.0.3 -->
-## [1.0.3](https://github.com/chef/chef-licensing/tree/1.0.3) (2024-08-06)
+<!-- latest_release 1.0.4 -->
+## [1.0.4](https://github.com/chef/chef-licensing/tree/1.0.4) (2024-10-01)
 
 #### Merged Pull Requests
-- Improve entitlement error handling during `fetch_and_persist` [#192](https://github.com/chef/chef-licensing/pull/192) ([ahasunos](https://github.com/ahasunos))
+- Error handling for empty keys in software entitlement call [#194](https://github.com/chef/chef-licensing/pull/194) ([Nik08](https://github.com/Nik08))
 <!-- latest_release -->
 
 <!-- release_rollup since=1.0.2 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Error handling for empty keys in software entitlement call [#194](https://github.com/chef/chef-licensing/pull/194) ([Nik08](https://github.com/Nik08)) <!-- 1.0.4 -->
 - Improve entitlement error handling during `fetch_and_persist` [#192](https://github.com/chef/chef-licensing/pull/192) ([ahasunos](https://github.com/ahasunos)) <!-- 1.0.3 -->
 <!-- release_rollup -->
 
