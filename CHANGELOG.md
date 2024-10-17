@@ -1,27 +1,24 @@
 # Changelog
 
-<!-- latest_release 1.0.4 -->
-## [1.0.4](https://github.com/chef/chef-licensing/tree/1.0.4) (2024-10-01)
-
-#### Merged Pull Requests
-- Error handling for empty keys in software entitlement call [#194](https://github.com/chef/chef-licensing/pull/194) ([Nik08](https://github.com/Nik08))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=1.0.2 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Error handling for empty keys in software entitlement call [#194](https://github.com/chef/chef-licensing/pull/194) ([Nik08](https://github.com/Nik08)) <!-- 1.0.4 -->
-- Improve entitlement error handling during `fetch_and_persist` [#192](https://github.com/chef/chef-licensing/pull/192) ([ahasunos](https://github.com/ahasunos)) <!-- 1.0.3 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [1.0.4](https://github.com/chef/chef-licensing/tree/1.0.4) (2024-10-17)
+
+#### Merged Pull Requests
+- Improve entitlement error handling during `fetch_and_persist` [#192](https://github.com/chef/chef-licensing/pull/192) ([ahasunos](https://github.com/ahasunos))
+- Error handling for empty keys in software entitlement call [#194](https://github.com/chef/chef-licensing/pull/194) ([Nik08](https://github.com/Nik08))
+<!-- latest_stable_release -->
+
 ## [1.0.2](https://github.com/chef/chef-licensing/tree/1.0.2) (2024-07-23)
 
 #### Merged Pull Requests
 - Updates the CHANGELOG file  [#190](https://github.com/chef/chef-licensing/pull/190) ([Vasu1105](https://github.com/Vasu1105))
 - CHEF-14423: Fix LicenseKeyNotFetchedError in non-tty terminal with non-active license key [#191](https://github.com/chef/chef-licensing/pull/191) ([ahasunos](https://github.com/ahasunos))
-<!-- latest_stable_release -->
 
 ## [1.0.0](https://github.com/chef/chef-licensing/tree/1.0.0) (2024-07-22)
 
