@@ -1,9 +1,17 @@
 # Changelog
 
-<!-- latest_release -->
+<!-- latest_release 1.0.5 -->
+## [1.0.5](https://github.com/chef/chef-licensing/tree/1.0.5) (2024-10-23)
+
+#### Merged Pull Requests
+- Go Component - FetchAndPersist [#186](https://github.com/chef/chef-licensing/pull/186) ([ashiqueps](https://github.com/ashiqueps))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=1.0.4 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Go Component - FetchAndPersist [#186](https://github.com/chef/chef-licensing/pull/186) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.0.5 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
