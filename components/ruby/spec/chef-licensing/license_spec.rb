@@ -30,7 +30,7 @@ RSpec.describe ChefLicensing::License do
         "id" => "entitlementguid",
         "name" => "Inspec",
         "start" => "2022-11-01",
-        "end" => "2024-11-01",
+        "end" => "2030-11-01",
         "licenses" => 2,
         "limits" => [ { "measure" => "nodes", "amount" => 2 } ],
         "entitled" => false,
