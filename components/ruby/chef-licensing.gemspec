@@ -35,4 +35,8 @@ Gem::Specification.new do |spec|
   # Similar issue with 7.0 existed: https://github.com/rails/rails/pull/45293
   spec.add_dependency "activesupport", "~> 7.0", "< 7.1"
   spec.add_dependency "tty-spinner", "~> 0.9.3"
+
+  # Gem dependency needed with Ruby 3.4 upgrade
+  spec.add_dependency "mutex_m", "~> 0.2.0"
+  spec.add_dependency "ostruct", "~> 0.1.0"
 end
