@@ -30,13 +30,9 @@ Gem::Specification.new do |spec|
   spec.add_dependency "tty-prompt", "~> 0.23"
   spec.add_dependency "faraday", ">= 1", "< 3"
   spec.add_dependency "faraday-http-cache"
-  # Note: 7.1.0 does not defaults its cache_format_version to 7.1 but 6.1 instead which gives deprecation warnings
-  # Remove the version constraint when we can upgrade to 7.1.1 post stable release of Activesupport 7.1
-  # Similar issue with 7.0 existed: https://github.com/rails/rails/pull/45293
-  spec.add_dependency "activesupport", "~> 7.0", "< 7.1"
+  spec.add_dependency "activesupport", "~> 7.2", ">= 7.2.2.1"
   spec.add_dependency "tty-spinner", "~> 0.9.3"
 
   # Gem dependency needed with Ruby 3.4 upgrade
-  spec.add_dependency "mutex_m", "~> 0.2.0"
   spec.add_dependency "ostruct", "~> 0.1.0"
 end
