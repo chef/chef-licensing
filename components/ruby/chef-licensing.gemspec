@@ -39,5 +39,5 @@ Gem::Specification.new do |spec|
   # Gem dependency needed with Ruby 3.4 upgrade
   spec.add_dependency "mutex_m", "~> 0.2.0"
   spec.add_dependency "ostruct", "~> 0.1.0"
-  spec.add_dependency "bigdecimal", "~> 3.0"
+  # spec.add_dependency "bigdecimal", "~> 3.0"
 end
