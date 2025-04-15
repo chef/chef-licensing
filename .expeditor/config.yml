@@ -29,7 +29,7 @@ changelog:
 
 pipelines:
   - verify:
-      public: false
+      public: true
 
 subscriptions:
   # These actions are taken, in order they are specified, anytime a Pull Request is merged.
