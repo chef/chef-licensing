@@ -16,7 +16,7 @@ module ChefLicensing
       attr_writer :license_server_url, :logger, :output, :license_server_url_check_in_file, :license_add_command, :license_list_command
 
       # is_local_license_service is used by context class
-      attr_accessor :is_local_license_service, :chef_entitlement_id, :chef_product_name, :chef_executable_name
+      attr_accessor :is_local_license_service, :chef_entitlement_id, :chef_product_name, :chef_executable_name, :chef_license_key, :license_server_url_in_config_file
 
       def license_server_url(opts = {})
         return @license_server_url if @license_server_url && @license_server_url_check_in_file
