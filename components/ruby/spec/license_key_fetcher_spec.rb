@@ -156,8 +156,8 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
 
         let(:license_key_fetcher) { described_class.new(opts) }
 
-        it "has optional_mode set to false by default" do
-          expect(ChefLicensing::Config.optional_mode).to eq(false)
+        it "has make_licensing_optional set to false by default" do
+          expect(ChefLicensing::Config.make_licensing_optional).to eq(false)
         end
 
         it "adds one license returned by on-prem service" do
@@ -180,7 +180,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       ChefLicensing::Context.current_context = nil
     end
 
-    context "when optional mode is enabled" do
+    context "when make_licensing_optional is enabled" do
       let(:opts) {
         {
           output: output,
@@ -191,13 +191,13 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
 
       before do
         ChefLicensing.configure do |config|
-          config.optional_mode = true
+          config.make_licensing_optional = true
         end
       end
 
       after do
         ChefLicensing.configure do |config|
-          config.optional_mode = false
+          config.make_licensing_optional = false
         end
       end
 
@@ -215,8 +215,8 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       }
       let(:license_key_fetcher) { described_class.new(opts) }
 
-      it "has optional_mode set to false by default" do
-        expect(ChefLicensing::Config.optional_mode).to eq(false)
+      it "has make_licensing_optional set to false by default" do
+        expect(ChefLicensing::Config.make_licensing_optional).to eq(false)
       end
 
       it "raises an error" do
@@ -266,8 +266,8 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
 
       end
 
-      it "has optional_mode set to false by default" do
-        expect(ChefLicensing::Config.optional_mode).to eq(false)
+      it "has make_licensing_optional set to false by default" do
+        expect(ChefLicensing::Config.make_licensing_optional).to eq(false)
       end
 
       it "creates file, persist only trial and not free due to active trial restriction" do
@@ -472,8 +472,8 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
 
         let(:license_key_fetcher) { described_class.new(opts) }
 
-        it "has optional_mode set to false by default" do
-          expect(ChefLicensing::Config.optional_mode).to eq(false)
+        it "has make_licensing_optional set to false by default" do
+          expect(ChefLicensing::Config.make_licensing_optional).to eq(false)
         end
 
         it "adds one license returned by on-prem service" do
