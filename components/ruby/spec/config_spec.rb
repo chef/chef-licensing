@@ -14,6 +14,12 @@ RSpec.describe ChefLicensing::Config do
       log
     }
 
+    context "default values" do
+      it "has optional_mode set to false by default" do
+        expect(ChefLicensing::Config.optional_mode).to eq(false)
+      end
+    end
+
     context "when values are set via block" do
       before do
         ChefLicensing.configure do |config|
