@@ -15,8 +15,8 @@ RSpec.describe ChefLicensing::Config do
     }
 
     context "default values" do
-      it "has optional_mode set to false by default" do
-        expect(ChefLicensing::Config.optional_mode).to eq(false)
+      it "has make_licensing_optional set to false by default" do
+        expect(ChefLicensing::Config.make_licensing_optional).to eq(false)
       end
     end
 
