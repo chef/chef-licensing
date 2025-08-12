@@ -85,6 +85,7 @@ RSpec.describe ChefLicensing::TUIEngine do
       config.license_server_url_check_in_file = true
       config.chef_product_name = "inspec"
       config.chef_entitlement_id = "3ff52c37-e41f-4f6c-ad4d-365192205968"
+      config.make_licensing_optional = false # <-- Ensure licensing is not optional
     end
   end
 
@@ -382,6 +383,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         end
         ChefLicensing::Context.current_context = nil
         license_key_fetcher.fetch_and_persist
+        ChefLicensing::Context.current_context = nil # <-- Ensure context is reset after persisting
       end
 
       it "checks if the license is persister" do
@@ -393,7 +395,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         prompt.input << valid_free_license_key_2
         prompt.input << "\n"
         prompt.input.rewind
-        ChefLicensing::Context.current_context = nil
+        ChefLicensing::Context.current_context = nil # <-- Ensure context is reset before running TUI
       end
 
       let(:expected_flow_for_license_restriction) {
@@ -609,6 +611,11 @@ RSpec.describe ChefLicensing::TUIEngine do
       before do
         ChefLicensing::Context.current_context = nil
         license_key_fetcher.fetch_and_persist
+
+        # Add missing stub for /v1/listLicenses for trial license
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
+          .to_return(body: { data: [], status_code: 404 }.to_json,
+                     headers: { content_type: "application/json" })
       end
 
       it "checks if the license is persisted" do
