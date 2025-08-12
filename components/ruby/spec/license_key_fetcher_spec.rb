@@ -137,6 +137,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
         ChefLicensing.configure do |config|
           config.is_local_license_service = nil
           config.license_server_url = "http://localhost-license-server/License"
+          config.make_licensing_optional = false # <-- Ensure licensing is not optional
         end
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
           .to_return(body: { data: ["tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"], status_code: 200 }.to_json,
