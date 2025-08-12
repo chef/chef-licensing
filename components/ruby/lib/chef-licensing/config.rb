@@ -51,6 +51,21 @@ module ChefLicensing
       def make_licensing_optional
         @make_licensing_optional ||= false
       end
+
+      def require_license_for
+        return unless block_given?
+        # Store the original value by calling the method, not accessing the instance variable
+        original_value = make_licensing_optional
+
+        begin
+          # Temporarily set licensing as required (not optional)
+          @make_licensing_optional = false
+          yield
+        ensure
+          # Always restore the original value, even if an exception occurs
+          @make_licensing_optional = original_value
+        end
+      end
     end
   end
 end
