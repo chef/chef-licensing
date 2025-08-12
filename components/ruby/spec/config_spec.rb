@@ -97,4 +97,82 @@ RSpec.describe ChefLicensing::Config do
       end
     end
   end
+
+  describe "#require_license_for" do
+    context "when make_licensing_optional is initially true" do
+      before do
+        ChefLicensing::Config.make_licensing_optional = true
+      end
+
+      it "temporarily sets make_licensing_optional to false within the block" do
+        expect(ChefLicensing::Config.make_licensing_optional).to eq(true)
+
+        ChefLicensing::Config.require_license_for do
+          expect(ChefLicensing::Config.make_licensing_optional).to eq(false)
+        end
+
+        expect(ChefLicensing::Config.make_licensing_optional).to eq(true)
+      end
+
+      it "restores original value even when block raises an exception" do
+        expect(ChefLicensing::Config.make_licensing_optional).to eq(true)
+
+        expect {
+          ChefLicensing::Config.require_license_for do
+            expect(ChefLicensing::Config.make_licensing_optional).to eq(false)
+            raise StandardError, "test exception"
+          end
+        }.to raise_error(StandardError, "test exception")
+
+        expect(ChefLicensing::Config.make_licensing_optional).to eq(true)
+      end
+    end
+
+    context "when make_licensing_optional is initially false" do
+      before do
+        ChefLicensing::Config.make_licensing_optional = false
+      end
+
+      it "keeps make_licensing_optional as false within the block and restores afterward" do
+        expect(ChefLicensing::Config.make_licensing_optional).to eq(false)
+
+        ChefLicensing::Config.require_license_for do
+          expect(ChefLicensing::Config.make_licensing_optional).to eq(false)
+        end
+
+        expect(ChefLicensing::Config.make_licensing_optional).to eq(false)
+      end
+    end
+
+    context "when no block is given" do
+      it "returns nil and does not affect make_licensing_optional" do
+        ChefLicensing::Config.make_licensing_optional = true
+
+        result = ChefLicensing::Config.require_license_for
+
+        expect(result).to be_nil
+        expect(ChefLicensing::Config.make_licensing_optional).to eq(true)
+      end
+    end
+
+    context "when block returns a value" do
+      before do
+        ChefLicensing::Config.make_licensing_optional = true
+      end
+
+      it "returns the block's return value" do
+        result = ChefLicensing::Config.require_license_for do
+          "block return value"
+        end
+
+        expect(result).to eq("block return value")
+        expect(ChefLicensing::Config.make_licensing_optional).to eq(true)
+      end
+    end
+
+    after do
+      # Reset to default value after each test
+      ChefLicensing::Config.make_licensing_optional = false
+    end
+  end
 end
