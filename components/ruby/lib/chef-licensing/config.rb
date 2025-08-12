@@ -54,6 +54,7 @@ module ChefLicensing
 
       def require_license_for
         return unless block_given?
+
         # Store the original value by calling the method, not accessing the instance variable
         original_value = make_licensing_optional
 
