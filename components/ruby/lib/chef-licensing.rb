@@ -10,14 +10,6 @@ require "chef-licensing/api/client"
 require "chef-licensing/license_key_fetcher/prompt"
 require "chef-licensing/context"
 
-# Require the chef-official-distribution gem if available
-# This may not be necessary in all environments.
-begin
-  require "chef-official-distribution"
-rescue LoadError
-  # chef-official-distribution gem is not available, continue without it
-end
-
 module ChefLicensing
   class << self
 
@@ -89,4 +81,14 @@ module ChefLicensing
       ChefLicensing::Context.license
     end
   end
+end
+
+# Require the chef-official-distribution gem if available
+# chef-official-distribution gem has a dependency on ChefLicensing.configure which is only loaded after this file is loaded.
+# Hence this require is placed at the end of the file.
+begin
+  require "chef-official-distribution"
+rescue LoadError
+  # Todo: should we warn here?
+  # Running in an unoffical distribution mode.
 end
