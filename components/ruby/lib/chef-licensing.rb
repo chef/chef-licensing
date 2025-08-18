@@ -90,5 +90,5 @@ begin
   require "chef-official-distribution"
 rescue LoadError
   # Todo: should we warn here?
-  # Running in an unoffical distribution mode.
+  # Running in an unofficial distribution mode.
 end
