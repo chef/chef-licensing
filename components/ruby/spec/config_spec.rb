@@ -99,6 +99,11 @@ RSpec.describe ChefLicensing::Config do
   end
 
   describe "#require_license_for" do
+    before do
+      # Mock fetch_and_persist to prevent actual license fetching during tests
+      allow(ChefLicensing).to receive(:fetch_and_persist)
+    end
+
     context "when make_licensing_optional is initially true" do
       before do
         ChefLicensing::Config.make_licensing_optional = true
@@ -114,6 +119,14 @@ RSpec.describe ChefLicensing::Config do
         expect(ChefLicensing::Config.make_licensing_optional).to eq(true)
       end
 
+      it "calls fetch_and_persist before executing the block" do
+        expect(ChefLicensing).to receive(:fetch_and_persist).once
+
+        ChefLicensing::Config.require_license_for do
+          # block content
+        end
+      end
+
       it "restores original value even when block raises an exception" do
         expect(ChefLicensing::Config.make_licensing_optional).to eq(true)
 
@@ -123,6 +136,19 @@ RSpec.describe ChefLicensing::Config do
             raise StandardError, "test exception"
           end
         }.to raise_error(StandardError, "test exception")
+
+        expect(ChefLicensing::Config.make_licensing_optional).to eq(true)
+      end
+
+      it "restores original value even when fetch_and_persist raises an exception" do
+        allow(ChefLicensing).to receive(:fetch_and_persist).and_raise(StandardError, "fetch error")
+        expect(ChefLicensing::Config.make_licensing_optional).to eq(true)
+
+        expect {
+          ChefLicensing::Config.require_license_for do
+            # block content
+          end
+        }.to raise_error(StandardError, "fetch error")
 
         expect(ChefLicensing::Config.make_licensing_optional).to eq(true)
       end
@@ -142,6 +168,14 @@ RSpec.describe ChefLicensing::Config do
 
         expect(ChefLicensing::Config.make_licensing_optional).to eq(false)
       end
+
+      it "calls fetch_and_persist before executing the block" do
+        expect(ChefLicensing).to receive(:fetch_and_persist).once
+
+        ChefLicensing::Config.require_license_for do
+          # block content
+        end
+      end
     end
 
     context "when no block is given" do
@@ -152,6 +186,12 @@ RSpec.describe ChefLicensing::Config do
 
         expect(result).to be_nil
         expect(ChefLicensing::Config.make_licensing_optional).to eq(true)
+      end
+
+      it "does not call fetch_and_persist when no block is given" do
+        expect(ChefLicensing).not_to receive(:fetch_and_persist)
+
+        ChefLicensing::Config.require_license_for
       end
     end
 
@@ -167,6 +207,14 @@ RSpec.describe ChefLicensing::Config do
 
         expect(result).to eq("block return value")
         expect(ChefLicensing::Config.make_licensing_optional).to eq(true)
+      end
+
+      it "calls fetch_and_persist before executing the block" do
+        expect(ChefLicensing).to receive(:fetch_and_persist).once
+
+        ChefLicensing::Config.require_license_for do
+          "block return value"
+        end
       end
     end
 
