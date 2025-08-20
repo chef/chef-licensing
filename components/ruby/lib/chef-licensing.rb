@@ -82,3 +82,13 @@ module ChefLicensing
     end
   end
 end
+
+# Require the chef-official-distribution gem if available
+# chef-official-distribution gem has a dependency on ChefLicensing.configure which is only loaded after this file is loaded.
+# Hence this require is placed at the end of the file.
+begin
+  require "chef-official-distribution"
+rescue LoadError
+  # Todo: should we warn here?
+  # Running in an unofficial distribution mode.
+end
