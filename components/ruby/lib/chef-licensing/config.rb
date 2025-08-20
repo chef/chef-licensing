@@ -1,5 +1,6 @@
 require "singleton" unless defined?(Singleton)
 require "logger"
+require "thread"
 require_relative "config_fetcher/arg_fetcher"
 require_relative "config_fetcher/env_fetcher"
 require_relative "license_key_fetcher/file"
@@ -55,18 +56,22 @@ module ChefLicensing
       def require_license_for
         return unless block_given?
 
-        # Store the original value by calling the method, not accessing the instance variable
-        original_value = make_licensing_optional
+        @require_license_mutex ||= Mutex.new
+        
+        @require_license_mutex.synchronize do
+          # Store the original value by calling the method, not accessing the instance variable
+          original_value = make_licensing_optional
 
-        begin
-          # Temporarily set licensing as required (not optional)
-          @make_licensing_optional = false
-          # Enforce the license requirement by fetching and persisting the license keys
-          ChefLicensing.fetch_and_persist
-          yield
-        ensure
-          # Always restore the original value, even if an exception occurs
-          @make_licensing_optional = original_value
+          begin
+            # Temporarily set licensing as required (not optional)
+            @make_licensing_optional = false
+            # Enforce the license requirement by fetching and persisting the license keys
+            ChefLicensing.fetch_and_persist
+            yield
+          ensure
+            # Always restore the original value, even if an exception occurs
+            @make_licensing_optional = original_value
+          end
         end
       end
     end

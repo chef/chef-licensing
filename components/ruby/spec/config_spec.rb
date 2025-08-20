@@ -152,6 +152,30 @@ RSpec.describe ChefLicensing::Config do
 
         expect(ChefLicensing::Config.make_licensing_optional).to eq(true)
       end
+
+      it "is thread-safe when called concurrently" do
+        results = []
+        threads = []
+        
+        # Create multiple threads that call require_license_for concurrently
+        5.times do |i|
+          threads << Thread.new do
+            ChefLicensing::Config.require_license_for do
+              sleep(0.01) # Small delay to increase chance of race conditions
+              results << ChefLicensing::Config.make_licensing_optional
+            end
+          end
+        end
+
+        # Wait for all threads to complete
+        threads.each(&:join)
+        
+        # All threads should see make_licensing_optional as false during execution
+        expect(results).to all(eq(false))
+        
+        # After all threads complete, original value should be restored
+        expect(ChefLicensing::Config.make_licensing_optional).to eq(true)
+      end
     end
 
     context "when make_licensing_optional is initially false" do
