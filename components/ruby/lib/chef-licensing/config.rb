@@ -1,6 +1,5 @@
 require "singleton" unless defined?(Singleton)
 require "logger"
-require "thread"
 require_relative "config_fetcher/arg_fetcher"
 require_relative "config_fetcher/env_fetcher"
 require_relative "license_key_fetcher/file"
@@ -57,7 +56,7 @@ module ChefLicensing
         return unless block_given?
 
         @require_license_mutex ||= Mutex.new
-        
+
         @require_license_mutex.synchronize do
           # Store the original value by calling the method, not accessing the instance variable
           original_value = make_licensing_optional
