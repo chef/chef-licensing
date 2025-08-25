@@ -66,8 +66,6 @@ module ChefLicensing
           begin
             # Temporarily set licensing as required (not optional)
             @make_licensing_optional = false
-            # Enforce the license requirement by fetching and persisting the license keys
-            ChefLicensing.fetch_and_persist
             yield
           ensure
             # Always restore the original value, even if an exception occurs
