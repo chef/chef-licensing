@@ -52,12 +52,14 @@ module ChefLicensing
         @make_licensing_optional ||= false
       end
 
+      def require_license_mutex
+        @require_license_mutex ||= Mutex.new
+      end
+
       def require_license_for
         return unless block_given?
 
-        @require_license_mutex ||= Mutex.new
-
-        @require_license_mutex.synchronize do
+        require_license_mutex.synchronize do
           # Store the original value by calling the method, not accessing the instance variable
           original_value = make_licensing_optional
 
