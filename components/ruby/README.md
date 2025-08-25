@@ -86,6 +86,42 @@ end
 
 ```
 
+#### Requiring License for Specific Operations
+
+The `require_license_for` method allows you to temporarily enforce licensing for specific operations, even when licensing has been made optional globally. This is useful for ensuring that certain premium features or critical operations always require a valid license.
+
+```ruby
+require "chef-licensing"
+
+# Configure licensing as optional globally
+ChefLicensing.configure do |config|
+  config.make_licensing_optional = true
+end
+
+# Use require_license_for to enforce licensing for specific operations
+ChefLicensing::Config.require_license_for do
+  # Within this block, licensing is required regardless of global setting
+  ChefLicensing.check_software_entitlement!
+
+  # Your premium feature logic here
+  perform_premium_operation()
+end
+
+# After the block, the original licensing optional setting is restored
+```
+
+##### Key Features
+
+- **Temporary Override**: Temporarily sets `make_licensing_optional` to `false` within the block, then restores the original value
+- **Exception Safety**: The original licensing setting is restored even if an exception occurs within the block
+- **Thread Safety**: Uses a mutex to ensure thread-safe operation when called concurrently
+- **Return Value**: Returns the return value of the block
+- **Block Required**: Does nothing and returns `nil` if no block is provided
+
+##### Response
+
+The method returns the return value of the provided block. If no block is given, it returns `nil` and does not modify the licensing configuration.
+
 <!-- Usage section contains all the methods that the client would invoke while using the Chef Licensing Library -->
 ## Usage
 
