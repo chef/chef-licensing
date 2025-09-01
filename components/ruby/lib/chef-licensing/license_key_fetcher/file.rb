@@ -292,7 +292,7 @@ module ChefLicensing
       end
 
       def handle_error(e, message = nil)
-        logger.debug "#{e.backtrace.join("\n\t")}"
+        logger.trace "#{e.backtrace.join("\n\t")}"
         e
       end
 

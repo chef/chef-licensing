@@ -3,6 +3,7 @@ require "logger"
 require_relative "config_fetcher/arg_fetcher"
 require_relative "config_fetcher/env_fetcher"
 require_relative "license_key_fetcher/file"
+require_relative "log"
 
 # Config class handles all configuration related to chef-licensing
 # Values can be set via block, environment variable or command line argument
@@ -31,8 +32,8 @@ module ChefLicensing
       def logger
         return @logger if @logger
 
-        @logger = Logger.new(STDERR)
-        @logger.level = Logger::INFO
+        @logger = ChefLicensing::Log
+        @logger.level = :info
         @logger
       end
 
