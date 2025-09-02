@@ -23,6 +23,9 @@ module ChefLicensing
     end
 
     def check_feature_entitlement!(feature_name: nil, feature_id: nil)
+      # If licensing is optional, bypass entitlement checks
+      return true if ChefLicensing::Config.make_licensing_optional
+
       # Checking for feature presence in license feature entitlements
       license = client(license_keys: license_keys)
       feature_entitlements = license.feature_entitlements.select { |feature| feature.id == feature_id || feature.name == feature_name }
@@ -35,9 +38,14 @@ module ChefLicensing
 
     def check_software_entitlement!
       # If API call is not breaking that means license is entitled.
-      raise ChefLicensing::LicenseKeyFetcher::LicenseKeyNotFetchedError.new("Unable to obtain a License Key.") if license_keys.empty?
+      unless ChefLicensing::Config.make_licensing_optional
+        if license_keys.empty?
+          raise ChefLicensing::LicenseKeyFetcher::LicenseKeyNotFetchedError,
+                "Unable to obtain a License Key."
+        end
 
-      client(license_keys: license_keys)
+        client(license_keys: license_keys)
+      end
       true
     rescue ChefLicensing::ClientError => e
       # Checking specific text phrase for entitlement error
