@@ -23,6 +23,9 @@ module ChefLicensing
     end
 
     def check_feature_entitlement!(feature_name: nil, feature_id: nil)
+      # If licensing is optional, bypass entitlement checks
+      return true if ChefLicensing::Config.make_licensing_optional
+
       # Checking for feature presence in license feature entitlements
       license = client(license_keys: license_keys)
       feature_entitlements = license.feature_entitlements.select { |feature| feature.id == feature_id || feature.name == feature_name }
