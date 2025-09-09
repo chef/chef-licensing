@@ -72,9 +72,9 @@ module ChefLicensing
 
       def get_log_level_from_flags
         ChefLicensing::ArgFetcher.fetch_value("--log-level", :string) ||
-        ChefLicensing::ArgFetcher.fetch_value("--chef-log-level", :string) ||
-        ChefLicensing::EnvFetcher.fetch_value("LOG_LEVEL", :string) ||
-        ChefLicensing::EnvFetcher.fetch_value("CHEF_LOG_LEVEL", :string)
+          ChefLicensing::ArgFetcher.fetch_value("--chef-log-level", :string) ||
+          ChefLicensing::EnvFetcher.fetch_value("LOG_LEVEL", :string) ||
+          ChefLicensing::EnvFetcher.fetch_value("CHEF_LOG_LEVEL", :string)
       end
     end
   end
