@@ -29,18 +29,17 @@ module ChefLicensing
       end
 
       def logger
+        # If no log level flags are set and we have a cached logger (like Inspec::Log), use it as-is
+        return @logger if @logger && !log_level_flags_present?
+
+        # If log level flags are present, configure the logger with determined level
         @logger = ChefLicensing::Log
         @logger.level = determine_log_level
         @logger
       end
 
       def determine_log_level
-        # Check for log level from command line arguments or environment variables
-        log_level_string = ChefLicensing::ArgFetcher.fetch_value("--log-level", :string) ||
-                          ChefLicensing::ArgFetcher.fetch_value("--chef-log-level", :string) ||
-                          ChefLicensing::EnvFetcher.fetch_value("LOG_LEVEL", :string) ||
-                          ChefLicensing::EnvFetcher.fetch_value("CHEF_LOG_LEVEL", :string)
-
+        log_level_string = get_log_level_from_flags
 
         valid = %w{trace debug info warn error fatal}
 
@@ -63,6 +62,19 @@ module ChefLicensing
 
       def license_list_command
         @license_list_command ||= "license list"
+      end
+
+      private
+
+      def log_level_flags_present?
+        !get_log_level_from_flags.nil?
+      end
+
+      def get_log_level_from_flags
+        ChefLicensing::ArgFetcher.fetch_value("--log-level", :string) ||
+        ChefLicensing::ArgFetcher.fetch_value("--chef-log-level", :string) ||
+        ChefLicensing::EnvFetcher.fetch_value("LOG_LEVEL", :string) ||
+        ChefLicensing::EnvFetcher.fetch_value("CHEF_LOG_LEVEL", :string)
       end
     end
   end

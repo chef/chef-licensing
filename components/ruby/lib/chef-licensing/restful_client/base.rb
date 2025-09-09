@@ -103,6 +103,7 @@ module ChefLicensing
           # At this point, we have a successful connection
           # Update the value of license server url in config
           ChefLicensing::Config.license_server_url = url
+          logger.debug "Connection succeeded to #{url}"
           break response
         rescue RestfulClientConnectionError
           logger.warn "Connection failed to #{url}"
