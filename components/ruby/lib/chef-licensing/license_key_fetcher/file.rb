@@ -151,7 +151,6 @@ module ChefLicensing
         ensure
           @license_server_url = @contents[:license_server_url]
         end
-        logger.debug "License server URL: #{@license_server_url}"
         @license_server_url
       end
 
@@ -214,7 +213,6 @@ module ChefLicensing
       def read_license_key_file
         return contents if contents
 
-        logger.debug "Reading license file from #{seek}"
         path = seek
         return nil unless path
 
@@ -239,7 +237,6 @@ module ChefLicensing
           write_license_file(path) # update the license file contents to the latest version
           @contents
         else
-          logger.debug "License File version #{@contents[:file_format_version]} not supported."
           raise ChefLicensing::InvalidFileFormatVersion.new("Unable to read licenses. License File version #{@contents[:file_format_version]} not supported.")
         end
       end
@@ -261,7 +258,6 @@ module ChefLicensing
       def load_license_file(license_key_file_path)
         return unless ::File.exist?(license_key_file_path)
 
-        logger.debug "Reading license_key file at #{license_key_file_path}"
         msg = "Could not read license key file #{license_key_file_path}"
         YAML.load_file(license_key_file_path)
       rescue StandardError => e
@@ -271,7 +267,6 @@ module ChefLicensing
       def load_license_data_to_contents(license_data)
         return unless license_data
 
-        logger.debug "Loading license data to contents"
         if @contents.nil? || @contents.empty? # this case is likely to happen only during testing
           load_basic_license_data_to_contents(@license_server_url, [license_data])
         elsif @contents[:licenses].nil?

@@ -92,7 +92,7 @@ module ChefLicensing
           attempted_urls << url
           break if i == REQUEST_LIMIT - 1
 
-          logger.debug "Trying to connect to #{url}"
+          logger.debug "Trying to connect to #{url}" if urls.size > 1
           handle_connection.call(url) do |connection|
             response = connection.send(http_method, endpoint) do |request|
               request.body = payload.to_json if payload
@@ -103,7 +103,6 @@ module ChefLicensing
           # At this point, we have a successful connection
           # Update the value of license server url in config
           ChefLicensing::Config.license_server_url = url
-          logger.debug "Connection succeeded to #{url}"
           break response
         rescue RestfulClientConnectionError
           logger.warn "Connection failed to #{url}"
