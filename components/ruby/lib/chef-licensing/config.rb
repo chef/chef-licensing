@@ -23,18 +23,34 @@ module ChefLicensing
         return @license_server_url if @license_server_url && @license_server_url_check_in_file
 
         license_server_url_from_system = ChefLicensing::ArgFetcher.fetch_value("--chef-license-server", :string) || ChefLicensing::EnvFetcher.fetch_value("CHEF_LICENSE_SERVER", :string)
-
         @license_server_url = ChefLicensing::LicenseKeyFetcher::File.fetch_or_persist_url(@license_server_url, license_server_url_from_system, opts)
         @license_server_url_check_in_file = true
         @license_server_url
       end
 
       def logger
-        return @logger if @logger
-
         @logger = ChefLicensing::Log
-        @logger.level = :info
+        @logger.level = determine_log_level
         @logger
+      end
+
+      def determine_log_level
+        # Check for log level from command line arguments or environment variables
+        log_level_string = ChefLicensing::ArgFetcher.fetch_value("--log-level", :string) ||
+                          ChefLicensing::ArgFetcher.fetch_value("--chef-log-level", :string) ||
+                          ChefLicensing::EnvFetcher.fetch_value("LOG_LEVEL", :string) ||
+                          ChefLicensing::EnvFetcher.fetch_value("CHEF_LOG_LEVEL", :string)
+
+
+        valid = %w{trace debug info warn error fatal}
+
+        if valid.include?(log_level_string)
+          log_level = log_level_string
+        else
+          log_level = "info"
+        end
+
+        Mixlib::Log.const_get(log_level.upcase)
       end
 
       def output
