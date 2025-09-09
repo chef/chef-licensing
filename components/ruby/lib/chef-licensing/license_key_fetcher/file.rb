@@ -140,6 +140,10 @@ module ChefLicensing
           load_basic_license_data_to_contents(url, [])
         elsif @contents && license_server_url_from_system && license_server_url_from_system != @contents[:license_server_url]
           @contents[:license_server_url] = license_server_url_from_system
+        else
+          # Nothing to change in the file
+          @license_server_url = @contents[:license_server_url]
+          return @license_server_url
         end
 
         # Ensure the license server URL is returned to the caller in all cases
