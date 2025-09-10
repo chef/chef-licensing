@@ -6,7 +6,12 @@ RSpec.describe ChefLicensing::Api::ListLicenses do
   let(:valid_list_licenses_api_response) { File.read("spec/fixtures/api_response_data/valid_list_licenses_api_response.json") }
   let(:invalid_list_licenses_api_response) { File.read("spec/fixtures/api_response_data/invalid_list_licenses_api_response.json") }
   let(:output) { StringIO.new }
-  let(:logger) { Logger.new(output) }
+  let(:logger) {
+    log = Object.new
+    log.extend(Mixlib::Log)
+    log.init(output)
+    log
+  }
   let(:licenses_list) { ["free-42727540-ddc8-4d4b-0000-80662e03cd73-0000"] }
 
   context "when the licensing server is local, it returns a valid response" do

@@ -6,7 +6,12 @@ require "chef-licensing/tui_engine/tui_exceptions"
 RSpec.describe ChefLicensing::TUIEngine::TUIPrompt do
 
   let(:output) { StringIO.new }
-  let(:logger) { Logger.new(output) }
+  let(:logger) {
+    log = Object.new
+    log.extend(Mixlib::Log)
+    log.init(output)
+    log
+  }
 
   before do
     ChefLicensing.configure do |conf|

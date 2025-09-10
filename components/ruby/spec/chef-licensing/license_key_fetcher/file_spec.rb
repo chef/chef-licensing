@@ -10,7 +10,13 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
   let(:unsupported_vesion_license_dir) { "spec/fixtures/unsupported_version_license" }
   let(:multiple_keys_license_dir) { "spec/fixtures/multiple_license_keys_license" }
   let(:output) { StringIO.new }
-  let(:logger) { Logger.new(output) }
+  let(:logger) {
+    log = Object.new
+    log.extend(Mixlib::Log)
+    log.init(output)
+    log.level = Mixlib::Log::WARN  # Set to WARN level to capture deprecation warnings
+    log
+  }
   let(:v3_license_dir) { "spec/fixtures/v3_licenses" }
   let(:license_file_without_file_format_version) { "spec/fixtures/license_file_without_file_format_version" }
 

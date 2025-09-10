@@ -3,7 +3,12 @@ require "chef-licensing"
 
 RSpec.describe ChefLicensing::Context do
   let(:output) { StringIO.new }
-  let(:logger) { Logger.new(output) }
+  let(:logger) {
+    log = Object.new
+    log.extend(Mixlib::Log)
+    log.init(output)
+    log
+  }
   let(:client_api_data) { JSON.parse(File.read("spec/fixtures/api_response_data/valid_client_api_response.json")) }
   let(:argv) { [] }
   let(:env) { {} }

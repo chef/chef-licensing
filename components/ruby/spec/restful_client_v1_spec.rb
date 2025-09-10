@@ -4,7 +4,13 @@ require "chef-licensing/restful_client/v1"
 
 RSpec.describe ChefLicensing::RestfulClient::V1 do
   let(:output) { StringIO.new }
-  let(:logger) { Logger.new(output) }
+  let(:logger) {
+    log = Object.new
+    log.extend(Mixlib::Log)
+    log.init(output)
+    log.level = Mixlib::Log::DEBUG  # Set to DEBUG level to capture all log messages
+    log
+  }
   let(:free_license_key) { "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111" }
 
   context "when one license_server_url is set" do
