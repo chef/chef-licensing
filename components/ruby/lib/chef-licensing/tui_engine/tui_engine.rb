@@ -59,7 +59,6 @@ module ChefLicensing
       verify_interaction_data
       store_interaction_objects
       build_interaction_path
-      logger.debug "TUI Engine initialized."
     end
 
     def inflate_interaction_data(interaction_file)

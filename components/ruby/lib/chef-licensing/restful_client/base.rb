@@ -92,7 +92,7 @@ module ChefLicensing
           attempted_urls << url
           break if i == REQUEST_LIMIT - 1
 
-          logger.debug "Trying to connect to #{url}"
+          logger.debug "Trying to connect to #{url}" if urls.size > 1
           handle_connection.call(url) do |connection|
             response = connection.send(http_method, endpoint) do |request|
               request.body = payload.to_json if payload

@@ -6,7 +6,12 @@ require_relative "../lib/chef-licensing/exceptions/client_error"
 
 RSpec.describe ChefLicensing do
 
-  let(:logger) { Logger.new(STDOUT) }
+  let(:logger) {
+    log = Object.new
+    log.extend(Mixlib::Log)
+    log.init(STDOUT)
+    log
+  }
 
   before do
     described_class.configure do |config|
@@ -175,7 +180,12 @@ RSpec.describe ChefLicensing do
     let(:license_server_url) { "https://license-server.example.com" }
     let(:chef_product_name) { "chef" }
     let(:chef_entitlement_id) { "0000-1111-2222-3333" }
-    let(:logger) { Logger.new(STDOUT) }
+    let(:logger) {
+      log = Object.new
+      log.extend(Mixlib::Log)
+      log.init(STDOUT)
+      log
+    }
 
     before do
       described_class.configure do |config|

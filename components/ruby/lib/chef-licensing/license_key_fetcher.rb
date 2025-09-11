@@ -37,7 +37,6 @@ module ChefLicensing
       config[:dir] = opts[:dir]
 
       # While using on-prem licensing service, @license_keys are fetched from API
-      logger.debug "License Key fetcher - fetching license keys depending upon the context (either API or file)"
       # While using global licensing service, @license_keys are fetched from file
       @license_keys = ChefLicensing::Context.license_keys(opts) || []
 
@@ -95,12 +94,10 @@ module ChefLicensing
       end
 
       # Otherwise nothing was able to fetch a license. Throw an exception.
-      logger.debug "License Key fetcher - no license Key able to be fetched."
       raise LicenseKeyNotFetchedError.new("Unable to obtain a License Key.")
     end
 
     def perform_global_operations
-      logger.debug "License Key fetcher examining CLI arg checks"
       new_keys = fetch_license_key_from_arg
       license_type = validate_and_fetch_license_type(new_keys)
       if license_type && !unrestricted_license_added?(new_keys, license_type)
@@ -109,7 +106,6 @@ module ChefLicensing
         return license_keys
       end
 
-      logger.debug "License Key fetcher examining ENV checks"
       new_keys = fetch_license_key_from_env
       license_type = validate_and_fetch_license_type(new_keys)
       if license_type && !unrestricted_license_added?(new_keys, license_type)
@@ -127,7 +123,6 @@ module ChefLicensing
       # Lowest priority is to interactively prompt if we have a TTY
       if config[:output].isatty
         append_extra_info_to_tui_engine # will add extra dynamic values in tui flows
-        logger.debug "License Key fetcher - detected TTY, prompting..."
         new_keys = prompt_fetcher.fetch
 
         unless new_keys.empty?
@@ -153,12 +148,10 @@ module ChefLicensing
       end
 
       # Otherwise nothing was able to fetch a license. Throw an exception.
-      logger.debug "License Key fetcher - no license Key able to be fetched."
       raise LicenseKeyNotFetchedError.new("Unable to obtain a License Key.")
     end
 
     def add_license
-      logger.debug "License Key fetcher - add license flow, starting..."
       if ChefLicensing::Context.local_licensing_service?
         raise LicenseKeyAddNotAllowed.new("'inspec license add' command is not supported with airgapped environment. You cannot generate license from airgapped environment.")
       else
@@ -305,7 +298,6 @@ module ChefLicensing
     end
 
     def prompt_license_addition_restricted(license_type, existing_license_keys_in_file)
-      logger.debug "License Key fetcher - prompting license addition restriction"
       # For trial license
       # TODO for Free Tier License
       config[:start_interaction] = :prompt_license_addition_restriction

@@ -7,7 +7,12 @@ require_relative "../lib/chef-licensing/context"
 RSpec.describe ChefLicensing::LicenseKeyFetcher do
 
   let(:output) { StringIO.new }
-  let(:logger) { Logger.new(output) }
+  let(:logger) {
+    log = Object.new
+    log.extend(Mixlib::Log)
+    log.init(output)
+    log
+  }
   let(:api_version) { 2 }
 
   let(:describe_api_data) { JSON.parse(File.read("spec/fixtures/api_response_data/valid_describe_api_response.json")) }

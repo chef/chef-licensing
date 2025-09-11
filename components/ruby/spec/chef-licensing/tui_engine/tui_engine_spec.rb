@@ -10,7 +10,12 @@ require "chef-licensing/tui_engine/tui_exceptions"
 RSpec.describe ChefLicensing::TUIEngine do
   let(:fixture_dir) { "spec/fixtures/tui_interactions" }
   let(:output) { StringIO.new }
-  let(:logger) { Logger.new(output) }
+  let(:logger) {
+    log = Object.new
+    log.extend(Mixlib::Log)
+    log.init(output)
+    log
+  }
 
   before do
     ChefLicensing.configure do |conf|

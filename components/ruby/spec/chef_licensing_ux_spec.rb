@@ -11,7 +11,13 @@ require "chef-licensing/license_key_fetcher"
 RSpec.describe ChefLicensing::TUIEngine do
   let(:interaction_file) { File.join("lib/chef-licensing/license_key_fetcher", "chef_licensing_interactions.yaml") }
   let(:output) { StringIO.new }
-  let(:logger) { Logger.new(output) }
+  let(:logger) {
+    log = Object.new
+    log.extend(Mixlib::Log)
+    log.init(output)
+    log.level = Mixlib::Log::DEBUG  # Set to DEBUG level to capture all log messages
+    log
+  }
   let(:valid_trial_license_key) { "tmns-58555821-925e-4a27-8fdc-e79dae5a425b-1234" }
   let(:valid_trial_license_key_2) { "tmns-58555821-925e-4a27-8fdc-e79dae5a425b-1235" }
   let(:expired_trial_license_key) { "tmns-58555821-925e-4a27-8fdc-e79dae5a425b-1236" }

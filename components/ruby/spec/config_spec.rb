@@ -7,7 +7,12 @@ RSpec.describe ChefLicensing::Config do
   describe "#configure" do
 
     let(:output) { StringIO.new }
-    let(:logger) { Logger.new(output) }
+    let(:logger) {
+      log = Object.new
+      log.extend(Mixlib::Log)
+      log.init(output)
+      log
+    }
 
     context "default values" do
       it "has make_licensing_optional set to false by default" do

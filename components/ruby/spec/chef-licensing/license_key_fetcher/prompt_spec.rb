@@ -4,7 +4,12 @@ require "logger"
 
 RSpec.describe ChefLicensing::LicenseKeyFetcher::Prompt do
   let(:output) { StringIO.new }
-  let(:logger) { Logger.new(output) }
+  let(:logger) {
+    log = Object.new
+    log.extend(Mixlib::Log)
+    log.init(output)
+    log
+  }
 
   describe "when the user chooses to input license id" do
     # TODO: Implement this test

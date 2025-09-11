@@ -40,7 +40,8 @@ module ChefLicensing
 
       def fetch
         read_license_key_file
-        contents&.key?(:licenses) ? fetch_license_keys(contents[:licenses]) : []
+        # Check if contents is valid and not an error before accessing license data
+        (contents && !contents.is_a?(StandardError) && contents.key?(:licenses)) ? fetch_license_keys(contents[:licenses]) : []
       end
 
       def fetch_license_keys(licenses)
@@ -50,7 +51,8 @@ module ChefLicensing
       def fetch_license_types
         read_license_key_file
 
-        if contents.nil? || contents[:licenses].nil?
+        # Return empty array if contents failed to load, is nil, or has no licenses
+        if contents.is_a?(StandardError) || contents.nil? || contents[:licenses].nil?
           []
         else
           contents[:licenses].collect { |x| x[:license_type] }
@@ -61,7 +63,8 @@ module ChefLicensing
         @active_trial_status = false
         read_license_key_file
 
-        if contents&.key?(:licenses)
+        # Only proceed if contents loaded successfully and contains license data
+        if contents && !contents.is_a?(StandardError) && contents.key?(:licenses)
           @active_trial_status = contents[:licenses].any? { |license| license[:license_type] == :trial && ChefLicensing.client(license_keys: [license[:license_key]]).active? }
         end
         @active_trial_status
@@ -69,7 +72,8 @@ module ChefLicensing
 
       def user_has_active_trial_or_free_license?
         read_license_key_file
-        return false unless contents&.key?(:licenses)
+        # Early return if contents failed to load or doesn't contain license data
+        return false unless contents && !contents.is_a?(StandardError) && contents.key?(:licenses)
 
         all_license_keys = contents[:licenses].collect { |license| license[:license_key] }
         license_obj = ChefLicensing.client(license_keys: all_license_keys)
@@ -87,7 +91,8 @@ module ChefLicensing
 
       def fetch_license_keys_based_on_type(license_type)
         read_license_key_file
-        if contents.nil?
+        # Return empty array if contents failed to load or is nil
+        if contents.is_a?(StandardError) || contents.nil?
           []
         else
           contents[:licenses].collect do |x|
@@ -131,15 +136,21 @@ module ChefLicensing
 
         @contents = load_license_file(license_key_file_path)
 
-        # Two possible cases:
-        # 1. If contents is nil, load basic license data with the latest structure.
-        # 2. If contents is not nil, but the license server URL in contents is different from the system's,
+        # Three possible cases:
+        # 1. If contents is nil or an error occurred while loading, load basic license data with the latest structure.
+        # 2. If contents is not nil and valid, but the license server URL in contents is different from the system's,
         #    update the license server URL in contents and licenses.yaml file.
-        if @contents.nil?
+        # 3. If contents is valid and no update is needed, return the existing license server URL.
+        # Handle error cases first - when file loading failed or contents is nil
+        if @contents.is_a?(StandardError) || @contents.nil?
           url = license_server_url_from_system || license_server_url_from_config
           load_basic_license_data_to_contents(url, [])
         elsif @contents && license_server_url_from_system && license_server_url_from_system != @contents[:license_server_url]
           @contents[:license_server_url] = license_server_url_from_system
+        else
+          # Nothing to change in the file
+          @license_server_url = @contents[:license_server_url]
+          return @license_server_url
         end
 
         # Ensure the license server URL is returned to the caller in all cases
@@ -151,7 +162,6 @@ module ChefLicensing
         ensure
           @license_server_url = @contents[:license_server_url]
         end
-        logger.debug "License server URL: #{@license_server_url}"
         @license_server_url
       end
 
@@ -214,7 +224,6 @@ module ChefLicensing
       def read_license_key_file
         return contents if contents
 
-        logger.debug "Reading license file from #{seek}"
         path = seek
         return nil unless path
 
@@ -239,7 +248,6 @@ module ChefLicensing
           write_license_file(path) # update the license file contents to the latest version
           @contents
         else
-          logger.debug "License File version #{@contents[:file_format_version]} not supported."
           raise ChefLicensing::InvalidFileFormatVersion.new("Unable to read licenses. License File version #{@contents[:file_format_version]} not supported.")
         end
       end
@@ -261,7 +269,6 @@ module ChefLicensing
       def load_license_file(license_key_file_path)
         return unless ::File.exist?(license_key_file_path)
 
-        logger.debug "Reading license_key file at #{license_key_file_path}"
         msg = "Could not read license key file #{license_key_file_path}"
         YAML.load_file(license_key_file_path)
       rescue StandardError => e
@@ -271,8 +278,8 @@ module ChefLicensing
       def load_license_data_to_contents(license_data)
         return unless license_data
 
-        logger.debug "Loading license data to contents"
-        if @contents.nil? || @contents.empty? # this case is likely to happen only during testing
+        # Handle cases where contents failed to load, is nil, or empty
+        if @contents.is_a?(StandardError) || @contents.nil? || @contents.empty? # this case is likely to happen only during testing or when file loading fails
           load_basic_license_data_to_contents(@license_server_url, [license_data])
         elsif @contents[:licenses].nil?
           @contents[:licenses] = [license_data]
@@ -292,7 +299,7 @@ module ChefLicensing
       end
 
       def handle_error(e, message = nil)
-        logger.debug "#{e.backtrace.join("\n\t")}"
+        logger.trace "#{e.backtrace.join("\n\t")}"
         e
       end
 

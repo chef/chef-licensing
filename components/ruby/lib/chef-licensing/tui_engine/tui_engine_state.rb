@@ -19,8 +19,6 @@ module ChefLicensing
       end
 
       def default_action(interaction)
-        logger.debug "Default action called for interaction id: #{interaction.id}"
-
         response = if interaction.messages
                      messages = render_messages(interaction.messages)
                      @prompt.send(interaction.prompt_type, messages, interaction.prompt_attributes)
@@ -29,8 +27,6 @@ module ChefLicensing
                    end
 
         @input.store(interaction.id, response)
-        logger.debug "Response for interaction #{interaction.id} is #{@input[interaction.id]}"
-
         @next_interaction_id = if interaction.paths.size > 1
                                  interaction.response_path_map[response.to_s]
                                elsif interaction.paths.size == 1
