@@ -55,9 +55,6 @@ module ChefLicensing
     # Methods for obtaining consent from the user.
     #
     def fetch_and_persist
-      # Return early if make_licensing_optional is enabled
-      return true if ChefLicensing::Config.make_licensing_optional
-
       if ChefLicensing::Context.local_licensing_service?
         perform_on_prem_operations
       else

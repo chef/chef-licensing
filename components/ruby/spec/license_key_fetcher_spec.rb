@@ -137,7 +137,6 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
         ChefLicensing.configure do |config|
           config.is_local_license_service = nil
           config.license_server_url = "http://localhost-license-server/License"
-          config.make_licensing_optional = false # <-- Ensure licensing is not optional
         end
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
           .to_return(body: { data: ["tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"], status_code: 200 }.to_json,
@@ -162,10 +161,6 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
 
         let(:license_key_fetcher) { described_class.new(opts) }
 
-        it "has make_licensing_optional set to false by default" do
-          expect(ChefLicensing::Config.make_licensing_optional).to eq(false)
-        end
-
         it "adds one license returned by on-prem service" do
           expect(license_key_fetcher.fetch_and_persist).to eq(%w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150})
         end
@@ -186,31 +181,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       ChefLicensing::Context.current_context = nil
     end
 
-    context "when make_licensing_optional is enabled" do
-      let(:opts) {
-        {
-          output: output,
-          logger: logger,
-        }
-      }
-      let(:license_key_fetcher) { described_class.new(opts) }
 
-      before do
-        ChefLicensing.configure do |config|
-          config.make_licensing_optional = true
-        end
-      end
-
-      after do
-        ChefLicensing.configure do |config|
-          config.make_licensing_optional = false
-        end
-      end
-
-      it "returns true immediately without checking licenses" do
-        expect(license_key_fetcher.fetch_and_persist).to eq(true)
-      end
-    end
 
     context "the file does not exist; and no license keys are set either via arg or env" do
       let(:opts) {
@@ -220,10 +191,6 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
         }
       }
       let(:license_key_fetcher) { described_class.new(opts) }
-
-      it "has make_licensing_optional set to false by default" do
-        expect(ChefLicensing::Config.make_licensing_optional).to eq(false)
-      end
 
       it "raises an error" do
         expect { license_key_fetcher.fetch_and_persist }.to raise_error(ChefLicensing::LicenseKeyFetcher::LicenseKeyNotFetchedError)
@@ -270,10 +237,6 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
           .to_return(body: { data: describe_api_data, status_code: 200 }.to_json,
             headers: { content_type: "application/json" })
 
-      end
-
-      it "has make_licensing_optional set to false by default" do
-        expect(ChefLicensing::Config.make_licensing_optional).to eq(false)
       end
 
       it "creates file, persist only trial and not free due to active trial restriction" do
@@ -477,10 +440,6 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
         }
 
         let(:license_key_fetcher) { described_class.new(opts) }
-
-        it "has make_licensing_optional set to false by default" do
-          expect(ChefLicensing::Config.make_licensing_optional).to eq(false)
-        end
 
         it "adds one license returned by on-prem service" do
           expect(license_key_fetcher.fetch_and_persist).to eq(%w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150})
