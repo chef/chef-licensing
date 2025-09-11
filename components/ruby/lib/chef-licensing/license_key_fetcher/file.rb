@@ -271,7 +271,6 @@ module ChefLicensing
 
         msg = "Could not read license key file #{license_key_file_path}"
         YAML.load_file(license_key_file_path)
-        # raise StandardError, "Some issue with the license key file"
       rescue StandardError => e
         handle_error(e, msg)
       end
