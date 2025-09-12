@@ -176,8 +176,6 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       ChefLicensing::Context.current_context = nil
     end
 
-
-
     context "the file does not exist; and no license keys are set either via arg or env" do
       let(:opts) {
         {
