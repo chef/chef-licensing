@@ -217,6 +217,24 @@ RSpec.describe ChefLicensing do
   end
 
   describe ".fetch_and_persist" do
+    context "when licensing is optional" do
+      before do
+        ChefLicensing.configure do |config|
+          config.make_licensing_optional = true
+        end
+      end
+
+      after do
+        ChefLicensing.configure do |config|
+          config.make_licensing_optional = false
+        end
+      end
+
+      it "returns true without fetching license keys" do
+        expect(ChefLicensing.fetch_and_persist).to eq(true)
+      end
+    end
+
     context "when there is no client error" do
       let(:license_keys) { %w{license_key1 license_key2} }
 

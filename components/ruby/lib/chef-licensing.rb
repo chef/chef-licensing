@@ -63,6 +63,9 @@ module ChefLicensing
 
     # @note fetch_and_persist is invoked by chef-products to fetch and persist the license keys
     def fetch_and_persist
+      # Return early if make_licensing_optional is enabled
+      return true if ChefLicensing::Config.make_licensing_optional
+
       ChefLicensing::LicenseKeyFetcher.fetch_and_persist
     rescue ChefLicensing::ClientError => e
       # Checking specific text phrase for entitlement error
