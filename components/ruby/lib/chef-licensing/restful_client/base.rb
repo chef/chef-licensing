@@ -106,7 +106,7 @@ module ChefLicensing
           logger.debug "Connection succeeded to #{url}"
           break response
         rescue RestfulClientConnectionError
-          logger.warn "Connection failed to #{url}"
+          logger.debug "Connection failed to #{url}"
         rescue URI::InvalidURIError
           logger.warn "Invalid URI #{url}"
         end
