@@ -5,7 +5,12 @@ require "logger"
 
 RSpec.describe ChefLicensing::ListLicenseKeys do
 
-  let(:logger) { Logger.new(STDERR) }
+  let(:logger) {
+    log = Object.new
+    log.extend(Mixlib::Log)
+    log.init(STDERR)
+    log
+  }
 
   let(:output_stream) {
     StringIO.new
@@ -25,7 +30,7 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
   let(:describe_api_data) { JSON.parse(File.read("spec/fixtures/api_response_data/valid_describe_api_response.json")) }
 
   before do
-    logger.level = Logger::INFO
+    logger.level = Mixlib::Log::INFO
     ChefLicensing.configure do |conf|
       conf.chef_product_name = "inspec"
       conf.chef_entitlement_id = "testing_entitlement_id"

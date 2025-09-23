@@ -32,6 +32,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "faraday-http-cache"
   spec.add_dependency "activesupport", "~> 7.2", ">= 7.2.2.1"
   spec.add_dependency "tty-spinner", "~> 0.9.3"
+  spec.add_dependency "mixlib-log", "~> 3.0"
 
   # Gem dependency needed with Ruby 3.4 upgrade
   spec.add_dependency "ostruct", "~> 0.1.0"

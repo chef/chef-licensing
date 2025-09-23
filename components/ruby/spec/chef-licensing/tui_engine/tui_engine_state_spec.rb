@@ -7,7 +7,12 @@ require "chef-licensing"
 RSpec.describe ChefLicensing::TUIEngine::TUIEngineState do
 
   let(:output) { StringIO.new }
-  let(:logger) { Logger.new(output) }
+  let(:logger) {
+    log = Object.new
+    log.extend(Mixlib::Log)
+    log.init(output)
+    log
+  }
 
   before do
     ChefLicensing.configure do |conf|

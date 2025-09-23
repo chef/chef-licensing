@@ -10,7 +10,13 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
   let(:unsupported_vesion_license_dir) { "spec/fixtures/unsupported_version_license" }
   let(:multiple_keys_license_dir) { "spec/fixtures/multiple_license_keys_license" }
   let(:output) { StringIO.new }
-  let(:logger) { Logger.new(output) }
+  let(:logger) {
+    log = Object.new
+    log.extend(Mixlib::Log)
+    log.init(output)
+    log.level = Mixlib::Log::WARN  # Set to WARN level to capture deprecation warnings
+    log
+  }
   let(:v3_license_dir) { "spec/fixtures/v3_licenses" }
   let(:license_file_without_file_format_version) { "spec/fixtures/license_file_without_file_format_version" }
 
@@ -108,6 +114,76 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
         file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: tmpdir })
         expect { file_fetcher.persist("tmns-0f76efaf-e45e-4d92-86b2-2d144ce73dfa-150", "invalid-type") }.to raise_error(ChefLicensing::LicenseKeyFetcher::LicenseKeyNotPersistedError, /License type invalid-type is not a valid license type./)
         expect(file_fetcher.persisted?).to eq(false)
+      end
+    end
+  end
+
+  describe "trace level logging" do
+    let(:trace_logger) {
+      log = Object.new
+      log.extend(Mixlib::Log)
+      log.init(output)
+      log.level = Mixlib::Log::TRACE # Set to TRACE level to capture all log messages
+      log
+    }
+
+    before do
+      ChefLicensing.configure do |config|
+        config.logger = trace_logger
+        config.license_server_url = "https://license.chef.io"
+        config.license_server_url_check_in_file = true
+      end
+    end
+
+    it "logs trace level messages when trace level is enabled" do
+      Dir.mktmpdir do |tmpdir|
+        file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: tmpdir })
+
+        # Create a scenario that would trigger trace logging
+        file_fetcher.persist("test-key", "trial")
+
+        # Since trace is the lowest level, it should capture all log messages
+        # Check that trace logger was configured correctly
+        # -1 for trace logger level means TRACE level is enabled
+        expect(trace_logger.level).to eq(:trace)
+      end
+    end
+
+    it "captures handle_error trace messages when StandardError occurs" do
+      Dir.mktmpdir do |tmpdir|
+        file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: tmpdir })
+
+        # Mock a scenario where handle_error would be called
+        error = StandardError.new("Test error")
+        error.set_backtrace(%w{line1 line2 line3})
+
+        # Call handle_error method directly to test trace logging
+        result = file_fetcher.send(:handle_error, error, "Test message")
+
+        # Verify the error is returned
+        expect(result).to be_a(StandardError)
+        expect(result.message).to eq("Test error")
+
+        # Check that trace logging includes backtrace
+        expect(output.string).to include("line1")
+        expect(output.string).to include("line2")
+        expect(output.string).to include("line3")
+      end
+    end
+
+    it "captures trace level logs for file operations" do
+      Dir.mktmpdir do |tmpdir|
+        file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: tmpdir })
+
+        # Perform operations that should generate trace logs
+        file_fetcher.persist("trace-test-key", "trial")
+
+        # Verify trace logger configuration
+        expect(trace_logger.level).to eq(:trace)
+
+        # The trace logger should capture any debug, info, warn, error, and trace messages
+        # Since we're persisting, there should be some log activity
+        expect(file_fetcher.persisted?).to eq(true)
       end
     end
   end

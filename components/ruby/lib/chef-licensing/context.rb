@@ -63,7 +63,6 @@ module ChefLicensing
 
     # The Context allows changing the State object
     def transition_to(state)
-      logger.debug "Chef Licensing Context: Transition to #{state.class}"
       @state = state
       @state.context = self
       @state.options = options

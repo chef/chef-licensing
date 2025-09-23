@@ -117,11 +117,9 @@ module ChefLicensing
       license_keys = opts[:license_keys] || ChefLicensing::LicenseKeyFetcher.fetch({ dir: opts[:dir] })
 
       if license_keys.empty?
-        logger.debug "No license keys found on disk."
         output.puts "No license keys found on disk."
         exit
       end
-      logger.debug "License keys fetched from disk: #{license_keys}"
 
       license_keys
     rescue ChefLicensing::LicenseKeyFetcher::LicenseKeyNotFetchedError => e
@@ -135,7 +133,6 @@ module ChefLicensing
       licenses_metadata = ChefLicensing::Api::Describe.list({
         license_keys: license_keys,
       })
-      logger.debug "License metadata fetched from server: #{licenses_metadata}"
 
       licenses_metadata
     rescue ChefLicensing::DescribeError => e
