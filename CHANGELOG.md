@@ -1,9 +1,17 @@
 # Changelog
 
-<!-- latest_release -->
+<!-- latest_release 1.1.1 -->
+## [1.1.1](https://github.com/chef/chef-licensing/tree/1.1.1) (2025-09-23)
+
+#### Merged Pull Requests
+- CHEF-23442 Added trace level logging [#205](https://github.com/chef/chef-licensing/pull/205) ([Nik08](https://github.com/Nik08))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=1.1.0 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- CHEF-23442 Added trace level logging [#205](https://github.com/chef/chef-licensing/pull/205) ([Nik08](https://github.com/Nik08)) <!-- 1.1.1 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
