@@ -103,6 +103,16 @@ RSpec.describe ChefLicensing do
 
       it { expect { subject }.to raise_error(ChefLicensing::ClientError) }
     end
+
+    context "when licensing is optional" do
+      before do
+        allow(ChefLicensing::Config).to receive(:make_licensing_optional).and_return(true)
+      end
+
+      it "returns true without checking license" do
+        expect(described_class.check_feature_entitlement!(feature_name: feature, feature_id: nil)).to eq(true)
+      end
+    end
   end
 
   describe ".check_software_entitlement!" do
@@ -153,6 +163,16 @@ RSpec.describe ChefLicensing do
 
       it { expect { subject }.to raise_error(ChefLicensing::ClientError) }
     end
+
+    context "when licensing is optional" do
+      before do
+        allow(ChefLicensing::Config).to receive(:make_licensing_optional).and_return(true)
+      end
+
+      it "returns true without checking license" do
+        expect(described_class.check_software_entitlement!).to eq(true)
+      end
+    end
   end
 
   describe ".configure" do
@@ -182,9 +202,39 @@ RSpec.describe ChefLicensing do
       expect(ChefLicensing::Config.chef_entitlement_id).to eq(chef_entitlement_id)
       expect(ChefLicensing::Config.logger).to eq(logger)
     end
+
+    context "when configuring optional licensing" do
+      before do
+        described_class.configure do |config|
+          config.make_licensing_optional = true
+        end
+      end
+
+      it "sets the make_licensing_optional configuration" do
+        expect(ChefLicensing::Config.make_licensing_optional).to eq(true)
+      end
+    end
   end
 
   describe ".fetch_and_persist" do
+    context "when licensing is optional" do
+      before do
+        ChefLicensing.configure do |config|
+          config.make_licensing_optional = true
+        end
+      end
+
+      after do
+        ChefLicensing.configure do |config|
+          config.make_licensing_optional = false
+        end
+      end
+
+      it "returns true without fetching license keys" do
+        expect(ChefLicensing.fetch_and_persist).to eq(true)
+      end
+    end
+
     context "when there is no client error" do
       let(:license_keys) { %w{license_key1 license_key2} }
 

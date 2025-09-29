@@ -141,13 +141,29 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
           .to_return(body: { data: ["tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"], status_code: 200 }.to_json,
           headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
+                headers: { content_type: "application/json" })
         ChefLicensing::Context.current_context = nil
       end
 
-      let(:license_key_fetcher) { ChefLicensing::LicenseKeyFetcher.new(opts) }
+      Dir.mktmpdir do |tmpdir|
+        let(:opts) {
+          {
+            logger: logger,
+            argv: argv,
+            env: env,
+            output: output,
+            dir: tmpdir,
+          }
+        }
 
-      it "returns key fetched using on-prem service" do
-        expect(license_key_fetcher.fetch).to eq(["tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"])
+        let(:license_key_fetcher) { described_class.new(opts) }
+
+        it "adds one license returned by on-prem service" do
+          expect(license_key_fetcher.fetch_and_persist).to eq(%w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150})
+        end
       end
     end
   end
@@ -173,6 +189,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
         }
       }
       let(:license_key_fetcher) { described_class.new(opts) }
+
       it "raises an error" do
         expect { license_key_fetcher.fetch_and_persist }.to raise_error(ChefLicensing::LicenseKeyFetcher::LicenseKeyNotFetchedError)
       end
@@ -219,6 +236,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
             headers: { content_type: "application/json" })
 
       end
+
       it "creates file, persist only trial and not free due to active trial restriction" do
         expect(license_key_fetcher.fetch_and_persist).to eq(["tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"])
       end
@@ -420,6 +438,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
         }
 
         let(:license_key_fetcher) { described_class.new(opts) }
+
         it "adds one license returned by on-prem service" do
           expect(license_key_fetcher.fetch_and_persist).to eq(%w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150})
         end
