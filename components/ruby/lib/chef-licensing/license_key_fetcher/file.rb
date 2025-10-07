@@ -136,19 +136,35 @@ module ChefLicensing
 
         @contents = load_license_file(license_key_file_path)
 
-        # Three possible cases:
-        # 1. If contents is nil or an error occurred while loading, load basic license data with the latest structure.
-        # 2. If contents is not nil and valid, but the license server URL in contents is different from the system's,
-        #    update the license server URL in contents and licenses.yaml file.
-        # 3. If contents is valid and no update is needed, return the existing license server URL.
+        # Allow developers to opt-out of using system-provided license server URLs
+        # (for example CI/developer envs that set CHEF_LICENSE_SERVER). When the
+        # env var CHEF_LICENSE_IGNORE_SYSTEM_LICENSE_SERVER is set we will not
+        # consider the system value for persisting into the licenses.yaml file.
+        if ENV["CHEF_LICENSE_IGNORE_SYSTEM_LICENSE_SERVER"]
+          logger.debug("Ignoring system-provided license server URL due to CHEF_LICENSE_IGNORE_SYSTEM_LICENSE_SERVER") if logger
+          license_server_url_from_system = nil
+        end
+
+        # Decide when to update the license_server_url persisted in licenses.yaml.
+        # Priority (highest -> lowest):
+        # 1. Explicit config/CLI value (license_server_url_from_config)
+        # 2. Existing value in the file (do not let system/env override it)
+        # 3. System/env value (license_server_url_from_system) only if file is absent
         # Handle error cases first - when file loading failed or contents is nil
         if @contents.is_a?(StandardError) || @contents.nil?
+          # No existing file or failed to load: prefer system value but fall back to config
           url = license_server_url_from_system || license_server_url_from_config
           load_basic_license_data_to_contents(url, [])
-        elsif @contents && license_server_url_from_system && license_server_url_from_system != @contents[:license_server_url]
+        elsif license_server_url_from_config && license_server_url_from_config != @contents[:license_server_url]
+          # An explicit config/arg should overwrite the persisted value
+          @contents[:license_server_url] = license_server_url_from_config
+        elsif license_server_url_from_system && license_server_url_from_system != @contents[:license_server_url]
+          # If a system-provided value (ENV/CLI) is present and differs from the
+          # persisted value, treat it as an explicit override unless the caller
+          # has intentionally set CHEF_LICENSE_IGNORE_SYSTEM_LICENSE_SERVER.
           @contents[:license_server_url] = license_server_url_from_system
         else
-          # Nothing to change in the file
+          # Nothing to change in the file: return the existing persisted value
           @license_server_url = @contents[:license_server_url]
           return @license_server_url
         end
