@@ -30,7 +30,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "tty-prompt", "~> 0.23"
   spec.add_dependency "faraday", ">= 1", "< 2"
   spec.add_dependency "faraday-http-cache"
-  spec.add_dependency "activesupport", "~> 7.2", ">= 7.2.2.1"
+  spec.add_dependency "activesupport", "> 7.1.3.2", "< 7.2"
   spec.add_dependency "tty-spinner", "~> 0.9.3"
   spec.add_dependency "mixlib-log", "~> 3.0"
 
