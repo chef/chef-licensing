@@ -1,6 +1,6 @@
 ---
 :file_format_version: 4.0.0
-:license_server_url: https://custom-licensing-server.com/License
+:license_server_url: https://licensing-acceptance.chef.co/License
 :licenses:
 - :license_key: tmns-6544d799-f03c-0000-9b16-8b731cab93ba-0000
   :license_type: :trial
