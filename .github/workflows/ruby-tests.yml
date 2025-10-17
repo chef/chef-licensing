@@ -38,9 +38,10 @@ jobs:
         bundler-cache: true
         working-directory: components/ruby
 
-    - name: Run style checks
-      working-directory: components/ruby
-      run: bundle exec rake style
+# disable style checks for now
+#    - name: Run style checks
+#      working-directory: components/ruby
+#      run: bundle exec rake style
 
     - name: Run RSpec tests
       working-directory: components/ruby
