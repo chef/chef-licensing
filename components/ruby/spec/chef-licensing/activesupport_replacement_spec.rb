@@ -63,7 +63,7 @@ RSpec.describe ChefLicensing::MonetaAdapter do
     adapter.write("test_key", "test_value")
     expect(adapter.read("test_key")).to eq("test_value")
     expect(adapter.exist?("test_key")).to be true
-    
+
     adapter.delete("test_key")
     expect(adapter.read("test_key")).to be_nil
   end
