@@ -47,43 +47,6 @@ jobs:
       working-directory: components/ruby
       run: bundle exec rake spec
 
-    - name: Verify ActiveSupport removal
-      working-directory: components/ruby
-      run: |
-        echo "Checking that ActiveSupport is not required in the codebase..."
-        if grep -r "require.*active_support\|require.*activesupport" lib/ --exclude-dir=vendor || \
-           grep -r "ActiveSupport::" lib/ --exclude-dir=vendor; then
-          echo "❌ Found ActiveSupport usage in the codebase!"
-          exit 1
-        else
-          echo "✅ No ActiveSupport usage found in the codebase"
-        fi
-
-    - name: Verify cache functionality
-      working-directory: components/ruby
-      run: |
-        echo "Testing Moneta cache implementation..."
-        bundle exec ruby -e "
-          require_relative 'lib/chef-licensing/moneta_adapter'
-          require 'tmpdir'
-
-          Dir.mktmpdir do |tmpdir|
-            # Test MonetaAdapter
-            adapter = ChefLicensing::MonetaAdapter.new(tmpdir)
-            adapter.write('test_key', 'test_value')
-            value = adapter.read('test_key')
-            raise 'Cache read/write failed' unless value == 'test_value'
-
-            # Test existence check
-            raise 'Exist check failed' unless adapter.exist?('test_key')
-
-            # Test deletion
-            adapter.delete('test_key')
-            raise 'Deletion failed' unless !adapter.exist?('test_key')
-
-            puts '✅ Moneta cache adapter works correctly'
-          end
-        "
 
   activesupport-replacement-validation:
     name: ActiveSupport Replacement Validation
