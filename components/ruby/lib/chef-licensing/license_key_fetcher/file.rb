@@ -228,7 +228,7 @@ module ChefLicensing
         return nil unless path
 
         # only checking for major version for file format for breaking changes
-        @contents ||= YAML.load(::File.read(path))
+        @contents ||= YAML.load_file(path)
 
         # raise error if the file_format_version key is missing
         raise LicenseFileCorrupted.new("Unrecognized license file; :file_format_version missing.") unless @contents.key?(:file_format_version)

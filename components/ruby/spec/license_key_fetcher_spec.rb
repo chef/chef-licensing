@@ -38,7 +38,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       ChefLicensing::Context.current_context = nil
       stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
         .to_return(body: { data: [], status_code: 404 }.to_json,
-                  headers: { content_type: "application/json" })
+          headers: { content_type: "application/json" })
     end
 
     context "the license keys are passed in via the CLI with space and ENV; & file doesn't exist" do
@@ -140,11 +140,11 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
         end
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
           .to_return(body: { data: ["tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"], status_code: 200 }.to_json,
-          headers: { content_type: "application/json" })
+            headers: { content_type: "application/json" })
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
           .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
-                headers: { content_type: "application/json" })
+            headers: { content_type: "application/json" })
         ChefLicensing::Context.current_context = nil
       end
 
@@ -177,7 +177,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       end
       stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
         .to_return(body: { data: [], status_code: 404 }.to_json,
-                  headers: { content_type: "application/json" })
+          headers: { content_type: "application/json" })
       ChefLicensing::Context.current_context = nil
     end
 
@@ -213,23 +213,23 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
           .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", version: api_version })
           .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
-                     headers: { content_type: "application/json" })
+            headers: { content_type: "application/json" })
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
           .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111", version: api_version })
           .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
-                  headers: { content_type: "application/json" })
+            headers: { content_type: "application/json" })
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
           .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
-                    headers: { content_type: "application/json" })
+            headers: { content_type: "application/json" })
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
           .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111", entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: client_api_free_license_data, status_code: 200 }.to_json,
-                  headers: { content_type: "application/json" })
+            headers: { content_type: "application/json" })
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
           .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
-                     headers: { content_type: "application/json" })
+            headers: { content_type: "application/json" })
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
           .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: describe_api_data, status_code: 200 }.to_json,
@@ -250,23 +250,23 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
           .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", version: api_version })
           .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
-                     headers: { content_type: "application/json" })
+            headers: { content_type: "application/json" })
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
           .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111", version: api_version })
           .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
-                  headers: { content_type: "application/json" })
+            headers: { content_type: "application/json" })
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
           .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
-                  headers: { content_type: "application/json" })
+            headers: { content_type: "application/json" })
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
           .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111", entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: client_api_free_license_data, status_code: 200 }.to_json,
-                  headers: { content_type: "application/json" })
+            headers: { content_type: "application/json" })
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
           .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
-                     headers: { content_type: "application/json" })
+            headers: { content_type: "application/json" })
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
           .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: describe_api_data, status_code: 200 }.to_json,
@@ -307,11 +307,11 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
             "limits" => [
                {
                 "testing" => "software",
-                 "id" => "guid",
-                 "amount" => 2,
-                 "measure" => "nodes",
-                 "used" => 2,
-                 "status" => "Active",
+                "id" => "guid",
+                "amount" => 2,
+                "measure" => "nodes",
+                "used" => 2,
+                "status" => "Active",
                },
             ],
           }],
@@ -370,19 +370,19 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
           .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111", version: api_version })
           .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
-                  headers: { content_type: "application/json" })
+            headers: { content_type: "application/json" })
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
           .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-112", version: api_version })
           .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
-                headers: { content_type: "application/json" })
+            headers: { content_type: "application/json" })
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
           .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111", entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: client_api_free_license_data, status_code: 200 }.to_json,
-                  headers: { content_type: "application/json" })
+            headers: { content_type: "application/json" })
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
           .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-112", entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: client_api_free_license_data, status_code: 200 }.to_json,
-                headers: { content_type: "application/json" })
+            headers: { content_type: "application/json" })
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
           .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-112", entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: describe_api_data, status_code: 200 }.to_json,
@@ -418,11 +418,11 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
         end
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
           .to_return(body: { data: ["tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"], status_code: 200 }.to_json,
-          headers: { content_type: "application/json" })
+            headers: { content_type: "application/json" })
         stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
           .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
           .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
-                headers: { content_type: "application/json" })
+            headers: { content_type: "application/json" })
         ChefLicensing::Context.current_context = nil
       end
 
@@ -493,11 +493,11 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
           stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
             .with(query: { licenseId: license_keys.first, version: api_version })
             .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
-                       headers: { content_type: "application/json" })
+              headers: { content_type: "application/json" })
           stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
             .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
             .to_return(body: { data: client_data_about_to_expire_in_1_day, status_code: 200 }.to_json,
-                       headers: { content_type: "application/json" })
+              headers: { content_type: "application/json" })
         end
 
         it "works correctly but doesn't prints any output of trial warning" do
@@ -517,7 +517,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       end
       stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
         .to_return(body: { data: [], status_code: 404 }.to_json,
-                  headers: { content_type: "application/json" })
+          headers: { content_type: "application/json" })
       ChefLicensing::Context.current_context = nil
     end
 
@@ -676,7 +676,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       end
       stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
         .to_return(body: { data: [], status_code: 404 }.to_json,
-                  headers: { content_type: "application/json" })
+          headers: { content_type: "application/json" })
       ChefLicensing::Context.current_context = nil
     end
 
@@ -732,11 +732,11 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
           stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
             .with(query: { licenseId: license_keys.first, version: api_version })
             .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
-                       headers: { content_type: "application/json" })
+              headers: { content_type: "application/json" })
           stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
             .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
             .to_return(body: { data: client_data_about_to_expire_in_1_day, status_code: 200 }.to_json,
-                       headers: { content_type: "application/json" })
+              headers: { content_type: "application/json" })
         end
 
         it "nags that it is about to expire" do
@@ -791,11 +791,11 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
           stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
             .with(query: { licenseId: license_keys.first, version: api_version })
             .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
-                       headers: { content_type: "application/json" })
+              headers: { content_type: "application/json" })
           stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
             .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
             .to_return(body: { data: client_data_about_to_expire_in_2_days, status_code: 200 }.to_json,
-                       headers: { content_type: "application/json" })
+              headers: { content_type: "application/json" })
         end
 
         it "nags that it is about to expire" do
@@ -850,11 +850,11 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
           stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
             .with(query: { licenseId: license_keys.first, version: api_version })
             .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
-                       headers: { content_type: "application/json" })
+              headers: { content_type: "application/json" })
           stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
             .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
             .to_return(body: { data: client_data_about_to_expire_in_7_days, status_code: 200 }.to_json,
-                       headers: { content_type: "application/json" })
+              headers: { content_type: "application/json" })
         end
 
         it "nags that it is about to expire" do
@@ -909,11 +909,11 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
           stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
             .with(query: { licenseId: license_keys.first, version: api_version })
             .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
-                       headers: { content_type: "application/json" })
+              headers: { content_type: "application/json" })
           stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
             .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
             .to_return(body: { data: client_data_about_to_expire_in_8_days, status_code: 200 }.to_json,
-                       headers: { content_type: "application/json" })
+              headers: { content_type: "application/json" })
         end
 
         it "does not nags that it is about to expire" do
@@ -969,11 +969,11 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
             stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
               .with(query: { licenseId: license_keys.first, version: api_version })
               .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
-                        headers: { content_type: "application/json" })
+                headers: { content_type: "application/json" })
             stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
               .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
               .to_return(body: { data: client_data_expired, status_code: 200 }.to_json,
-                        headers: { content_type: "application/json" })
+                headers: { content_type: "application/json" })
           end
 
           it { expect { license_key_fetcher.fetch_and_persist }.to raise_error(ChefLicensing::LicenseKeyFetcher::LicenseKeyNotFetchedError) }
@@ -1029,11 +1029,11 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
               stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
                 .with(query: { licenseId: license_keys.first, version: api_version })
                 .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
-                          headers: { content_type: "application/json" })
+                  headers: { content_type: "application/json" })
               stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
                 .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
                 .to_return(body: { data: client_data_expired, status_code: 200 }.to_json,
-                          headers: { content_type: "application/json" })
+                  headers: { content_type: "application/json" })
             end
 
             it { expect(license_key_fetcher.fetch_and_persist).to eq(["HA0D5BABCDEFG7X2E8SXYZ4MV4"]) }
@@ -1063,15 +1063,15 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
               ChefLicensing::Context.current_context = nil
               stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
                 .to_return(body: { data: ["HA0D5BABCDEFG7X2E8SXYZ4MV4"], status_code: 200 }.to_json,
-                headers: { content_type: "application/json" })
+                  headers: { content_type: "application/json" })
               stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
                 .with(query: { licenseId: license_keys.first, version: api_version })
                 .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
-                headers: { content_type: "application/json" })
+                  headers: { content_type: "application/json" })
               stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
                 .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
                 .to_return(body: { data: client_data_expired, status_code: 200 }.to_json,
-                headers: { content_type: "application/json" })
+                  headers: { content_type: "application/json" })
             end
 
             it { expect(license_key_fetcher.fetch_and_persist).to eq(["HA0D5BABCDEFG7X2E8SXYZ4MV4"]) }
@@ -1086,7 +1086,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
           end
           stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
             .to_return(body: { data: [], status_code: 404 }.to_json,
-                      headers: { content_type: "application/json" })
+              headers: { content_type: "application/json" })
           ChefLicensing::Context.current_context = nil
         end
         let(:client_data_expired) {
@@ -1134,23 +1134,23 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
             stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
               .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", version: api_version })
               .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
-                        headers: { content_type: "application/json" })
+                headers: { content_type: "application/json" })
             stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
               .with(query: { licenseId: "tmns-0ac34ff6-51e7-46f5-ba1b-7cac36a7361e-9238", version: api_version })
               .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
-                      headers: { content_type: "application/json" })
+                headers: { content_type: "application/json" })
             stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
               .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
               .to_return(body: { data: client_data_expired, status_code: 200 }.to_json,
-                        headers: { content_type: "application/json" })
+                headers: { content_type: "application/json" })
             stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
               .with(query: { licenseId: "tmns-0ac34ff6-51e7-46f5-ba1b-7cac36a7361e-9238", entitlementId: ChefLicensing::Config.chef_entitlement_id })
               .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
-                      headers: { content_type: "application/json" })
+                headers: { content_type: "application/json" })
             stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
               .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
               .to_return(body: { data: client_data_expired, status_code: 200 }.to_json,
-                      headers: { content_type: "application/json" })
+                headers: { content_type: "application/json" })
           end
 
           it "raises an exception and it still enables hard enforcement" do
@@ -1168,7 +1168,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       end
       stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
         .to_return(body: { data: [], status_code: 404 }.to_json,
-                  headers: { content_type: "application/json" })
+          headers: { content_type: "application/json" })
       ChefLicensing::Context.current_context = nil
     end
 
@@ -1202,11 +1202,11 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
           stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
             .with(query: { licenseId: license_keys.first, version: api_version })
             .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
-                       headers: { content_type: "application/json" })
+              headers: { content_type: "application/json" })
           stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
             .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
             .to_return(body: { data: exhausted_commercial_client_api_data, status_code: 200 }.to_json,
-                       headers: { content_type: "application/json" })
+              headers: { content_type: "application/json" })
         end
 
         it "nags that it is about to expire" do
@@ -1234,11 +1234,11 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
           stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
             .with(query: { licenseId: free_license_keys.first, version: api_version })
             .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
-                       headers: { content_type: "application/json" })
+              headers: { content_type: "application/json" })
           stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
             .with(query: { licenseId: free_license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
             .to_return(body: { data: exhausted_free_client_api_data, status_code: 200 }.to_json,
-                       headers: { content_type: "application/json" })
+              headers: { content_type: "application/json" })
         end
 
         it "nags that it is about to expire and raises an exception" do
@@ -1267,23 +1267,23 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
           stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
             .with(query: { licenseId: "free-11eef3a8-1234-4b4c-567d-dd8c1234567d-890", version: api_version })
             .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
-                       headers: { content_type: "application/json" })
+              headers: { content_type: "application/json" })
           stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
             .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111", version: api_version })
             .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
-                    headers: { content_type: "application/json" })
+              headers: { content_type: "application/json" })
           stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
             .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111", entitlementId: ChefLicensing::Config.chef_entitlement_id })
             .to_return(body: { data: client_api_free_license_data, status_code: 200 }.to_json,
-                      headers: { content_type: "application/json" })
+              headers: { content_type: "application/json" })
           stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
             .with(query: { licenseId: "free-11eef3a8-1234-4b4c-567d-dd8c1234567d-890", entitlementId: ChefLicensing::Config.chef_entitlement_id })
             .to_return(body: { data: exhausted_free_client_api_data, status_code: 200 }.to_json,
-                      headers: { content_type: "application/json" })
+              headers: { content_type: "application/json" })
           stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
             .with(query: { licenseId: free_license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
             .to_return(body: { data: exhausted_free_client_api_data, status_code: 200 }.to_json,
-                       headers: { content_type: "application/json" })
+              headers: { content_type: "application/json" })
         end
 
         it "raises an exception and it still enables hard enforcement" do

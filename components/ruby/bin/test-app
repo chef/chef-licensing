@@ -16,4 +16,4 @@ ChefLicensing::LicenseKeyFetcher.fetch_and_persist(logger: logger).each do |lice
   puts "License Key: #{license_key}"
 end
 
-puts "Airgap is " + (ChefLicensing.air_gap_detected? ? true : false)
+puts "Airgap is " + (ChefLicensing.air_gap_detected? || false)

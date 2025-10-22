@@ -254,7 +254,7 @@ module ChefLicensing
     def validate_and_fetch_license_type(new_keys)
       unless new_keys.empty?
         is_valid = validate_license_key(new_keys.first)
-        return get_license_type(new_keys.first) if is_valid
+        get_license_type(new_keys.first) if is_valid
       end
     end
 

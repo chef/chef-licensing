@@ -32,11 +32,11 @@ RSpec.describe ChefLicensing::Context do
     ChefLicensing::Context.current_context = nil
     stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
       .to_return(body: { data: ["tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"], status_code: 200 }.to_json,
-    headers: { content_type: "application/json" })
+        headers: { content_type: "application/json" })
     stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
       .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
       .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
-              headers: { content_type: "application/json" })
+        headers: { content_type: "application/json" })
   end
 
   describe "Fetching license context" do

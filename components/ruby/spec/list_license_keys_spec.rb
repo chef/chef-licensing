@@ -45,7 +45,7 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
     stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
       .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
       .to_return(body: { data: describe_api_data, status_code: 200 }.to_json,
-                 headers: { content_type: "application/json" })
+        headers: { content_type: "application/json" })
   end
 
   describe "when there are no license_keys on the system" do
@@ -76,7 +76,7 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
       stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
         .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
         .to_return(body: { status_code: 404 }.to_json,
-                   headers: { content_type: "application/json" })
+          headers: { content_type: "application/json" })
     end
 
     it "exits with error message about DescribeError" do
@@ -97,7 +97,7 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
     before do
       stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
         .to_return(body: { data: [], status_code: 404 }.to_json,
-                  headers: { content_type: "application/json" })
+          headers: { content_type: "application/json" })
       ChefLicensing::Context.current_context = nil
     end
 
@@ -123,7 +123,7 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
       end
       stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
         .to_return(body: { data: ["tmns-bea68bbb-1e85-44ea-8b98-a654b011174b-4227"], status_code: 200 }.to_json,
-        headers: { content_type: "application/json" })
+          headers: { content_type: "application/json" })
       ChefLicensing::Context.current_context = nil
     end
 
