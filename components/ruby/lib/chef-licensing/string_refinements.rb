@@ -7,7 +7,7 @@ module ChefLicensing
         return self if count == 1
 
         # Simple pluralization rules
-        case self.downcase
+        case downcase
         when /s$/, /sh$/, /ch$/, /x$/, /z$/
           "#{self}es"
         when /[^aeiou]y$/
