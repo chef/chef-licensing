@@ -16,7 +16,7 @@ task :style do
     sh "cookstyle --chefstyle -c .rubocop.yml"
   end
 rescue LoadError
-  puts "Rubocop or Cookstyle gems are not installed. bundle install first to make sure all dependencies are installed."
+  puts "RuboCop or Cookstyle gems are not installed. bundle install first to make sure all dependencies are installed."
 end
 
 task default: :spec
