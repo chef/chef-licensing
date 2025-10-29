@@ -5,7 +5,7 @@ require_relative "../exceptions/restful_client_error"
 require_relative "../exceptions/restful_client_connection_error"
 require_relative "../exceptions/missing_api_credentials_error"
 require_relative "../config"
-require_relative "../moneta_adapter"
+require_relative "../pstore_adapter"
 require_relative "middleware/exceptions_handler"
 require_relative "middleware/content_type_validator"
 
@@ -132,7 +132,7 @@ module ChefLicensing
       end
 
       def get_connection(url = nil)
-        store = MonetaAdapter.new(Dir.tmpdir)
+        store = PStoreAdapter.new(Dir.tmpdir)
         Faraday.new(url: url) do |config|
           config.request :json
           config.response :json, parser_options: { object_class: OpenStruct }

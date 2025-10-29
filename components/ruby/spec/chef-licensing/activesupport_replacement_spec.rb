@@ -1,8 +1,8 @@
 require "spec_helper"
-require "chef-licensing/moneta_adapter"
+require "chef-licensing/pstore_adapter"
 require "chef-licensing/string_refinements"
 
-RSpec.describe ChefLicensing::MonetaAdapter do
+RSpec.describe ChefLicensing::PStoreAdapter do
   let(:cache_dir) { Dir.mktmpdir }
   let(:adapter) { described_class.new(cache_dir) }
 
@@ -51,7 +51,7 @@ RSpec.describe ChefLicensing::MonetaAdapter do
   end
 end
 
-RSpec.describe ChefLicensing::MonetaAdapter do
+RSpec.describe ChefLicensing::PStoreAdapter do
   let(:cache_dir) { Dir.mktmpdir }
   let(:adapter) { described_class.new(cache_dir) }
 
