@@ -1,4 +1,5 @@
 require "faraday" unless defined?(Faraday)
+require "faraday_middleware"
 require "faraday/http_cache"
 require "tmpdir" unless defined?(Dir.mktmpdir)
 require_relative "../exceptions/restful_client_error"
