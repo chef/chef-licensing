@@ -3,9 +3,11 @@ require_relative "api/describe"
 require_relative "exceptions/describe_error"
 require "pastel" unless defined?(Pastel)
 require_relative "config"
+require_relative "string_refinements"
 
 module ChefLicensing
   class ListLicenseKeys
+    using StringRefinements
     def self.display(opts = {})
       new(opts).display
     end

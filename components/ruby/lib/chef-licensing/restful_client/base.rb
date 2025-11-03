@@ -1,11 +1,12 @@
 require "faraday" unless defined?(Faraday)
+require "faraday_middleware"
 require "faraday/http_cache"
-require "active_support"
 require "tmpdir" unless defined?(Dir.mktmpdir)
 require_relative "../exceptions/restful_client_error"
 require_relative "../exceptions/restful_client_connection_error"
 require_relative "../exceptions/missing_api_credentials_error"
 require_relative "../config"
+require_relative "../pstore_adapter"
 require_relative "middleware/exceptions_handler"
 require_relative "middleware/content_type_validator"
 
@@ -132,7 +133,7 @@ module ChefLicensing
       end
 
       def get_connection(url = nil)
-        store = ::ActiveSupport::Cache.lookup_store(:file_store, Dir.tmpdir)
+        store = PStoreAdapter.new(Dir.tmpdir)
         Faraday.new(url: url) do |config|
           config.request :json
           config.response :json, parser_options: { object_class: OpenStruct }
