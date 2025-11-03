@@ -1,27 +1,24 @@
 # Changelog
 
-<!-- latest_release 1.3.0 -->
-## [1.3.0](https://github.com/chef/chef-licensing/tree/1.3.0) (2025-11-03)
-
-#### Merged Pull Requests
-- Remove activesupport due to its volatility and potential to generate … [#211](https://github.com/chef/chef-licensing/pull/211) ([tpowell-progress](https://github.com/tpowell-progress))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=1.2.0 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Remove activesupport due to its volatility and potential to generate … [#211](https://github.com/chef/chef-licensing/pull/211) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 1.3.0 -->
-- Updating linting and cookstyle support [#212](https://github.com/chef/chef-licensing/pull/212) ([johnmccrae](https://github.com/johnmccrae)) <!-- 1.2.1 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [1.3.0](https://github.com/chef/chef-licensing/tree/1.3.0) (2025-11-03)
+
+#### Merged Pull Requests
+- Updating linting and cookstyle support [#212](https://github.com/chef/chef-licensing/pull/212) ([johnmccrae](https://github.com/johnmccrae))
+- Remove activesupport due to its volatility and potential to generate … [#211](https://github.com/chef/chef-licensing/pull/211) ([tpowell-progress](https://github.com/tpowell-progress))
+<!-- latest_stable_release -->
+
 ## [1.2.0](https://github.com/chef/chef-licensing/tree/1.2.0) (2025-09-29)
 
 #### Merged Pull Requests
 - CHEF-23442 Added trace level logging [#205](https://github.com/chef/chef-licensing/pull/205) ([Nik08](https://github.com/Nik08))
 - CHEF-23313 Licensing optional mode changes [#201](https://github.com/chef/chef-licensing/pull/201) ([Nik08](https://github.com/Nik08))
-<!-- latest_stable_release -->
 
 ## [1.1.0](https://github.com/chef/chef-licensing/tree/1.1.0) (2025-07-14)
 
