@@ -63,7 +63,7 @@ RSpec.describe ChefLicensing::Api::LicenseFeatureEntitlement do
         stub_request(:post, "#{ChefLicensing::Config.license_server_url}/license-service/featurebyname")
           .with(body: payload)
           .to_return(body: successful_response.to_json,
-                     headers: { content_type: "application/json" })
+            headers: { content_type: "application/json" })
       end
       it { is_expected.to be_truthy }
 
@@ -85,7 +85,7 @@ RSpec.describe ChefLicensing::Api::LicenseFeatureEntitlement do
           stub_request(:post, "#{ChefLicensing::Config.license_server_url}/license-service/featurebyname")
             .with(body: payload)
             .to_return(body: invalid_license_response.to_json,
-                       headers: { content_type: "application/json" }, status: 400)
+              headers: { content_type: "application/json" }, status: 400)
         end
 
         it { expect { subject }.to raise_error(ChefLicensing::RestfulClientError) }
@@ -104,7 +104,7 @@ RSpec.describe ChefLicensing::Api::LicenseFeatureEntitlement do
           stub_request(:post, "#{ChefLicensing::Config.license_server_url}/license-service/featurebyname")
             .with(body: payload)
             .to_return(body: failure_response.to_json,
-                       headers: { content_type: "application/json" })
+              headers: { content_type: "application/json" })
         end
 
         it { expect { subject }.to raise_error(ChefLicensing::FeatureNotEntitled) }
@@ -135,7 +135,7 @@ RSpec.describe ChefLicensing::Api::LicenseFeatureEntitlement do
         stub_request(:post, "#{ChefLicensing::Config.license_server_url}/license-service/featurebyid")
           .with(body: payload)
           .to_return(body: successful_response.to_json,
-                     headers: { content_type: "application/json" })
+            headers: { content_type: "application/json" })
       end
       it { is_expected.to be_truthy }
 
@@ -157,7 +157,7 @@ RSpec.describe ChefLicensing::Api::LicenseFeatureEntitlement do
           stub_request(:post, "#{ChefLicensing::Config.license_server_url}/license-service/featurebyid")
             .with(body: payload)
             .to_return(body: invalid_license_response.to_json,
-                       headers: { content_type: "application/json" }, status: 400)
+              headers: { content_type: "application/json" }, status: 400)
         end
 
         it { expect { subject }.to raise_error(ChefLicensing::RestfulClientError) }
@@ -176,7 +176,7 @@ RSpec.describe ChefLicensing::Api::LicenseFeatureEntitlement do
           stub_request(:post, "#{ChefLicensing::Config.license_server_url}/license-service/featurebyid")
             .with(body: payload)
             .to_return(body: failure_response.to_json,
-                       headers: { content_type: "application/json" })
+              headers: { content_type: "application/json" })
         end
 
         it { expect { subject }.to raise_error(ChefLicensing::FeatureNotEntitled) }
@@ -184,4 +184,3 @@ RSpec.describe ChefLicensing::Api::LicenseFeatureEntitlement do
     end
   end
 end
-

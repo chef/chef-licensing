@@ -8,7 +8,7 @@ RSpec.describe ChefLicensing::RestfulClient::V1 do
     log = Object.new
     log.extend(Mixlib::Log)
     log.init(output)
-    log.level = Mixlib::Log::DEBUG  # Set to DEBUG level to capture all log messages
+    log.level = Mixlib::Log::DEBUG # Set to DEBUG level to capture all log messages
     log
   }
   let(:free_license_key) { "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111" }
@@ -29,7 +29,7 @@ RSpec.describe ChefLicensing::RestfulClient::V1 do
       stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
         .with(query: { licenseId: free_license_key, version: 2 })
         .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
-                  headers: { content_type: "application/json" })
+          headers: { content_type: "application/json" })
     end
 
     let(:base_obj) { described_class.new }
@@ -60,7 +60,7 @@ RSpec.describe ChefLicensing::RestfulClient::V1 do
       stub_request(:get, "http://localhost-2-license-server/License/v1/validate")
         .with(query: { licenseId: free_license_key, version: 2 })
         .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
-                  headers: { content_type: "application/json" })
+          headers: { content_type: "application/json" })
     end
 
     let(:base_obj) { described_class.new }
@@ -95,7 +95,7 @@ RSpec.describe ChefLicensing::RestfulClient::V1 do
       stub_request(:get, "http://localhost-2-license-server/License/v1/validate")
         .with(query: { licenseId: free_license_key, version: 2 })
         .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
-                  headers: { content_type: "application/json" })
+          headers: { content_type: "application/json" })
     end
 
     let(:base_obj) { described_class.new }
@@ -130,7 +130,7 @@ RSpec.describe ChefLicensing::RestfulClient::V1 do
       stub_request(:get, "http://localhost-2-license-server/License/v1/validate")
         .with(query: { licenseId: free_license_key, version: 2 })
         .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
-                  headers: { content_type: "application/json" })
+          headers: { content_type: "application/json" })
     end
 
     let(:base_obj) { described_class.new }

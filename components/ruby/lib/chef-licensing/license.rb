@@ -35,10 +35,9 @@ module ChefLicensing
     def feature_entitlements
       return @feature_entitlements unless @feature_entitlements.empty?
 
-      feat_entitlements = []
       feat_entitlements_data = @parser.parse_feature_entitlements
-      feat_entitlements_data.each do |data|
-        feat_entitlements << FeatureEntitlement.new(data)
+      feat_entitlements = feat_entitlements_data.map do |data|
+        FeatureEntitlement.new(data)
       end
       @feature_entitlements = feat_entitlements
     end
@@ -46,10 +45,9 @@ module ChefLicensing
     def software_entitlements
       return @software_entitlements unless @software_entitlements.empty?
 
-      sw_entitlements = []
       sw_entitlements_data = @parser.parse_software_entitlements
-      sw_entitlements_data.each do |data|
-        sw_entitlements << SoftwareEntitlement.new(data)
+      sw_entitlements = sw_entitlements_data.map do |data|
+        SoftwareEntitlement.new(data)
       end
       @software_entitlements = sw_entitlements
     end
@@ -57,10 +55,9 @@ module ChefLicensing
     def asset_entitlements
       return @asset_entitlements unless @asset_entitlements.empty?
 
-      asset_entitlements = []
       asset_entitlements_data = @parser.parse_asset_entitlements
-      asset_entitlements_data.each do |data|
-        asset_entitlements << AssetEntitlement.new(data)
+      asset_entitlements = asset_entitlements_data.map do |data|
+        AssetEntitlement.new(data)
       end
       @asset_entitlements = asset_entitlements
     end
@@ -68,10 +65,9 @@ module ChefLicensing
     def limits
       return @limits unless @limits.empty?
 
-      limits = []
       limits_data = @parser.parse_limits
-      limits_data.each do |data|
-        limits << Limit.new(data, { product_name: @product_name })
+      limits = limits_data.map do |data|
+        Limit.new(data, { product_name: @product_name })
       end
       @limits = limits
     end

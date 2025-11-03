@@ -30,7 +30,7 @@ RSpec.describe ChefLicensing::Api::ListLicenses do
     it "returns a list of licenses" do
       stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
         .to_return(body: valid_list_licenses_api_response,
-                   headers: { content_type: "application/json" })
+          headers: { content_type: "application/json" })
 
       expect(ChefLicensing::Api::ListLicenses.info).to eq(licenses_list)
       expect(ChefLicensing::Context.local_licensing_service?).to eq(true)
@@ -50,7 +50,7 @@ RSpec.describe ChefLicensing::Api::ListLicenses do
     it "raises and error" do
       stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
         .to_return(body: invalid_list_licenses_api_response,
-                    headers: { content_type: "application/json" })
+          headers: { content_type: "application/json" })
       expect { ChefLicensing::Api::ListLicenses.info }.to raise_error(ChefLicensing::ListLicensesError, /You are not authorized to access this resource/)
       expect(ChefLicensing::Context.local_licensing_service?).to eq(false)
     end

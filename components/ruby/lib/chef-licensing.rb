@@ -41,7 +41,7 @@ module ChefLicensing
       unless ChefLicensing::Config.make_licensing_optional
         if license_keys.empty?
           raise ChefLicensing::LicenseKeyFetcher::LicenseKeyNotFetchedError,
-                "Unable to obtain a License Key."
+            "Unable to obtain a License Key."
         end
 
         client(license_keys: license_keys)

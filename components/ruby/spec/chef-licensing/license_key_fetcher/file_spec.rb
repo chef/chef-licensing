@@ -14,7 +14,7 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
     log = Object.new
     log.extend(Mixlib::Log)
     log.init(output)
-    log.level = Mixlib::Log::WARN  # Set to WARN level to capture deprecation warnings
+    log.level = Mixlib::Log::WARN # Set to WARN level to capture deprecation warnings
     log
   }
   let(:v3_license_dir) { "spec/fixtures/v3_licenses" }
