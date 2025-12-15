@@ -34,6 +34,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "mixlib-log", "~> 3.0"
 
   # Gem dependency needed with Ruby 3.4 upgrade
-  spec.add_dependency "ostruct", "~> 0.1.0"
+  spec.add_dependency "ostruct", "~> 0.6.0"
   spec.add_dependency "pstore", "~> 0.1.1"
 end
