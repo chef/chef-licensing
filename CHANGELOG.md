@@ -1,26 +1,23 @@
 # Changelog
 
-<!-- latest_release 1.3.1 -->
+<!-- latest_release -->
+<!-- latest_release -->
+
+<!-- release_rollup -->
+<!-- release_rollup -->
+
+<!-- latest_stable_release -->
 ## [1.3.1](https://github.com/chef/chef-licensing/tree/1.3.1) (2025-12-15)
 
 #### Merged Pull Requests
 - CHEF-29044-Upgrade faraday gem version  [#216](https://github.com/chef/chef-licensing/pull/216) ([balasubramanian-s](https://github.com/balasubramanian-s))
-<!-- latest_release -->
-
-<!-- release_rollup since=1.3.0 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- CHEF-29044-Upgrade faraday gem version  [#216](https://github.com/chef/chef-licensing/pull/216) ([balasubramanian-s](https://github.com/balasubramanian-s)) <!-- 1.3.1 -->
-<!-- release_rollup -->
-
 <!-- latest_stable_release -->
+
 ## [1.3.0](https://github.com/chef/chef-licensing/tree/1.3.0) (2025-11-03)
 
 #### Merged Pull Requests
 - Updating linting and cookstyle support [#212](https://github.com/chef/chef-licensing/pull/212) ([johnmccrae](https://github.com/johnmccrae))
 - Remove activesupport due to its volatility and potential to generate … [#211](https://github.com/chef/chef-licensing/pull/211) ([tpowell-progress](https://github.com/tpowell-progress))
-<!-- latest_stable_release -->
 
 ## [1.2.0](https://github.com/chef/chef-licensing/tree/1.2.0) (2025-09-29)
 
