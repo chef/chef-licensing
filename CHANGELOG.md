@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 1.3.2 -->
-## [1.3.2](https://github.com/chef/chef-licensing/tree/1.3.2) (2025-12-15)
+<!-- latest_release 1.3.3 -->
+## [1.3.3](https://github.com/chef/chef-licensing/tree/1.3.3) (2025-12-15)
 
 #### Merged Pull Requests
-- bump ostruct ruby dep [#215](https://github.com/chef/chef-licensing/pull/215) ([Stromweld](https://github.com/Stromweld))
+- updated ostruct in gemfile.lock [#218](https://github.com/chef/chef-licensing/pull/218) ([Stromweld](https://github.com/Stromweld))
 <!-- latest_release -->
 
 <!-- release_rollup since=1.3.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- updated ostruct in gemfile.lock [#218](https://github.com/chef/chef-licensing/pull/218) ([Stromweld](https://github.com/Stromweld)) <!-- 1.3.3 -->
 - bump ostruct ruby dep [#215](https://github.com/chef/chef-licensing/pull/215) ([Stromweld](https://github.com/Stromweld)) <!-- 1.3.2 -->
 <!-- release_rollup -->
 
