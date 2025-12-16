@@ -20,7 +20,6 @@ jobs:
   check-markdown:
     name: Markdown Linting
     runs-on: ubuntu-latest
-    name: runner / markdownlint
     steps:
       - name: Check out code
         uses: actions/checkout@v5
