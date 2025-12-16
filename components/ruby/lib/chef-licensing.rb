@@ -1,4 +1,5 @@
 require "chef-licensing/version"
+require "chef-licensing/monkey_patches/faraday_http_cache_sha_patch"
 require "chef-licensing/license_key_fetcher"
 require "chef-licensing/config"
 require "chef-licensing/api/describe"
