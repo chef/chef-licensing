@@ -20,19 +20,9 @@ jobs:
     name: YAML Linting
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-      - name: Install yamllint
-        run: pip install yamllint
-      - name: Run yamllint on workflows
-        run: yamllint -c .yamllint.yml .github/workflows/ || yamllint .github/workflows/
-      - name: Run yamllint on component configs
-        run: |
-          yamllint -c .yamllint.yml components/ || yamllint components/
+      - uses: actions/checkout@v6
+      - name: Run yaml Lint
+        uses: actionshub/yamllint@main
 
   ruby-lint:
     name: Ruby Linting (Cookstyle)
