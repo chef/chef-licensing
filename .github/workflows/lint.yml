@@ -1,6 +1,7 @@
+---
 name: Lint & Test
 
-on:
+"on":
   push:
     branches:
       - main
@@ -16,6 +17,18 @@ on:
   workflow_dispatch:
 
 jobs:
+  check-markdown:
+    name: Markdown Linting
+    runs-on: ubuntu-latest
+    name: runner / markdownlint
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v5
+      - name: Run Markdown Lint
+        uses: DavidAnson/markdownlint-cli2-action@v22
+        with:
+          globs: "**/*.md"
+
   yaml-lint:
     name: YAML Linting
     runs-on: ubuntu-latest
@@ -23,6 +36,18 @@ jobs:
       - uses: actions/checkout@v6
       - name: Run yaml Lint
         uses: actionshub/yamllint@main
+
+  json-lint:
+    name: Json Linting
+    runs-on: ubuntu-latest
+    container: python:alpine
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+      - name: Run JSON Linter
+        run: |
+          pip install --no-cache-dir demjson3
+          find . -type f -iname "*.json" -exec jsonlint \{\} \+
 
   ruby-lint:
     name: Ruby Linting (Cookstyle)
@@ -40,7 +65,7 @@ jobs:
           bundler-cache: true
           working-directory: components/ruby
       - name: Run Cookstyle
-        run: bundle exec cookstyle --chef-style --display-cop-names --extra-details
+        run: bundle exec cookstyle --chefstyle --display-cop-names --extra-details
 
   go-lint:
     name: Go Linting (golangci-lint)
@@ -107,4 +132,7 @@ jobs:
       - name: Run Go tests
         run: go test -v -race -coverprofile=coverage.out ./...
       - name: Display coverage
-        run: go tool cover -func=coverage.out
+        run: |
+          go get .
+          go mod tidy
+          go test -v ./...
