@@ -1,0 +1,120 @@
+name: Lint & Test
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'components/**'
+      - '.github/workflows/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'components/**'
+      - '.github/workflows/**'
+  workflow_dispatch:
+
+jobs:
+  yaml-lint:
+    name: YAML Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Install yamllint
+        run: pip install yamllint
+      - name: Run yamllint on workflows
+        run: yamllint -c .yamllint.yml .github/workflows/ || yamllint .github/workflows/
+      - name: Run yamllint on component configs
+        run: |
+          yamllint -c .yamllint.yml components/ || yamllint components/
+
+  ruby-lint:
+    name: Ruby Linting (Cookstyle)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: components/ruby
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          bundler-cache: true
+          working-directory: components/ruby
+      - name: Run Cookstyle
+        run: bundle exec cookstyle --chef-style --display-cop-names --extra-details
+
+  go-lint:
+    name: Go Linting (golangci-lint)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: components/go
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+          cache-dependency-path: components/go/go.sum
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: latest
+          working-directory: components/go
+          args: --timeout=5m --enable=gofmt,govet,errcheck,staticcheck,unused,gosimple,ineffassign,typecheck
+      - name: Run go vet
+        run: go vet ./...
+      - name: Run go fmt check
+        run: |
+          if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
+            echo "The following files need formatting:"
+            gofmt -s -l .
+            exit 1
+          fi
+
+  ruby-test:
+    name: Ruby Unit Tests (RSpec)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: components/ruby
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          bundler-cache: true
+          working-directory: components/ruby
+      - name: Run RSpec tests
+        run: bundle exec rspec --format documentation --color
+
+  go-test:
+    name: Go Unit Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: components/go
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+          cache-dependency-path: components/go/go.sum
+      - name: Run Go tests
+        run: go test -v -race -coverprofile=coverage.out ./...
+      - name: Display coverage
+        run: go tool cover -func=coverage.out
