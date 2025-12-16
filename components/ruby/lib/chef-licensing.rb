@@ -77,6 +77,21 @@ module ChefLicensing
       end
     end
 
+    # @note fetch_only is invoked to fetch license keys without persisting them to a config file
+    def fetch_only
+      # Return early if make_licensing_optional is enabled
+      return true if ChefLicensing::Config.make_licensing_optional
+
+      ChefLicensing::LicenseKeyFetcher.fetch
+    rescue ChefLicensing::ClientError => e
+      # Checking specific text phrase for entitlement error
+      if e.message.match?(/not entitled/)
+        raise(ChefLicensing::SoftwareNotEntitled, "Software is not entitled.")
+      else
+        raise
+      end
+    end
+
     def list_license_keys_info(opts = {})
       ChefLicensing::ListLicenseKeys.display(opts)
     end
