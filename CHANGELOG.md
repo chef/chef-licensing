@@ -1,27 +1,24 @@
 # Changelog
 
-<!-- latest_release 1.3.4 -->
-## [1.3.4](https://github.com/chef/chef-licensing/tree/1.3.4) (2025-12-16)
-
-#### Merged Pull Requests
-- Monkey patch &#39;cache_key_for&#39; action in &#39;faraday-http-cache&#39; gem [#217](https://github.com/chef/chef-licensing/pull/217) ([neha-p6](https://github.com/neha-p6))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=1.3.1 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Monkey patch &#39;cache_key_for&#39; action in &#39;faraday-http-cache&#39; gem [#217](https://github.com/chef/chef-licensing/pull/217) ([neha-p6](https://github.com/neha-p6)) <!-- 1.3.4 -->
-- updated ostruct in gemfile.lock [#218](https://github.com/chef/chef-licensing/pull/218) ([Stromweld](https://github.com/Stromweld)) <!-- 1.3.3 -->
-- bump ostruct ruby dep [#215](https://github.com/chef/chef-licensing/pull/215) ([Stromweld](https://github.com/Stromweld)) <!-- 1.3.2 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [1.3.4](https://github.com/chef/chef-licensing/tree/1.3.4) (2025-12-16)
+
+#### Merged Pull Requests
+- bump ostruct ruby dep [#215](https://github.com/chef/chef-licensing/pull/215) ([Stromweld](https://github.com/Stromweld))
+- updated ostruct in gemfile.lock [#218](https://github.com/chef/chef-licensing/pull/218) ([Stromweld](https://github.com/Stromweld))
+- Monkey patch &#39;cache_key_for&#39; action in &#39;faraday-http-cache&#39; gem [#217](https://github.com/chef/chef-licensing/pull/217) ([neha-p6](https://github.com/neha-p6))
+<!-- latest_stable_release -->
+
 ## [1.3.1](https://github.com/chef/chef-licensing/tree/1.3.1) (2025-12-15)
 
 #### Merged Pull Requests
 - CHEF-29044-Upgrade faraday gem version  [#216](https://github.com/chef/chef-licensing/pull/216) ([balasubramanian-s](https://github.com/balasubramanian-s))
-<!-- latest_stable_release -->
 
 ## [1.3.0](https://github.com/chef/chef-licensing/tree/1.3.0) (2025-11-03)
 
