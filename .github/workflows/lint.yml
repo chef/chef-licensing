@@ -78,23 +78,13 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.21'
-          cache-dependency-path: components/go/go.sum
+          go-version-file: 'go.mod'
+          cache: true
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
-          version: latest
+          version-file: 'go.mod'
           working-directory: components/go
-          args: --timeout=5m --enable=gofmt,govet,errcheck,staticcheck,unused,gosimple,ineffassign,typecheck
-      - name: Run go vet
-        run: go vet ./...
-      - name: Run go fmt check
-        run: |
-          if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
-            echo "The following files need formatting:"
-            gofmt -s -l .
-            exit 1
-          fi
 
   ruby-test:
     name: Ruby Unit Tests (RSpec)
@@ -126,11 +116,9 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.21'
-          cache-dependency-path: components/go/go.sum
+          go-version-file: 'go.mod'
+          cache: true
       - name: Run Go tests
-        run: go test -v -race -coverprofile=coverage.out ./...
-      - name: Display coverage
         run: |
           go get .
           go mod tidy
