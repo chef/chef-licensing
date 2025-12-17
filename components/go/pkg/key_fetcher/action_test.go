@@ -226,7 +226,7 @@ func TestFetchLicenseTypeRestricted(t *testing.T) {
 
 func loadInteractions() map[string]keyfetcher.ActionDetail {
 	var intr keyfetcher.Interaction
-	yaml.Unmarshal([]byte(YAML_DATA), &intr)
+	_ = yaml.Unmarshal([]byte(YAML_DATA), &intr)
 
 	return intr.Actions
 }
@@ -242,7 +242,7 @@ func readFromSTDOUT(function actionFunction) (string, string) {
 	os.Stdout = originalStdout
 
 	var buf bytes.Buffer
-	io.Copy(&buf, r)
+	_, _ = io.Copy(&buf, r)
 
 	return buf.String(), output
 }
@@ -250,7 +250,7 @@ func readFromSTDOUT(function actionFunction) (string, string) {
 func mockAPIResponse(mockResponse string, status int) *httptest.Server {
 	mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(status)
-		w.Write([]byte(mockResponse))
+		_, _ = w.Write([]byte(mockResponse))
 	}))
 	setConfig(mockServer.URL)
 	return mockServer

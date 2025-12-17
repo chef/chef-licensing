@@ -51,7 +51,7 @@ func TestSetHeader(t *testing.T) {
 func MockAPIResponse(mockResponse string, status int) *httptest.Server {
 	mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(status)
-		w.Write([]byte(mockResponse))
+		_, _ = w.Write([]byte(mockResponse))
 	}))
 	setConfig(mockServer.URL)
 
