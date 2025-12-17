@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Run Markdown Lint
         uses: DavidAnson/markdownlint-cli2-action@v22
         with:
@@ -78,12 +78,12 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version-file: 'go.mod'
+          go-version-file: 'components/go/go.mod'
           cache: true
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
-          version-file: 'go.mod'
+          version-file: 'components/go/go.mod'
           working-directory: components/go
 
   ruby-test:
@@ -116,10 +116,8 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version-file: 'go.mod'
+          go-version-file: 'components/go/go.mod'
           cache: true
       - name: Run Go tests
         run: |
-          go get .
-          go mod tidy
           go test -v ./...
