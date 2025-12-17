@@ -31,7 +31,6 @@ suite deterministic and hermetic.
 
 ## Running the tests
 
-
 From the `components/ruby` directory run:
 
 ```bash
