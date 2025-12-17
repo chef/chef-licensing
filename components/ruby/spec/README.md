@@ -8,7 +8,7 @@ suite deterministic and hermetic.
 
 Key points
 ----------
- 
+
 - WebMock is required before the library (`require "webmock/rspec"`) so any
   HTTP client initialization that happens at require-time is intercepted.
   This prevents accidental real HTTP connections during test bootstrap.

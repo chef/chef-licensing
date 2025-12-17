@@ -78,6 +78,13 @@ func TestSayAction(t *testing.T) {
 }
 
 func TestTimeoutSelect(t *testing.T) {
+	// Skip this test in CI environments where /dev/tty is not available
+	if tty, err := os.Open("/dev/tty"); err != nil {
+		t.Skip("Skipping test: /dev/tty not available (likely running in CI)")
+	} else {
+		tty.Close()
+	}
+
 	actions := loadInteractions()
 
 	detail := actions["ask_for_license_timeout"]

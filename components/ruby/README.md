@@ -51,7 +51,7 @@ The `ChefLicensing::Config` class manages the configuration parameters used in t
 #### Configure the Parameters using argument flag or environment variable
 
 | Configuration Parameters | Argument Flag | Environment Variable | Type |
-| ---------- |---------- | ---------- | ---------- |
+| ---------- | ---------- | ---------- | ---------- |
 | license_server_url | `--chef-license-server` | `CHEF_LICENSE_SERVER` | String |
 | chef_product_name | `--chef-product-name` | `CHEF_PRODUCT_NAME` | String |
 | chef_executable_name | `--chef-executable-name` | `CHEF_EXECUTABLE_NAME` | String |
@@ -171,7 +171,7 @@ If the retrieval is successful, it displays the information of all the license; 
 
 **Sample output:**
 
-```
+```bash
 +---------- License Keys Information ----------+
 Total License Keys found: 1
 
@@ -215,6 +215,7 @@ Software entitlement check validates a user's entitlement to use a specific soft
 require "chef-licensing"
 ChefLicensing.check_software_entitlement!
 ```
+
 #### Response
 
 If the software is entitled to the license, it returns true; else, it raises an `ChefLicensing::SoftwareNotEntitled` exception.
@@ -569,8 +570,8 @@ where the different keys in an interaction file are:
 8. `description`: `description` is an optional field of an interaction which is used to describe interaction for readability of the interaction file.
 
 9. `prompt_attributes`: `prompt_attributes` helps to provide additional properties required by any prompt_type. Currently, supported attributes are:
-   1.  `timeout_duration`: This attribute is supported by the `timeout_yes` prompt and can receive decimal values.
-   2.  `timeout_message`: This attribute is supported by the `timeout_yes` prompt and can receive string values.
+   1. `timeout_duration`: This attribute is supported by the `timeout_yes` prompt and can receive decimal values.
+   2. `timeout_message`: This attribute is supported by the `timeout_yes` prompt and can receive string values.
 
 10. `:file_format_version`: it defines the version of the interaction file's format. This key is a mandatory key in an interaction file. Currently supported version of interaction file is `1.x.x`
 
@@ -594,7 +595,7 @@ The different ways how we can define an interaction is shown below.
         paths: []
         description: "This is the exit interaction"
    ```
-   
+
    Here, `start` and `exit` are the interaction id.
 
    Since, prompt_type defaults to say for any interaction, description is an optional field and paths is empty for `exit` interaction. The above interactions interaction could also be defined as:
