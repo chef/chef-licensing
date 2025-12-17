@@ -16,6 +16,13 @@ name: Lint & Test
       - '.github/workflows/**'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: integration-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   check-markdown:
     name: Markdown Linting
