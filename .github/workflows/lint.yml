@@ -20,7 +20,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: integration-${{ github.ref }}
+  group: lint-unit-test-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
