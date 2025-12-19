@@ -86,7 +86,7 @@ func (ad ActionDetail) TimeoutSelect() string {
 			return ad.ResponsePathMap[val]
 		}
 	case <-timeoutContext.Done():
-		fmt.Print(printInColor(attribute.TimeoutWarningColor, attribute.TimeoutMessage, false, true))
+		fmt.Printf(printInColor(attribute.TimeoutWarningColor, attribute.TimeoutMessage, false, true))
 		fmt.Printf("Timeout!\n")
 		if !attribute.TimeoutContinue {
 			os.Exit(1)
