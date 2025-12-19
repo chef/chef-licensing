@@ -1,4 +1,3 @@
----
 :file_format_version: 1.0.0
 
 interactions:
@@ -12,7 +11,7 @@ interactions:
     messages: ["Select an option from below: ", ["Option 1", "Option 2"]]
     prompt_type: "select"
     paths: [prompt_3, prompt_4]
-    response_path_map:
+    response_path_map: 
       "Option 1": prompt_3
       "Option 2": prompt_4
 

@@ -1,4 +1,3 @@
----
 :file_format_version: 1.0.0
 
 interactions:
@@ -12,7 +11,7 @@ interactions:
     messages: ["Do you agree?"]
     prompt_type: "yes"
     paths: [prompt_3, prompt_4]
-    response_path_map:
+    response_path_map: 
       "true": prompt_3
       "false": prompt_4
 
