@@ -1,0 +1,130 @@
+---
+name: Lint & Test
+
+"on":
+  push:
+    branches:
+      - main
+    paths:
+      - 'components/**'
+      - '.github/workflows/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'components/**'
+      - '.github/workflows/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lint-unit-test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-markdown:
+    name: Markdown Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+      - name: Run Markdown Lint
+        uses: DavidAnson/markdownlint-cli2-action@v22
+        with:
+          globs: "**/*.md"
+
+  yaml-lint:
+    name: YAML Linting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Run yaml Lint
+        uses: actionshub/yamllint@main
+
+  json-lint:
+    name: Json Linting
+    runs-on: ubuntu-latest
+    container: python:alpine
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+      - name: Run JSON Linter
+        run: |
+          pip install --no-cache-dir demjson3
+          find . -type f -iname "*.json" -exec jsonlint \{\} \+
+
+  ruby-lint:
+    name: Ruby Linting (Cookstyle)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: components/ruby
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          bundler-cache: true
+          working-directory: components/ruby
+      - name: Run Cookstyle
+        run: bundle exec cookstyle --chefstyle --display-cop-names --extra-details
+
+  go-lint:
+    name: Go Linting (golangci-lint)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: components/go
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'components/go/go.mod'
+          cache: true
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version-file: 'components/go/go.mod'
+          working-directory: components/go
+
+  ruby-test:
+    name: Ruby Unit Tests (RSpec)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: components/ruby
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          bundler-cache: true
+          working-directory: components/ruby
+      - name: Run RSpec tests
+        run: bundle exec rspec --format documentation --color
+
+  go-test:
+    name: Go Unit Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: components/go
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'components/go/go.mod'
+          cache: true
+      - name: Run Go tests
+        run: |
+          go test -v ./...
