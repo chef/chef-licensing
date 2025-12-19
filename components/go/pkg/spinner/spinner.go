@@ -36,7 +36,7 @@ func StopSpinner(spinner *yacspin.Spinner, stopMessage, stopChar, stopColor stri
 	if IsTTY() {
 		spinner.StopMessage(stopMessage)
 		spinner.StopCharacter(stopChar)
-		spinner.StopColors(stopColor)
+		_ = spinner.StopColors(stopColor)
 		_ = spinner.Stop()
 	}
 }
