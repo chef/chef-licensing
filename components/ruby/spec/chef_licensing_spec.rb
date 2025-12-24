@@ -269,4 +269,58 @@ RSpec.describe ChefLicensing do
       end
     end
   end
+
+  describe ".fetch_only" do
+    context "when licensing is optional" do
+      before do
+        ChefLicensing.configure do |config|
+          config.make_licensing_optional = true
+        end
+      end
+
+      after do
+        ChefLicensing.configure do |config|
+          config.make_licensing_optional = false
+        end
+      end
+
+      it "returns true without fetching license keys" do
+        expect(ChefLicensing.fetch_only).to eq(true)
+      end
+    end
+
+    context "when there is no client error" do
+      let(:license_keys) { %w{license_key1 license_key2} }
+
+      before do
+        allow(ChefLicensing::LicenseKeyFetcher).to receive(:fetch).and_return(license_keys)
+      end
+
+      it "fetches the license keys without persisting them" do
+        expect(ChefLicensing.fetch_only).to eq(license_keys)
+      end
+    end
+
+    context "when there is a client error due to software entitlement" do
+      let(:error_message) { "Software is not entitled." }
+
+      before do
+        allow(ChefLicensing::LicenseKeyFetcher).to receive(:fetch).and_raise(ChefLicensing::ClientError, error_message)
+      end
+
+      it "raises a SoftwareNotEntitled exception" do
+        expect { ChefLicensing.fetch_only }.to raise_error(ChefLicensing::SoftwareNotEntitled, error_message)
+      end
+    end
+
+    context "when there is a client error due to unknown reason" do
+      before do
+        allow(ChefLicensing::LicenseKeyFetcher).to receive(:fetch).and_raise(ChefLicensing::ClientError, "Some other error")
+      end
+
+      it "raises a ClientError exception" do
+        expect { ChefLicensing.fetch_only }.to raise_error(ChefLicensing::ClientError, "Some other error")
+      end
+    end
+  end
 end
