@@ -303,6 +303,9 @@ RSpec.describe ChefLicensing do
       end
 
       it "fetches the license keys without persisting them" do
+        expect(ChefLicensing::LicenseKeyFetcher::File).not_to receive(:new)
+        expect_any_instance_of(ChefLicensing::LicenseKeyFetcher::File).not_to receive(:write_license_file)
+        expect_any_instance_of(ChefLicensing::LicenseKeyFetcher::File).not_to receive(:persist)
         expect(ChefLicensing.fetch_only).to eq(license_keys)
       end
     end

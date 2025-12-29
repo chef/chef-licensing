@@ -633,6 +633,11 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
         expect(license_key_fetcher.fetch_and_validate).to eq(["tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"])
       end
 
+      it "sets persist_license_data config to false" do
+        license_key_fetcher.fetch_and_validate
+        expect(ChefLicensing::Config.persist_license_data).to eq(false)
+      end
+
       it "does not persist license to disk" do
         license_dir = opts[:dir]
         license_file_path = File.join(license_dir, "licenses.yaml")
@@ -691,6 +696,11 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
         expect(File.exist?(persist_file)).to be false
         license_key_fetcher_persist.fetch_and_persist
         expect(File.exist?(persist_file)).to be true
+      end
+
+      it "fetch_and_persist sets persist_license_data config to true" do
+        license_key_fetcher_persist.fetch_and_persist
+        expect(ChefLicensing::Config.persist_license_data).to eq(true)
       end
 
       it "fetch_and_validate does not create license file" do

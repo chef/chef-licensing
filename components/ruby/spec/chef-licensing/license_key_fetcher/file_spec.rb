@@ -125,6 +125,94 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
     end
   end
 
+  describe "#fetch_or_persist_url" do
+    let(:license_server_url) { "https://license.chef.io" }
+    let(:system_url) { "https://custom-license-server.com" }
+
+    context "when persist is true" do
+      it "writes the license server URL to disk" do
+        Dir.mktmpdir do |tmpdir|
+          file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: tmpdir })
+          license_file_path = File.join(tmpdir, "licenses.yaml")
+
+          expect(File.exist?(license_file_path)).to be false
+          result = file_fetcher.fetch_or_persist_url(license_server_url, nil, persist: true)
+          expect(result).to eq(license_server_url)
+          expect(File.exist?(license_file_path)).to be true
+
+          # Verify content
+          content = YAML.load_file(license_file_path)
+          expect(content[:license_server_url]).to eq(license_server_url)
+        end
+      end
+
+      it "updates existing license server URL in file" do
+        Dir.mktmpdir do |tmpdir|
+          file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: tmpdir })
+          license_file_path = File.join(tmpdir, "licenses.yaml")
+
+          # Create initial file
+          file_fetcher.fetch_or_persist_url(license_server_url, nil, persist: true)
+          expect(YAML.load_file(license_file_path)[:license_server_url]).to eq(license_server_url)
+
+          # Update with system URL
+          result = file_fetcher.fetch_or_persist_url(license_server_url, system_url, persist: true)
+          expect(result).to eq(system_url)
+          expect(YAML.load_file(license_file_path)[:license_server_url]).to eq(system_url)
+        end
+      end
+    end
+
+    context "when persist is false" do
+      it "does not write the license server URL to disk" do
+        Dir.mktmpdir do |tmpdir|
+          file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: tmpdir })
+          license_file_path = File.join(tmpdir, "licenses.yaml")
+
+          expect(File.exist?(license_file_path)).to be false
+          result = file_fetcher.fetch_or_persist_url(license_server_url, nil, persist: false)
+          expect(result).to eq(license_server_url)
+          expect(File.exist?(license_file_path)).to be false
+        end
+      end
+
+      it "returns URL but does not update existing file" do
+        Dir.mktmpdir do |tmpdir|
+          file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: tmpdir })
+          license_file_path = File.join(tmpdir, "licenses.yaml")
+
+          # Create initial file with persist: true
+          file_fetcher.fetch_or_persist_url(license_server_url, nil, persist: true)
+          original_content = YAML.load_file(license_file_path)
+          expect(original_content[:license_server_url]).to eq(license_server_url)
+
+          # Try to update with persist: false
+          result = file_fetcher.fetch_or_persist_url(license_server_url, system_url, persist: false)
+          expect(result).to eq(system_url)
+
+          # File content should remain unchanged
+          updated_content = YAML.load_file(license_file_path)
+          expect(updated_content[:license_server_url]).to eq(license_server_url)
+        end
+      end
+    end
+
+    context "when persist defaults to true" do
+      it "writes to disk when persist parameter is not provided" do
+        Dir.mktmpdir do |tmpdir|
+          file_fetcher = ChefLicensing::LicenseKeyFetcher::File.new({ dir: tmpdir })
+          license_file_path = File.join(tmpdir, "licenses.yaml")
+
+          expect(File.exist?(license_file_path)).to be false
+          # Call without persist parameter - should default to true
+          result = file_fetcher.fetch_or_persist_url(license_server_url, nil)
+          expect(result).to eq(license_server_url)
+          expect(File.exist?(license_file_path)).to be true
+        end
+      end
+    end
+  end
+
   describe "trace level logging" do
     let(:trace_logger) {
       log = Object.new

@@ -55,6 +55,7 @@ module ChefLicensing
     # Methods for obtaining consent from the user.
     #
     def fetch_and_persist
+      ChefLicensing::Config.persist_license_data = true
       if ChefLicensing::Context.local_licensing_service?
         perform_on_prem_operations
       else
@@ -64,6 +65,7 @@ module ChefLicensing
 
     # Method for validating license key without writing to disk
     def fetch_and_validate
+      ChefLicensing::Config.persist_license_data = false
       if ChefLicensing::Context.local_licensing_service?
         perform_on_prem_operations
       else

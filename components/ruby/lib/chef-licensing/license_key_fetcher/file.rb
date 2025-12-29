@@ -129,24 +129,30 @@ module ChefLicensing
         !!seek
       end
 
-      def fetch_or_persist_url(license_server_url_from_config, license_server_url_from_system = nil)
+      def fetch_or_persist_url(license_server_url_from_config, license_server_url_from_system = nil, persist: true)
         dir = @opts[:dir]
         license_key_file_path = "#{dir}/#{LICENSE_KEY_FILE}"
-        create_license_directory_if_not_exist(dir, license_key_file_path)
+        create_license_directory_if_not_exist(dir, license_key_file_path) if persist
 
         @contents = load_license_file(license_key_file_path)
 
         # Three possible cases:
         # 1. If contents is nil or an error occurred while loading, load basic license data with the latest structure.
         # 2. If contents is not nil and valid, but the license server URL in contents is different from the system's,
-        #    update the license server URL in contents and licenses.yaml file.
+        #    update the license server URL in contents and licenses.yaml file if persist is true.
         # 3. If contents is valid and no update is needed, return the existing license server URL.
         # Handle error cases first - when file loading failed or contents is nil
         if @contents.is_a?(StandardError) || @contents.nil?
           url = license_server_url_from_system || license_server_url_from_config
           load_basic_license_data_to_contents(url, [])
         elsif @contents && license_server_url_from_system && license_server_url_from_system != @contents[:license_server_url]
-          @contents[:license_server_url] = license_server_url_from_system
+          if persist
+            @contents[:license_server_url] = license_server_url_from_system
+          else
+            # When not persisting, just return the new URL without modifying the file or in-memory contents
+            @license_server_url = license_server_url_from_system
+            return @license_server_url
+          end
         else
           # Nothing to change in the file
           @license_server_url = @contents[:license_server_url]
@@ -156,7 +162,7 @@ module ChefLicensing
         # Ensure the license server URL is returned to the caller in all cases
         # (even if it's not persisted to the licenses.yaml file on the disk)
         begin
-          write_license_file(license_key_file_path)
+          write_license_file(license_key_file_path) if persist
         rescue StandardError => e
           handle_error(e)
         ensure
@@ -178,7 +184,8 @@ module ChefLicensing
       end
 
       def self.fetch_or_persist_url(license_server_url_from_config, license_server_url_from_system = nil, opts = {})
-        new(opts).fetch_or_persist_url(license_server_url_from_config, license_server_url_from_system)
+        persist = opts.delete(:persist) { true }
+        new(opts).fetch_or_persist_url(license_server_url_from_config, license_server_url_from_system, persist: persist)
       end
 
       private
