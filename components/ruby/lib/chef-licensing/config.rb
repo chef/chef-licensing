@@ -17,13 +17,15 @@ module ChefLicensing
       attr_writer :license_server_url, :logger, :output, :license_server_url_check_in_file, :license_add_command, :license_list_command, :make_licensing_optional
 
       # is_local_license_service is used by context class
-      attr_accessor :is_local_license_service, :chef_entitlement_id, :chef_product_name, :chef_executable_name
+      attr_accessor :is_local_license_service, :chef_entitlement_id, :chef_product_name, :chef_executable_name, :persist_license_data
 
       def license_server_url(opts = {})
         return @license_server_url if @license_server_url && @license_server_url_check_in_file
 
         license_server_url_from_system = ChefLicensing::ArgFetcher.fetch_value("--chef-license-server", :string) || ChefLicensing::EnvFetcher.fetch_value("CHEF_LICENSE_SERVER", :string)
-        @license_server_url = ChefLicensing::LicenseKeyFetcher::File.fetch_or_persist_url(@license_server_url, license_server_url_from_system, opts)
+        # Default persist to true for backward compatibility, but respect the config setting if set
+        persist = @persist_license_data.nil? || @persist_license_data
+        @license_server_url = ChefLicensing::LicenseKeyFetcher::File.fetch_or_persist_url(@license_server_url, license_server_url_from_system, opts.merge(persist: persist))
         @license_server_url_check_in_file = true
         @license_server_url
       end

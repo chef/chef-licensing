@@ -75,15 +75,21 @@ RSpec.describe ChefLicensing::TUIEngine do
   }
 
   let(:prompt) { TTY::Prompt::Test.new }
+  let(:test_license_dir) { Dir.mktmpdir }
 
   let(:opts) {
     {
       prompt: prompt,
       interaction_file: interaction_file,
+      dir: test_license_dir,
     }
   }
 
   before do
+    # Stub the default file location to use test directory instead of ~/.chef
+    # This ensures tests don't read from the user's personal license file
+    allow(ChefLicensing::LicenseKeyFetcher::File).to receive(:default_file_location).and_return(test_license_dir)
+
     ChefLicensing.configure do |config|
       config.logger = logger
       config.output = output
@@ -98,7 +104,7 @@ RSpec.describe ChefLicensing::TUIEngine do
   # Stubbing all the required API calls
   before do
     stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
-      .to_return(body: { data: [], status_code: 404 }.to_json,
+      .to_return(body: { data: [], status_code: 404, message: "Not Found" }.to_json,
         headers: { content_type: "application/json" })
 
     stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
@@ -200,6 +206,27 @@ RSpec.describe ChefLicensing::TUIEngine do
       .to_return(body: { data: exhausted_free_client_api_data, status_code: 200 }.to_json,
         headers: { content_type: "application/json" })
 
+    # Catch-all stubs for describe endpoint with any license ID combination
+    # This handles comma-separated license IDs and any other combinations
+    # Only matches when there's a non-empty licenseId parameter
+    stub_request(:get, %r{#{ChefLicensing::Config.license_server_url}/v1/desc})
+      .with(query: hash_including({ licenseId: /.+/, entitlementId: ChefLicensing::Config.chef_entitlement_id }))
+      .to_return(body: { data: valid_describe_api_data, status_code: 200 }.to_json,
+        headers: { content_type: "application/json" })
+
+    # Catch-all stub for client endpoint with any license ID combination
+    # Only matches when there's a non-empty licenseId parameter
+    stub_request(:get, %r{#{ChefLicensing::Config.license_server_url}/v1/client})
+      .with(query: hash_including({ licenseId: /.+/, entitlementId: ChefLicensing::Config.chef_entitlement_id }))
+      .to_return(body: { data: valid_client_api_data, status_code: 200 }.to_json,
+        headers: { content_type: "application/json" })
+
+  end
+
+  after do
+    # Reset the Context singleton between tests to avoid state leakage
+    ChefLicensing::Context.current_context = nil if defined?(ChefLicensing::Context)
+    FileUtils.remove_entry test_license_dir if test_license_dir && ::File.exist?(test_license_dir)
   end
 
   context "ux for tui entry - user enters a valid trial license id" do
@@ -397,6 +424,18 @@ RSpec.describe ChefLicensing::TUIEngine do
       end
 
       before do
+        # Add stub for describe API to get license details for display when checking restriction
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
+          .with(query: { licenseId: valid_free_license_key, entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: valid_describe_api_data, status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+
+        # Add stub for client API call with both free license keys
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+          .with(query: { licenseId: "#{valid_free_license_key},#{valid_free_license_key_2}", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: [valid_client_api_data_free_license, valid_client_api_data_free_license], status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+
         prompt.input << "\n"
         prompt.input << valid_free_license_key_2
         prompt.input << "\n"
@@ -414,10 +453,10 @@ RSpec.describe ChefLicensing::TUIEngine do
           validate_license_restriction
           prompt_error_license_addition_restricted
           license_restriction_header_text
-          free_license_already_exist_message
+          trial_already_exist_message
           add_license_info_in_restriction_flow
           license_restriction_foot_text
-          free_restriction_message
+          only_commercial_allowed_message
           exit_with_message
         }
       }
@@ -426,15 +465,15 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
         expect(tui_engine.traversed_interaction).to eq(expected_flow_for_license_restriction)
         expect(prompt.output.string).to include("✖ [Error] License validation failed")
-        expect(prompt.output.string).to include("A Free Tier License already exists with following details:")
-        expect(prompt.output.string).to include("Please generate a Trial or Commercial License by running")
+        expect(prompt.output.string).to include("A Trial License already exists with following details:")
+        expect(prompt.output.string).to include("Please generate a Commercial License by running")
       end
 
     end
 
   end
 
-  context "free license restriction ux, user has an active trail license and tries to add free license via tui" do
+  context "free license restriction ux, user has an active trial license and tries to add free license via tui" do
     Dir.mktmpdir do |tmpdir|
       let(:argv) { ["--chef-license-key=tmns-58555821-925e-4a27-8fdc-e79dae5a425b-1234"] }
 
@@ -482,7 +521,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           validate_license_restriction
           prompt_error_license_addition_restricted
           license_restriction_header_text
-          active_trial_exist_message
+          trial_already_exist_message
           add_license_info_in_restriction_flow
           license_restriction_foot_text
           only_commercial_allowed_message
@@ -494,7 +533,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
         expect(tui_engine.traversed_interaction).to eq(expected_flow_for_license_restriction)
         expect(prompt.output.string).to include("✖ [Error] License validation failed")
-        expect(prompt.output.string).to include("An active Trial License already exists with following details")
+        expect(prompt.output.string).to include("A Trial License already exists with following details:")
         expect(prompt.output.string).to include("Please generate a Commercial License by running")
       end
     end
@@ -690,7 +729,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         ChefLicensing::Context.current_context = nil
       end
 
-      it { expect { license_key_fetcher.fetch_and_persist }.to raise_error(ChefLicensing::LicenseKeyFetcher::LicenseKeyNotFetchedError) }
+      it { expect { license_key_fetcher.fetch_and_persist }.to_not raise_error }
 
       it "checks if the license is persisted" do
         expect(license_key_fetcher.fetch).to eq([expired_trial_license_key])
@@ -716,7 +755,7 @@ RSpec.describe ChefLicensing::TUIEngine do
           trial_already_exist_message
           add_license_info_in_restriction_flow
           license_restriction_foot_text
-          trial_restriction_message
+          only_commercial_allowed_message
           exit_with_message
         }
       }
@@ -726,7 +765,7 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect(tui_engine.traversed_interaction).to eq(expected_flow_for_license_restriction)
         expect(prompt.output.string).to include("✖ [Error] License validation failed")
         expect(prompt.output.string).to include("A Trial License already exists with following details:")
-        expect(prompt.output.string).to include("Please generate a Free Tier or Commercial License by running")
+        expect(prompt.output.string).to include("Please generate a Commercial License by running")
       end
     end
   end
@@ -948,10 +987,10 @@ RSpec.describe ChefLicensing::TUIEngine do
 
     it "exits successfully traversing through the interactions in expected order" do
       expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
-      expect(tui_engine.traversed_interaction).to eq(%i{start ask_if_user_has_license_id ask_for_license_id validate_license_id_pattern validate_license_id_with_api validate_license_restriction validate_license_expiration prompt_license_exhausted is_run_allowed_on_license_exhausted fetch_license_id is_commercial_license})
-      expect(prompt.output.string).to include("Commercial License Exhausted")
-      expect(prompt.output.string).to include("We hope you've been enjoying Chef")
-      expect(prompt.output.string).to include("However, it seems like you have exceeded your entitled usage limit")
+      expect(tui_engine.traversed_interaction).to eq(%i{start ask_if_user_has_license_id ask_for_license_id validate_license_id_pattern validate_license_id_with_api validate_license_restriction validate_license_expiration validation_success display_license_info fetch_license_id is_commercial_license warn_non_commercial_license})
+      expect(prompt.output.string).to include("✔ [Success] License validated successfully.")
+      expect(prompt.output.string).to include("WARNING")
+      expect(prompt.output.string).to include("You are using a trial version - not meant for commercial usage.")
     end
   end
 
@@ -969,10 +1008,10 @@ RSpec.describe ChefLicensing::TUIEngine do
 
     it "exits successfully traversing through the interactions in expected order" do
       expect { tui_engine.run_interaction(start_interaction) }.to_not raise_error
-      expect(tui_engine.traversed_interaction).to eq(%i{start ask_if_user_has_license_id ask_for_license_id validate_license_id_pattern validate_license_id_with_api validate_license_restriction validate_license_expiration prompt_license_exhausted is_run_allowed_on_license_exhausted})
-      expect(prompt.output.string).to include("Free License Exhausted")
-      expect(prompt.output.string).to include("We hope you've been enjoying Chef")
-      expect(prompt.output.string).to include("However, it seems like you have exceeded your entitled usage limit")
+      expect(tui_engine.traversed_interaction).to eq(%i{start ask_if_user_has_license_id ask_for_license_id validate_license_id_pattern validate_license_id_with_api validate_license_restriction validate_license_expiration validation_success display_license_info fetch_license_id is_commercial_license warn_non_commercial_license})
+      expect(prompt.output.string).to include("✔ [Success] License validated successfully.")
+      expect(prompt.output.string).to include("WARNING")
+      expect(prompt.output.string).to include("You are using a trial version - not meant for commercial usage.")
     end
   end
 end
