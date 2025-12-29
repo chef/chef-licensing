@@ -1,3 +1,4 @@
+---
 :file_format_version: 1.0.0
 
 interactions:
@@ -8,7 +9,7 @@ interactions:
       timeout_duration: 1
       timeout_message: "Oops! Your reflex is too slow."
     paths: [play, rest, exit]
-    response_path_map: 
+    response_path_map:
       "Yes": play
       "No": rest
       "Exit": exit
