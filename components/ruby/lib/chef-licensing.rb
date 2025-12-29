@@ -82,7 +82,7 @@ module ChefLicensing
       # Return early if make_licensing_optional is enabled
       return true if ChefLicensing::Config.make_licensing_optional
 
-      ChefLicensing::LicenseKeyFetcher.fetch
+      ChefLicensing::LicenseKeyFetcher.fetch_and_validate
     rescue ChefLicensing::ClientError => e
       # Checking specific text phrase for entitlement error
       if e.message.match?(/not entitled/)
