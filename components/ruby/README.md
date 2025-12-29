@@ -11,15 +11,17 @@ Chef Licensing is a Ruby library for managing the licensing of Chef products. It
 5. [APIs](#apis)
 6. [Implementation Details](#implementation-details)
 
-
 ## System Prerequisites
 
 Usage of this library assumes the system to meet the following requirements:
+
 - **Ruby**: This library requires Ruby version >= 3.0.3. If you do not have Ruby installed, you can download it from the official Ruby website or use a package manager for the same.
 - **Bundler**: This project uses Bundler to manage dependencies. If you do not have Bundler installed, you can install it by running the following command in your terminal:
-  ```
-  gem install bundler
-  ```
+
+```bash
+gem install bundler
+```
+
 If you have any issues with the installation or configuration of these prerequisites, please refer to the documentation of each respective tool or library.
 
 ## Installation
@@ -27,14 +29,15 @@ If you have any issues with the installation or configuration of these prerequis
 You can use Chef Licensing Library by adding it to your Gemfile:
 
 <!-- I am assuming the gem name here; we could change it later -->
+
 ```ruby
 gem 'chef-licensing'
 ```
 
 Then, run `bundle install` to install the library and its dependencies.
 
-
 <!-- Usage Prerequisites contains the configuration to be done before using the library in the client's application -->
+
 ## Usage Prerequisites
 
 To use the Chef licensing library, certain configuration values such as the server URL, server API key, etc. must be set to validate, and check for entitlements. These values can be set via the environment or the library, or passed as arguments while executing your application.
@@ -48,7 +51,7 @@ The `ChefLicensing::Config` class manages the configuration parameters used in t
 #### Configure the Parameters using argument flag or environment variable
 
 | Configuration Parameters | Argument Flag | Environment Variable | Type |
-|----------|----------|----------|----------|
+| ---------- | ---------- | ---------- | ---------- |
 | license_server_url | `--chef-license-server` | `CHEF_LICENSE_SERVER` | String |
 | chef_product_name | `--chef-product-name` | `CHEF_PRODUCT_NAME` | String |
 | chef_executable_name | `--chef-executable-name` | `CHEF_EXECUTABLE_NAME` | String |
@@ -133,6 +136,7 @@ This endpoint enables to fetch licenses from the system or from user via interac
 require "chef-licensing"
 ChefLicensing.fetch_and_persist
 ```
+
 #### Response
 
 If sucessful, the licenses is stored on the system. Incase of errors, `ChefLicensing::LicenseKeyNotFetchedError` class raises the exception.
@@ -167,7 +171,7 @@ If the retrieval is successful, it displays the information of all the license; 
 
 **Sample output:**
 
-```
+```bash
 +---------- License Keys Information ----------+
 Total License Keys found: 1
 
@@ -211,6 +215,7 @@ Software entitlement check validates a user's entitlement to use a specific soft
 require "chef-licensing"
 ChefLicensing.check_software_entitlement!
 ```
+
 #### Response
 
 If the software is entitled to the license, it returns true; else, it raises an `ChefLicensing::SoftwareNotEntitled` exception.
@@ -271,6 +276,7 @@ It helps to validate array of licenses.
 require 'chef-licensing/license_feature_entitlement'
 ChefLicensing::LicenseKeyValidator.validate!("LICENSE_KEY")
 ```
+
 #### Response
 
 If the license validation process is successful, it returns true or false to indicate the validity of the license.
@@ -285,6 +291,7 @@ It helps to retrieve information about licenses, its entitlements to various fea
 require "chef-licensing/api/client"
 ChefLicensing::Api::Client.info(options_hash)
 ```
+
 - values to be sent in `options_hash` are `license_keys` and `restful_client`. Default value of restful_client is `ChefLicensing::RestfulClient::V1`.
 
 #### Response
@@ -293,7 +300,7 @@ If the retrieval is successful, it returns a license data model object that util
 
 However, if an error occurs during the process, the `ChefLicensing::ClientError` raises an exception.
 
-**Sample response from the Licensing Server which is converted into license data model object**
+##### Sample response from the Licensing Server which is converted into license data model object**
 
 ```json
 {
@@ -345,7 +352,7 @@ If the retrieval is successful, it returns a license data model object that util
 
 However, if an error occurs during the process, the `ChefLicensing::DescribeError` raises an exception.
 
-**Sample response from the Licensing Server which is converted into license data model object**
+##### Sample response from the Licensing Server which is converted into license data model object**
 
 ```json
 {
@@ -493,6 +500,7 @@ To supply the dynamic messages to the engine, send a hash as below:
 ```ruby
 tui_engine.append_info_to_input({ extra_info: "Welcome!" })
 ```
+
 Now extra_info key could be used to display as part of text user interace in the erb template.
 
 Examle: `messages: "This is a dynamic message, <% input[:extra_info] $>`
@@ -512,7 +520,6 @@ interactions:
   exit:
     messages: "Thank you"
 ```
-
 
 where the different keys in an interaction file are:
 
@@ -563,8 +570,8 @@ where the different keys in an interaction file are:
 8. `description`: `description` is an optional field of an interaction which is used to describe interaction for readability of the interaction file.
 
 9. `prompt_attributes`: `prompt_attributes` helps to provide additional properties required by any prompt_type. Currently, supported attributes are:
-   1.  `timeout_duration`: This attribute is supported by the `timeout_yes` prompt and can receive decimal values.
-   2.  `timeout_message`: This attribute is supported by the `timeout_yes` prompt and can receive string values.
+   1. `timeout_duration`: This attribute is supported by the `timeout_yes` prompt and can receive decimal values.
+   2. `timeout_message`: This attribute is supported by the `timeout_yes` prompt and can receive string values.
 
 10. `:file_format_version`: it defines the version of the interaction file's format. This key is a mandatory key in an interaction file. Currently supported version of interaction file is `1.x.x`
 
@@ -573,6 +580,7 @@ where the different keys in an interaction file are:
 The different ways how we can define an interaction is shown below.
 
 1. A simple interaction which displays message and exits with exit message.
+
    ```YAML
    interactions:
       start:
@@ -581,15 +589,17 @@ The different ways how we can define an interaction is shown below.
         paths: [exit]
         description: "Some description about this interaction"
 
-       exit:
-         messages: "Thank you"
-         prompt_type: "say"
-         paths: []
-         description: "This is the exit interaction"
+      exit:
+        messages: "Thank you"
+        prompt_type: "say"
+        paths: []
+        description: "This is the exit interaction"
    ```
+
    Here, `start` and `exit` are the interaction id.
 
    Since, prompt_type defaults to say for any interaction, description is an optional field and paths is empty for `exit` interaction. The above interactions interaction could also be defined as:
+
    ```YAML
    interactions:
       start:
@@ -601,6 +611,7 @@ The different ways how we can define an interaction is shown below.
    ```
 
 2. An interaction which displays message and has a single path
+
    ```YAML
    ask_number:
      messages: "Please enter two numbers"
@@ -608,18 +619,22 @@ The different ways how we can define an interaction is shown below.
      paths: [validate_number]
      description: "Some description about this interaction"
    ```
+
    Here, validate_number is the interaction id of next interaction.
 
 3. An interaction which has an action item and has a single path
+
    ```YAML
    validate_number:
      action: is_number_valid?
      paths: [add_inputs]
      description: "Some description about this interaction"
    ```
+
    Here, add_inputs is the interaction id of next interaction.
 
 4. An interaction which displays a list of choices and has multiple paths
+
    ```YAML
    menu_prompt:
     messages: ["Header of message", ["Option 1", "Option 2"]]
@@ -629,10 +644,11 @@ The different ways how we can define an interaction is shown below.
       "Option 1": prompt_1_id
       "Option 2": prompt_2_id
    ```
+
    Here, a menu is displayed with two options to select from. prompt_1_id and prompt_2_id are the two interaction id of next possible interactions. Here, `response_path_map` is required since different response from the user can lead to different interaction.
 
-
 5. An interaction which has an action item and has multiple paths
+
    ```YAML
    validate_number:
      action: is_number_valid?
@@ -642,22 +658,26 @@ The different ways how we can define an interaction is shown below.
        "false": ask_number
       description: "is_number_valid? is a method and should be defined by the user in TUI Actions"
    ```
+
    Here, after the action is performed, based on the response of the action it could lead to different paths with the mapped interaction id.
 
 6. An interaction with a different starting interaction id other than `start`.
+
    ```YAML
    interactions:
       greeting:
         messages: "The greeting message to be displayed in this interaction"
         paths: [exit]
 
-       exit:
-         messages: "Thank you"
+      exit:
+        messages: "Thank you"
    ```
+
    It is not mandatory to name starting interaction id with `start`.
 
 7. An interaction can have multiple starting points.
-  ```YAML
+
+   ```YAML
    interactions:
       greeting:
         messages: "The greeting message to be displayed in this interaction"
@@ -667,12 +687,14 @@ The different ways how we can define an interaction is shown below.
         messages: "The good bye message to be displayed in this interaction"
         paths: [exit]
 
-       exit:
-         messages: "Thank you"
+      exit:
+        messages: "Thank you"
    ```
+
    In case of multiple starting interaction ids, interaction is run by passing selected starting interaction id.
 
 #### Troubleshooting
+
 - Do not have response_path_map based on the response from prompts and action together in a single interaction, this could lead to ambiguity. So, atomize the interaction to either:
   - display message,
   - take inputs from user, or
@@ -686,176 +708,176 @@ The different ways how we can define an interaction is shown below.
 
 1. basic interaction file
 
-```YAML
-:file_format_version: 1.0.0
-
-interactions:
-  start:
-    messages: ["This is a start message"]
-    prompt_type: "say"
-    paths: [prompt_2]
-    description: This is an optional field. WYOD (Write your own description)
-
-  prompt_2:
-    messages: ["Do you agree?"]
-    prompt_type: "yes"
-    paths: [prompt_3, prompt_4]
-    response_path_map:
-      "true": prompt_3
-      "false": prompt_4
-
-  prompt_3:
-    messages: ["This is message for prompt 3 - Reached when user says yes"]
-    prompt_type: "ok"
-    paths: [prompt_6]
-
-  prompt_4:
-    messages: ["This is message for prompt 4 - Reached when user says no"]
-    prompt_type: "warn"
-    paths: [prompt_5]
-
-  prompt_5:
-    messages: ["This is message for prompt 5"]
-    prompt_type: "error"
-    paths: [exit]
-
-  prompt_6:
-    messages: ["This is message for prompt 6"]
-    prompt_type: "ask"
-    paths: [exit]
-
-  exit:
-    messages: ["This is the exist prompt"]
-    prompt_type: "say"
-```
+   ```YAML
+   :file_format_version: 1.0.0
+   
+   interactions:
+     start:
+       messages: ["This is a start message"]
+       prompt_type: "say"
+       paths: [prompt_2]
+       description: This is an optional field. WYOD (Write your own description)
+   
+     prompt_2:
+       messages: ["Do you agree?"]
+       prompt_type: "yes"
+       paths: [prompt_3, prompt_4]
+       response_path_map:
+         "true": prompt_3
+         "false": prompt_4
+   
+     prompt_3:
+       messages: ["This is message for prompt 3 - Reached when user says yes"]
+       prompt_type: "ok"
+       paths: [prompt_6]
+   
+     prompt_4:
+       messages: ["This is message for prompt 4 - Reached when user says no"]
+       prompt_type: "warn"
+       paths: [prompt_5]
+   
+     prompt_5:
+       messages: ["This is message for prompt 5"]
+       prompt_type: "error"
+       paths: [exit]
+   
+     prompt_6:
+       messages: ["This is message for prompt 6"]
+       prompt_type: "ask"
+       paths: [exit]
+   
+     exit:
+       messages: ["This is the exist prompt"]
+       prompt_type: "say"
+   ```
 
 2. with timeout_yes prompt
 
-```YAML
-:file_format_version: 1.0.0
-
-interactions:
-  start:
-    messages: ["Shall we begin the game?"]
-    prompt_type: "timeout_yes"
-    prompt_attributes:
-      timeout_duration: 10
-      timeout_message: "Oops! Reflex too slow."
-    paths: [play, rest]
-    response_path_map:
-      "true": play
-      "false": rest
-  play:
-    messages: ["Playing..."]
-    prompt_type: "ok"
-    paths: [exit]
-  rest:
-    messages: ["Resting..."]
-    prompt_type: "ok"
-    paths: [exit]
-  exit:
-    messages: ["Game over!"]
-    prompt_type: "say"
-```
+   ```YAML
+   :file_format_version: 1.0.0
+   
+   interactions:
+     start:
+       messages: ["Shall we begin the game?"]
+       prompt_type: "timeout_yes"
+       prompt_attributes:
+         timeout_duration: 10
+         timeout_message: "Oops! Reflex too slow."
+       paths: [play, rest]
+       response_path_map:
+         "true": play
+         "false": rest
+     play:
+       messages: ["Playing..."]
+       prompt_type: "ok"
+       paths: [exit]
+     rest:
+       messages: ["Resting..."]
+       prompt_type: "ok"
+       paths: [exit]
+     exit:
+       messages: ["Game over!"]
+       prompt_type: "say"
+   ```
 
 3. with erb message
 
-```YAML
-:file_format_version: 1.0.0
-
-interactions:
-  start:
-    messages: ["TUI GREET!"]
-    prompt_type: "say"
-    paths: [ask_user_name]
-    description: This is an optional field. WYOD (Write your own description)
-  ask_user_name:
-    messages: ["What is your name?"]
-    prompt_type: "ask"
-    paths: [welcome_user_in_english]
-    description: This is an optional field. WYOD (Write your own description)
-  welcome_user_in_english:
-    # You can provide variables/Constants of TUIEngineState
-    messages: ["Hello, <%=  input[:ask_user_name] %>"]
-    prompt_type: "ok"
-    paths: [exit]
-  exit:
-    messages: ["This is the exit prompt"]
-    prompt_type: "say"
-```
+   ```YAML
+   :file_format_version: 1.0.0
+   
+   interactions:
+     start:
+       messages: ["TUI GREET!"]
+       prompt_type: "say"
+       paths: [ask_user_name]
+       description: This is an optional field. WYOD (Write your own description)
+     ask_user_name:
+       messages: ["What is your name?"]
+       prompt_type: "ask"
+       paths: [welcome_user_in_english]
+       description: This is an optional field. WYOD (Write your own description)
+     welcome_user_in_english:
+       # You can provide variables/Constants of TUIEngineState
+       messages: ["Hello, <%=  input[:ask_user_name] %>"]
+       prompt_type: "ok"
+       paths: [exit]
+     exit:
+       messages: ["This is the exit prompt"]
+       prompt_type: "say"
+   ```
 
 4. with timeout_select prompt
 
-```YAML
-:file_format_version: 1.0.0
-interactions:
-  start:
-    messages: ["Shall we begin the game?", ["Yes", "No", "Exit"]]
-    prompt_type: "timeout_select"
-    prompt_attributes:
-      timeout_duration: 10
-      timeout_message: "Oops! Your reflex is too slow."
-    paths: [play, rest, exit]
-    response_path_map:
-      "Yes": play
-      "No": rest
-      "Exit": exit
-
-  play:
-    messages: ["Playing..."]
-    prompt_type: "ok"
-    paths: [exit]
-    description: WYOD.
-
-  rest:
-    messages: ["Resting..."]
-    prompt_type: "ok"
-    paths: [exit]
-    description: WYOD.
-
-  exit:
-    messages: ["Game over!"]
-    prompt_type: "say"
-```
+   ```YAML
+   :file_format_version: 1.0.0
+   interactions:
+     start:
+       messages: ["Shall we begin the game?", ["Yes", "No", "Exit"]]
+       prompt_type: "timeout_select"
+       prompt_attributes:
+         timeout_duration: 10
+         timeout_message: "Oops! Your reflex is too slow."
+       paths: [play, rest, exit]
+       response_path_map:
+         "Yes": play
+         "No": rest
+         "Exit": exit
+   
+     play:
+       messages: ["Playing..."]
+       prompt_type: "ok"
+       paths: [exit]
+       description: WYOD.
+   
+     rest:
+       messages: ["Resting..."]
+       prompt_type: "ok"
+       paths: [exit]
+       description: WYOD.
+   
+     exit:
+       messages: ["Game over!"]
+       prompt_type: "say"
+   ```
 
 5. with styled texts
-The messages can be styled with all the APIs provided by the `pastel` gem. The popular method/APIs of pastel library are `red`, `green`, `blue` etc. to change the text color or `bold`, `underline` to format the text. To know more about the different options available, refer to the [Pastel Readme](https://github.com/piotrmurach/pastel)
 
-Below are few examples of the usage of Pastel methods:
+   The messages can be styled with all the APIs provided by the `pastel` gem. The popular method/APIs of pastel library are `red`, `green`, `blue` etc. to change the text color or `bold`, `underline` to format the text. To know more about the different options available, refer to the [Pastel Readme](https://github.com/piotrmurach/pastel)
 
-```YAML
-:file_format_version: 1.0.0
+   Below are few examples of the usage of Pastel methods:
 
-interactions:
-  start:
-    messages: ['<%= input[:pastel].bold.underline.green("Welcome, this text is bold, underlined and colored in green")%>.']
-    prompt_type: "say"
-    paths: [prompt_2]
-    description: This is an optional field. WYOD (Write your own description)
-
-  prompt_2:
-    messages: ["Do you agree?"]
-    prompt_type: "yes"
-    paths: [prompt_3, prompt_4]
-    response_path_map:
-      "true": prompt_3
-      "false": prompt_4
-
-  prompt_3:
-    messages: ['You have selected <%= input[:pastel].green("yes") %>']
-    prompt_type: "ok"
-    paths: [exit]
-
-  prompt_4:
-    messages: ['You have selected <%= input[:pastel].red("no") %>']
-    prompt_type: "error"
-    paths: [exit]
-
-  exit:
-    messages: ["This is the exit prompt"]
-    prompt_type: "say"
-```
-
+   ```YAML
+   :file_format_version: 1.0.0
+   
+   interactions:
+     start:
+       messages: ['<%= input[:pastel].bold.underline.green("Welcome, this text is bold, underlined and colored in green")%>.']
+       prompt_type: "say"
+       paths: [prompt_2]
+       description: This is an optional field. WYOD (Write your own description)
+   
+     prompt_2:
+       messages: ["Do you agree?"]
+       prompt_type: "yes"
+       paths: [prompt_3, prompt_4]
+       response_path_map:
+         "true": prompt_3
+         "false": prompt_4
+   
+     prompt_3:
+       messages: ['You have selected <%= input[:pastel].green("yes") %>']
+       prompt_type: "ok"
+       paths: [exit]
+   
+     prompt_4:
+       messages: ['You have selected <%= input[:pastel].red("no") %>']
+       prompt_type: "error"
+       paths: [exit]
+   
+     exit:
+       messages: ["This is the exit prompt"]
+       prompt_type: "say"
+   ```
 
 ### ChefLicensing Context
 
@@ -873,5 +895,6 @@ ChefLicensing::Context.<class_method>
 where `class_method` are methods extended for this module.
 
 List of methods available with context module:
+
 - `local_licensing_service?` method determines if the chef licensing gem is using an on-prem licensing service.
 - `license_keys` method will return the list of license keys based on current state and it's behavior.

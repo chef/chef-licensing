@@ -1,12 +1,12 @@
-Test harness notes for the chef-licensing specs
+# Test harness notes for the chef-licensing specs
 
-Purpose
--------
+## Purpose
+
 This file documents the decisions made in `spec/spec_helper.rb` to keep the
 suite deterministic and hermetic.
 
-Key points
-----------
+## Key points
+
 - WebMock is required before the library (`require "webmock/rspec"`) so any
   HTTP client initialization that happens at require-time is intercepted.
   This prevents accidental real HTTP connections during test bootstrap.
@@ -29,8 +29,8 @@ Key points
   WebMock's `stub_request`. Consider adding common stubs to
   `spec/support/license_server_stubs.rb` to reduce duplication.
 
-Running the tests
------------------
+## Running the tests
+
 From the `components/ruby` directory run:
 
 ```bash
@@ -43,8 +43,8 @@ If you only want to run a single spec file:
 bundle exec rspec spec/path/to/file_spec.rb
 ```
 
-Adding a new spec
------------------
+## Adding a new spec
+
 - If your spec touches the user's HOME, prefer creating temporary dirs
   under `Dir.mktmpdir` and avoid writing into the suite-level HOME
   directly. Use the provided per-example HOME swap when you need a
@@ -55,7 +55,7 @@ Adding a new spec
   factor them into `spec/support/license_server_stubs.rb` and require that
   from `spec/spec_helper.rb`.
 
-Contact
--------
+## Contact
+
 If you have questions about why this setup exists, check the Git history
 for `spec/spec_helper.rb` or ask the maintainer team.
