@@ -271,6 +271,12 @@ RSpec.describe ChefLicensing do
   end
 
   describe ".fetch_only" do
+    before do
+      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
+        .to_return(body: { data: [], status_code: 404 }.to_json,
+          headers: { content_type: "application/json" })
+    end
+
     context "when licensing is optional" do
       before do
         ChefLicensing.configure do |config|
@@ -293,7 +299,7 @@ RSpec.describe ChefLicensing do
       let(:license_keys) { %w{license_key1 license_key2} }
 
       before do
-        allow(ChefLicensing::LicenseKeyFetcher).to receive(:fetch).and_return(license_keys)
+        allow(ChefLicensing::LicenseKeyFetcher).to receive(:fetch_and_validate).and_return(license_keys)
       end
 
       it "fetches the license keys without persisting them" do
@@ -305,7 +311,7 @@ RSpec.describe ChefLicensing do
       let(:error_message) { "Software is not entitled." }
 
       before do
-        allow(ChefLicensing::LicenseKeyFetcher).to receive(:fetch).and_raise(ChefLicensing::ClientError, error_message)
+        allow(ChefLicensing::LicenseKeyFetcher).to receive(:fetch_and_validate).and_raise(ChefLicensing::ClientError, error_message)
       end
 
       it "raises a SoftwareNotEntitled exception" do
@@ -315,7 +321,7 @@ RSpec.describe ChefLicensing do
 
     context "when there is a client error due to unknown reason" do
       before do
-        allow(ChefLicensing::LicenseKeyFetcher).to receive(:fetch).and_raise(ChefLicensing::ClientError, "Some other error")
+        allow(ChefLicensing::LicenseKeyFetcher).to receive(:fetch_and_validate).and_raise(ChefLicensing::ClientError, "Some other error")
       end
 
       it "raises a ClientError exception" do

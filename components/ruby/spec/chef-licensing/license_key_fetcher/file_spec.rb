@@ -26,6 +26,13 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher::File do
       config.license_server_url = "https://license.chef.io"
       config.license_server_url_check_in_file = true
     end
+    # Mock the default_file_location to use a temp directory for tests
+    @test_home_dir = Dir.mktmpdir
+    allow(ChefLicensing::LicenseKeyFetcher::File).to receive(:default_file_location).and_return(@test_home_dir)
+  end
+
+  after do
+    FileUtils.rm_rf(@test_home_dir) if @test_home_dir && Dir.exist?(@test_home_dir)
   end
 
   describe "#fetch" do

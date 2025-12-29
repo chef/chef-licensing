@@ -28,6 +28,13 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
       config.output = output
       config.logger = logger
     end
+    # Mock the default_file_location to use a temp directory for tests
+    @test_home_dir = Dir.mktmpdir
+    allow(ChefLicensing::LicenseKeyFetcher::File).to receive(:default_file_location).and_return(@test_home_dir)
+  end
+
+  after do
+    FileUtils.rm_rf(@test_home_dir) if @test_home_dir && Dir.exist?(@test_home_dir)
   end
 
   describe "fetch" do
@@ -506,6 +513,198 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
         end
       end
 
+    end
+  end
+
+  describe "fetch_and_validate" do
+    let(:argv) { ["--chef-license-key=tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"] }
+    let(:env) { { "CHEF_LICENSE_KEY" => "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111" } }
+    before do
+      ChefLicensing.configure do |config|
+        config.is_local_license_service = nil
+      end
+      stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
+        .to_return(body: { data: [], status_code: 404 }.to_json,
+          headers: { content_type: "application/json" })
+      ChefLicensing::Context.current_context = nil
+    end
+
+    context "the file does not exist; and no license keys are set either via arg or env" do
+      let(:opts) {
+        {
+          output: output,
+          logger: logger,
+        }
+      }
+      let(:license_key_fetcher) { described_class.new(opts) }
+
+      it "raises an error" do
+        expect { license_key_fetcher.fetch_and_validate }.to raise_error(ChefLicensing::LicenseKeyFetcher::LicenseKeyNotFetchedError)
+      end
+    end
+
+    context "the license is set via the argument & environment; the file does not exist" do
+      let(:opts) {
+        {
+          dir: Dir.mktmpdir,
+          output: output,
+          logger: logger,
+          argv: argv,
+          env: env,
+        }
+      }
+      let(:license_keys) {
+        %w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150 free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111}
+      }
+      let(:license_key_fetcher) { described_class.new(opts) }
+      before do
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", version: api_version })
+          .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+          .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111", version: api_version })
+          .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+          .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: client_api_free_license_data, status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+          .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: describe_api_data, status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+
+      end
+
+      it "validates license without persisting to disk" do
+        expect(license_key_fetcher.fetch_and_validate).to eq(%w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150 free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111})
+      end
+
+      it "does not create or write to license file" do
+        license_dir = opts[:dir]
+        license_file_path = File.join(license_dir, "licenses.yaml")
+
+        # Ensure file doesn't exist before
+        expect(File.exist?(license_file_path)).to be false
+
+        license_key_fetcher.fetch_and_validate
+
+        # Ensure file still doesn't exist after validation
+        expect(File.exist?(license_file_path)).to be false
+      end
+    end
+
+    context "the license is set via the argument; validates without writing to disk" do
+      let(:opts) {
+        {
+          dir: Dir.mktmpdir,
+          output: output,
+          logger: logger,
+          argv: argv,
+          env: {},
+        }
+      }
+      let(:license_key_fetcher) { described_class.new(opts) }
+      before do
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", version: api_version })
+          .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: describe_api_data, status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+      end
+
+      it "returns the validated license key" do
+        expect(license_key_fetcher.fetch_and_validate).to eq(["tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150"])
+      end
+
+      it "does not persist license to disk" do
+        license_dir = opts[:dir]
+        license_file_path = File.join(license_dir, "licenses.yaml")
+
+        expect(File.exist?(license_file_path)).to be false
+        license_key_fetcher.fetch_and_validate
+        expect(File.exist?(license_file_path)).to be false
+      end
+    end
+
+    context "comparison: fetch_and_persist writes to disk, fetch_and_validate does not" do
+      let(:persist_dir) { Dir.mktmpdir }
+      let(:validate_dir) { Dir.mktmpdir }
+      let(:persist_opts) {
+        {
+          dir: persist_dir,
+          output: output,
+          logger: logger,
+          argv: argv,
+          env: {},
+        }
+      }
+      let(:validate_opts) {
+        {
+          dir: validate_dir,
+          output: output,
+          logger: logger,
+          argv: argv,
+          env: {},
+        }
+      }
+      let(:license_key_fetcher_persist) { described_class.new(persist_opts) }
+      let(:license_key_fetcher_validate) { described_class.new(validate_opts) }
+
+      before do
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", version: api_version })
+          .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150,tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: describe_api_data, status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+      end
+
+      it "fetch_and_persist creates license file" do
+        persist_file = File.join(persist_dir, "licenses.yaml")
+        expect(File.exist?(persist_file)).to be false
+        license_key_fetcher_persist.fetch_and_persist
+        expect(File.exist?(persist_file)).to be true
+      end
+
+      it "fetch_and_validate does not create license file" do
+        validate_file = File.join(validate_dir, "licenses.yaml")
+        expect(File.exist?(validate_file)).to be false
+        license_key_fetcher_validate.fetch_and_validate
+        expect(File.exist?(validate_file)).to be false
+      end
+
+      it "both methods return same license keys" do
+        persist_result = license_key_fetcher_persist.fetch_and_persist
+        validate_result = license_key_fetcher_validate.fetch_and_validate
+        expect(persist_result).to eq(validate_result)
+      end
     end
   end
 
