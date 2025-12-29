@@ -24,7 +24,7 @@ module ChefLicensing
 
         license_server_url_from_system = ChefLicensing::ArgFetcher.fetch_value("--chef-license-server", :string) || ChefLicensing::EnvFetcher.fetch_value("CHEF_LICENSE_SERVER", :string)
         # Default persist to true for backward compatibility, but respect the config setting if set
-        persist = @persist_license_data.nil? ? true : @persist_license_data
+        persist = @persist_license_data.nil? || @persist_license_data
         @license_server_url = ChefLicensing::LicenseKeyFetcher::File.fetch_or_persist_url(@license_server_url, license_server_url_from_system, opts.merge(persist: persist))
         @license_server_url_check_in_file = true
         @license_server_url
