@@ -716,6 +716,83 @@ RSpec.describe ChefLicensing::LicenseKeyFetcher do
         expect(persist_result).to eq(validate_result)
       end
     end
+
+    context "the license is set via the argument & environment; and the file exists" do
+      let(:existing_license_dir) { "spec/fixtures/multiple_license_keys_license" }
+
+      let(:opts) {
+        {
+          logger: logger,
+          argv: argv,
+          env: env,
+          output: output,
+          dir: existing_license_dir,
+        }
+      }
+      let(:license_keys) {
+        %w{tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150 free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111}
+      }
+      let(:license_key_fetcher) { described_class.new(opts) }
+      before do
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", version: api_version })
+          .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
+          .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111", version: api_version })
+          .to_return(body: { data: true, message: "License Id is valid", status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+          .with(query: { licenseId: "free-c0832d2d-1111-1ec1-b1e5-011d182dc341-111", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: client_api_free_license_data, status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+          .with(query: { licenseId: license_keys.join(","), entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: client_api_data, status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
+          .with(query: { licenseId: "tmns-0f76efaf-b45b-4d92-86b2-2d144ce73dfa-150", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: describe_api_data, status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+      end
+
+      it "validates licenses from arg/env without modifying existing file" do
+        license_file_path = File.join(existing_license_dir, "licenses.yaml")
+
+        # Capture the original file content
+        original_content = File.read(license_file_path) if File.exist?(license_file_path)
+
+        # Perform validation
+        result = license_key_fetcher.fetch_and_validate
+
+        # Check that the expected licenses are returned
+        expect(result).to eq(license_keys)
+
+        # Ensure the file content hasn't changed
+        expect(File.read(license_file_path)).to eq(original_content)
+      end
+
+      it "does not write passed licenses to disk" do
+        license_file_path = File.join(existing_license_dir, "licenses.yaml")
+        original_mtime = File.mtime(license_file_path) if File.exist?(license_file_path)
+
+        sleep 0.01 # Small sleep to ensure mtime would change if file was written
+
+        license_key_fetcher.fetch_and_validate
+
+        # Verify mtime hasn't changed (file wasn't modified)
+        expect(File.mtime(license_file_path)).to eq(original_mtime)
+      end
+
+      it "sets persist_license_data config to false" do
+        license_key_fetcher.fetch_and_validate
+        expect(ChefLicensing::Config.persist_license_data).to eq(false)
+      end
+    end
   end
 
   describe "verify license keys format" do
