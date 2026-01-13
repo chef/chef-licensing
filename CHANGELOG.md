@@ -1,28 +1,25 @@
 # Changelog
 
-<!-- latest_release 1.4.0 -->
-## [1.4.0](https://github.com/chef/chef-licensing/tree/1.4.0) (2026-01-13)
-
-#### Merged Pull Requests
-- Add fetch_only endpoint [#219](https://github.com/chef/chef-licensing/pull/219) ([Stromweld](https://github.com/Stromweld))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=1.3.4 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Add fetch_only endpoint [#219](https://github.com/chef/chef-licensing/pull/219) ([Stromweld](https://github.com/Stromweld)) <!-- 1.4.0 -->
-- add GHA workflow and linting fixes [#221](https://github.com/chef/chef-licensing/pull/221) ([Stromweld](https://github.com/Stromweld)) <!-- 1.3.5 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [1.4.0](https://github.com/chef/chef-licensing/tree/1.4.0) (2026-01-13)
+
+#### Merged Pull Requests
+- add GHA workflow and linting fixes [#221](https://github.com/chef/chef-licensing/pull/221) ([Stromweld](https://github.com/Stromweld))
+- Add fetch_only endpoint [#219](https://github.com/chef/chef-licensing/pull/219) ([Stromweld](https://github.com/Stromweld))
+<!-- latest_stable_release -->
+
 ## [1.3.4](https://github.com/chef/chef-licensing/tree/1.3.4) (2025-12-16)
 
 #### Merged Pull Requests
 - bump ostruct ruby dep [#215](https://github.com/chef/chef-licensing/pull/215) ([Stromweld](https://github.com/Stromweld))
 - updated ostruct in gemfile.lock [#218](https://github.com/chef/chef-licensing/pull/218) ([Stromweld](https://github.com/Stromweld))
 - Monkey patch &#39;cache_key_for&#39; action in &#39;faraday-http-cache&#39; gem [#217](https://github.com/chef/chef-licensing/pull/217) ([neha-p6](https://github.com/neha-p6))
-<!-- latest_stable_release -->
 
 ## [1.3.1](https://github.com/chef/chef-licensing/tree/1.3.1) (2025-12-15)
 
