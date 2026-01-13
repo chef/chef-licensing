@@ -55,10 +55,21 @@ module ChefLicensing
     # Methods for obtaining consent from the user.
     #
     def fetch_and_persist
+      ChefLicensing::Config.persist_license_data = true
       if ChefLicensing::Context.local_licensing_service?
         perform_on_prem_operations
       else
         perform_global_operations
+      end
+    end
+
+    # Method for validating license key without writing to disk
+    def fetch_and_validate
+      ChefLicensing::Config.persist_license_data = false
+      if ChefLicensing::Context.local_licensing_service?
+        perform_on_prem_operations
+      else
+        perform_global_operations(false)
       end
     end
 
@@ -94,10 +105,10 @@ module ChefLicensing
       raise LicenseKeyNotFetchedError.new("Unable to obtain a License Key.")
     end
 
-    def perform_global_operations
+    def perform_global_operations(persist = true)
       new_keys = fetch_license_key_from_arg
       license_type = validate_and_fetch_license_type(new_keys)
-      if license_type && !unrestricted_license_added?(new_keys, license_type)
+      if license_type && !unrestricted_license_added?(new_keys, license_type, persist)
         # break the flow after the prompt if there is a restriction in adding license
         # and return the license keys persisted in the file or @license_keys if any
         return license_keys
@@ -105,7 +116,7 @@ module ChefLicensing
 
       new_keys = fetch_license_key_from_env
       license_type = validate_and_fetch_license_type(new_keys)
-      if license_type && !unrestricted_license_added?(new_keys, license_type)
+      if license_type && !unrestricted_license_added?(new_keys, license_type, persist)
         # break the flow after the prompt if there is a restriction in adding license
         # and return the license keys persisted in the file or @license_keys if any
         return license_keys
@@ -125,7 +136,11 @@ module ChefLicensing
         unless new_keys.empty?
           # If license type is not selected using TUI, assign it using API call to fetch type.
           prompt_fetcher.license_type ||= get_license_type(new_keys.first)
-          persist_and_concat(new_keys, prompt_fetcher.license_type)
+          if persist
+            persist_and_concat(new_keys, prompt_fetcher.license_type)
+          else
+            validate_and_concat(new_keys, prompt_fetcher.license_type)
+          end
           license ||= ChefLicensing::Context.license
           # Expired trial licenses and exhausted free licenses will be blocked
           # Not blocking commercial licenses
@@ -174,6 +189,10 @@ module ChefLicensing
 
     def self.fetch_and_persist(opts = {})
       new(opts).fetch_and_persist
+    end
+
+    def self.fetch_and_validate(opts = {})
+      new(opts).fetch_and_validate
     end
 
     def self.fetch(opts = {})
@@ -263,6 +282,11 @@ module ChefLicensing
       @license_keys.concat(new_keys)
     end
 
+    def validate_and_concat(new_keys, license_type)
+      # Only update in-memory license keys without persisting to disk
+      @license_keys.concat(new_keys)
+    end
+
     def fetch_license_key_from_arg
       new_key = @arg_fetcher.fetch_value("--chef-license-key")
       validate_license_key_format(new_key)
@@ -304,7 +328,7 @@ module ChefLicensing
       prompt_fetcher.fetch
     end
 
-    def unrestricted_license_added?(new_keys, license_type)
+    def unrestricted_license_added?(new_keys, license_type, persist = true)
       if license_restricted?(license_type)
         # Existing license keys of same license type are fetched to compare if old license key or a new one is added.
         # However, if user is trying to add Free Tier License, and user has active trial license, we fetch the trial license key
@@ -327,7 +351,11 @@ module ChefLicensing
         # license addition should be restricted but it is not because the license is expired and warning wont be handled by this restriction
         true
       else
-        persist_and_concat(new_keys, license_type)
+        if persist
+          persist_and_concat(new_keys, license_type)
+        else
+          validate_and_concat(new_keys, license_type)
+        end
         true
       end
     end

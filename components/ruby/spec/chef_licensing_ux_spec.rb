@@ -75,15 +75,21 @@ RSpec.describe ChefLicensing::TUIEngine do
   }
 
   let(:prompt) { TTY::Prompt::Test.new }
+  let(:test_license_dir) { Dir.mktmpdir }
 
   let(:opts) {
     {
       prompt: prompt,
       interaction_file: interaction_file,
+      dir: test_license_dir,
     }
   }
 
   before do
+    # Stub the default file location to use test directory instead of ~/.chef
+    # This ensures tests don't read from the user's personal license file
+    allow(ChefLicensing::LicenseKeyFetcher::File).to receive(:default_file_location).and_return(test_license_dir)
+
     ChefLicensing.configure do |config|
       config.logger = logger
       config.output = output
@@ -98,7 +104,7 @@ RSpec.describe ChefLicensing::TUIEngine do
   # Stubbing all the required API calls
   before do
     stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
-      .to_return(body: { data: [], status_code: 404 }.to_json,
+      .to_return(body: { data: [], status_code: 404, message: "Not Found" }.to_json,
         headers: { content_type: "application/json" })
 
     stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/validate")
@@ -200,6 +206,25 @@ RSpec.describe ChefLicensing::TUIEngine do
       .to_return(body: { data: exhausted_free_client_api_data, status_code: 200 }.to_json,
         headers: { content_type: "application/json" })
 
+    # Add stub for client API call with both trial license keys (expired + new)
+    stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+      .with(query: { licenseId: "#{expired_trial_license_key},#{valid_trial_license_key_2}", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+      .to_return(body: { data: [expired_trial_license_client_api_data, valid_client_api_data], status_code: 200 }.to_json,
+        headers: { content_type: "application/json" })
+
+    # Catch-all stub for describe endpoint with any license ID combination
+    # This handles comma-separated license IDs and any other combinations
+    # Only matches when there's a non-empty licenseId parameter
+    stub_request(:get, %r{#{ChefLicensing::Config.license_server_url}/v1/desc})
+      .with(query: hash_including({ licenseId: /.+/, entitlementId: ChefLicensing::Config.chef_entitlement_id }))
+      .to_return(body: { data: valid_describe_api_data, status_code: 200 }.to_json,
+        headers: { content_type: "application/json" })
+  end
+
+  after do
+    # Reset the Context singleton between tests to avoid state leakage
+    ChefLicensing::Context.current_context = nil if defined?(ChefLicensing::Context)
+    FileUtils.remove_entry test_license_dir if test_license_dir && ::File.exist?(test_license_dir)
   end
 
   context "ux for tui entry - user enters a valid trial license id" do
@@ -397,6 +422,18 @@ RSpec.describe ChefLicensing::TUIEngine do
       end
 
       before do
+        # Add stub for describe API to get license details for display when checking restriction
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/desc")
+          .with(query: { licenseId: valid_free_license_key, entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: valid_describe_api_data, status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+
+        # Add stub for client API call with both free license keys
+        stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/client")
+          .with(query: { licenseId: "#{valid_free_license_key},#{valid_free_license_key_2}", entitlementId: ChefLicensing::Config.chef_entitlement_id })
+          .to_return(body: { data: [valid_client_api_data_free_license, valid_client_api_data_free_license], status_code: 200 }.to_json,
+            headers: { content_type: "application/json" })
+
         prompt.input << "\n"
         prompt.input << valid_free_license_key_2
         prompt.input << "\n"
@@ -429,12 +466,10 @@ RSpec.describe ChefLicensing::TUIEngine do
         expect(prompt.output.string).to include("A Free Tier License already exists with following details:")
         expect(prompt.output.string).to include("Please generate a Trial or Commercial License by running")
       end
-
     end
-
   end
 
-  context "free license restriction ux, user has an active trail license and tries to add free license via tui" do
+  context "free license restriction ux, user has an active trial license and tries to add free license via tui" do
     Dir.mktmpdir do |tmpdir|
       let(:argv) { ["--chef-license-key=tmns-58555821-925e-4a27-8fdc-e79dae5a425b-1234"] }
 

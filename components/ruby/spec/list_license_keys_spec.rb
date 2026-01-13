@@ -96,9 +96,11 @@ RSpec.describe ChefLicensing::ListLicenseKeys do
 
     before do
       stub_request(:get, "#{ChefLicensing::Config.license_server_url}/v1/listLicenses")
-        .to_return(body: { data: [], status_code: 404 }.to_json,
-          headers: { content_type: "application/json" })
+        .to_return(status: 404, body: { status_code: 404, message: "Not found" }.to_json, headers: { "Content-Type" => "application/json" })
       ChefLicensing::Context.current_context = nil
+      # Ensure the file fetcher will find and try to read the test fixture file
+      allow_any_instance_of(ChefLicensing::LicenseKeyFetcher::File).to receive(:seek)
+        .and_return("#{unsupported_version_license_dir}/licenses.yaml")
     end
 
     it "exits with error message about LicenseKeyNotFetchedError" do

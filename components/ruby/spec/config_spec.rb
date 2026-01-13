@@ -97,6 +97,19 @@ RSpec.describe ChefLicensing::Config do
         expect(YAML.load_file("#{temp_dir}/licenses.yaml")[:license_server_url]).to eq("https://custom-licensing-server-2.com/License")
       end
 
+      it "does not update the file when persist_license_data is false" do
+        # Reset the cached license server URL to force re-evaluation
+        ChefLicensing::Config.license_server_url_check_in_file = false
+        ChefLicensing::Config.persist_license_data = false
+        # load the original file first and check the value
+        original_url = YAML.load_file("#{temp_dir}/licenses.yaml")[:license_server_url]
+        expect(original_url).to eq("https://custom-licensing-server.com/License")
+        # this will NOT update the value in licenses.yaml file
+        expect(ChefLicensing::Config.license_server_url(opts)).to eq("https://custom-licensing-server-2.com/License")
+        # load the file again and check the value is unchanged
+        expect(YAML.load_file("#{temp_dir}/licenses.yaml")[:license_server_url]).to eq("https://custom-licensing-server.com/License")
+      end
+
       after do
         ARGV.clear
       end
