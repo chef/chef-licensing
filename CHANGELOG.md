@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 1.3.5 -->
-## [1.3.5](https://github.com/chef/chef-licensing/tree/1.3.5) (2025-12-29)
+<!-- latest_release 1.4.0 -->
+## [1.4.0](https://github.com/chef/chef-licensing/tree/1.4.0) (2026-01-13)
 
 #### Merged Pull Requests
-- add GHA workflow and linting fixes [#221](https://github.com/chef/chef-licensing/pull/221) ([Stromweld](https://github.com/Stromweld))
+- Add fetch_only endpoint [#219](https://github.com/chef/chef-licensing/pull/219) ([Stromweld](https://github.com/Stromweld))
 <!-- latest_release -->
 
 <!-- release_rollup since=1.3.4 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Add fetch_only endpoint [#219](https://github.com/chef/chef-licensing/pull/219) ([Stromweld](https://github.com/Stromweld)) <!-- 1.4.0 -->
 - add GHA workflow and linting fixes [#221](https://github.com/chef/chef-licensing/pull/221) ([Stromweld](https://github.com/Stromweld)) <!-- 1.3.5 -->
 <!-- release_rollup -->
 
