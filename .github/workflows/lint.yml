@@ -68,8 +68,9 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.4'
-          bundler-cache: true
           working-directory: components/ruby
+      - name: Install dependencies
+        run: bundle install
       - name: Run Cookstyle
         run: bundle exec cookstyle --chefstyle --display-cop-names --extra-details
 
@@ -106,8 +107,9 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.4'
-          bundler-cache: true
           working-directory: components/ruby
+      - name: Install dependencies
+        run: bundle install
       - name: Run RSpec tests
         run: bundle exec rspec --format documentation --color
 
