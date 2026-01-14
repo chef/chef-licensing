@@ -109,7 +109,6 @@ jobs:
           ruby-version: '3.4'
           working-directory: components/ruby
       - name: Install dependencies
-        working-directory: components/ruby
         run: bundle install
       - name: Run RSpec tests
         run: bundle exec rspec --format documentation --color
