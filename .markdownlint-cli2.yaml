@@ -6,3 +6,4 @@ ignores:
   - .github/copilot-instructions.md
   - CHANGELOG.md
   - CODE_OF_CONDUCT.md
+  - SECURITY.md
