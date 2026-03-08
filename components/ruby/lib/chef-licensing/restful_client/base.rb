@@ -29,6 +29,11 @@ module ChefLicensing
         raise MissingAPICredentialsError, "Missing credential in config: Set in block chef_license_server or use environment variable CHEF_LICENSE_SERVER or pass through argument --chef-license-server" if ChefLicensing::Config.license_server_url.nil?
 
         @logger = ChefLicensing::Config.logger
+        @license_server_urls = if ChefLicensing::Config.license_server_url.kind_of?(String)
+                                  ChefLicensing::Config.license_server_url.split(",")
+                                else
+                                  ChefLicensing::Config.license_server_url
+                                end
       end
 
       def validate(license)
@@ -65,19 +70,18 @@ module ChefLicensing
 
       private
 
-      attr_reader :logger
+      attr_reader :logger, :license_server_urls
 
       # a common method to handle the get API calls
       def invoke_get_api(endpoint, params = {})
-        response = invoke_api(ChefLicensing::Config.license_server_url.split(","), endpoint, :get, nil, params)
+        response = invoke_api(license_server_urls, endpoint, :get, nil, params)
         response.body
       end
 
       # a common method to handle the post API calls
       def invoke_post_api(endpoint, payload, headers = {})
-        response = invoke_api(ChefLicensing::Config.license_server_url.split(","), endpoint, :post, payload, nil, headers)
+        response = invoke_api(license_server_urls, endpoint, :post, payload, nil, headers)
         raise RestfulClientError, format_error_from(response) unless response.success?
-
         response.body
       end
 
