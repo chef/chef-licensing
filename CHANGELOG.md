@@ -1,9 +1,17 @@
 # Changelog
 
-<!-- latest_release -->
+<!-- latest_release 1.4.1 -->
+## [1.4.1](https://github.com/chef/chef-licensing/tree/1.4.1) (2026-03-10)
+
+#### Merged Pull Requests
+- fix chef-licensing when license server url is passed an array of servers [#225](https://github.com/chef/chef-licensing/pull/225) ([Stromweld](https://github.com/Stromweld))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=1.4.0 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- fix chef-licensing when license server url is passed an array of servers [#225](https://github.com/chef/chef-licensing/pull/225) ([Stromweld](https://github.com/Stromweld)) <!-- 1.4.1 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
