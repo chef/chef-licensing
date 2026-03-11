@@ -1,26 +1,23 @@
 # Changelog
 
-<!-- latest_release 1.4.1 -->
-## [1.4.1](https://github.com/chef/chef-licensing/tree/1.4.1) (2026-03-10)
-
-#### Merged Pull Requests
-- fix chef-licensing when license server url is passed an array of servers [#225](https://github.com/chef/chef-licensing/pull/225) ([Stromweld](https://github.com/Stromweld))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=1.4.0 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- fix chef-licensing when license server url is passed an array of servers [#225](https://github.com/chef/chef-licensing/pull/225) ([Stromweld](https://github.com/Stromweld)) <!-- 1.4.1 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [1.4.1](https://github.com/chef/chef-licensing/tree/1.4.1) (2026-03-11)
+
+#### Merged Pull Requests
+- fix chef-licensing when license server url is passed an array of servers [#225](https://github.com/chef/chef-licensing/pull/225) ([Stromweld](https://github.com/Stromweld))
+<!-- latest_stable_release -->
+
 ## [1.4.0](https://github.com/chef/chef-licensing/tree/1.4.0) (2026-01-13)
 
 #### Merged Pull Requests
 - add GHA workflow and linting fixes [#221](https://github.com/chef/chef-licensing/pull/221) ([Stromweld](https://github.com/Stromweld))
 - Add fetch_only endpoint [#219](https://github.com/chef/chef-licensing/pull/219) ([Stromweld](https://github.com/Stromweld))
-<!-- latest_stable_release -->
 
 ## [1.3.4](https://github.com/chef/chef-licensing/tree/1.3.4) (2025-12-16)
 
