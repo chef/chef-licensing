@@ -3,8 +3,6 @@ require "chef-config/path_helper"
 require "yaml"
 require "date"
 require "fileutils" unless defined?(FileUtils)
-require_relative "../license_key_fetcher"
-require_relative "../config"
 require_relative "../exceptions/license_file_corrupted"
 require_relative "license_file/v4"
 require_relative "license_file/v3"
