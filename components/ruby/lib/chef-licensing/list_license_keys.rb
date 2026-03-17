@@ -1,8 +1,6 @@
-require_relative "license_key_fetcher"
 require_relative "api/describe"
 require_relative "exceptions/describe_error"
 require "pastel" unless defined?(Pastel)
-require_relative "config"
 require_relative "string_refinements"
 
 module ChefLicensing
