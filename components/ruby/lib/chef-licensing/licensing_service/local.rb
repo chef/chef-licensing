@@ -23,9 +23,6 @@ module ChefLicensing
         return false if e.status_code == 404
 
         raise(ChefLicensing::ListLicensesError.new("Error occured while fetching licenses #{e.message}", e.status_code))
-      rescue ChefLicensing::RestfulClientConnectionError
-        # Cannot reach the server (timeout, no route, etc.) — not a local service
-        false
       end
     end
   end

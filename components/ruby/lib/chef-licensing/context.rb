@@ -14,15 +14,7 @@ module ChefLicensing
       attr_writer :current_context
 
       def local_licensing_service?
-        # Skip HTTP detection entirely when licensing is optional (e.g. tests)
-        return false if ChefLicensing::Config.make_licensing_optional
-
-        # Use nil? so that a cached false result is respected (||= would re-evaluate false)
-        unless ChefLicensing::Config.is_local_license_service.nil?
-          return ChefLicensing::Config.is_local_license_service
-        end
-
-        ChefLicensing::Config.is_local_license_service = LicensingService::Local.detected?
+        ChefLicensing::Config.is_local_license_service ||= LicensingService::Local.detected?
       end
 
       # Implement methods on current context

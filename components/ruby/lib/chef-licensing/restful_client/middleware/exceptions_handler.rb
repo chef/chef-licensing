@@ -7,7 +7,7 @@ module Middleware
   class ExceptionsHandler < Faraday::Middleware
     def call(env)
       @app.call(env)
-    rescue Faraday::ConnectionFailed, Faraday::TimeoutError => e
+    rescue Faraday::ConnectionFailed => e
       raise ChefLicensing::RestfulClientConnectionError, e.message
     end
   end
