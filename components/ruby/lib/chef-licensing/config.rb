@@ -2,14 +2,10 @@ require "singleton" unless defined?(Singleton)
 require "logger"
 require_relative "config_fetcher/arg_fetcher"
 require_relative "config_fetcher/env_fetcher"
-require_relative "license_key_fetcher/file"
 require_relative "log"
 
 # Config class handles all configuration related to chef-licensing
 # Values can be set via block, environment variable or command line argument
-
-# Licensing service detection
-require_relative "licensing_service/local"
 
 module ChefLicensing
   class Config

@@ -1,5 +1,4 @@
 require_relative "base"
-require_relative "../../config"
 
 module ChefLicensing
   module LicenseFile
