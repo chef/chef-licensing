@@ -139,6 +139,8 @@ module ChefLicensing
       def get_connection(url = nil)
         store = PStoreAdapter.new(Dir.tmpdir)
         Faraday.new(url: url) do |config|
+          config.options.open_timeout = 10
+          config.options.timeout = 30
           config.request :json
           config.response :json, parser_options: { object_class: OpenStruct }
           config.use Faraday::HttpCache, shared_cache: false, logger: logger, store: store
@@ -150,6 +152,8 @@ module ChefLicensing
 
       def post_connection(url = nil)
         Faraday.new(url: url) do |config|
+          config.options.open_timeout = 10
+          config.options.timeout = 30
           config.request :json
           config.response :json, parser_options: { object_class: OpenStruct }
           config.use Middleware::ExceptionsHandler
