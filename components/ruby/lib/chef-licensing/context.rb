@@ -14,6 +14,9 @@ module ChefLicensing
       attr_writer :current_context
 
       def local_licensing_service?
+        # Skip HTTP detection entirely when licensing is optional (e.g. during unit tests)
+        return false if ChefLicensing::Config.make_licensing_optional
+
         ChefLicensing::Config.is_local_license_service ||= LicensingService::Local.detected?
       end
 
