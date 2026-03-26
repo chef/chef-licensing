@@ -68,10 +68,11 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.4'
-          bundler-cache: true
-          working-directory: components/ruby
+          bundler-cache: false
+      - name: Install cookstyle
+        run: gem install cookstyle
       - name: Run Cookstyle
-        run: bundle exec cookstyle --chefstyle --display-cop-names --extra-details
+        run: cookstyle --chefstyle --display-cop-names --extra-details
 
   go-lint:
     name: Go Linting (golangci-lint)
