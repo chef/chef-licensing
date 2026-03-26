@@ -1,16 +1,17 @@
 # Changelog
 
-<!-- latest_release 1.4.2 -->
-## [1.4.2](https://github.com/chef/chef-licensing/tree/1.4.2) (2026-03-26)
+<!-- latest_release 1.4.3 -->
+## [1.4.3](https://github.com/chef/chef-licensing/tree/1.4.3) (2026-03-26)
 
 #### Merged Pull Requests
-- fix circular reference&#39;s errors [#226](https://github.com/chef/chef-licensing/pull/226) ([Stromweld](https://github.com/Stromweld))
+- [CHEF-21374] Using debug to warn the user about the connection failure to the lice… [#199](https://github.com/chef/chef-licensing/pull/199) ([ashiqueps](https://github.com/ashiqueps))
 <!-- latest_release -->
 
 <!-- release_rollup since=1.4.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- [CHEF-21374] Using debug to warn the user about the connection failure to the lice… [#199](https://github.com/chef/chef-licensing/pull/199) ([ashiqueps](https://github.com/ashiqueps)) <!-- 1.4.3 -->
 - fix circular reference&#39;s errors [#226](https://github.com/chef/chef-licensing/pull/226) ([Stromweld](https://github.com/Stromweld)) <!-- 1.4.2 -->
 <!-- release_rollup -->
 
