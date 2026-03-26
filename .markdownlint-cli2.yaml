@@ -7,3 +7,5 @@ ignores:
   - CHANGELOG.md
   - CODE_OF_CONDUCT.md
   - SECURITY.md
+  - CONTRIBUTING.md
+  - COPYRIGHT.md
