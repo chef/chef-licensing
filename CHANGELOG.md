@@ -1,9 +1,17 @@
 # Changelog
 
-<!-- latest_release -->
+<!-- latest_release 1.4.2 -->
+## [1.4.2](https://github.com/chef/chef-licensing/tree/1.4.2) (2026-03-26)
+
+#### Merged Pull Requests
+- fix circular reference&#39;s errors [#226](https://github.com/chef/chef-licensing/pull/226) ([Stromweld](https://github.com/Stromweld))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=1.4.1 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- fix circular reference&#39;s errors [#226](https://github.com/chef/chef-licensing/pull/226) ([Stromweld](https://github.com/Stromweld)) <!-- 1.4.2 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
