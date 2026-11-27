@@ -119,7 +119,7 @@ func renderMessages(messages []string) {
 }
 
 func printHyperlink(url string) string {
-	return color.Style{color.FgGreen, color.OpUnderscore}.Sprintf(url)
+	return color.Style{color.FgGreen, color.OpUnderscore}.Sprintf("%s", url)
 }
 
 func printInColor(selColor, text string, options ...bool) string {
@@ -152,11 +152,11 @@ func printInColor(selColor, text string, options ...bool) string {
 		output = append(output, color.OpBold)
 	}
 
-	return output.Sprintf(text)
+	return output.Sprintf("%s", text)
 }
 
 func printBoldText(text1, text2 string) string {
-	return color.Bold.Sprintf(text1 + " " + text2)
+	return color.Bold.Sprintf("%s %s", text1, text2)
 }
 
 func printLicenseAddCommand() string {

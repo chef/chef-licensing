@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -74,6 +75,27 @@ func TestSayAction(t *testing.T) {
 	}
 	if funcOut != "next_path_after_say" {
 		t.Errorf("expected %q but got %q", "next_path_after_say", funcOut)
+	}
+}
+
+func TestSayActionPreservesPercentSigns(t *testing.T) {
+	tests := []struct {
+		message string
+		want    string
+	}{
+		{`{{printHyperlink "https://example.com/a%20b"}}`, "https://example.com/a%20b"},
+		{`{{printInColor "red" "100% complete"}}`, "100% complete"},
+		{`{{printBoldText "100%" "complete"}}`, "100% complete"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.message, func(t *testing.T) {
+			detail := keyfetcher.ActionDetail{Messages: []string{tt.message}, Paths: []string{"next"}}
+			output, _ := readFromSTDOUT(detail.Say)
+			if !strings.Contains(output, tt.want) {
+				t.Errorf("expected output to contain %q, got %q", tt.want, output)
+			}
+		})
 	}
 }
 
