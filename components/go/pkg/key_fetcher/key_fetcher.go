@@ -19,7 +19,7 @@ const (
 	QUIT_KEY_REGEX           = "(q|Q)"
 )
 
-var ErrInvalidKeyFormat = fmt.Errorf("Malformed License Key passed on command line - should be %s or %s", LICENSE_KEY_PATTERN_DESC, SERIAL_KEY_PATTERN_DESC)
+var ErrInvalidKeyFormat = fmt.Errorf("Malformed License Key passed on command line - should be %s or %s", LICENSE_KEY_PATTERN_DESC, SERIAL_KEY_PATTERN_DESC) //nolint:staticcheck // Preserve the existing user-facing error message.
 
 func ValidateKeyFormat(key string) (matches bool) {
 	var regexes []*regexp.Regexp

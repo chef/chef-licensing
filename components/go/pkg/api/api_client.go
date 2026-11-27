@@ -121,10 +121,16 @@ func (c *APIClient) doRequest(method, endpoint string, body io.Reader) (*http.Re
 }
 
 func (c *APIClient) decodeJSON(resp *http.Response, v interface{}) {
-	defer resp.Body.Close()
+	defer closeResponseBody(resp)
 	err := json.NewDecoder(resp.Body).Decode(v)
 	if err != nil {
 		log.Fatal("Failed to parse the response from the server:", err)
+	}
+}
+
+func closeResponseBody(resp *http.Response) {
+	if err := resp.Body.Close(); err != nil {
+		log.Printf("Failed to close response body: %v", err)
 	}
 }
 

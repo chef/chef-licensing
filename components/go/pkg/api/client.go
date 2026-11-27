@@ -138,7 +138,7 @@ func parseClientResponse(body []byte) (*LicenseClient, error) {
 }
 
 func getResponseBody(resp *http.Response) []byte {
-	defer resp.Body.Close()
+	defer closeResponseBody(resp)
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatal(err)
