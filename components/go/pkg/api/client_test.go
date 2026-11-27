@@ -1,11 +1,30 @@
 package api_test
 
 import (
+	"bytes"
+	"errors"
+	"io"
+	"log"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/chef/chef-licensing/components/go/pkg/api"
 )
+
+type failingCloseBody struct {
+	io.Reader
+}
+
+func (failingCloseBody) Close() error {
+	return errors.New("close failed")
+}
+
+type roundTripFunc func(*http.Request) (*http.Response, error)
+
+func (f roundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
+	return f(req)
+}
 
 const VALID_CLIENT = `
 	{
@@ -85,5 +104,45 @@ func TestFailedLicenseClient(t *testing.T) {
 	}
 	if err.Error() != "invalid licenseId" {
 		t.Fatalf("expected `invalid licenseId` error, got %s", err.Error())
+	}
+}
+
+func TestResponseBodyCloseErrorIsLogged(t *testing.T) {
+	tests := []struct {
+		name string
+		body string
+		call func(*api.APIClient) error
+	}{
+		{"client", VALID_CLIENT, func(c *api.APIClient) error {
+			_, err := c.GetLicenseClient([]string{"key-123"})
+			return err
+		}},
+		{"list", `{"data":[]}`, func(c *api.APIClient) error {
+			_, err := c.ListLicensesAPI()
+			return err
+		}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var output bytes.Buffer
+			originalOutput := log.Writer()
+			log.SetOutput(&output)
+			t.Cleanup(func() { log.SetOutput(originalOutput) })
+
+			client := &api.APIClient{
+				URL: "https://example.com",
+				HTTPClient: &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
+					return &http.Response{StatusCode: http.StatusOK, Body: failingCloseBody{strings.NewReader(tt.body)}}, nil
+				})},
+			}
+			setConfig()
+			if err := tt.call(client); err != nil {
+				t.Fatalf("request failed: %v", err)
+			}
+			if !strings.Contains(output.String(), "Failed to close response body: close failed") {
+				t.Errorf("expected close error to be logged, got %q", output.String())
+			}
+		})
 	}
 }

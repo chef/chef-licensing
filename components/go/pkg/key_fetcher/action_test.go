@@ -69,7 +69,7 @@ func TestSayAction(t *testing.T) {
 
 	detail := actions["test_say"]
 
-	stdOut, funcOut := readFromSTDOUT(detail.Say)
+	stdOut, funcOut := readFromSTDOUT(t, detail.Say)
 	if stdOut != "\nFirst Message" {
 		t.Errorf("expected %q but got %q", "First Message", stdOut)
 	}
@@ -91,7 +91,7 @@ func TestSayActionPreservesPercentSigns(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.message, func(t *testing.T) {
 			detail := keyfetcher.ActionDetail{Messages: []string{tt.message}, Paths: []string{"next"}}
-			output, _ := readFromSTDOUT(detail.Say)
+			output, _ := readFromSTDOUT(t, detail.Say)
 			if !strings.Contains(output, tt.want) {
 				t.Errorf("expected output to contain %q, got %q", tt.want, output)
 			}
@@ -104,13 +104,15 @@ func TestTimeoutSelect(t *testing.T) {
 	if tty, err := os.Open("/dev/tty"); err != nil {
 		t.Skip("Skipping test: /dev/tty not available (likely running in CI)")
 	} else {
-		tty.Close()
+		if err := tty.Close(); err != nil {
+			t.Fatalf("close /dev/tty: %v", err)
+		}
 	}
 
 	actions := loadInteractions()
 
 	detail := actions["ask_for_license_timeout"]
-	_, funcOut := readFromSTDOUT(detail.TimeoutSelect)
+	_, funcOut := readFromSTDOUT(t, detail.TimeoutSelect)
 
 	if funcOut != "" {
 		t.Errorf("expected %q but got %q", "", funcOut)
@@ -121,7 +123,7 @@ func TestWarnAction(t *testing.T) {
 	actions := loadInteractions()
 	detail := actions["warn"]
 
-	stdOut, funcOut := readFromSTDOUT(detail.Warn)
+	stdOut, funcOut := readFromSTDOUT(t, detail.Warn)
 	if stdOut != "\nThis is a warn" {
 		t.Errorf("expected %q but got %q", "This is a warn", stdOut)
 	}
@@ -134,7 +136,7 @@ func TestErrorAction(t *testing.T) {
 	actions := loadInteractions()
 	detail := actions["error"]
 
-	stdOut, funcOut := readFromSTDOUT(detail.Error)
+	stdOut, funcOut := readFromSTDOUT(t, detail.Error)
 	if stdOut != "\nThis is a error" {
 		t.Errorf("expected %q but got %q", "This is a error", stdOut)
 	}
@@ -147,7 +149,7 @@ func TestOkAction(t *testing.T) {
 	actions := loadInteractions()
 	detail := actions["ok"]
 
-	stdOut, funcOut := readFromSTDOUT(detail.Ok)
+	stdOut, funcOut := readFromSTDOUT(t, detail.Ok)
 	if stdOut != "\nThis is a ok" {
 		t.Errorf("expected %q but got %q", "This is a ok", stdOut)
 	}
@@ -253,18 +255,31 @@ func loadInteractions() map[string]keyfetcher.ActionDetail {
 	return intr.Actions
 }
 
-func readFromSTDOUT(function actionFunction) (string, string) {
+func readFromSTDOUT(t *testing.T, function actionFunction) (string, string) {
+	t.Helper()
 	originalStdout := os.Stdout
-	r, w, _ := os.Pipe()
+	r, w, err := os.Pipe()
+	if err != nil {
+		t.Fatalf("create stdout pipe: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := r.Close(); err != nil {
+			t.Errorf("close stdout reader: %v", err)
+		}
+	})
 	os.Stdout = w
+	defer func() { os.Stdout = originalStdout }()
 
 	output := function()
 
-	w.Close()
-	os.Stdout = originalStdout
+	if err := w.Close(); err != nil {
+		t.Fatalf("close stdout writer: %v", err)
+	}
 
 	var buf bytes.Buffer
-	_, _ = io.Copy(&buf, r)
+	if _, err := io.Copy(&buf, r); err != nil {
+		t.Fatalf("read stdout pipe: %v", err)
+	}
 
 	return buf.String(), output
 }
